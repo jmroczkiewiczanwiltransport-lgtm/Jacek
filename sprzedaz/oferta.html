@@ -1,0 +1,355 @@
+<title>Oferta KSeF Uzgodnienia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --ground:      #F7F8F6;
+    --surface:     #FFFFFF;
+    --surface-alt: #F1F4F2;
+    --ink:         #151C1E;
+    --ink-muted:   #5A6A6C;
+    --ink-faint:   #8B9A9B;
+    --border:      #DDE3E1;
+    --border-firm: #C3CDCA;
+
+    --accent:      #0F6E64;
+    --accent-soft: #E4EFEC;
+    --accent-ink:  #0A4A43;
+
+    --critical:      #B3261E;
+    --critical-soft: #FBE9E7;
+    --info:          #2A5DB0;
+    --info-soft:     #E8EEF9;
+
+    --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+
+    --radius: 3px;
+    --gutter: clamp(1rem, 4vw, 3rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0E1416;
+      --surface:     #151D1F;
+      --surface-alt: #1B2426;
+      --ink:         #E6ECEA;
+      --ink-muted:   #9BADAC;
+      --ink-faint:   #6E8180;
+      --border:      #26332F;
+      --border-firm: #35443F;
+      --accent:      #39B39F;
+      --accent-soft: #10302C;
+      --accent-ink:  #7FD4C4;
+      --critical:      #F2867C;
+      --critical-soft: #351916;
+      --info:          #8AB0EE;
+      --info-soft:     #16202F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0E1416;
+    --surface:     #151D1F;
+    --surface-alt: #1B2426;
+    --ink:         #E6ECEA;
+    --ink-muted:   #9BADAC;
+    --ink-faint:   #6E8180;
+    --border:      #26332F;
+    --border-firm: #35443F;
+    --accent:      #39B39F;
+    --accent-soft: #10302C;
+    --accent-ink:  #7FD4C4;
+    --critical:      #F2867C;
+    --critical-soft: #351916;
+    --info:          #8AB0EE;
+    --info-soft:     #16202F;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet { max-width: 60rem; margin: 0 auto; padding: 0 var(--gutter) 4rem; }
+
+  h1, h2, h3 { font-family: var(--font-display); margin: 0; line-height: 1.15; text-wrap: balance; }
+  h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 700; letter-spacing: -.025em; }
+  h2 { font-size: 1.375rem; font-weight: 600; letter-spacing: -.01em; }
+  h3 { font-size: 1.0625rem; font-weight: 600; }
+  p { margin: 0; }
+  strong { font-weight: 600; }
+
+  .label {
+    font-family: var(--font-display);
+    font-size: .6875rem; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  /* ---- nagłówek ---- */
+  .top {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 2rem;
+    padding: 2.5rem 0 1.5rem; border-bottom: 2px solid var(--ink);
+  }
+  .top .who { display: flex; flex-direction: column; gap: .5rem; }
+  h1 .k { color: var(--accent); }
+  .lede { color: var(--ink-muted); max-width: 46ch; font-size: 1.0625rem; }
+  .safe {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--accent-soft); color: var(--accent-ink);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 100px; padding: .35rem .8rem;
+    font-family: var(--font-display); font-size: .8125rem; font-weight: 600;
+  }
+  .safe .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+
+  section { margin-top: 2.75rem; }
+  .stack { display: flex; flex-direction: column; gap: 1rem; }
+
+  /* ---- pytanie otwierające ---- */
+  .hook {
+    margin-top: 2rem;
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    padding: 1.5rem 1.75rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    display: flex; flex-direction: column; gap: .75rem;
+  }
+  .hook .q {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(1.125rem, 2.8vw, 1.5rem); line-height: 1.3;
+  }
+  .hook .a { color: var(--ink-muted); max-width: 62ch; }
+
+  /* ---- dwa kierunki sprawdzenia ---- */
+  .dirs { display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: 1rem; }
+  .dir {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem 1.35rem;
+    display: flex; flex-direction: column; gap: .65rem;
+  }
+  .dir.lead { border-color: color-mix(in srgb, var(--info) 40%, transparent); background: var(--info-soft); }
+  .flow {
+    font-family: var(--font-mono); font-size: .8125rem; font-weight: 500;
+    color: var(--ink-muted); letter-spacing: .01em;
+  }
+  .dir.lead .flow { color: var(--info); }
+  .dir ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: .3rem; }
+  .dir li { font-size: .9375rem; }
+  .dir li::marker { color: var(--accent); }
+  .dir .worth {
+    margin-top: .25rem; font-size: .9375rem; font-weight: 600;
+    color: var(--info); font-family: var(--font-display);
+  }
+
+  /* ---- zaufanie ---- */
+  .trust { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (min-width: 44rem) { .trust { grid-template-columns: repeat(2, 1fr); } }
+  .tr {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.1rem 1.2rem; background: var(--surface);
+    display: flex; flex-direction: column; gap: .35rem;
+  }
+  .tr p { font-size: .9375rem; color: var(--ink-muted); }
+
+  /* ---- cennik ---- */
+  .prices { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; }
+  .price {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface); padding: 1.35rem;
+    display: flex; flex-direction: column; gap: .5rem;
+  }
+  .price.pick { border-color: var(--accent); border-width: 1.5px; }
+  .price .tier { font-family: var(--font-display); font-weight: 700; font-size: 1.0625rem; }
+  .price .amt {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 2rem; line-height: 1; letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .price.pick .amt { color: var(--accent); }
+  .price .per { font-size: .8125rem; color: var(--ink-faint); }
+  .price p { font-size: .9375rem; color: var(--ink-muted); }
+  .price .flag {
+    align-self: flex-start; margin-bottom: -.2rem;
+    background: var(--accent-soft); color: var(--accent-ink);
+    font-family: var(--font-display); font-size: .6875rem; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: .15rem .5rem; border-radius: 100px;
+  }
+
+  /* ---- kroki ---- */
+  ol.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .85rem; counter-reset: s; }
+  ol.steps li {
+    counter-increment: s;
+    display: grid; grid-template-columns: 2rem 1fr; gap: .9rem; align-items: baseline;
+  }
+  ol.steps li::before {
+    content: counter(s, decimal-leading-zero);
+    font-family: var(--font-mono); font-size: .8125rem; font-weight: 500;
+    color: var(--accent); font-variant-numeric: tabular-nums;
+  }
+  ol.steps .st { font-weight: 600; }
+  ol.steps .sd { color: var(--ink-muted); font-size: .9375rem; }
+
+  /* ---- zamknięcie ---- */
+  .close {
+    margin-top: 2.75rem; border-top: 2px solid var(--ink); padding-top: 1.5rem;
+    display: flex; flex-wrap: wrap; gap: 1.25rem 2.5rem; align-items: flex-end;
+  }
+  .close .ask { font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; max-width: 34ch; }
+  .card { margin-left: auto; display: flex; flex-direction: column; gap: .2rem; font-size: .9375rem; }
+  .card .nm { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+  .card .li { color: var(--ink-muted); }
+  .ph {
+    border-bottom: 1.5px dashed var(--border-firm);
+    color: var(--ink-faint); font-style: italic;
+  }
+
+  .fine { margin-top: 2rem; font-size: .8125rem; color: var(--ink-faint); max-width: 70ch; }
+
+  @media print {
+    body { background: #fff; color: #000; font-size: 10.5pt; }
+    .sheet { max-width: none; padding: 0; }
+    .safe, .dir, .tr, .price, .hook { break-inside: avoid; }
+    section { margin-top: 1.25rem; }
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="top">
+    <div class="who">
+      <h1><span class="k">KSeF</span> Uzgodnienia</h1>
+      <p class="lede">Sprawdzenie zgodności rejestru zakupu z Krajowym Systemem
+        e-Faktur. Dla biur rachunkowych i działów księgowych.</p>
+    </div>
+    <span class="safe"><span class="dot" aria-hidden="true"></span> Bez serwera — dane nie opuszczają Państwa komputera</span>
+  </header>
+
+  <div class="hook">
+    <p class="q">Ile faktur z KSeF nie jest u Państwa zaksięgowanych?</p>
+    <p class="a">Prawie nikt nie zna odpowiedzi, bo przy kilkuset pozycjach miesięcznie
+      ręcznie się tego nie sprawdza. Każda taka faktura to nieodliczony VAT
+      i niezaksięgowany koszt — a termin mija razem z zamknięciem miesiąca.</p>
+  </div>
+
+  <section class="stack">
+    <span class="label">Sprawdzenie idzie w dwie strony</span>
+    <div class="dirs">
+      <div class="dir">
+        <span class="flow">rejestr &rarr; KSeF</span>
+        <h3>Czy wpisane numery są prawidłowe</h3>
+        <ul>
+          <li>uzupełnia brakujące numery KSeF, gdy dopasowanie jest jednoznaczne</li>
+          <li>wykrywa numery <strong>wpisane błędnie</strong> i podaje prawidłowe</li>
+          <li>oznacza numery podejrzane: zły format, NIP niezgodny z dostawcą, brak w KSeF</li>
+        </ul>
+      </div>
+      <div class="dir lead">
+        <span class="flow">KSeF &rarr; rejestr</span>
+        <h3>Czego brakuje w księgach</h3>
+        <ul>
+          <li>wskazuje faktury obecne w KSeF, których <strong>nie ma w rejestrze</strong></li>
+          <li>podaje NIP, numer faktury i numer KSeF każdej z nich</li>
+        </ul>
+        <p class="worth">To ta część, która zwraca koszt narzędzia.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="stack">
+    <span class="label">Dlaczego to jest bezpieczne</span>
+    <div class="trust">
+      <div class="tr">
+        <h3>Nie ma serwera</h3>
+        <p>Całość liczy się w przeglądarce. Żaden plik nigdzie nie jest wysyłany — można
+          odciąć internet i narzędzie nadal działa.</p>
+      </div>
+      <div class="tr">
+        <h3>Nie ma instalacji</h3>
+        <p>Jeden plik na dysku, otwierany dwuklikiem. Bez uprawnień administratora,
+          bez zmian w Państwa systemie księgowym.</p>
+      </div>
+      <div class="tr">
+        <h3>Nie rusza Państwa pliku</h3>
+        <p>Wynik wychodzi jako osobny raport albo gotowa kolumna do wklejenia. Formuły
+          i łącza zewnętrzne w plikach idących pod JPK zostają nietknięte.</p>
+      </div>
+      <div class="tr">
+        <h3>Każdą pozycję można sprawdzić</h3>
+        <p>Raport podaje numer wiersza w Państwa pliku. Dopasowania niepewne są osobno
+          oznaczone jako „przybliżone — sprawdź”.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="stack">
+    <span class="label">Cennik</span>
+    <div class="prices">
+      <div class="price pick">
+        <span class="flag">Zalecane</span>
+        <span class="tier">Abonament</span>
+        <span class="amt">149 zł</span>
+        <span class="per">miesięcznie, za biuro, netto</span>
+        <p>Bez limitu pozycji i plików. Poprawki i nowe funkcje w cenie. Rezygnacja
+          w dowolnym miesiącu.</p>
+      </div>
+      <div class="price">
+        <span class="tier">Licencja jednorazowa</span>
+        <span class="amt">990 zł</span>
+        <span class="per">jednorazowo, za stanowisko, netto</span>
+        <p>Wersja w chwili zakupu, bez ograniczeń czasowych. Późniejsze aktualizacje
+          osobno.</p>
+      </div>
+      <div class="price">
+        <span class="tier">Sprawdzenie próbne</span>
+        <span class="amt">0 zł</span>
+        <span class="per">jeden miesiąc, Państwa dane</span>
+        <p>Pełny wynik na ekranie, eksport do 100 pozycji. Wystarczy, żeby zobaczyć,
+          czy u Państwa są rozbieżności.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="stack">
+    <span class="label">Jak zacząć</span>
+    <ol class="steps">
+      <li><span><span class="st">Eksport z KSeF za jeden miesiąc.</span>
+        <span class="sd">Aplikacja Podatnika KSeF → Faktury → wyszukaj okres → Eksportuj.
+        Jeśli nie robili tego Państwo wcześniej, przeprowadzę przez to przez telefon.</span></span></li>
+      <li><span><span class="st">Rejestr zakupu za ten sam miesiąc.</span>
+        <span class="sd">Zwykły eksport z Państwa programu księgowego — bez żadnego
+        przygotowywania pliku.</span></span></li>
+      <li><span><span class="st">Wynik w minutę.</span>
+        <span class="sd">Oba pliki wrzucone do narzędzia, wynik od razu na ekranie.
+        Decyzja o zakupie dopiero po zobaczeniu własnych liczb.</span></span></li>
+    </ol>
+  </section>
+
+  <div class="close">
+    <p class="ask">Jeśli sprawdzenie wykaże zero rozbieżności — proszę tego nie kupować.
+      Powiem to samo.</p>
+    <div class="card">
+      <span class="nm"><span class="ph">imię i nazwisko</span></span>
+      <span class="li"><span class="ph">telefon</span></span>
+      <span class="li"><span class="ph">adres e-mail</span></span>
+    </div>
+  </div>
+
+  <p class="fine">Narzędzie wskazuje rozbieżności między dwoma plikami. Nie jest usługą
+    doradztwa podatkowego i nie zastępuje decyzji księgowej — ocena każdej wskazanej
+    pozycji należy do osoby prowadzącej księgi.</p>
+
+</div>
