@@ -66,6 +66,22 @@ Biblioteka: `vendor/xlsx.full.min.js` (SheetJS 0.18.5, Apache-2.0) — wbudowana
 Kroje pisma pobierane są z Google Fonts. Bez internetu aplikacja działa normalnie,
 tylko z krojami systemowymi.
 
+## Dwie wersje, dwa zestawy możliwości
+
+Ten sam kod źródłowy daje dwa warianty, bo przeglądarkowy podglądacz stron nie pozwala
+stronie zapisywać plików bezpośrednio.
+
+| | Plik z dysku (`dist/ksef-uzgodnienia.html`) | Strona opublikowana |
+|---|---|---|
+| Raport | `.xlsx`, każda kategoria na osobnej karcie | `.csv` (rozdzielany średnikiem, z BOM), przy braku zgody na `.csv` — `.txt` |
+| Kolumna do wklejenia | tak | tak |
+| Zapis uzupełnionego rejestru | tak | nie — strona nie może nadpisać pliku na dysku |
+| Działa bez internetu | tak | nie |
+| Biblioteka SheetJS | pełna | `core` (bez tablic stron kodowych) |
+
+Aplikacja sama rozpoznaje, w którym trybie działa, i dostosowuje przyciski oraz opisy.
+Wersję opublikowaną traktuj jako demo do wysłania klientowi; do pracy wydawaj plik z dysku.
+
 ## Licencjonowanie
 
 Wersja bez klucza jest w pełni sprawna na ekranie — **limit dotyczy tylko eksportu**

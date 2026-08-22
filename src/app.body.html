@@ -106,7 +106,7 @@
           <div class="exp">
             <h3>Raport kontrolny</h3>
             <p>Arkusz <span class="mono">.xlsx</span> — każda kategoria na osobnej karcie, z numerem wiersza w Twoim pliku. To dokument do wpięcia w dokumentację kontrolną.</p>
-            <div class="rowbtns"><button class="btn btn-primary" id="dlReport">Pobierz raport .xlsx</button></div>
+            <div class="rowbtns"><button class="btn btn-primary" id="dlReport">Pobierz raport .xlsx</button><span id="dlMsg" class="licmsg" aria-live="polite"></span></div>
           </div>
           <div class="exp">
             <h3>Kolumna do wklejenia</h3>
@@ -118,7 +118,7 @@
             </div>
             <textarea class="paste" id="pasteCol" hidden readonly aria-label="Kolumna numerów KSeF do wklejenia"></textarea>
           </div>
-          <div class="exp">
+          <div class="exp" id="expFilled">
             <h3>Rejestr z uzupełnioną kolumną</h3>
             <p id="fillNote">Twój plik rejestru z wpisanymi numerami KSeF.</p>
             <div class="rowbtns"><button class="btn" id="dlFilled">Pobierz uzupełniony rejestr</button></div>

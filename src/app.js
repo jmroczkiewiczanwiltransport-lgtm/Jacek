@@ -697,10 +697,8 @@
     });
     renderCat();
 
-    $('fillNote').innerHTML = hasFormulas(S.regRef.file.wb, S.regRef.sheet)
-      ? '<strong style="color:var(--warning)">Uwaga:</strong> ten rejestr zawiera formuły lub łącza zewnętrzne. Zapis przez przeglądarkę może je uszkodzić. Jeśli plik idzie pod JPK — użyj kolumny do wklejenia.'
-      : 'Twój plik rejestru z wpisanymi numerami KSeF.';
-
+    paintExportUi();
+    $('dlMsg').textContent = '';
     buildPasteColumn();
     paintLicense();
   }
@@ -730,6 +728,93 @@
 
   /* ---------- eksporty ---------- */
 
+  /* Z dysku plik zapisujemy wprost przez SheetJS. Na stronie opublikowanej
+     przegladarkowy podglad blokuje pobieranie inicjowane skryptem - tam plik
+     trzeba oddac przez kanal gospodarza, ktory nie przyjmuje .xlsx. Dlatego
+     w tym trybie raport wychodzi jako CSV, a zapis calego rejestru jest
+     niedostepny (zostaje kolumna do wklejenia, ktora i tak jest bezpieczniejsza). */
+  var DL = null;
+
+  function initDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    var p;
+    try { p = window.claude.use('downloads'); } catch (e) { return; }
+    if (!p || typeof p.then !== 'function') return;
+    p.then(function (ns) {
+      if (ns && typeof ns.save === 'function') { DL = ns; paintExportUi(); }
+    }, function () { });
+  }
+
+  /* Jedno miejsce decydujace o wygladzie sekcji eksportu - wolane i przy starcie
+     (gdy rozstrzygnie sie tryb), i po kazdym uzgodnieniu. */
+  function paintExportUi() {
+    $('dlReport').textContent = DL ? 'Pobierz raport .csv' : 'Pobierz raport .xlsx';
+    var btn = $('dlFilled'), note = $('fillNote');
+    if (!btn || !note) return;
+    if (DL) {
+      btn.disabled = true;
+      note.innerHTML = 'Niedostępne na tej stronie — nie może ona nadpisać pliku na Twoim dysku. ' +
+        'Użyj kolumny do wklejenia; przy plikach z formułami jest to i tak bezpieczniejsza droga. ' +
+        'Zapis całego arkusza działa w wersji uruchamianej z dysku.';
+      return;
+    }
+    btn.disabled = false;
+    note.innerHTML = (S.result && hasFormulas(S.regRef.file.wb, S.regRef.sheet))
+      ? '<strong style="color:var(--warning)">Uwaga:</strong> ten rejestr zawiera formuły lub łącza zewnętrzne. Zapis przez przeglądarkę może je uszkodzić. Jeśli plik idzie pod JPK — użyj kolumny do wklejenia.'
+      : 'Twój plik rejestru z wpisanymi numerami KSeF.';
+  }
+
+  function csvCell(v) {
+    var t = v === null || v === undefined ? '' : String(v);
+    return /[";\r\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  }
+
+  function csvFrom(sections) {
+    var out = [];
+    sections.forEach(function (sec, i) {
+      if (i) out.push('');
+      out.push(csvCell('== ' + sec.name + ' =='));
+      out.push(sec.header.map(csvCell).join(';'));
+      sec.rows.forEach(function (r) { out.push(r.map(csvCell).join(';')); });
+    });
+    /* BOM, zeby Excel w polskiej lokalizacji poprawnie odczytal ogonki */
+    return '\uFEFF' + out.join('\r\n') + '\r\n';
+  }
+
+  function dlSay(kind, text) {
+    var el = $('dlMsg');
+    el.className = 'licmsg ' + kind;
+    el.textContent = text;
+  }
+
+  function saveHosted(base, sections) {
+    var text = csvFrom(sections);
+    function attempt(ext) {
+      return DL.save({ filename: base + '.' + ext, data: text });
+    }
+    dlSay('', 'Przygotowuję plik...');
+    attempt('csv').then(function () {
+      dlSay('ok', 'Zapisano raport .csv');
+    }, function (err) {
+      var code = err && err.code;
+      if (code === 'extension_not_enabled' || code === 'rejected_extension') {
+        attempt('txt').then(function () {
+          dlSay('ok', 'Zapisano raport .txt (kolumny rozdzielone średnikiem)');
+        }, function (e2) { dlSay('bad', dlWhy(e2 && e2.code)); });
+        return;
+      }
+      dlSay('bad', dlWhy(code));
+    });
+  }
+
+  function dlWhy(code) {
+    if (code === 'declined') return 'Zapis anulowany.';
+    if (code === 'rate_limited') return 'Za dużo próśb o zapis — spróbuj za chwilę.';
+    if (code === 'too_large') return 'Raport jest za duży na zapis ze strony — użyj wersji uruchamianej z dysku.';
+    return 'Zapis się nie udał. Skorzystaj z kolumny do wklejenia albo z wersji uruchamianej z dysku.';
+  }
+
+
   function cap(rows) {
     if (S.licensed) return { rows: rows, cut: 0 };
     return { rows: rows.slice(0, FREE_ROWS), cut: Math.max(0, rows.length - FREE_ROWS) };
@@ -749,47 +834,83 @@
     return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes());
   }
 
-  $('dlReport').addEventListener('click', function () {
-    var R = S.result, st = R.stats, wb = XLSX.utils.book_new();
-
-    function add(name, header, rows, widths) {
-      var c = cap(rows), body = c.rows;
-      if (c.cut) {
-        body = body.concat([[]], [['Wersja demonstracyjna — pominięto ' + c.cut + ' dalszych pozycji. Klucz licencyjny zdejmuje limit.']]);
+  function reportSections() {
+    var R = S.result, st = R.stats;
+    return [
+      {
+        name: 'Podsumowanie', header: ['Pozycja', 'Liczba'], widths: [42, 46],
+        rows: [
+          ['Wiersze rejestru', st.rows],
+          ['Faktury w eksporcie KSeF', st.ksefRows],
+          ['Uzupełnione — dopasowanie dokładne', st.exact],
+          ['Uzupełnione — dopasowanie przybliżone', st.fuzzy],
+          ['Korekty (błędny numer w rejestrze)', st.corr],
+          ['Do wyjaśnienia', st.unclear],
+          ['Bez dopasowania', st.none + st.ambig],
+          ['Już zgodne', st.ok + st.okAlt],
+          ['W KSeF, brak w rejestrze', R.onlyKsef.length],
+          [],
+          ['Plik KSeF', S.ksefRef.file.name],
+          ['Plik rejestru', S.regRef.file.name + ' › ' + S.regRef.sheet],
+          ['Zakres wierszy rejestru', R.firstDataRow + '-' + R.lastDataRow]
+        ]
+      },
+      {
+        name: 'Korekty', header: ['Wiersz', 'NIP', 'Nr faktury', 'Wpisany numer', 'Poprawny numer KSeF'],
+        widths: [9, 15, 28, 40, 40],
+        rows: R.corrections.map(function (x) { return [x.excel, x.nip, x.inv, x.was, x.num]; })
+      },
+      {
+        name: 'W KSeF brak w rejestrze', header: ['Wiersz KSeF', 'NIP', 'Nr faktury', 'Numer KSeF'],
+        widths: [12, 15, 28, 40],
+        rows: R.onlyKsef.map(function (x) { return [x.excel, x.nipRaw || x.nip, x.inv, x.num]; })
+      },
+      {
+        name: 'Uzupełnione', header: ['Wiersz', 'NIP', 'Nr faktury', 'Numer KSeF', 'Dopasowanie'],
+        widths: [9, 15, 28, 40, 24],
+        rows: R.filled.map(function (x) { return [x.excel, x.nip, x.inv, x.num, x.how]; })
+      },
+      {
+        name: 'Do wyjaśnienia', header: ['Wiersz', 'NIP', 'Nr faktury', 'Wpisany numer', 'Uwaga'],
+        widths: [9, 15, 28, 40, 56],
+        rows: R.unclear.map(function (x) { return [x.excel, x.nip, x.inv, x.was, x.note]; })
+      },
+      {
+        name: 'Bez dopasowania', header: ['Wiersz', 'NIP', 'Nr faktury', 'Flaga', 'Uwaga'],
+        widths: [9, 15, 28, 14, 40],
+        rows: R.unmatched.map(function (x) { return [x.excel, x.nip, x.inv, x.flag || '', x.note || '']; })
+      },
+      {
+        name: 'Zgodne', header: ['Wiersz', 'NIP', 'Nr faktury', 'Numer KSeF', 'Uwaga'],
+        widths: [9, 15, 28, 40, 46],
+        rows: R.ok.map(function (x) { return [x.excel, x.nip, x.inv, x.num, x.note]; })
       }
-      XLSX.utils.book_append_sheet(wb, sheetFrom(header, body, widths), name);
-    }
+    ];
+  }
 
-    XLSX.utils.book_append_sheet(wb, sheetFrom(['Pozycja', 'Liczba'], [
-      ['Wiersze rejestru', st.rows],
-      ['Faktury w eksporcie KSeF', st.ksefRows],
-      ['Uzupełnione — dopasowanie dokładne', st.exact],
-      ['Uzupełnione — dopasowanie przybliżone', st.fuzzy],
-      ['Korekty (błędny numer w rejestrze)', st.corr],
-      ['Do wyjaśnienia', st.unclear],
-      ['Bez dopasowania', st.none + st.ambig],
-      ['Już zgodne', st.ok + st.okAlt],
-      ['W KSeF, brak w rejestrze', R.onlyKsef.length],
-      [],
-      ['Plik KSeF', S.ksefRef.file.name],
-      ['Plik rejestru', S.regRef.file.name + ' › ' + S.regRef.sheet],
-      ['Zakres wierszy rejestru', R.firstDataRow + '-' + R.lastDataRow]
-    ], [42, 46]), 'Podsumowanie');
+  /* Limit wersji demonstracyjnej dotyczy tylko eksportu - podsumowanie zostaje cale. */
+  function cappedSections() {
+    return reportSections().map(function (sec) {
+      if (sec.name === 'Podsumowanie') return sec;
+      var c = cap(sec.rows);
+      var rows = c.rows;
+      if (c.cut) {
+        rows = rows.concat([[]], [['Wersja demonstracyjna — pominięto ' + c.cut + ' dalszych pozycji. Klucz licencyjny zdejmuje limit.']]);
+      }
+      return { name: sec.name, header: sec.header, widths: sec.widths, rows: rows };
+    });
+  }
 
-    add('Korekty', ['Wiersz', 'NIP', 'Nr faktury', 'Wpisany numer', 'Poprawny numer KSeF'],
-      R.corrections.map(function (x) { return [x.excel, x.nip, x.inv, x.was, x.num]; }), [9, 15, 28, 40, 40]);
-    add('W KSeF brak w rejestrze', ['Wiersz KSeF', 'NIP', 'Nr faktury', 'Numer KSeF'],
-      R.onlyKsef.map(function (x) { return [x.excel, x.nipRaw || x.nip, x.inv, x.num]; }), [12, 15, 28, 40]);
-    add('Uzupełnione', ['Wiersz', 'NIP', 'Nr faktury', 'Numer KSeF', 'Dopasowanie'],
-      R.filled.map(function (x) { return [x.excel, x.nip, x.inv, x.num, x.how]; }), [9, 15, 28, 40, 24]);
-    add('Do wyjaśnienia', ['Wiersz', 'NIP', 'Nr faktury', 'Wpisany numer', 'Uwaga'],
-      R.unclear.map(function (x) { return [x.excel, x.nip, x.inv, x.was, x.note]; }), [9, 15, 28, 40, 56]);
-    add('Bez dopasowania', ['Wiersz', 'NIP', 'Nr faktury', 'Flaga', 'Uwaga'],
-      R.unmatched.map(function (x) { return [x.excel, x.nip, x.inv, x.flag || '', x.note || '']; }), [9, 15, 28, 14, 40]);
-    add('Zgodne', ['Wiersz', 'NIP', 'Nr faktury', 'Numer KSeF', 'Uwaga'],
-      R.ok.map(function (x) { return [x.excel, x.nip, x.inv, x.num, x.note]; }), [9, 15, 28, 40, 46]);
-
-    XLSX.writeFile(wb, 'RAPORT_KSeF_' + stamp() + '.xlsx');
+  $('dlReport').addEventListener('click', function () {
+    var sections = cappedSections();
+    var base = 'RAPORT_KSeF_' + stamp();
+    if (DL) { saveHosted(base, sections); return; }
+    var wb = XLSX.utils.book_new();
+    sections.forEach(function (sec) {
+      XLSX.utils.book_append_sheet(wb, sheetFrom(sec.header, sec.rows, sec.widths), sec.name.slice(0, 31));
+    });
+    XLSX.writeFile(wb, base + '.xlsx');
+    dlSay('ok', 'Zapisano raport .xlsx');
   });
 
   function buildPasteColumn() {
@@ -872,4 +993,5 @@
   $('resetAll').addEventListener('click', function () { $('reset1').click(); goStep(1); });
 
   paintLicense();
+  initDownloads();
 })();
