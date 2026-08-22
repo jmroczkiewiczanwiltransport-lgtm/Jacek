@@ -1,0 +1,19 @@
+{
+  "name": "mbs-narzedzia",
+  "private": true,
+  "description": "Narzedzia MBS Business Solutions: aplikacja KSeF Uzgodnienia, strona, oferta, znak marki",
+  "scripts": {
+    "build": "./build.sh",
+    "pdf": "node tools/mkpdf.js",
+    "logo": "node tools/genlogo.js && node tools/raster.js",
+    "keys": "node tools/keygen.js 10"
+  },
+  "devDependencies": {
+    "@fontsource/archivo": "^5.0.0",
+    "@fontsource/ibm-plex-mono": "^5.0.0",
+    "@fontsource/source-sans-3": "^5.0.0",
+    "opentype.js": "^2.0.0",
+    "playwright-core": "^1.62.0",
+    "xlsx": "^0.18.5"
+  }
+}

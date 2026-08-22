@@ -548,6 +548,10 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   var AL = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   var SALT = 'ksef-uzgodnienia-v1';
   var MAX_RENDER = 500;
+  /* Od rozliczenia za luty 2026 kazda pozycja ewidencji JPK_V7 musi miec numer KSeF
+     albo jedno z oznaczen: OFF (awaria lub niedostepnosc KSeF), BFK (faktura wystawiona
+     bez uzycia KSeF), DI (dowod inny niz faktura). Puste pole nie przechodzi. */
+  var MARKERS = /^(OFF|BFK|DI)$/i;
 
   var PAT = {
     nip: /\bnip\b|identyfikator\s*(sprzedawcy|nabywcy|podmiotu)|nr\s*ident|tax\s*id|vat\s*id/i,
@@ -800,8 +804,9 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     }
 
     var out = {
-      filled: [], corrections: [], unclear: [], ok: [], unmatched: [], onlyKsef: [],
-      stats: { rows: 0, ksefRows: ksefRows.length, ok: 0, okAlt: 0, exact: 0, fuzzy: 0, corr: 0, unclear: 0, ambig: 0, none: 0 },
+      filled: [], corrections: [], unclear: [], ok: [], unmatched: [], onlyKsef: [], jpkBlock: [],
+      stats: { rows: 0, ksefRows: ksefRows.length, ok: 0, okAlt: 0, exact: 0, fuzzy: 0, corr: 0, unclear: 0, ambig: 0, none: 0, badMarker: 0 },
+      hasFlagCol: R.flag >= 0,
       firstDataRow: regRef.headerRow + 1,
       lastDataRow: regRef.headerRow,
       fillByRow: {},
@@ -879,6 +884,24 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
           out.unmatched.push({ excel: excel, nip: nipRaw, inv: invRaw, flag: flag, note: m.length > 1 ? 'kilku kandydatów: ' + m.join(' | ') : '' });
         }
       }
+    }
+
+    /* Kontrola pod JPK: po uzgodnieniu kazdy wiersz musi miec numer KSeF albo
+       poprawne oznaczenie. Wiersz bez jednego i bez drugiego nie przejdzie ewidencji. */
+    for (r = regRef.headerRow; r < regRef.aoa.length; r++) {
+      row = regRef.aoa[r] || [];
+      var iv = txt(row[R.inv]), nv = txt(row[R.nip]), cv = txt(row[R.ksef]);
+      if (!iv && !nv && !cv) continue;
+      var ex = r + 1;
+      var finalNum = cv || out.fillByRow[ex] || '';
+      var fl = R.flag >= 0 ? txt(row[R.flag]) : '';
+      if (finalNum) continue;
+      if (MARKERS.test(fl)) continue;
+      out.stats.badMarker++;
+      out.jpkBlock.push({
+        excel: ex, nip: nv, inv: iv, flag: fl,
+        note: fl ? 'oznaczenie „' + fl + '” nie jest jednym z OFF / BFK / DI' : 'brak numeru KSeF i brak oznaczenia'
+      });
     }
 
     var seenNum = {}, i, kr;
@@ -1135,6 +1158,15 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       empty: 'Brak korekt — wszystkie wpisane numery zgadzają się z KSeF.'
     },
     {
+      id: 'jpkBlock', name: 'Bez numeru i bez oznaczenia', sig: 'critical',
+      cols: ['Wiersz', 'NIP', 'Nr faktury', 'Oznaczenie', 'Uwaga'],
+      row: function (x) {
+        return '<td class="r">' + x.excel + '</td><td class="k">' + esc(x.nip) + '</td><td class="wide">' + esc(x.inv) +
+          '</td><td>' + (x.flag ? esc(x.flag) : '<span style="color:var(--critical)">puste</span>') + '</td><td>' + esc(x.note) + '</td>';
+      },
+      empty: 'Każda pozycja ma numer KSeF albo poprawne oznaczenie OFF / BFK / DI.'
+    },
+    {
       id: 'onlyKsef', name: 'W KSeF, brak w rejestrze', sig: 'info',
       cols: ['Wiersz KSeF', 'NIP', 'Nr faktury', 'Numer KSeF'],
       row: function (x) {
@@ -1181,7 +1213,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     }
   ];
 
-  var activeCat = 'corrections';
+  var activeCat = 'corrections';   /* nadpisywane po uzgodnieniu, jesli cos blokuje JPK */
 
   function renderResult() {
     var R = S.result, st = R.stats;
@@ -1190,19 +1222,33 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       ' (wiersze ' + R.firstDataRow + '–' + R.lastDataRow + ') · Eksport z KSeF: ' + st.ksefRows + ' ' +
       plural(st.ksefRows, 'faktura', 'faktury', 'faktur');
 
+    /* Kolejnosc wedlug pilnosci: najpierw to, co zablokuje ewidencje, potem to, co
+       kosztuje pieniadze, na koncu informacje. "Juz zgodne" nie ma kafla - nic z nim
+       nie trzeba zrobic, a liczba jest widoczna na zakladce. */
     var tiles = [
-      { v: st.exact + st.fuzzy, k: st.fuzzy ? 'Uzupełnione numery — w tym ' + st.fuzzy + ' przybliżone' : 'Uzupełnione numery', c: 'is-good' },
+      { v: R.jpkBlock.length, k: 'Bez numeru i bez oznaczenia', c: R.jpkBlock.length ? 'is-critical' : '' },
       { v: st.corr, k: 'Korekty — błędny numer', c: 'is-critical' },
       { v: R.onlyKsef.length, k: 'W KSeF, brak w rejestrze', c: 'is-info' },
       { v: st.unclear, k: 'Do wyjaśnienia', c: 'is-warning' },
-      { v: st.none + st.ambig, k: 'Bez dopasowania', c: '' },
-      { v: st.ok + st.okAlt, k: 'Już zgodne', c: '' }
+      { v: st.exact + st.fuzzy, k: st.fuzzy ? 'Uzupełnione — w tym ' + st.fuzzy + ' przybliżone' : 'Uzupełnione numery', c: 'is-good' },
+      { v: st.none + st.ambig, k: 'Bez dopasowania', c: '' }
     ];
     $('tiles').innerHTML = tiles.map(function (t) {
       return '<div class="tile ' + t.c + '"><span class="v">' + t.v + '</span><span class="k">' + t.k + '</span></div>';
     }).join('');
 
     var hl = [];
+    if (R.jpkBlock.length) {
+      hl.push('<div class="callout is-critical"><strong>' + R.jpkBlock.length + ' ' +
+        plural(R.jpkBlock.length, 'pozycja nie ma', 'pozycje nie mają', 'pozycji nie ma') +
+        ' ani numeru KSeF, ani oznaczenia</strong><span>Od rozliczenia za luty 2026 każda pozycja ewidencji ' +
+        'JPK_V7 musi mieć numer KSeF albo oznaczenie <strong>OFF</strong>, <strong>BFK</strong> lub ' +
+        '<strong>DI</strong> — puste pole nie przechodzi. Te wiersze trzeba uzupełnić przed złożeniem pliku.</span></div>');
+    } else if (!R.hasFlagCol) {
+      hl.push('<div class="callout is-warning"><strong>Kontrola oznaczeń nie została wykonana</strong><span>' +
+        'Nie wskazano kolumny z oznaczeniem, więc program nie sprawdził, czy pozycje bez numeru KSeF mają ' +
+        'OFF, BFK albo DI. Wróć do kroku 2 i wskaż tę kolumnę — od lutego 2026 puste pole nie przechodzi w JPK_V7.</span></div>');
+    }
     if (st.corr) {
       hl.push('<div class="callout is-critical"><strong>' + st.corr + ' ' +
         plural(st.corr, 'błędny numer KSeF', 'błędne numery KSeF', 'błędnych numerów KSeF') +
@@ -1222,6 +1268,9 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       hl.push('<div class="callout"><strong>Bez zastrzeżeń</strong><span>Rejestr zgadza się z KSeF. Nie znaleziono błędnych numerów ani faktur pominiętych w księgowaniu.</span></div>');
     }
     $('headlines').innerHTML = hl.join('');
+
+    if (R.jpkBlock.length) activeCat = 'jpkBlock';
+    else if (!R.corrections.length) activeCat = R.onlyKsef.length ? 'onlyKsef' : 'filled';
 
     $('subtabs').innerHTML = CATS.map(function (c) {
       return '<button class="subtab' + (c.sig ? ' sig-' + c.sig : '') + '" role="tab" data-cat="' + c.id +
@@ -1388,6 +1437,8 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
           ['Bez dopasowania', st.none + st.ambig],
           ['Już zgodne', st.ok + st.okAlt],
           ['W KSeF, brak w rejestrze', R.onlyKsef.length],
+      ['Bez numeru KSeF i bez oznaczenia OFF/BFK/DI', R.jpkBlock.length],
+      ['Kontrola oznaczen wykonana', R.hasFlagCol ? 'tak' : 'nie - nie wskazano kolumny'],
           [],
           ['Plik KSeF', S.ksefRef.file.name],
           ['Plik rejestru', S.regRef.file.name + ' › ' + S.regRef.sheet],
@@ -1398,6 +1449,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         name: 'Korekty', header: ['Wiersz', 'NIP', 'Nr faktury', 'Wpisany numer', 'Poprawny numer KSeF'],
         widths: [9, 15, 28, 40, 40],
         rows: R.corrections.map(function (x) { return [x.excel, x.nip, x.inv, x.was, x.num]; })
+      },
+      {
+        name: 'Bez numeru i oznaczenia', header: ['Wiersz', 'NIP', 'Nr faktury', 'Oznaczenie', 'Uwaga'],
+        widths: [9, 15, 28, 14, 52],
+        rows: R.jpkBlock.map(function (x) { return [x.excel, x.nip, x.inv, x.flag || '', x.note]; })
       },
       {
         name: 'W KSeF brak w rejestrze', header: ['Wiersz KSeF', 'NIP', 'Nr faktury', 'Numer KSeF'],

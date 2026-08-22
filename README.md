@@ -74,6 +74,21 @@ Biblioteka: `vendor/xlsx.full.min.js` (SheetJS 0.18.5, Apache-2.0) — wbudowana
 Kroje pisma pobierane są z Google Fonts. Bez internetu aplikacja działa normalnie,
 tylko z krojami systemowymi.
 
+## Narzędzia pomocnicze
+
+Sama aplikacja i strony nie mają zależności — budują się skryptem `./build.sh`.
+Narzędzia do znaku marki i PDF wymagają pakietów npm:
+
+```bash
+npm install          # kroje pisma, opentype.js, playwright-core
+npm run pdf          # dist/MBS-oferta-KSeF.pdf z osadzonymi krojami
+npm run logo         # marka/*.svg i marka/*.png
+npm run keys         # dziesięć nowych kluczy licencyjnych
+```
+
+Przeglądarka do generowania PDF i plików PNG jest brana z `PLAYWRIGHT_BROWSERS_PATH`,
+a nie pobierana.
+
 ## Dwie wersje, dwa zestawy możliwości
 
 Ten sam kod źródłowy daje dwa warianty, bo przeglądarkowy podglądacz stron nie pozwala

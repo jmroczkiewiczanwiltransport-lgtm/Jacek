@@ -160,6 +160,21 @@
     color: var(--info); font-family: var(--font-display);
   }
 
+  /* ---- konsekwencje: prawdziwa kolejnosc zdarzen, wiec numeracja jest uzasadniona ---- */
+  .conseq { border-left: 3px solid var(--critical); background: var(--critical-soft);
+    padding: 1.25rem 1.5rem; border-radius: 0 var(--radius) var(--radius) 0;
+    display: flex; flex-direction: column; gap: 1rem; }
+  .conseq .lead { font-size: .9375rem; max-width: 64ch; }
+  ol.timeline { margin: 0; padding: 0; list-style: none; display: grid; gap: .7rem; counter-reset: t; }
+  ol.timeline li { counter-increment: t; display: grid; grid-template-columns: 1.6rem 1fr; gap: .8rem; align-items: baseline; }
+  ol.timeline li::before {
+    content: counter(t); font-family: var(--font-mono); font-size: .75rem; font-weight: 500;
+    color: var(--critical); font-variant-numeric: tabular-nums;
+  }
+  ol.timeline li > span { font-size: .9375rem; }
+  ol.timeline strong { font-weight: 600; }
+  .caveat { font-size: .875rem; color: var(--ink-muted); border-top: 1px solid color-mix(in srgb, var(--critical) 25%, transparent); padding-top: .8rem; max-width: 66ch; }
+
   /* ---- zaufanie ---- */
   .trust { display: grid; grid-template-columns: 1fr; gap: 1rem; }
   @media (min-width: 44rem) { .trust { grid-template-columns: repeat(2, 1fr); } }
@@ -266,6 +281,8 @@
           <li>uzupełnia brakujące numery KSeF, gdy dopasowanie jest jednoznaczne</li>
           <li>wykrywa numery <strong>wpisane błędnie</strong> i podaje prawidłowe</li>
           <li>oznacza numery podejrzane: zły format, NIP niezgodny z dostawcą, brak w KSeF</li>
+          <li>wskazuje pozycje, które nie mają <strong>ani numeru KSeF, ani oznaczenia</strong>
+            OFF / BFK / DI — czyli takie, których JPK_V7 nie przyjmie</li>
         </ul>
       </div>
       <div class="dir lead">
@@ -277,6 +294,32 @@
         </ul>
         <p class="worth">To ta część, która zwraca koszt narzędzia.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="stack">
+    <span class="label">Co się dzieje, gdy numer jest błędny albo go nie ma</span>
+    <div class="conseq">
+      <p class="lead">Od rozliczenia za <strong>luty 2026</strong> każda pozycja ewidencji
+        JPK_V7 musi mieć numer KSeF albo oznaczenie <strong>OFF</strong>, <strong>BFK</strong>
+        lub <strong>DI</strong>. Puste pole nie przechodzi, a błędny numer wychodzi
+        automatycznie — urząd porównuje ewidencję z bazą KSeF, więc nie zależy to od tego,
+        czy ktoś zajrzy w dokumenty.</p>
+      <ol class="timeline">
+        <li><span><strong>Niezgodność zostaje wykryta</strong> przy porównaniu ewidencji
+          z bazą KSeF — pozycji nie da się powiązać z rzeczywistą fakturą.</span></li>
+        <li><span><strong>Wezwanie do skorygowania ewidencji</strong> — na korektę albo
+          wyjaśnienia są <strong>14 dni</strong>.</span></li>
+        <li><span>Jeśli w tym terminie nie złożono korekty ani wyjaśnień, naczelnik urzędu
+          może nałożyć <strong>karę 500 zł za każdy błąd</strong> wskazany w wezwaniu
+          (art. 109 ust. 3h ustawy o VAT).</span></li>
+        <li><span>Przy kilkudziesięciu pozycjach robi to z drobnej pomyłki kwotę,
+          która przewyższa roczny koszt narzędzia.</span></li>
+      </ol>
+      <p class="caveat">Uczciwie: kara nie jest automatyczna — dotyczy sytuacji, w której
+        po wezwaniu nie złożono w terminie korekty ani wyjaśnień. Samo wezwanie i tak
+        kosztuje jednak czas, a wszystkie te pozycje da się znaleźć w minutę, zanim plik
+        zostanie złożony.</p>
     </div>
   </section>
 

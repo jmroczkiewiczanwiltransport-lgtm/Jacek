@@ -42,6 +42,35 @@ niego biuro nie dotknie linku, bo to dane klientów.
 
 ---
 
+## 1b. Mail zimny — wersja z terminem (od lutego 2026 najmocniejsza)
+
+**Temat:** pozycje, których JPK_V7 nie przyjmie
+
+> Dzień dobry,
+>
+> od rozliczenia za luty 2026 każda pozycja ewidencji JPK_V7 musi mieć numer KSeF albo
+> oznaczenie OFF, BFK lub DI — puste pole nie przechodzi. Błędny numer wychodzi
+> automatycznie, bo urząd porównuje ewidencję z bazą KSeF.
+>
+> Mam narzędzie, które przed złożeniem pliku pokazuje trzy rzeczy: pozycje bez numeru
+> i bez oznaczenia, numery wpisane błędnie oraz faktury, które są w KSeF, ale nie ma ich
+> w rejestrze.
+>
+> Sprawdzenie zajmuje minutę na Państwa własnym pliku, nic nie trzeba instalować,
+> a dane nie opuszczają Państwa komputera.
+>
+> Mam wysłać link?
+>
+> [imię i nazwisko]
+> [telefon]
+
+**Kiedy używać:** gdy odbiorca składa JPK_V7 sam albo za klientów. Termin działa jako
+powód, żeby zająć się tym teraz, a nie „kiedyś".
+
+**Czego w tym mailu nie ma:** kwoty kary. Celowo — o karze mówi się po demie, gdy obok
+niej stoją ich własne liczby. W pierwszym mailu straszenie kwotą brzmi jak sprzedaż strachu
+i obniża odpowiedzi.
+
 ## 2. Mail zimny — wersja krótka (LinkedIn, Messenger, SMS)
 
 > Dzień dobry, robię narzędzie, które porównuje eksport z KSeF z rejestrem zakupu
@@ -128,6 +157,12 @@ ma, bo obok niej stoją ich własne liczby.
 > Ile kosztuje jedna nieodliczona faktura na 20 tysięcy netto? Narzędzie ma się zwrócić
 > na pierwszej znalezionej pozycji. Jeśli u Państwa wychodzi zero rozbieżności, to nie
 > kupujcie — mówię to poważnie.
+
+**„Skąd Pan wie, że za to są kary?"**
+> Art. 109 ust. 3h ustawy o VAT: po wezwaniu jest 14 dni na korektę albo wyjaśnienia,
+> a jeśli ich nie ma — 500 zł za każdy błąd wskazany w wezwaniu. Kara nie jest
+> automatyczna, dotyczy braku reakcji na wezwanie. Obowiązek podawania numeru KSeF
+> w ewidencji wynika ze struktury JPK_V7M(3) obowiązującej od 1 lutego 2026.
 
 **„Skąd mam wiedzieć, że liczy dobrze?"**
 > Raport podaje numer wiersza w Państwa pliku dla każdej pozycji, więc każdą można
