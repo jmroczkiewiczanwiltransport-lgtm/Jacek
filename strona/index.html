@@ -127,11 +127,9 @@
     padding-left: .65rem; border-left: 1px solid var(--slab-line);
   }
   @media (max-width: 34rem) { .logo .desc { display: none; } }
-  .logo .tick {
-    width: .95rem; height: .95rem; flex: none;
-    border: 2px solid var(--slab-accent); border-top: 0; border-right: 0;
-    transform: rotate(-45deg) translateY(-.12rem);
-  }
+  /* Znak marki: znak rownosci wyciety z pelnego kwadratu. Dziury zrobione
+     regula evenodd, wiec przeswituje przez nie tlo paska. */
+  .logo .tile { width: 1.4rem; height: 1.4rem; flex: none; fill: var(--slab-accent); }
   .bar nav { margin-left: auto; display: flex; gap: 1.5rem; flex-wrap: wrap; }
   .bar nav a {
     font-family: var(--font-display); font-size: .875rem; font-weight: 500;
@@ -266,6 +264,10 @@
   .ph { border-bottom: 1.5px dashed var(--border-firm); color: var(--ink-faint); font-style: italic; font-weight: 400; }
   /* NIP jest przepisywany do systemu ksiegowego, wiec staly odstep i tabelaryczne cyfry */
   .mono-nip { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .details .addr { font-weight: 400; font-family: var(--font-body); font-size: .9375rem; line-height: 1.4; }
+  .details .mail { font-family: var(--font-body); font-size: .9375rem; font-weight: 400; color: var(--accent); text-decoration: none; word-break: break-all; }
+  .details .mail:hover { text-decoration: underline; }
+  .details .mail:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   footer {
     border-top: 1px solid var(--border); padding: 1.75rem 0 2.5rem;
@@ -280,7 +282,7 @@
   <div class="wrap">
     <div class="bar">
       <a class="logo" href="#gora">
-        <span class="tick" aria-hidden="true"></span>
+        <svg class="tile" viewBox="0 0 100 100" aria-hidden="true"><path d="M 8 0 H 92 A 8 8 0 0 1 100 8 V 92 A 8 8 0 0 1 92 100 H 8 A 8 8 0 0 1 0 92 V 8 A 8 8 0 0 1 8 0 Z M 22 31 H 78 V 43 H 22 Z M 22 57 H 78 V 69 H 22 Z" fill-rule="evenodd"/></svg>
         <span class="mark">MBS</span>
         <span class="desc">narzędzia liczące</span>
       </a>
@@ -445,11 +447,12 @@
             w rozmowie.</p>
         </div>
         <div class="details">
-          <div class="row"><span class="k">Firma</span><span class="v"><span class="ph">pełna nazwa firmy</span></span></div>
-          <div class="row"><span class="k">Kontakt</span><span class="v"><span class="ph">imię i nazwisko</span></span></div>
+          <div class="row"><span class="k">Firma</span><span class="v">Jacek Mroczkiewicz<br>MBS Business Solutions</span></div>
+          <div class="row"><span class="k">Adres</span><span class="v addr">ul. Ludomska 13/A<br>64-600 Dąbrówka Leśna</span></div>
+          <div class="row"><span class="k">E-mail</span><span class="v"><a class="mail" href="mailto:mbs.mroczkiewicz@gmail.com">mbs.mroczkiewicz@gmail.com</a></span></div>
           <div class="row"><span class="k">Telefon</span><span class="v"><span class="ph">numer telefonu</span></span></div>
-          <div class="row"><span class="k">E-mail</span><span class="v"><span class="ph">adres e-mail</span></span></div>
           <div class="row"><span class="k">NIP</span><span class="v mono-nip">7871809487</span></div>
+          <div class="row"><span class="k">REGON</span><span class="v mono-nip">540507784</span></div>
         </div>
       </div>
     </div>
@@ -458,7 +461,7 @@
 
 <div class="wrap">
   <footer>
-    <span>MBS — narzędzia liczące na Państwa komputerze. NIP 7871809487.</span>
+    <span>Jacek Mroczkiewicz MBS Business Solutions · NIP 7871809487 · REGON 540507784</span>
     <span>Narzędzia wskazują rozbieżności i liczą wskaźniki. Nie są usługą doradztwa
       podatkowego — ocena wskazanych pozycji należy do osoby prowadzącej księgi.</span>
   </footer>
