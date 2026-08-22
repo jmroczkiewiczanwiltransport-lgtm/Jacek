@@ -1,0 +1,149 @@
+<div class="shell">
+
+  <header class="masthead">
+    <div class="brand">
+      <h1><span class="k">KSeF</span> Uzgodnienia</h1>
+      <p class="tagline">Zestawia eksport z KSeF z Twoim rejestrem zakupu. Uzupełnia brakujące numery, wyłapuje błędne i pokazuje faktury, których w rejestrze nie ma wcale.</p>
+    </div>
+    <div class="creds">
+      <span class="badge-offline"><span class="dot" aria-hidden="true"></span> Działa bez internetu — dane nie opuszczają tego komputera</span>
+      <span class="lic-state" id="licState">Wersja demonstracyjna</span>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Etapy pracy">
+    <button class="tab" id="tab-1" role="tab" aria-selected="true" aria-controls="panel-1" data-step="1">
+      <span class="idx">01</span> Wczytaj pliki
+    </button>
+    <button class="tab" id="tab-2" role="tab" aria-selected="false" aria-controls="panel-2" data-step="2" disabled>
+      <span class="idx">02</span> Sprawdź kolumny
+    </button>
+    <button class="tab" id="tab-3" role="tab" aria-selected="false" aria-controls="panel-3" data-step="3" disabled>
+      <span class="idx">03</span> Wynik
+    </button>
+  </div>
+
+  <!-- ══ ETAP 1 ══ -->
+  <section class="panel" id="panel-1" role="tabpanel" aria-labelledby="tab-1">
+    <div class="stack">
+      <div class="stack-tight">
+        <h2>Wczytaj dwa pliki</h2>
+        <p style="color:var(--ink-muted); max-width:68ch">Kolejność nie ma znaczenia — program sam rozpozna, który plik jest eksportem z KSeF, a który Twoim rejestrem. Obsługiwane formaty: <span class="mono">.xlsx</span>, <span class="mono">.xls</span>, <span class="mono">.csv</span>.</p>
+      </div>
+
+      <div class="drops">
+        <label class="drop" id="drop-A" data-slot="A">
+          <input type="file" accept=".xlsx,.xls,.xlsm,.csv" aria-label="Pierwszy plik">
+          <span class="role">Plik pierwszy</span>
+          <span class="hint">Przeciągnij tutaj albo kliknij, żeby wybrać</span>
+        </label>
+        <label class="drop" id="drop-B" data-slot="B">
+          <input type="file" accept=".xlsx,.xls,.xlsm,.csv" aria-label="Drugi plik">
+          <span class="role">Plik drugi</span>
+          <span class="hint">Przeciągnij tutaj albo kliknij, żeby wybrać</span>
+        </label>
+      </div>
+
+      <div id="detect1" aria-live="polite"></div>
+
+      <div class="rowbtns">
+        <button class="btn btn-primary" id="goMap" disabled>Dalej — sprawdź kolumny</button>
+        <button class="btn btn-ghost" id="reset1" hidden>Wyczyść</button>
+        <span id="busy1"></span>
+      </div>
+
+      <div class="callout is-info">
+        <strong>Skąd wziąć eksport z KSeF</strong>
+        <span>Aplikacja Podatnika KSeF → Faktury → wyszukaj za okres → Eksportuj. Potrzebne kolumny: NIP sprzedawcy, numer KSeF, numer faktury. Rejestr to zwykły eksport z Twojego programu księgowego.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ETAP 2 ══ -->
+  <section class="panel" id="panel-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+    <div class="stack">
+      <div class="stack-tight">
+        <h2>Sprawdź, czy kolumny się zgadzają</h2>
+        <p style="color:var(--ink-muted); max-width:68ch">Kolumny zostały rozpoznane automatycznie i oznaczone jako <span class="guessed">rozpoznane</span>. Popraw je, jeśli program trafił źle — każdy program księgowy nazywa je inaczej.</p>
+      </div>
+
+      <div class="mapgrid" id="mapgrid"></div>
+
+      <div class="stack-tight">
+        <span class="label">Podgląd rejestru</span>
+        <div class="preview" id="previewReg"></div>
+      </div>
+
+      <div class="rowbtns">
+        <button class="btn btn-primary" id="goRun">Uzgodnij</button>
+        <button class="btn" id="back1">Wróć do plików</button>
+        <button class="btn btn-ghost" id="swapFiles">Zamień pliki miejscami</button>
+        <span id="busy2"></span>
+      </div>
+      <div id="mapWarn"></div>
+    </div>
+  </section>
+
+  <!-- ══ ETAP 3 ══ -->
+  <section class="panel" id="panel-3" role="tabpanel" aria-labelledby="tab-3" hidden>
+    <div class="stack">
+      <div class="stack-tight">
+        <h2>Wynik uzgodnienia</h2>
+        <p style="color:var(--ink-muted)" id="runMeta"></p>
+      </div>
+
+      <div class="tiles" id="tiles"></div>
+      <div id="headlines" class="stack-tight"></div>
+
+      <div class="stack-tight">
+        <div class="subtabs" role="tablist" aria-label="Kategorie wyniku" id="subtabs"></div>
+        <div id="catBody"></div>
+      </div>
+
+      <div class="stack-tight">
+        <span class="label">Pobierz wynik</span>
+        <div class="exports">
+          <div class="exp">
+            <h3>Raport kontrolny</h3>
+            <p>Arkusz <span class="mono">.xlsx</span> — każda kategoria na osobnej karcie, z numerem wiersza w Twoim pliku. To dokument do wpięcia w dokumentację kontrolną.</p>
+            <div class="rowbtns"><button class="btn btn-primary" id="dlReport">Pobierz raport .xlsx</button></div>
+          </div>
+          <div class="exp">
+            <h3>Kolumna do wklejenia</h3>
+            <p>Gotowe numery KSeF w kolejności wierszy rejestru — wklej wprost do swojego pliku. Bezpieczne: nie rusza formuł ani łączy zewnętrznych.</p>
+            <div class="rowbtns">
+              <button class="btn" id="copyCol">Skopiuj kolumnę</button>
+              <button class="btn btn-ghost" id="showCol">Pokaż</button>
+              <span id="copyMsg" class="licmsg" aria-live="polite"></span>
+            </div>
+            <textarea class="paste" id="pasteCol" hidden readonly aria-label="Kolumna numerów KSeF do wklejenia"></textarea>
+          </div>
+          <div class="exp">
+            <h3>Rejestr z uzupełnioną kolumną</h3>
+            <p id="fillNote">Twój plik rejestru z wpisanymi numerami KSeF.</p>
+            <div class="rowbtns"><button class="btn" id="dlFilled">Pobierz uzupełniony rejestr</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="licbar">
+        <div class="field">
+          <span>Klucz licencyjny <span class="note">— odblokowuje eksport bez limitu wierszy</span></span>
+          <input type="text" id="licKey" placeholder="KSU-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false">
+        </div>
+        <button class="btn" id="licApply">Aktywuj</button>
+        <span class="licmsg" id="licMsg" aria-live="polite"></span>
+      </div>
+
+      <div class="rowbtns">
+        <button class="btn" id="back2">Wróć do kolumn</button>
+        <button class="btn btn-ghost" id="resetAll">Nowe uzgodnienie</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Cała praca odbywa się w przeglądarce. Żaden plik nie jest nigdzie wysyłany.</span>
+    <span>Plik KSeF jest źródłem prawdy — korekty nanieś też w programie księgowym.</span>
+  </footer>
+</div>
