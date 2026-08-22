@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Uzgodnienia KSeF, raporty paliwowe flot, szkolenia obowiazkowe i arkusze na zamowienie. Narzedzia liczace lokalnie, bez serwera.">
-<title>Policzone</title>
+<title>MBS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -116,11 +116,22 @@
     padding: 1.1rem 0; border-bottom: 1px solid var(--slab-line);
   }
   .logo {
-    font-family: var(--font-display); font-weight: 800;
-    font-size: 1.0625rem; letter-spacing: -.015em;
-    display: inline-flex; align-items: center; gap: .5rem;
+    font-family: var(--font-display);
+    display: inline-flex; align-items: center; gap: .55rem;
     text-decoration: none;
   }
+  /* Trzyliterowy skrot czyta sie jak monogram, nie jak wyraz - stad rozstrzelenie
+     i wieksza waga. Deskryptor obok jest konieczny, bo sam skrot nie mowi nic. */
+  .logo .mark {
+    font-weight: 800; font-size: 1.1875rem;
+    letter-spacing: .09em;
+  }
+  .logo .desc {
+    font-weight: 500; font-size: .8125rem; letter-spacing: .01em;
+    color: var(--slab-muted);
+    padding-left: .65rem; border-left: 1px solid var(--slab-line);
+  }
+  @media (max-width: 34rem) { .logo .desc { display: none; } }
   .logo .tick {
     width: .95rem; height: .95rem; flex: none;
     border: 2px solid var(--slab-accent); border-top: 0; border-right: 0;
@@ -273,7 +284,11 @@
 <div class="slab">
   <div class="wrap">
     <div class="bar">
-      <a class="logo" href="#gora"><span class="tick" aria-hidden="true"></span> Policzone</a>
+      <a class="logo" href="#gora">
+        <span class="tick" aria-hidden="true"></span>
+        <span class="mark">MBS</span>
+        <span class="desc">narzędzia liczące</span>
+      </a>
       <nav>
         <a href="#co-robie">Co robię</a>
         <a href="#jak">Jak to działa</a>
@@ -447,7 +462,7 @@
 
 <div class="wrap">
   <footer>
-    <span>Policzone — narzędzia liczące na Państwa komputerze.</span>
+    <span>MBS — narzędzia liczące na Państwa komputerze.</span>
     <span>Narzędzia wskazują rozbieżności i liczą wskaźniki. Nie są usługą doradztwa
       podatkowego — ocena wskazanych pozycji należy do osoby prowadzącej księgi.</span>
   </footer>
