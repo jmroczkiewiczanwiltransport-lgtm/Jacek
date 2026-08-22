@@ -264,6 +264,8 @@
   }
   .details .v { font-size: 1.0625rem; font-weight: 600; font-family: var(--font-display); }
   .ph { border-bottom: 1.5px dashed var(--border-firm); color: var(--ink-faint); font-style: italic; font-weight: 400; }
+  /* NIP jest przepisywany do systemu ksiegowego, wiec staly odstep i tabelaryczne cyfry */
+  .mono-nip { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
 
   footer {
     border-top: 1px solid var(--border); padding: 1.75rem 0 2.5rem;
@@ -443,10 +445,11 @@
             w rozmowie.</p>
         </div>
         <div class="details">
-          <div class="row"><span class="k">Kto</span><span class="v"><span class="ph">imię i nazwisko</span></span></div>
+          <div class="row"><span class="k">Firma</span><span class="v"><span class="ph">pełna nazwa firmy</span></span></div>
+          <div class="row"><span class="k">Kontakt</span><span class="v"><span class="ph">imię i nazwisko</span></span></div>
           <div class="row"><span class="k">Telefon</span><span class="v"><span class="ph">numer telefonu</span></span></div>
           <div class="row"><span class="k">E-mail</span><span class="v"><span class="ph">adres e-mail</span></span></div>
-          <div class="row"><span class="k">Faktury</span><span class="v"><span class="ph">NIP / forma działalności</span></span></div>
+          <div class="row"><span class="k">NIP</span><span class="v mono-nip">7871809487</span></div>
         </div>
       </div>
     </div>
@@ -455,7 +458,7 @@
 
 <div class="wrap">
   <footer>
-    <span>MBS — narzędzia liczące na Państwa komputerze.</span>
+    <span>MBS — narzędzia liczące na Państwa komputerze. NIP 7871809487.</span>
     <span>Narzędzia wskazują rozbieżności i liczą wskaźniki. Nie są usługą doradztwa
       podatkowego — ocena wskazanych pozycji należy do osoby prowadzącej księgi.</span>
   </footer>
