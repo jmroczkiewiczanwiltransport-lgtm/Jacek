@@ -7,6 +7,26 @@
 | `oferta.html` | jednostronicowa oferta z cennikiem; do wysłania albo wydruku (ma osobny arkusz dla druku) |
 | `teksty-ogolne.md` | gotowe bloki opisujące ogólnie, co MBS może zrobić — od jednego zdania do sekcji na stronę, plus lista sformułowań, których nie używać |
 
+## Co wysyłać, a co linkować
+
+| Materiał | Forma | Dlaczego |
+|---|---|---|
+| **Oferta** | PDF w załączniku (`dist/MBS-oferta-KSeF.pdf`) | Oferty się wysyła, nie linkuje. Link do cudzej platformy w zimnym mailu obniża wiarygodność, a ta strona jest zaprojektowana jako dwustronicówka do druku. |
+| **Demo aplikacji** | link | Klient ma ją uruchomić na swoich plikach — plik do pobrania na tym etapie to za duża prośba. |
+| **Strona** | link w stopce maila | Ma potwierdzać, że firma istnieje, a nie sprzedawać. |
+| **Aplikacja do pracy** | plik `dist/ksef-uzgodnienia.html` | Dopiero po zakupie. Działa z dysku, bez internetu. |
+
+PDF powstaje z `dist/oferta.html`:
+
+```bash
+node tools/mkpdf.js
+```
+
+Kroje są **osadzone w pliku** (podzbiory latin i latin-ext), więc dokument wygląda
+identycznie u każdego odbiorcy i bez internetu. Skrypt ma własny arkusz dla druku:
+przestawia siatki na szerokość A4 i **ukrywa pola pozostawione do uzupełnienia** — puste
+„telefon" z przerywaną linią w dokumencie wysyłanym klientowi wygląda na niedokończony.
+
 ## Kolejność użycia
 
 1. **Mail albo telefon** (`wiadomosci.md`, szablon 1 lub 3) — cel: zgoda na link, nic więcej.
