@@ -37,3 +37,27 @@ FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="pre
 
 echo "dist/ksef-uzgodnienia.html  $(du -h dist/ksef-uzgodnienia.html | cut -f1)"
 echo "dist/artifact-body.html     $(du -h dist/artifact-body.html | cut -f1)"
+
+# ---- strony statyczne ----
+# Fragment do publikacji jest zrodlem. Tu robimy z niego kompletny dokument
+# z deklaracja kodowania: bez niej Firefox i Safari czytaja plik z dysku jako
+# windows-1252, a serwer bez naglowka charset psuje polskie znaki u kazdego.
+# Podzial jest jednoznaczny: wszystko do </style> nalezy do <head>, reszta do <body>.
+standalone() {
+  src="$1"; out="$2"; desc="$3"
+  {
+    printf '<!doctype html>\n<html lang="pl">\n<head>\n<meta charset="utf-8">\n'
+    printf '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+    printf '<meta name="description" content="%s">\n' "$desc"
+    awk '/^<meta charset=/ { next } { print } /<\/style>/ { exit }' "$src"
+    printf '</head>\n<body>\n'
+    awk 'f { print } /<\/style>/ { f = 1 }' "$src"
+    printf '</body>\n</html>\n'
+  } > "$out"
+  echo "$out  $(du -h "$out" | cut -f1)"
+}
+
+standalone strona/index.html dist/strona.html \
+  "Uzgodnienia KSeF, raporty paliwowe flot, szkolenia obowiazkowe i arkusze na zamowienie. Narzedzia liczace lokalnie, bez serwera."
+standalone sprzedaz/oferta.html dist/oferta.html \
+  "Oferta narzedzia KSeF Uzgodnienia dla biur rachunkowych - cennik i zasady wspolpracy."

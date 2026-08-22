@@ -53,11 +53,19 @@ gdy plik nie był w międzyczasie sortowany.
 ./build.sh
 ```
 
-Powstają dwa pliki:
+Powstają cztery pliki:
 
 - `dist/ksef-uzgodnienia.html` — samowystarczalny plik do rozdawania i uruchamiania
   z dysku (otwiera się dwuklikiem, także bez internetu),
-- `dist/artifact-body.html` — fragment do publikacji jako strona.
+- `dist/artifact-body.html` — fragment aplikacji do publikacji jako strona,
+- `dist/strona.html` — strona usługowa jako kompletny dokument, do hostowania,
+- `dist/oferta.html` — jednostronicowa oferta jako kompletny dokument.
+
+**Do hostowania i wysyłania używaj wyłącznie plików z `dist/`.** Źródła w `strona/`
+i `sprzedaz/` są fragmentami bez `<!doctype>` i bez `<meta charset>` — służą tylko
+publikacji, gdzie brakujące znaczniki dodaje platforma. Otwarte z dysku albo
+wystawione na serwerze bez nagłówka `charset` psują polskie znaki: Firefox i Safari
+czytają wtedy plik jako windows-1252 i zamiast „którą" wychodzi „ktÃ³rÄ…".
 
 Źródła: `src/app.css`, `src/app.body.html`, `src/app.js`.
 Biblioteka: `vendor/xlsx.full.min.js` (SheetJS 0.18.5, Apache-2.0) — wbudowana w wynik,
