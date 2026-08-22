@@ -5,6 +5,7 @@
 | `wiadomosci.md` | maile zimne, otwarcie rozmowy telefonicznej, follow-up, podsumowanie po demie, odpowiedzi na zastrzeżenia |
 | `demo-3-minuty.md` | scenariusz demo z podziałem na minuty — co klikać, co mówić, kiedy milczeć |
 | `oferta.html` | jednostronicowa oferta z cennikiem; do wysłania albo wydruku (ma osobny arkusz dla druku) |
+| `teksty-ogolne.md` | gotowe bloki opisujące ogólnie, co MBS może zrobić — od jednego zdania do sekcji na stronę, plus lista sformułowań, których nie używać |
 
 ## Kolejność użycia
 
