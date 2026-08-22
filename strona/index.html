@@ -194,6 +194,12 @@
     background: var(--accent-soft); color: var(--accent-ink);
     padding: .2rem .55rem; border-radius: 100px;
   }
+  /* Dwie odmiany etykiety niosa prawdziwa roznice: co jest gotowe, a co powstaje
+     na zamowienie. Bez tego rozroznienia strona obiecuje polke, ktorej nie ma. */
+  .svc .tag.custom { background: var(--surface-alt); color: var(--ink-muted); border: 1px solid var(--border); }
+  /* Ostatnia karta jest zbiorcza, wiec zajmuje cala szerokosc - inaczej zostaje sierotka */
+  @media (min-width: 48rem) { .svc.wide { grid-column: 1 / -1; } }
+  .svc.wide .io { max-width: 46rem; }
   .svc h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.015em; }
   .svc > p { color: var(--ink-muted); font-size: .9375rem; }
 
@@ -350,16 +356,16 @@
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Co robię</span>
-      <h2>Trzy gotowe narzędzia i jedna rzecz na zamówienie</h2>
-      <p>Pierwsze trzy działają i co miesiąc coś liczą — powstały, bo sam ich potrzebowałem
-        w firmie transportowej. Czwarta pozycja to praca na zamówienie: opisują Państwo
-        czynność, ja robię narzędzie.</p>
+      <h2>Trzy gotowe narzędzia i robota na zamówienie</h2>
+      <p>Narzędzia oznaczone jako gotowe działają i co miesiąc coś liczą — powstały, bo sam
+        ich potrzebowałem w firmie transportowej. Reszta to praca na zamówienie: opisują
+        Państwo czynność, ja robię narzędzie pod Państwa pliki.</p>
     </div>
 
     <div class="svcs">
 
       <article class="svc flag">
-        <span class="tag">Najczęściej zamawiane</span>
+        <span class="tag">Gotowe narzędzie</span>
         <h3>Uzgodnienia KSeF</h3>
         <p>Zestawia eksport z KSeF z rejestrem zakupu. Uzupełnia brakujące numery, wyłapuje
           wpisane błędnie, a przede wszystkim wskazuje faktury, które są w KSeF, ale nie ma
@@ -372,6 +378,20 @@
       </article>
 
       <article class="svc">
+        <span class="tag custom">Na zamówienie</span>
+        <h3>Wiele plików w jedno zestawienie</h3>
+        <p>Kilkanaście plików od różnych osób, w różnych układach kolumn, z nagłówkami
+          w różnych wierszach. Na wyjściu jeden arkusz o tej samej strukturze za każdym
+          razem. To najczęstsza robota po uzgodnieniach — i najczęściej ta, którą ktoś
+          składa ręcznie od lat.</p>
+        <div class="io">
+          <div><span class="k">Wysyłają</span><span class="v">pliki źródłowe i przykład gotowego zestawienia</span></div>
+          <div class="out"><span class="k">Dostają</span><span class="v">narzędzie, które składa je w jeden arkusz</span></div>
+        </div>
+      </article>
+
+      <article class="svc">
+        <span class="tag">Gotowe narzędzie</span>
         <h3>Przepał floty</h3>
         <p>Liczy nadspalanie i oszczędność paliwa z miesięcznego eksportu tras — per kierowca
           albo per ciągnik. Pokazuje, z kim trzeba porozmawiać, zamiast ogólnej średniej,
@@ -383,6 +403,7 @@
       </article>
 
       <article class="svc">
+        <span class="tag">Gotowe narzędzie</span>
         <h3>Szkolenia obowiązkowe</h3>
         <p>Platforma szkoleniowa z materiałem, testem i rejestrem wyników — działająca
           z dysku firmowego, bez serwera i bez abonamentu za każdego pracownika. Z lektorem
@@ -393,14 +414,16 @@
         </div>
       </article>
 
-      <article class="svc">
-        <h3>Arkusz na zamówienie</h3>
-        <p>Powtarzalny raport, który ktoś składa ręcznie co miesiąc z kilku plików. Zamieniam
-          go w narzędzie, w którym wrzuca się pliki i wychodzi wynik. Zwykle wychodzi z tego
-          kilka godzin miesięcznie mniej.</p>
+      <article class="svc wide">
+        <span class="tag custom">Na zamówienie</span>
+        <h3>Coś innego, co robi się ręcznie</h3>
+        <p>Jeśli u Państwa wzorzec wygląda inaczej — proszę opisać czynność, częstotliwość
+          i liczbę pozycji. Odpowiem, czy da się to policzyć i ile by to kosztowało, także
+          wtedy gdy odpowiedź brzmi „nie". Nie biorę zleceń, których nie umiem policzyć,
+          i mówię to na pierwszej rozmowie, a nie po miesiącu.</p>
         <div class="io">
-          <div><span class="k">Wysyłają</span><span class="v">pliki źródłowe i przykład gotowego raportu</span></div>
-          <div class="out"><span class="k">Dostają</span><span class="v">narzędzie, które robi to samo bez ręcznej pracy</span></div>
+          <div><span class="k">Wysyłają</span><span class="v">opis czynności i przykładowe pliki</span></div>
+          <div class="out"><span class="k">Dostają</span><span class="v">odpowiedź w jeden dzień, a jeśli się da — wycenę</span></div>
         </div>
       </article>
 
