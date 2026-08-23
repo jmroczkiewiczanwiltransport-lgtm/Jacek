@@ -45,21 +45,21 @@ ustaleń.
 Zarejestruj się na adres **niezwiązany z pracodawcą** — pasuje `mbs.mroczkiewicz@gmail.com`,
 którego już używasz jako kontakt MBS. Osobne konto to osobna subskrypcja.
 
-### 2. GitHub — sprawdź, czy nie jest do rozdzielenia
+### 2. GitHub — nowe konto, nie odzyskiwanie starego
 
-Repozytorium leży na koncie `jmroczkiewiczanwiltransport-lgtm`. To **konto użytkownika**,
-nie organizacja pracodawcy — technicznie jest więc Twoje. Ale nazwa sugeruje firmę,
-w której pracujesz, co przy własnej działalności jest co najmniej mylące.
+**Decyzja podjęta: przenosimy na własne konto.** Konto
+`jmroczkiewiczanwiltransport-lgtm` nie zostało założone przez właściciela projektu —
+powstało automatycznie 17.01.2026, z nazwy złożonej z loginu i nazwy pracodawcy. Nie ma
+do niego dostępu jako administrator, więc nie da się ani przełączyć repozytorium na
+prywatne, ani przenieść własności.
 
-Dwie drogi:
-- **zostaw jak jest** — działa, nic nie trzeba robić,
-- **przenieś na konto osobiste** — Settings → Danger Zone → *Transfer ownership*.
-  Alternatywnie utwórz nowe repozytorium i wypchnij tam całą historię:
-  `git remote add prywatne <adres> && git push prywatne --all`
+Walka o odzyskanie tamtego konta to strata czasu. Zakładasz własne na
+`mbs.mroczkiewicz@gmail.com` i wypychasz tam całą historię z pliku
+`MBS-historia.bundle`. Szczegóły i gotowy tekst do wklejenia: `START-NOWE-KONTO.md`.
 
-Zanim cokolwiek zrobisz: **repozytorium musi być prywatne** (Settings → General →
-Danger Zone → *Change repository visibility*). W publicznym leży `tools/keygen.js`
-z solą licencyjną i cały playbook sprzedażowy.
+Stare repozytorium zostaje publiczne i nietknięte. Do rozważenia później: poproś osobę
+zarządzającą tamtym kontem o jego usunięcie albo o przełączenie na prywatne. Sól
+licencyjna jest już wymieniona, więc z wrażliwych rzeczy zostaje tam playbook sprzedażowy.
 
 ### 3. Zmień sól licencyjną
 

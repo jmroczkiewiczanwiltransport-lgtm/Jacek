@@ -18,8 +18,11 @@ MBS to działalność obok, sprzedawana biurom rachunkowym i firmom.
 
 ## Co jest zbudowane
 
-Repozytorium `jmroczkiewiczanwiltransport-lgtm/Jacek`, gałąź
-**`claude/desktop-cloud-access-myd0rp`**.
+**Uwaga: projekt jest w trakcie przenoszenia na własne konto.** Powstawał w repozytorium
+`jmroczkiewiczanwiltransport-lgtm/Jacek` (gałąź `claude/desktop-cloud-access-myd0rp`) —
+konto nie zostało założone przez właściciela projektu i nie ma do niego dostępu jako
+administrator. Docelowe miejsce to prywatne repozytorium na koncie GitHub założonym na
+`mbs.mroczkiewicz@gmail.com`. Kroki: `START-NOWE-KONTO.md`.
 
 | Co | Gdzie |
 |---|---|
@@ -30,7 +33,9 @@ Repozytorium `jmroczkiewiczanwiltransport-lgtm/Jacek`, gałąź
 | Materiały sprzedażowe | `sprzedaz/` — wiadomości, demo, teksty ogólne, gdzie szukać klientów, podstawa prawna |
 | Narzędzia | `tools/` — keygen, generator znaku, raster, mkpdf; `build.sh`; `package.json` |
 
-Opublikowane strony (prywatne, wymagają udostępnienia przed wysłaniem komukolwiek):
+Opublikowane strony — **adresy poniżej należą do starego konta i przy przenoszeniu
+trzeba je opublikować od nowa**; są prywatne i wymagają udostępnienia przed wysłaniem
+komukolwiek:
 - aplikacja: `https://claude.ai/code/artifact/a4209876-33c6-4d72-ba0d-e03d30aa0cf9`
 - strona: `https://claude.ai/code/artifact/6b4ffd16-48ec-4f28-a406-443eb64201e2`
 - oferta: `https://claude.ai/code/artifact/44781b54-d3bb-48c8-905b-3325c555a433`
