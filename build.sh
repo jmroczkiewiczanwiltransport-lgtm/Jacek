@@ -6,6 +6,10 @@ set -euo pipefail
 cd "$(dirname "$0")"
 mkdir -p dist
 
+# Znacznik wersji w stopce aplikacji - konczy zgadywanie, ktora wersja jest
+# wgrana na hosting. Data i skrot commita, podmieniane w locie przy skladaniu.
+WERSJA="$(date +%Y-%m-%d\ %H:%M) · $(git rev-parse --short HEAD 2>/dev/null || echo lokalna)"
+
 FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">'
 
 # Wersja publikowana uzywa buildu "core": obsluguje te same formaty plikow, ale nie
@@ -16,7 +20,7 @@ FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="pre
   printf '<title>KSeF Uzgodnienia</title>\n'
   printf '%s\n' "$FONTS"
   printf '<style>\n'; cat src/app.css; printf '\n</style>\n'
-  cat src/app.body.html
+  sed "s/__WERSJA__/$WERSJA/" src/app.body.html
   printf '<script>\n'; cat vendor/xlsx.core.min.js; printf '\n</script>\n'
   printf '<script>\n'; cat src/app.js; printf '\n</script>\n'
 } > dist/artifact-body.html
@@ -29,7 +33,7 @@ FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="pre
   printf '%s\n' "$FONTS"
   printf '<style>\n'; cat src/app.css; printf '\n</style>\n'
   printf '</head>\n<body>\n'
-  cat src/app.body.html
+  sed "s/__WERSJA__/$WERSJA/" src/app.body.html
   printf '<script>\n'; cat vendor/xlsx.full.min.js; printf '\n</script>\n'
   printf '<script>\n'; cat src/app.js; printf '\n</script>\n'
   printf '</body>\n</html>\n'

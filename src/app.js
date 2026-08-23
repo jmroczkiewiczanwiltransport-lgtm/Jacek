@@ -318,9 +318,11 @@
         if (isAmt && /\bdat|date/i.test(txt(hdr[q]))) continue;
         if (!PAT[k].test(txt(hdr[q]))) continue;
         /* Kilka kolumn pasuje (K_40, K_42, K_44...) - wygrywa najpelniejsza.
-           W ewidencji kolumny srodkow trwalych sa zwykle prawie puste, wiec
-           pierwsza od lewej bywa najgorszym wyborem. */
-        var fill = ratio(q, function (v) { return v !== ''; });
+           Dla kwot zero sie nie liczy: JPK kaze wpisywac "0.00" w nieuzywane
+           pola, wiec kolumna pelna zer jest tak samo pusta jak pusta. */
+        var fill = isAmt
+          ? ratio(q, function (v) { var n = parseAmt(v); return n !== null && Math.abs(n) > 0.004; })
+          : ratio(q, function (v) { return v !== ''; });
         if (fill > best) { best = fill; cq = q; }
       }
       /* Kolumna bez ani jednej wartosci nie jest propozycja - nie ma czego

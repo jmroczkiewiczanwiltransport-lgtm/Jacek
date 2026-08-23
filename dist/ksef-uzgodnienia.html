@@ -524,6 +524,7 @@ textarea.paste { font-family: var(--font-mono); font-size: .75rem; min-height: 8
   <footer class="foot">
     <span>Cała praca odbywa się w przeglądarce. Żaden plik nie jest nigdzie wysyłany.</span>
     <span>Plik KSeF jest źródłem prawdy — korekty nanieś też w programie księgowym.</span>
+    <span>wersja 2026-08-23 19:28 · 7a191d4</span>
   </footer>
 </div>
 <script>
@@ -872,9 +873,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         if (isAmt && /\bdat|date/i.test(txt(hdr[q]))) continue;
         if (!PAT[k].test(txt(hdr[q]))) continue;
         /* Kilka kolumn pasuje (K_40, K_42, K_44...) - wygrywa najpelniejsza.
-           W ewidencji kolumny srodkow trwalych sa zwykle prawie puste, wiec
-           pierwsza od lewej bywa najgorszym wyborem. */
-        var fill = ratio(q, function (v) { return v !== ''; });
+           Dla kwot zero sie nie liczy: JPK kaze wpisywac "0.00" w nieuzywane
+           pola, wiec kolumna pelna zer jest tak samo pusta jak pusta. */
+        var fill = isAmt
+          ? ratio(q, function (v) { var n = parseAmt(v); return n !== null && Math.abs(n) > 0.004; })
+          : ratio(q, function (v) { return v !== ''; });
         if (fill > best) { best = fill; cq = q; }
       }
       /* Kolumna bez ani jednej wartosci nie jest propozycja - nie ma czego
