@@ -58,9 +58,12 @@ grup są tysiące — wszystkie z tym samym problemem w tym samym terminie.
 ### Dwa segmenty, dwie ceny
 
 **A. Koncerny / spółki z zagranicznym ERP (premium — nowy segment):**
-- pilot u pracodawcy Alicji: **wdrożenie 25 000–35 000 zł netto + 1 500 zł/mies.**
-  utrzymania — ok. 1/3 ceny konkurencji (100k + 2,3k/mc), przy architekturze,
-  którą dział bezpieczeństwa koncernu pokocha (dane nie opuszczają ich komputera);
+- pilot u pracodawcy Alicji: **wdrożenie 25 000–30 000 zł netto + abonament
+  1 500 zł/mies.** (decyzja właściciela 24.08.2026: „nie róbmy im za darmo —
+  25–30 tys. plus abonament brzmi rozsądnie") — ok. 1/3 ceny konkurencji
+  (100k + 2,3k/mc), przy architekturze, którą dział bezpieczeństwa koncernu
+  pokocha (dane nie opuszczają ich komputera). Pilot = płatny; rabatem względem
+  rynku płacą za pakiet referencyjny;
 - w zamian za cenę pilotażową: referencja koncernu + zgoda na case study;
 - uwaga wdrożeniowa: sprzedaż korporacyjna = umowa, wymagania zakupowe,
   odpowiedzialność — do przygotowania przed rozmową (wzór umowy, zakres SLA).
