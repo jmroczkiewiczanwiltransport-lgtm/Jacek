@@ -2,7 +2,7 @@
 /* Generator kluczy licencyjnych. Uzycie: node tools/keygen.js [ile]
    Ten sam algorytm siedzi w src/app.js (funkcje fnv / sum4 / keyValid). */
 var AL = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-var SALT = 'ksef-uzgodnienia-v1';
+var SALT = 'mbs-2ca34d3cea05d6b4c72f42c56ab5f1c794bfd1c9';
 
 function fnv(s) {
   var h = 0x811c9dc5, i;
@@ -29,6 +29,32 @@ function valid(raw) {
   var b = k.slice(3);
   return sum4(b.slice(0, 8)) === b.slice(8, 12);
 }
+
+/* Sol musi byc identyczna w aplikacji i w generatorze. Jesli sie rozjada, generator
+   wypusci klucze, ktorych aplikacja nie przyjmie - i wyszlo by to dopiero u klienta.
+   Dlatego sprawdzamy to przy kazdym uruchomieniu, zamiast liczyc na pamiec. */
+(function checkSalt() {
+  var fs = require('fs'), path = require('path');
+  var appPath = path.join(__dirname, '..', 'src', 'app.js');
+  var m;
+  try {
+    m = fs.readFileSync(appPath, 'utf8').match(/var SALT = '([^']*)';/);
+  } catch (e) {
+    console.error('OSTRZEZENIE: nie znaleziono ' + appPath + ' - nie sprawdzono zgodnosci soli.');
+    return;
+  }
+  if (!m) {
+    console.error('OSTRZEZENIE: nie odczytano soli z src/app.js - nie sprawdzono zgodnosci.');
+    return;
+  }
+  if (m[1] !== SALT) {
+    console.error('BLAD: sol w src/app.js rozni sie od soli w generatorze.');
+    console.error('  aplikacja: ' + m[1]);
+    console.error('  generator: ' + SALT);
+    console.error('Klucze z tego generatora nie zostalyby przyjete. Ujednolic obie wartosci.');
+    process.exit(1);
+  }
+})();
 
 var arg = process.argv[2];
 if (arg && !/^\d+$/.test(arg)) {

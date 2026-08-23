@@ -121,13 +121,20 @@ node tools/keygen.js KSU-...     # sprawdź, czy klucz jest poprawny
 Klucz jest weryfikowany offline sumą kontrolną — nie ma serwera licencji, więc nie ma
 czego blokować i nie ma jak podejrzeć, kto pracuje na pliku.
 
+**Sól musi być identyczna w `src/app.js` i w `tools/keygen.js`.** Gdyby się rozjechały,
+generator wypuszczałby klucze, których aplikacja nie przyjmie — a wyszłoby to dopiero
+u klienta. Generator sprawdza to teraz przy każdym uruchomieniu i kończy błędem, jeśli
+wartości się różnią.
+
 **Uczciwie o ograniczeniu:** klucz i sól (`SALT` w `src/app.js`) siedzą w kodzie strony,
 więc osoba, która potrafi czytać JavaScript, obejdzie limit w kilka minut. Dla odbiorcy
 biurowego to wystarczająca bariera, ale nie jest to zabezpieczenie kryptograficzne.
 Jeśli kiedyś okaże się to problemem, właściwym krokiem jest podpisywanie kluczy
 kluczem prywatnym i wiązanie ich z NIP-em nabywcy, a nie utrudnianie kodu.
 
-Zmiana `SALT` unieważnia wszystkie wcześniej wydane klucze.
+Zmiana `SALT` unieważnia wszystkie wcześniej wydane klucze. Sól była wymieniona
+23.08.2026, bo repozytorium było wcześniej publiczne — klucze wydane przed tą datą
+są nieważne.
 
 ## Struktura projektu
 
