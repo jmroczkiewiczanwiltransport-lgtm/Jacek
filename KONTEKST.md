@@ -148,6 +148,22 @@ Stara notatka: cena była **do ustalenia.** Na stronie stoi „wycena po obejrze
 z ceną podaną z góry" — to jest uczciwe, ale kwoty nadal nie ma i trzeba ją wymyślić
 przed pierwszą rozmową.
 
+## Produkt nr 2 w kolejce: JPK_CIT Kontrola (pomysł z 23.08.2026 — NIE zaczynać przed pierwszym płacącym klientem KSeF)
+
+Nowy obowiązek JPK_CIT (struktura JPK_KR_PD): najwięksi podatnicy wysłali księgi za 2025
+do 31.07.2026 (termin przedłużony rozporządzeniem z 16.02.2026 do końca 7. miesiąca po
+roku podatkowym); **druga fala — księgi za 2026, raportowane w 2027 — to praktycznie
+wszyscy podatnicy CIT będący VAT-owcami**, czyli klienci biur rachunkowych. Trzecia fala
+rok później.
+
+Koncepcja narzędzia (ta sama architektura: przeglądarka, zero serwera): wczytanie XML
+JPK_KR_PD przed wysyłką i kontrola — obroty vs salda, BO = BZ poprzedniego roku,
+ciągłość numeracji dziennika, kompletność znaczników podatkowych przy kontach
+(największy ból: mapowanie planu kont na słownik MF), uzgodnienie z ZOiS z Excela.
+
+Pierwszy krok (bez kodu): zapytać Alicję, czy obsługuje spółki CIT i co w JPK_CIT boli.
+Budowa najwcześniej zimą 2026/27 — biura zaczną szukać narzędzi pod koniec 2026.
+
 ## Zasady, których się trzymamy
 
 - **Żadnych liczb, których nie mamy.** Bez „oszczędzamy 20 godzin miesięcznie", bez
