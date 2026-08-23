@@ -323,6 +323,9 @@
         var fill = ratio(q, function (v) { return v !== ''; });
         if (fill > best) { best = fill; cq = q; }
       }
+      /* Kolumna bez ani jednej wartosci nie jest propozycja - nie ma czego
+         porownywac, a "rozpoznane" przy pustej kolumnie tylko myli. */
+      if (best <= 0) cq = -1;
       /* „data wystawienia" wygrywa z „data otrzymania" o te sama kolumne tylko
          wtedy, gdy naglowki naprawde sie roznia - taken to zalatwia. */
       if (cq >= 0) taken[cq] = 1;
