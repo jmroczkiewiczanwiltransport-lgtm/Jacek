@@ -294,6 +294,9 @@
     line-height: 1.25; max-width: 32ch;
   }
   .contact .note { margin-top: .9rem; color: var(--ink-muted); font-size: .9375rem; max-width: 46ch; }
+  /* Zobowiazanie czasowe zastepuje numer telefonu: daje odbiorcy to samo poczucie
+     dostepnosci, a nie wymaga podawania numeru, ktorego jeszcze nie ma. */
+  .contact .reply { color: var(--ink); }
   .details {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 1.4rem 1.5rem;
@@ -562,12 +565,13 @@
           <p class="note">Najszybciej dojdziemy do czegoś, jeśli w pierwszej wiadomości
             będzie nazwa czynności, częstotliwość i liczba pozycji. Reszta wyjdzie
             w rozmowie.</p>
+          <p class="note reply"><strong>Odpowiadam w ciągu jednego dnia roboczego.</strong>
+            Jeśli wolą Państwo rozmowę, proszę napisać — oddzwonię w dogodnej porze.</p>
         </div>
         <div class="details">
           <div class="row"><span class="k">Firma</span><span class="v">Jacek Mroczkiewicz<br>MBS Business Solutions</span></div>
           <div class="row"><span class="k">Adres</span><span class="v addr">ul. Ludomska 13/A<br>64-600 Dąbrówka Leśna</span></div>
           <div class="row"><span class="k">E-mail</span><span class="v"><a class="mail" href="mailto:mbs.mroczkiewicz@gmail.com">mbs.mroczkiewicz@gmail.com</a></span></div>
-          <div class="row"><span class="k">Telefon</span><span class="v"><span class="ph">numer telefonu</span></span></div>
           <div class="row"><span class="k">NIP</span><span class="v mono-nip">7871809487</span></div>
           <div class="row"><span class="k">REGON</span><span class="v mono-nip">540507784</span></div>
         </div>

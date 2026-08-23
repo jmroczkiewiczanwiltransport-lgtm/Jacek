@@ -94,7 +94,8 @@ zarządzającą tamtym kontem o usunięcie repozytorium albo o przełączenie na
 
 ## Co nadal zostaje do zrobienia
 
-1. **Numer telefonu** — jedyne puste pole na stronie i w ofercie.
+1. **Numer telefonu** — usunięty z materiałów; potrzebny prepaid albo eSIM przed
+   pierwszą wysyłką.
 2. **Test aplikacji na prawdziwym eksporcie z KSeF** — największe otwarte ryzyko;
    aplikacja nie była sprawdzona na realnym pliku z Aplikacji Podatnika.
 3. **Udostępnienie stron** przed wysłaniem komukolwiek linku.

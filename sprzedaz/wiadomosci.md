@@ -33,8 +33,9 @@ dwa pliki przez link. Nie sprzedawaj w mailu. Sprzedaje wynik na ich własnych d
 >
 > Mam wysłać link?
 >
-> [imię i nazwisko]
-> [telefon]
+> Jacek Mroczkiewicz
+> MBS Business Solutions
+> mbs.mroczkiewicz@gmail.com
 
 **Dlaczego tak:** żadnego „innowacyjne rozwiązanie", żadnego załącznika, jedna prosta
 prośba na końcu. Zdanie o tym, że pliki nie wychodzą z komputera, jest kluczowe — bez
@@ -61,8 +62,9 @@ niego biuro nie dotknie linku, bo to dane klientów.
 >
 > Mam wysłać link?
 >
-> [imię i nazwisko]
-> [telefon]
+> Jacek Mroczkiewicz
+> MBS Business Solutions
+> mbs.mroczkiewicz@gmail.com
 
 **Kiedy używać:** gdy odbiorca składa JPK_V7 sam albo za klientów. Termin działa jako
 powód, żeby zająć się tym teraz, a nie „kiedyś".
@@ -81,6 +83,12 @@ i obniża odpowiedzi.
 ---
 
 ## 3. Otwarcie rozmowy telefonicznej
+
+> **Na razie niedostępne.** Nie ma jeszcze numeru firmowego, a numeru pracodawcy podawać
+> nie wolno — klient dzwoniłby na centralę ANWIL Transport. Skrypt zostaje, bo to
+> najskuteczniejszy kanał w tym segmencie; wróć do niego, gdy będzie numer (patrz uwaga
+> na końcu pliku). Do tego czasu dzwoń **wychodząco** z dowolnego telefonu, ale nie
+> podawaj numeru do oddzwaniania w materiałach.
 
 > Dzień dobry, [imię]. Dzwonię w jednej konkretnej sprawie i zajmę minutę.
 >
@@ -183,6 +191,29 @@ ryzyko podatkowe i godziny.
 Kolejność wysyłki: 20 biur w promieniu 50 km, jedna fala, potem follow-up po 5 dniach.
 Z 20 kontaktów realnie 3–6 obejrzy wynik, z tego 1–3 kupi. Nie skaluj wysyłki, dopóki
 nie masz pierwszego płacącego klienta i jego zdania o narzędziu.
+
+## Brakujący numer telefonu — do załatwienia przed pierwszą falą
+
+W materiałach nie ma numeru i to jest świadoma decyzja: jedyny dostępny numer należy do
+pracodawcy, a klient dzwoniący na centralę ANWIL Transport to gorszy scenariusz niż brak
+numeru. Zamiast niego w kontakcie stoi zobowiązanie: **odpowiedź w ciągu jednego dnia
+roboczego** — i trzeba go dotrzymywać, bo inaczej działa przeciw Tobie.
+
+Co przez to tracisz, uczciwie:
+
+- **cały kanał telefoniczny przychodzący** — biuro rachunkowe, które chce coś dopytać,
+  najczęściej dzwoni, a nie pisze,
+- **szablon 3** (otwarcie rozmowy telefonicznej), który jest najskuteczniejszy z całej listy,
+- część wiarygodności — firma bez telefonu wygląda mniej poważnie u odbiorcy, który
+  zawodowo weryfikuje kontrahentów.
+
+Rozwiązanie jest tanie i szybkie: **karta prepaid albo eSIM na drugi numer w tym samym
+telefonie.** Koszt rzędu kilkudziesięciu złotych, aktywacja tego samego dnia, żadnego
+drugiego urządzenia. Traktuj to jako zadanie **przed** pierwszą wysyłką, nie jako
+udoskonalenie na później.
+
+Gdy numer będzie: dopisz go w karcie kontaktowej na stronie i w ofercie, w podpisach
+wiadomości oraz odblokuj szablon 3.
 
 ## Czego nie robić
 

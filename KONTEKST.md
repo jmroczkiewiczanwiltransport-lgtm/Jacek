@@ -10,7 +10,9 @@ plik na początku. Wystarcza, żeby kontynuować bez powtarzania ustaleń.
 **Jacek Mroczkiewicz MBS Business Solutions** — jednoosobowa działalność, aktywna
 od 1 stycznia 2025. NIP `7871809487`, REGON `540507784`, ul. Ludomska 13/A,
 64-600 Dąbrówka Leśna (pod Obornikami, ok. 30 km od Poznania).
-Kontakt: `mbs.mroczkiewicz@gmail.com`. **Telefon: nadal nieuzupełniony.**
+Kontakt: `mbs.mroczkiewicz@gmail.com`. **Telefonu nie ma i celowo nie ma go
+w materiałach** — jedyny dostępny numer należy do pracodawcy. Do załatwienia przed
+pierwszą wysyłką: karta prepaid albo eSIM.
 
 Na co dzień pracuje w firmie transportowej (ANWIL Transport) — stamtąd bierze się
 znajomość procesów: KSeF/JPK na plikach z AS400, paliwo floty, szkolenia kierowców.
@@ -85,7 +87,10 @@ Klucze: `node tools/keygen.js`. Sól jest w kodzie strony, więc to bariera, nie
 
 ## Co jest otwarte
 
-1. **Numer telefonu** — jedyne puste pole na stronie i w ofercie.
+1. **Numer telefonu** — usunięty z materiałów (był tylko firmowy pracodawcy).
+   Zamiast niego zobowiązanie: odpowiedź w ciągu jednego dnia roboczego. Prepaid
+   albo eSIM przed pierwszą falą wysyłki — bez numeru nie działa kanał telefoniczny,
+   najskuteczniejszy w tym segmencie.
 2. **Udostępnienie stron** — wszystkie trzy są prywatne. Najpierw demo, potem strona,
    potem sprawdzić link w trybie prywatnym przeglądarki.
 3. **Test na prawdziwym eksporcie z KSeF** — największe otwarte ryzyko. Aplikacja była
