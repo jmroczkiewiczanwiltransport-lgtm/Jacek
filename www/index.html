@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Uzgodnienia KSeF, raporty paliwowe flot, szkolenia obowiazkowe i arkusze na zamowienie. Narzedzia liczace lokalnie, bez serwera.">
+<title>MBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --ground:      #F7F8F6;
+    --surface:     #FFFFFF;
+    --surface-alt: #EFF3F1;
+    --ink:         #151C1E;
+    --ink-muted:   #556668;
+    --ink-faint:   #869495;
+    --border:      #DCE3E0;
+    --border-firm: #C0CBC7;
+
+    --accent:      #0F6E64;
+    --accent-soft: #E2EEEB;
+    --accent-ink:  #0A4A43;
+
+    /* pasmo nagłówka jest zawsze ciemne - w obu motywach, celowo */
+    --slab:        #101A1B;
+    --slab-ink:    #EDF2F0;
+    --slab-muted:  #9BB0AE;
+    --slab-accent: #4CC3AD;
+    --slab-line:   #22322F;
+
+    --info:      #2A5DB0;
+    --info-soft: #E7EEF9;
+
+    --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+
+    --radius: 3px;
+    --gutter: clamp(1.25rem, 5vw, 4rem);
+    --wide: 68rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0C1213;
+      --surface:     #141C1D;
+      --surface-alt: #1A2325;
+      --ink:         #E6ECEA;
+      --ink-muted:   #9BADAC;
+      --ink-faint:   #6E8180;
+      --border:      #24312E;
+      --border-firm: #33423D;
+      --accent:      #39B39F;
+      --accent-soft: #10302C;
+      --accent-ink:  #7FD4C4;
+      --slab:        #08100F;
+      --slab-line:   #1A2724;
+      --info:        #8AB0EE;
+      --info-soft:   #15202F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0C1213;
+    --surface:     #141C1D;
+    --surface-alt: #1A2325;
+    --ink:         #E6ECEA;
+    --ink-muted:   #9BADAC;
+    --ink-faint:   #6E8180;
+    --border:      #24312E;
+    --border-firm: #33423D;
+    --accent:      #39B39F;
+    --accent-soft: #10302C;
+    --accent-ink:  #7FD4C4;
+    --slab:        #08100F;
+    --slab-line:   #1A2724;
+    --info:        #8AB0EE;
+    --info-soft:   #15202F;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; line-height: 1.12; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+
+  .wrap { max-width: var(--wide); margin: 0 auto; padding: 0 var(--gutter); }
+  .stack { display: flex; flex-direction: column; }
+
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: .6875rem; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ═══ pasmo nagłówka ═══ */
+  .slab { background: var(--slab); color: var(--slab-ink); }
+  .slab a { color: var(--slab-ink); }
+
+  .bar {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.1rem 0; border-bottom: 1px solid var(--slab-line);
+  }
+  .logo {
+    font-family: var(--font-display);
+    display: inline-flex; align-items: center; gap: .55rem;
+    text-decoration: none;
+  }
+  /* Trzyliterowy skrot czyta sie jak monogram, nie jak wyraz - stad rozstrzelenie
+     i wieksza waga. Deskryptor obok jest konieczny, bo sam skrot nie mowi nic. */
+  .logo .mark {
+    font-weight: 800; font-size: 1.1875rem;
+    letter-spacing: .09em;
+  }
+  .logo .desc {
+    font-weight: 500; font-size: .8125rem; letter-spacing: .01em;
+    color: var(--slab-muted);
+    padding-left: .65rem; border-left: 1px solid var(--slab-line);
+  }
+  @media (max-width: 34rem) { .logo .desc { display: none; } }
+  /* Znak marki: znak rownosci wyciety z pelnego kwadratu. Dziury zrobione
+     regula evenodd, wiec przeswituje przez nie tlo paska. */
+  .logo .tile { width: 1.4rem; height: 1.4rem; flex: none; fill: var(--slab-accent); }
+  .bar nav { margin-left: auto; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .bar nav a {
+    font-family: var(--font-display); font-size: .875rem; font-weight: 500;
+    color: var(--slab-muted); text-decoration: none;
+  }
+  .bar nav a:hover { color: var(--slab-ink); }
+  .bar nav a:focus-visible, .logo:focus-visible { outline: 2px solid var(--slab-accent); outline-offset: 3px; }
+
+  .hero { padding: clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 7vw, 5rem); }
+  .hero h1 {
+    font-size: clamp(2.1rem, 6vw, 3.75rem); font-weight: 800; letter-spacing: -.03em;
+    max-width: 30ch;
+  }
+  .hero h1 em { font-style: normal; color: var(--slab-accent); }
+  .hero .sub {
+    margin-top: 1.35rem; color: var(--slab-muted);
+    font-size: clamp(1.0625rem, 2.2vw, 1.25rem); max-width: 54ch;
+  }
+  .hero .cta { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: .75rem 1rem; align-items: center; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-family: var(--font-display); font-size: .9375rem; font-weight: 600;
+    padding: .7rem 1.25rem; border-radius: var(--radius);
+    text-decoration: none; border: 1.5px solid transparent;
+  }
+  .btn-solid { background: var(--slab-accent); color: #06201C; }
+  .btn-solid:hover { background: #6BD4C1; }
+  .btn-line { border-color: var(--slab-line); color: var(--slab-ink); }
+  .btn-line:hover { border-color: var(--slab-accent); color: var(--slab-accent); }
+  .btn:focus-visible { outline: 2px solid var(--slab-accent); outline-offset: 3px; }
+
+  .assure {
+    border-top: 1px solid var(--slab-line);
+    padding: 1rem 0 1.25rem;
+    display: flex; flex-wrap: wrap; gap: .5rem 2rem;
+    font-size: .875rem; color: var(--slab-muted);
+  }
+  .assure span { display: inline-flex; align-items: center; gap: .45rem; }
+  .assure .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--slab-accent); flex: none; }
+
+  /* ═══ sekcje ═══ */
+  section { padding: clamp(3rem, 7vw, 4.75rem) 0; }
+  .head { display: flex; flex-direction: column; gap: .6rem; max-width: 58ch; }
+  .head h2 { font-size: clamp(1.6rem, 3.6vw, 2.25rem); font-weight: 700; letter-spacing: -.02em; }
+  .head p { color: var(--ink-muted); }
+
+  /* ─ usługi ─ */
+  .svcs { margin-top: 2.25rem; display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (min-width: 48rem) { .svcs { grid-template-columns: repeat(2, 1fr); } }
+
+  .svc {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem 1.6rem;
+    display: flex; flex-direction: column; gap: .8rem;
+  }
+  .svc.flag { border-color: var(--accent); border-width: 1.5px; }
+  .svc .tag {
+    align-self: flex-start;
+    font-family: var(--font-display); font-size: .625rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: var(--accent-soft); color: var(--accent-ink);
+    padding: .2rem .55rem; border-radius: 100px;
+  }
+  /* Dwie odmiany etykiety niosa prawdziwa roznice: co jest gotowe, a co powstaje
+     na zamowienie. Bez tego rozroznienia strona obiecuje polke, ktorej nie ma. */
+  .svc .tag.custom { background: var(--surface-alt); color: var(--ink-muted); border: 1px solid var(--border); }
+  /* Ostatnia karta jest zbiorcza, wiec zajmuje cala szerokosc - inaczej zostaje sierotka */
+  @media (min-width: 48rem) { .svc.wide { grid-column: 1 / -1; } }
+  .svc.wide .io { max-width: 46rem; }
+  .svc h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.015em; }
+  .svc > p { color: var(--ink-muted); font-size: .9375rem; }
+
+  .io { margin-top: auto; display: grid; gap: .5rem; padding-top: .3rem; }
+  .io div { display: grid; grid-template-columns: 5.5rem 1fr; gap: .75rem; align-items: baseline; }
+  .io dt, .io .k {
+    font-family: var(--font-mono); font-size: .6875rem; font-weight: 500;
+    letter-spacing: .04em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .io .v { font-size: .875rem; }
+  .io .out .v { font-weight: 600; color: var(--accent); }
+
+  .svc .more {
+    margin-top: .35rem;
+    font-family: var(--font-display); font-size: .875rem; font-weight: 600;
+    color: var(--accent); text-decoration: none;
+    display: inline-flex; align-items: center; gap: .35rem;
+  }
+  .svc .more:hover { text-decoration: underline; }
+  .svc .more:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ─ rozpoznanie wzorca ─ */
+  .diag { margin-top: 2.25rem; display: grid; grid-template-columns: 1fr; gap: 1.75rem; }
+  @media (min-width: 52rem) { .diag { grid-template-columns: 1.15fr 1fr; gap: 3rem; } }
+
+  ul.signals { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+  ul.signals li { display: grid; grid-template-columns: 1.5rem 1fr; gap: .6rem; align-items: baseline; }
+  /* Znacznik listy powtarza znak marki - te same dwie kreski, ta sama mysl: zgadza sie albo nie. */
+  ul.signals li::before {
+    content: "="; font-family: var(--font-mono); font-weight: 500;
+    color: var(--accent); font-size: 1rem; line-height: inherit;
+  }
+  ul.signals li > span { line-height: 1.5; }
+  ul.signals strong { font-weight: 600; }
+  .diag .after { margin-top: 1.25rem; color: var(--ink-muted); font-size: .9375rem; max-width: 48ch; }
+
+  .formats {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.4rem 1.5rem;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .formats h3 { font-size: 1.0625rem; font-weight: 700; }
+  .formats div { display: flex; flex-direction: column; gap: .2rem; }
+  .formats dt, .formats .ft {
+    font-family: var(--font-display); font-size: .6875rem; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .formats .fv { font-size: .9375rem; color: var(--ink-muted); }
+  .formats code {
+    font-family: var(--font-mono); font-size: .8125rem;
+    background: var(--surface-alt); border: 1px solid var(--border);
+    border-radius: 2px; padding: .05rem .3rem; color: var(--ink);
+  }
+
+  /* ─ kroki ─ */
+  .band { background: var(--surface-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  ol.steps { margin: 2rem 0 0; padding: 0; list-style: none; display: grid; gap: 1.25rem; counter-reset: s; }
+  @media (min-width: 48rem) { ol.steps { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
+  ol.steps li { counter-increment: s; display: flex; flex-direction: column; gap: .45rem; }
+  ol.steps li::before {
+    content: counter(s, decimal-leading-zero);
+    font-family: var(--font-mono); font-size: .8125rem; font-weight: 500;
+    color: var(--accent); font-variant-numeric: tabular-nums;
+    padding-bottom: .35rem; border-bottom: 2px solid var(--accent);
+    align-self: flex-start; min-width: 2.25rem;
+  }
+  ol.steps h4 { font-size: 1.0625rem; font-weight: 700; }
+  ol.steps p { color: var(--ink-muted); font-size: .9375rem; }
+
+  /* ─ bezpieczeństwo ─ */
+  .safes { margin-top: 2rem; display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (min-width: 48rem) { .safes { grid-template-columns: repeat(3, 1fr); } }
+  .safe {
+    border-left: 3px solid var(--accent); background: var(--surface);
+    padding: 1.1rem 1.25rem; border-radius: 0 var(--radius) var(--radius) 0;
+    display: flex; flex-direction: column; gap: .35rem;
+  }
+  .safe h4 { font-size: 1rem; font-weight: 700; }
+  .safe p { color: var(--ink-muted); font-size: .9375rem; }
+
+  /* ─ kontakt ─ */
+  .contact { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
+  @media (min-width: 48rem) { .contact { grid-template-columns: 1.25fr 1fr; gap: 3rem; } }
+  .contact .pledge {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(1.25rem, 2.8vw, 1.6rem); letter-spacing: -.015em;
+    line-height: 1.25; max-width: 32ch;
+  }
+  .contact .note { margin-top: .9rem; color: var(--ink-muted); font-size: .9375rem; max-width: 46ch; }
+  /* Zobowiazanie czasowe zastepuje numer telefonu: daje odbiorcy to samo poczucie
+     dostepnosci, a nie wymaga podawania numeru, ktorego jeszcze nie ma. */
+  .contact .reply { color: var(--ink); }
+  .details {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.4rem 1.5rem;
+    display: flex; flex-direction: column; gap: .75rem;
+  }
+  .details .row { display: flex; flex-direction: column; gap: .1rem; }
+  .details .k {
+    font-family: var(--font-display); font-size: .6875rem; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .details .v { font-size: 1.0625rem; font-weight: 600; font-family: var(--font-display); }
+  .ph { border-bottom: 1.5px dashed var(--border-firm); color: var(--ink-faint); font-style: italic; font-weight: 400; }
+  /* NIP jest przepisywany do systemu ksiegowego, wiec staly odstep i tabelaryczne cyfry */
+  .mono-nip { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .details .addr { font-weight: 400; font-family: var(--font-body); font-size: .9375rem; line-height: 1.4; }
+  .details .mail { font-family: var(--font-body); font-size: .9375rem; font-weight: 400; color: var(--accent); text-decoration: none; word-break: break-all; }
+  .details .mail:hover { text-decoration: underline; }
+  .details .mail:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  footer {
+    border-top: 1px solid var(--border); padding: 1.75rem 0 2.5rem;
+    display: flex; flex-wrap: wrap; gap: .5rem 2rem;
+    font-size: .8125rem; color: var(--ink-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+
+<div class="slab">
+  <div class="wrap">
+    <div class="bar">
+      <a class="logo" href="#gora">
+        <svg class="tile" viewBox="0 0 100 100" aria-hidden="true"><path d="M 8 0 H 92 A 8 8 0 0 1 100 8 V 92 A 8 8 0 0 1 92 100 H 8 A 8 8 0 0 1 0 92 V 8 A 8 8 0 0 1 8 0 Z M 22 31 H 78 V 43 H 22 Z M 22 57 H 78 V 69 H 22 Z" fill-rule="evenodd"/></svg>
+        <span class="mark">MBS</span>
+        <span class="desc">narzędzia liczące</span>
+      </a>
+      <nav>
+        <a href="#co-robie">Co robię</a>
+        <a href="#jak">Jak to działa</a>
+        <a href="#bezpieczenstwo">Bezpieczeństwo</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+    </div>
+
+    <div class="hero" id="gora">
+      <h1>Robota, którą ktoś u Państwa robi ręcznie po nocach, <em>da się policzyć w minutę</em>.</h1>
+      <p class="sub">Uzgodnienia KSeF, raporty paliwowe flot, szkolenia obowiązkowe, arkusze,
+        które nikt nie chce robić. Narzędzia liczące na Państwa komputerze — bez serwera,
+        bez instalacji, bez wysyłania danych w świat.</p>
+      <div class="cta">
+        <a class="btn btn-solid" href="#co-robie">Zobacz, co mogę policzyć</a>
+        <a class="btn btn-line" href="#kontakt">Napisz w jednej sprawie</a>
+      </div>
+    </div>
+
+    <div class="assure">
+      <span><span class="dot" aria-hidden="true"></span> Dane nie opuszczają Państwa komputera</span>
+      <span><span class="dot" aria-hidden="true"></span> Bez instalacji i uprawnień administratora</span>
+      <span><span class="dot" aria-hidden="true"></span> Płatność po zobaczeniu wyniku na własnych danych</span>
+    </div>
+  </div>
+</div>
+
+<section id="co-robie">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Co robię</span>
+      <h2>Trzy gotowe narzędzia i robota na zamówienie</h2>
+      <p>Narzędzia oznaczone jako gotowe działają i co miesiąc coś liczą — powstały, bo sam
+        ich potrzebowałem w firmie transportowej. Reszta to praca na zamówienie: opisują
+        Państwo czynność, ja robię narzędzie pod Państwa pliki.</p>
+    </div>
+
+    <div class="svcs">
+
+      <article class="svc flag">
+        <span class="tag">Gotowe narzędzie</span>
+        <h3>Uzgodnienia KSeF</h3>
+        <p>Zestawia eksport z KSeF z rejestrem zakupu. Uzupełnia brakujące numery, wyłapuje
+          wpisane błędnie, a przede wszystkim wskazuje faktury, które są w KSeF, ale nie ma
+          ich w księgach — czyli nieodliczony VAT.</p>
+        <div class="io">
+          <div><span class="k">Wysyłają</span><span class="v">eksport z KSeF + rejestr zakupu za jeden miesiąc</span></div>
+          <div class="out"><span class="k">Dostają</span><span class="v">raport rozbieżności z numerem wiersza przy każdej pozycji</span></div>
+        </div>
+        <a class="more" href="ksef.html">Sprawdź na swoim pliku &rarr;</a>
+      </article>
+
+      <article class="svc">
+        <span class="tag custom">Na zamówienie</span>
+        <h3>Wiele plików w jedno zestawienie</h3>
+        <p>Kilkanaście plików od różnych osób, w różnych układach kolumn, z nagłówkami
+          w różnych wierszach. Na wyjściu jeden arkusz o tej samej strukturze za każdym
+          razem. To najczęstsza robota po uzgodnieniach — i najczęściej ta, którą ktoś
+          składa ręcznie od lat.</p>
+        <div class="io">
+          <div><span class="k">Wysyłają</span><span class="v">pliki źródłowe i przykład gotowego zestawienia</span></div>
+          <div class="out"><span class="k">Dostają</span><span class="v">narzędzie, które składa je w jeden arkusz</span></div>
+        </div>
+      </article>
+
+      <article class="svc">
+        <span class="tag">Gotowe narzędzie</span>
+        <h3>Przepał floty</h3>
+        <p>Liczy nadspalanie i oszczędność paliwa z miesięcznego eksportu tras — per kierowca
+          albo per ciągnik. Pokazuje, z kim trzeba porozmawiać, zamiast ogólnej średniej,
+          z której nic nie wynika.</p>
+        <div class="io">
+          <div><span class="k">Wysyłają</span><span class="v">miesięczny eksport tras z systemu pokładowego</span></div>
+          <div class="out"><span class="k">Dostają</span><span class="v">arkusz z przepałem per kierowca i per pojazd</span></div>
+        </div>
+      </article>
+
+      <article class="svc">
+        <span class="tag">Gotowe narzędzie</span>
+        <h3>Szkolenia obowiązkowe</h3>
+        <p>Platforma szkoleniowa z materiałem, testem i rejestrem wyników — działająca
+          z dysku firmowego, bez serwera i bez abonamentu za każdego pracownika. Z lektorem
+          i wersjami językowymi, jeśli są potrzebne.</p>
+        <div class="io">
+          <div><span class="k">Wysyłają</span><span class="v">materiał szkoleniowy i listę pytań</span></div>
+          <div class="out"><span class="k">Dostają</span><span class="v">gotowe szkolenie z testem i protokołem zaliczeń</span></div>
+        </div>
+      </article>
+
+      <article class="svc wide">
+        <span class="tag custom">Na zamówienie</span>
+        <h3>Coś innego, co robi się ręcznie</h3>
+        <p>Jeśli u Państwa wzorzec wygląda inaczej — proszę opisać czynność, częstotliwość
+          i liczbę pozycji. Odpowiem, czy da się to policzyć i ile by to kosztowało, także
+          wtedy gdy odpowiedź brzmi „nie". Nie biorę zleceń, których nie umiem policzyć,
+          i mówię to na pierwszej rozmowie, a nie po miesiącu.</p>
+        <div class="io">
+          <div><span class="k">Wysyłają</span><span class="v">opis czynności i przykładowe pliki</span></div>
+          <div class="out"><span class="k">Dostają</span><span class="v">odpowiedź w jeden dzień, a jeśli się da — wycenę</span></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section id="wzorzec">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Czy to o Państwa robocie</span>
+      <h2>Jeśli robi się to co miesiąc ręcznie, prawdopodobnie da się to policzyć</h2>
+      <p>Nie muszę znać Państwa branży. Muszę zobaczyć pliki i wiedzieć, jaki ma być
+        wynik. Wzorzec jest zawsze ten sam: dane są rozsypane po kilku miejscach, ktoś
+        je składa ręcznie, i przy każdym powtórzeniu jest ta sama okazja do pomyłki.</p>
+    </div>
+
+    <div class="diag">
+      <div>
+        <ul class="signals">
+          <li><span>ktoś robi <strong>to samo</strong> pierwszego albo dziesiątego każdego miesiąca</span></li>
+          <li><span>dane, które trzeba połączyć, są w <strong>więcej niż jednym pliku</strong></span></li>
+          <li><span>ktoś <strong>przepisuje albo kopiuje</strong> dane z jednego arkusza do drugiego</span></li>
+          <li><span>zdarzają się pomyłki, które wychodzą <strong>dopiero po czasie</strong></span></li>
+          <li><span><strong>jedna osoba</strong> wie, jak to się robi — i gdy jej nie ma, nie robi tego nikt</span></li>
+          <li><span>robi się to <strong>wieczorem albo na ostatnią chwilę</strong> przed terminem</span></li>
+          <li><span>ktoś sprawdza „na oko", bo sprawdzenie wszystkiego zajęłoby cały dzień</span></li>
+        </ul>
+        <p class="after">Jeśli choć jeden punkt brzmi znajomo — proszę napisać.
+          Odpowiem, czy da się to policzyć, także wtedy gdy odpowiedź brzmi „nie".</p>
+      </div>
+
+      <div class="formats">
+        <h3>Z czym pracuję</h3>
+        <div>
+          <span class="ft">Arkusze</span>
+          <span class="fv"><code>.xls</code> <code>.xlsx</code> <code>.xlsm</code> <code>.csv</code> —
+            także z formułami i łączami zewnętrznymi. Takich plików nie nadpisuję,
+            wynik dostają Państwo osobno.</span>
+        </div>
+        <div>
+          <span class="ft">Eksporty z systemów</span>
+          <span class="fv">Cokolwiek, co program potrafi zapisać do pliku. Nie muszę mieć
+            dostępu do Państwa systemu i o niego nie proszę.</span>
+        </div>
+        <div>
+          <span class="ft">Pliki tekstowe i wydruki</span>
+          <span class="fv"><code>.txt</code>, <code>.pdf</code> — o ile to tekst, a nie skan.
+            Skany też się da, ale to osobna rozmowa i osobna cena.</span>
+        </div>
+        <div>
+          <span class="ft">Bałagan</span>
+          <span class="fv">Nagłówki w piątym wierszu, scalone komórki, dwie tabele na jednym
+            arkuszu, daty jako tekst. To normalny stan plików — nie trzeba ich wcześniej
+            porządkować.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <section id="jak">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Jak to działa</span>
+        <h2>Najpierw wynik, potem faktura</h2>
+        <p>Nie sprzedaję wdrożeń ani analiz przedwstępnych. Sprawdzamy na jednym miesiącu
+          Państwa danych, czy jest o czym rozmawiać.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Rozmowa na 15 minut</h4>
+          <p>Opisują Państwo, co robi się ręcznie i jak często. Jeśli nie umiem tego
+            policzyć, mówię od razu — nie ma sensu tracić czasu obu stron.</p>
+        </li>
+        <li>
+          <h4>Sprawdzenie na Państwa danych</h4>
+          <p>Jeden miesiąc, prawdziwe pliki, wynik na ekranie. Bez opłaty i bez
+            zobowiązania. Jeśli wyjdzie, że wszystko się zgadza — też to powiem.</p>
+        </li>
+        <li>
+          <h4>Narzędzie do pracy</h4>
+          <p>Dostają Państwo plik, który zostaje u Państwa na dysku i działa dalej bez
+            mojego udziału. Poprawki i pytania w cenie.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<section id="bezpieczenstwo">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Bezpieczeństwo</span>
+      <h2>Państwa dane zostają u Państwa</h2>
+      <p>To nie jest hasło marketingowe, tylko sposób, w jaki te narzędzia są zbudowane.
+        Nie ma serwera, na który cokolwiek mogłoby trafić.</p>
+    </div>
+    <div class="safes">
+      <div class="safe">
+        <h4>Liczy się w przeglądarce</h4>
+        <p>Żaden plik nigdzie nie jest wysyłany. Można odciąć internet — narzędzie nadal
+          działa. Dlatego nie potrzebuję zgody na przetwarzanie danych Państwa klientów.</p>
+      </div>
+      <div class="safe">
+        <h4>Nie rusza Państwa plików</h4>
+        <p>Wynik wychodzi jako osobny raport albo gotowa kolumna do wklejenia. Formuły
+          i łącza zewnętrzne w plikach idących pod JPK zostają nietknięte.</p>
+      </div>
+      <div class="safe">
+        <h4>Każdą liczbę można sprawdzić</h4>
+        <p>Raporty podają numer wiersza w Państwa pliku. Dopasowania niepewne są osobno
+          oznaczone. Narzędzie nie udaje pewności, której nie ma.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <section id="kontakt">
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <span class="eyebrow">Kontakt</span>
+          <p class="pledge" style="margin-top:.6rem">Napiszcie, co robi się u Państwa
+            ręcznie. Odpowiem, czy da się to policzyć — także wtedy, gdy odpowiedź brzmi
+            „nie".</p>
+          <p class="note">Najszybciej dojdziemy do czegoś, jeśli w pierwszej wiadomości
+            będzie nazwa czynności, częstotliwość i liczba pozycji. Reszta wyjdzie
+            w rozmowie.</p>
+          <p class="note reply"><strong>Odpowiadam w ciągu jednego dnia roboczego.</strong>
+            Jeśli wolą Państwo rozmowę, proszę napisać — oddzwonię w dogodnej porze.</p>
+        </div>
+        <div class="details">
+          <div class="row"><span class="k">Firma</span><span class="v">Jacek Mroczkiewicz<br>MBS Business Solutions</span></div>
+          <div class="row"><span class="k">Adres</span><span class="v addr">ul. Ludomska 13/A<br>64-600 Dąbrówka Leśna</span></div>
+          <div class="row"><span class="k">E-mail</span><span class="v"><a class="mail" href="mailto:mbs.mroczkiewicz@gmail.com">mbs.mroczkiewicz@gmail.com</a></span></div>
+          <div class="row"><span class="k">NIP</span><span class="v mono-nip">7871809487</span></div>
+          <div class="row"><span class="k">REGON</span><span class="v mono-nip">540507784</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <footer>
+    <span>Jacek Mroczkiewicz MBS Business Solutions · NIP 7871809487 · REGON 540507784</span>
+    <span>Narzędzia wskazują rozbieżności i liczą wskaźniki. Nie są usługą doradztwa
+      podatkowego — ocena wskazanych pozycji należy do osoby prowadzącej księgi.</span>
+  </footer>
+</div>
+</body>
+</html>

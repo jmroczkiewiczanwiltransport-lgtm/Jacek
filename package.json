@@ -5,6 +5,7 @@
   "scripts": {
     "build": "./build.sh",
     "pdf": "node tools/mkpdf.js",
+    "www": "./build.sh && bash tools/www.sh",
     "logo": "node tools/genlogo.js && node tools/raster.js",
     "keys": "node tools/keygen.js 10"
   },

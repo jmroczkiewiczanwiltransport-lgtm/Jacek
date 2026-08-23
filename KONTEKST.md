@@ -35,9 +35,13 @@ administrator. Docelowe miejsce to prywatne repozytorium na koncie GitHub zało�
 | Materiały sprzedażowe | `sprzedaz/` — wiadomości, demo, teksty ogólne, gdzie szukać klientów, podstawa prawna |
 | Narzędzia | `tools/` — keygen, generator znaku, raster, mkpdf; `build.sh`; `package.json` |
 
-Opublikowane strony — **adresy poniżej należą do starego konta i przy przenoszeniu
-trzeba je opublikować od nowa**; są prywatne i wymagają udostępnienia przed wysłaniem
-komukolwiek:
+**Adresy dla klientów mają iść z własnego hostingu, nie z artefaktów Claude.** Folder
+`www/` (składany przez `npm run www`) daje stronę i demo jako pliki do wystawienia na
+darmowym hostingu statycznym — adres jest wtedy własny i nie zepsuje się przy przenoszeniu
+konta. Paczka do przeciągnięcia: `dist/mbs-strona.zip`. Szczegóły: `www/README.md`.
+
+Artefakty poniżej zostają tylko do podglądu — należą do przestrzeni AnwilTransport
+i są prywatne:
 - aplikacja: `https://claude.ai/code/artifact/a4209876-33c6-4d72-ba0d-e03d30aa0cf9`
 - strona: `https://claude.ai/code/artifact/6b4ffd16-48ec-4f28-a406-443eb64201e2`
 - oferta: `https://claude.ai/code/artifact/44781b54-d3bb-48c8-905b-3325c555a433`
