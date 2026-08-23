@@ -673,6 +673,51 @@
   .details .mail:hover { text-decoration: underline; }
   .details .mail:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+  /* ─ formularz zapytania ─ */
+  .ask {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem 1.6rem;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .ask h3 { font-size: 1.125rem; font-weight: 700; letter-spacing: -.01em; }
+  .ask .f { display: flex; flex-direction: column; gap: .3rem; }
+  .ask label {
+    font-family: var(--font-mono); font-size: .6875rem; font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .ask label .opt-mark { text-transform: none; letter-spacing: .02em; }
+  .ask input[type=text], .ask input[type=email], .ask input[type=tel], .ask textarea {
+    font: inherit; color: var(--ink); background: var(--ground);
+    border: 1px solid var(--border-firm); border-radius: var(--radius);
+    padding: .6rem .75rem; width: 100%;
+  }
+  .ask textarea { min-height: 7.5rem; resize: vertical; }
+  .ask input:focus-visible, .ask textarea:focus-visible, .ask input[type=file]:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  .ask .frow { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (min-width: 34rem) { .ask .frow { grid-template-columns: 1fr 1fr; } }
+  .ask input[type=file] { font-size: .875rem; color: var(--ink-muted); }
+  .ask input[type=file]::file-selector-button {
+    font: inherit; font-family: var(--font-display); font-weight: 600; font-size: .8125rem;
+    color: var(--accent-ink); background: var(--accent-soft);
+    border: 1px solid var(--accent); border-radius: var(--radius);
+    padding: .45rem .9rem; margin-right: .75rem; cursor: pointer;
+  }
+  .ask .hint { font-size: .8125rem; color: var(--ink-faint); }
+  .ask .send {
+    align-self: flex-start;
+    font-family: var(--font-display); font-size: .9375rem; font-weight: 600;
+    color: #fff; background: var(--accent);
+    border: 1.5px solid var(--accent); border-radius: var(--radius);
+    padding: .7rem 1.4rem; cursor: pointer;
+  }
+  .ask .send:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
+  .ask .send:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .ask .rodo { font-size: .75rem; color: var(--ink-faint); line-height: 1.5; }
+  /* pulapka na boty - pole niewidoczne dla ludzi */
+  .ask .bf { position: absolute; left: -5000px; width: 1px; height: 1px; overflow: hidden; }
+
   footer {
     border-top: 1px solid var(--border); padding: 1.75rem 0 2.5rem;
     display: flex; flex-wrap: wrap; gap: .5rem 2rem;
@@ -1224,6 +1269,33 @@
             w rozmowie.</p>
           <p class="note reply"><strong>Odpowiadam w ciągu jednego dnia roboczego.</strong>
             Jeśli wolą Państwo rozmowę, proszę napisać — oddzwonię w dogodnej porze.</p>
+
+          <form class="ask" style="margin-top:2rem" name="zapytanie" method="POST" action="/dziekujemy.html"
+                data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data">
+            <input type="hidden" name="form-name" value="zapytanie">
+            <p class="bf"><label>Nie wypełniaj tego pola<input name="bot-field"></label></p>
+            <h3>Zapytanie indywidualne</h3>
+            <div class="frow">
+              <div class="f"><label for="zi">Imię i nazwisko / firma</label>
+                <input type="text" id="zi" name="kto" required autocomplete="name"></div>
+              <div class="f"><label for="ze">E-mail do odpowiedzi</label>
+                <input type="email" id="ze" name="email" required autocomplete="email"></div>
+            </div>
+            <div class="f"><label for="zt">Telefon <span class="opt-mark">— opcjonalnie, jeśli wolą Państwo rozmowę</span></label>
+              <input type="tel" id="zt" name="telefon" autocomplete="tel"></div>
+            <div class="f"><label for="zo">Co robi się ręcznie</label>
+              <textarea id="zo" name="opis" required
+                placeholder="Nazwa czynności, jak często się ją robi i ile pozycji ma plik — np. „co miesiąc składamy 14 raportów oddziałów w jedno zestawienie, ok. 2000 wierszy”."></textarea></div>
+            <div class="f"><label for="zp">Przykładowy plik <span class="opt-mark">— opcjonalnie</span></label>
+              <input type="file" id="zp" name="plik" accept=".xls,.xlsx,.xlsm,.csv,.txt,.pdf,.docx,.zip">
+              <span class="hint">Kilka plików najlepiej spakować w jeden .zip. Wystarczy plik przykładowy
+                albo zanonimizowany — załącznik jest przesyłany do nas, więc proszę nie wysyłać danych
+                osobowych ani danych klientów.</span></div>
+            <button class="send" type="submit">Wyślij zapytanie</button>
+            <p class="rodo">Administratorem danych jest Jacek Mroczkiewicz MBS Business Solutions
+              (NIP 7871809487). Dane z formularza służą wyłącznie do odpowiedzi na zapytanie
+              i nie są nikomu przekazywane.</p>
+          </form>
         </div>
         <div class="details">
           <div class="row"><span class="k">Firma</span><span class="v">Jacek Mroczkiewicz<br>MBS Business Solutions</span></div>

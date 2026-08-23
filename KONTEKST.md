@@ -90,6 +90,19 @@ Wyjście: raport `.xlsx` (z dysku) lub `.csv` (na stronie), kolumna do wklejenia
 Licencja: pełny wynik na ekranie, eksport ograniczony do 100 pozycji bez klucza.
 Klucze: `node tools/keygen.js`. Sól jest w kodzie strony, więc to bariera, nie zabezpieczenie.
 
+## Formularz zapytań (od 23.08.2026)
+
+Sekcja Kontakt ma formularz „Zapytanie indywidualne" (imię/firma, e-mail, telefon
+opcjonalnie, opis, jeden załącznik) oparty o **Netlify Forms** — działa tylko na
+hostingu Netlify, nie z dysku ani z innego hostingu. Po wysłaniu przekierowanie na
+`/dziekujemy.html` (w paczce). Przy załączniku stoi ostrzeżenie, żeby nie wysyłać
+danych osobowych — formularz przesyła plik do nas, w przeciwieństwie do narzędzi.
+
+**Do zrobienia raz w panelu Netlify:** Site configuration → Forms → **Enable form
+detection**, potem wgrać paczkę jeszcze raz; następnie Forms → Notifications →
+dodać powiadomienie e-mail na mbs.mroczkiewicz@gmail.com. Darmowy plan: 100 zgłoszeń
+miesięcznie. Zgłoszenia widać w panelu: zakładka Forms → zapytanie.
+
 ## Fakty, na których stoi sprzedaż
 
 - Od rozliczenia za **luty 2026** każda pozycja ewidencji JPK_V7 musi mieć numer KSeF

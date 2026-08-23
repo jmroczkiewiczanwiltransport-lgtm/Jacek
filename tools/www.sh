@@ -9,6 +9,7 @@ cd "$(dirname "$0")/.."
 
 cp dist/strona.html www/index.html
 cp dist/ksef-uzgodnienia.html www/ksef.html
+cp dist/dziekujemy.html www/dziekujemy.html
 
 # Odsylacz do dema musi wskazywac na plik obok, a nie na artefakt w Claude - inaczej
 # link zepsuje sie przy zmianie konta, juz po rozeslaniu go klientom.

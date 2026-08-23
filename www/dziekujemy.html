@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Potwierdzenie wyslania zapytania do MBS Business Solutions.">
+<title>Dziękujemy — MBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    --ground: #F7F8F6; --surface: #FFFFFF; --ink: #151C1E; --ink-muted: #556668;
+    --ink-faint: #869495; --border: #DCE3E0;
+    --accent: #0F6E64; --accent-soft: #E2EEEB; --accent-ink: #0A4A43;
+    --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+    --radius: 3px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0C1213; --surface: #141C1D; --ink: #E6ECEA; --ink-muted: #9BADAC;
+      --ink-faint: #6E8180; --border: #24312E;
+      --accent: #39B39F; --accent-soft: #10302C; --accent-ink: #7FD4C4;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0C1213; --surface: #141C1D; --ink: #E6ECEA; --ink-muted: #9BADAC;
+    --ink-faint: #6E8180; --border: #24312E;
+    --accent: #39B39F; --accent-soft: #10302C; --accent-ink: #7FD4C4;
+  }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    background: var(--ground); color: var(--ink);
+    font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6;
+    padding: 2rem;
+  }
+  .card {
+    max-width: 34rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 2.5rem 2.75rem; text-align: center;
+  }
+  .tile { width: 2.6rem; height: 2.6rem; fill: var(--accent); margin-bottom: 1.1rem; }
+  h1 {
+    font-family: var(--font-display); font-weight: 800; font-size: 1.75rem;
+    letter-spacing: -.02em; margin: 0 0 .8rem; line-height: 1.2;
+  }
+  p { margin: 0 0 .6rem; color: var(--ink-muted); }
+  .promise { font-family: var(--font-mono); font-size: .8125rem; color: var(--accent-ink);
+    background: var(--accent-soft); border-radius: 100px; display: inline-block;
+    padding: .3rem .9rem; margin: .6rem 0 1.2rem; }
+  a.back {
+    font-family: var(--font-display); font-weight: 600; color: var(--accent);
+    text-decoration: none; font-size: .9375rem;
+  }
+  a.back:hover { text-decoration: underline; }
+  a.back:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+</style>
+</head>
+<body>
+
+<main class="card">
+  <svg class="tile" viewBox="0 0 100 100" aria-hidden="true"><path d="M 8 0 H 92 A 8 8 0 0 1 100 8 V 92 A 8 8 0 0 1 92 100 H 8 A 8 8 0 0 1 0 92 V 8 A 8 8 0 0 1 8 0 Z M 22 31 H 78 V 43 H 22 Z M 22 57 H 78 V 69 H 22 Z" fill-rule="evenodd"/></svg>
+  <h1>Zapytanie dotarło</h1>
+  <p>Dziękuję. Przeczytam je i odpowiem na podany adres — także wtedy,
+    gdy odpowiedź brzmi „tego nie umiem policzyć".</p>
+  <div class="promise">odpowiedź w ciągu jednego dnia roboczego</div>
+  <p><a class="back" href="/">&larr; Wróć na stronę</a></p>
+</main>
+</body>
+</html>
