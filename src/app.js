@@ -17,7 +17,11 @@
   var PAT = {
     nip: /\bnip\b|identyfikator\s*(sprzedawcy|nabywcy|podmiotu)|nr\s*ident|tax\s*id|vat\s*id/i,
     inv: /nr\s*fakt|numer\s*fakt|nr\s*dokument|numer\s*dokument|invoice\s*(nr|no|number)|supplier\s*invoice|\bnr\s*fv\b|\bfaktura\b|dokument\s*zakupu/i,
-    ksef: /ksef/i
+    ksef: /ksef/i,
+    /* Kolumna z oznaczeniem OFF/BFK/DI. Slownik zaczynal sie od „flag" i „typ",
+       ale najnaturalniejszy polski naglowek to „oznaczenie" - to samo slowo, ktorym
+       aplikacja poslugiwala sie we wszystkich komunikatach, a ktorego nie rozpoznawala. */
+    flag: /ksef3|oznacz|znacznik|\bflag|\btyp\b|rodzaj|dowod|dowód/i
   };
 
   function txt(v) { return v === null || v === undefined ? '' : String(v).trim(); }
@@ -200,25 +204,52 @@
 
     var ic = byHeader(PAT.inv, kc);
     if (ic < 0) {
+      /* Bez slownikowego naglowka kolumne numeru dokumentu poznajemy po tresci.
+         Sama roznorodnosc nie wystarcza: nazwy kontrahentow sa tak samo rozne,
+         a kwoty tak samo pelne cyfr. Numer dokumentu jako jedyny laczy jedno
+         z drugim - cyfry ORAZ cos poza cyframi (ukosnik, litere, kreske). */
       var bi = -1, bsc = 0, r, seen, tot, dist, v;
+      var bi2 = -1, bsc2 = 0;
       for (i = 0; i < cols; i++) {
         if (i === kc || i === nc) continue;
         seen = {}; tot = 0; dist = 0;
+        var mixed = 0;
         for (r = headerRow; r < Math.min(aoa.length, headerRow + 300); r++) {
           v = txt((aoa[r] || [])[i]);
           if (!v || v.length < 3) continue;
           tot++;
+          if (/\d/.test(v) && /[^\d\s.,]/.test(v)) mixed++;
           if (!seen[v]) { seen[v] = 1; dist++; }
         }
-        if (tot >= 3 && dist / tot > bsc) { bsc = dist / tot; bi = i; }
+        if (tot < 3) continue;
+        if (mixed / tot >= 0.5) {
+          if (dist / tot > bsc) { bsc = dist / tot; bi = i; }
+        } else if (/^\d+$/.test(txt((aoa[headerRow] || [])[i])) === false && dist / tot > bsc2) {
+          /* zapas na rejestry, w ktorych numery dokumentow sa czysto liczbowe */
+          bsc2 = dist / tot; bi2 = i;
+        }
       }
       if (bsc > 0.7) ic = bi;
+      else if (bsc2 > 0.9) ic = bi2;
     }
 
     var fc = -1;
     if (kind === 'reg') {
       for (i = 0; i < cols; i++) {
-        if (i !== kc && /ksef3\b|flag|typ\b|rodzaj/i.test(txt(hdr[i]))) { fc = i; break; }
+        if (i !== kc && PAT.flag.test(txt(hdr[i]))) { fc = i; break; }
+      }
+      /* Naglowek moze nazywac sie u klienta dowolnie, wiec gdy slownik nie trafi,
+         szukamy kolumny po tresci: takiej, w ktorej wartosci sa oznaczeniami z JPK.
+         Bez tego kazdy poprawnie oznaczony wiersz trafial do „bez numeru i bez
+         oznaczenia" - falszywy alarm na najbardziej niepokojacym kaflu. */
+      if (fc < 0) {
+        var bf = -1, bfs = 0, rf;
+        for (i = 0; i < cols; i++) {
+          if (i === kc || i === nc || i === ic) continue;
+          rf = ratio(i, function (v) { return MARKERS.test(v); });
+          if (rf > bfs && rf > 0.6) { bfs = rf; bf = i; }
+        }
+        fc = bf;
       }
     }
 
@@ -266,7 +297,7 @@
 
     var out = {
       filled: [], corrections: [], unclear: [], ok: [], unmatched: [], onlyKsef: [], jpkBlock: [],
-      stats: { rows: 0, ksefRows: ksefRows.length, ok: 0, okAlt: 0, exact: 0, fuzzy: 0, corr: 0, unclear: 0, ambig: 0, none: 0, badMarker: 0 },
+      stats: { rows: 0, ksefRows: ksefRows.length, ksefUniq: Object.keys(ksefSet).length, ok: 0, okAlt: 0, exact: 0, fuzzy: 0, corr: 0, unclear: 0, ambig: 0, none: 0, badMarker: 0 },
       hasFlagCol: R.flag >= 0,
       firstDataRow: regRef.headerRow + 1,
       lastDataRow: regRef.headerRow,
@@ -680,8 +711,10 @@
     var R = S.result, st = R.stats;
 
     $('runMeta').textContent = 'Rejestr: ' + st.rows + ' ' + plural(st.rows, 'wiersz', 'wiersze', 'wierszy') +
-      ' (wiersze ' + R.firstDataRow + '–' + R.lastDataRow + ') · Eksport z KSeF: ' + st.ksefRows + ' ' +
-      plural(st.ksefRows, 'faktura', 'faktury', 'faktur');
+      ' (wiersze ' + R.firstDataRow + '–' + R.lastDataRow + ') · Eksport z KSeF: ' + st.ksefUniq + ' ' +
+      plural(st.ksefUniq, 'faktura', 'faktury', 'faktur') +
+      (st.ksefRows !== st.ksefUniq ? ' w ' + st.ksefRows + ' ' +
+        plural(st.ksefRows, 'wierszu', 'wierszach', 'wierszach') : '');
 
     /* Kolejnosc wedlug pilnosci: najpierw to, co zablokuje ewidencje, potem to, co
        kosztuje pieniadze, na koncu informacje. "Juz zgodne" nie ma kafla - nic z nim
@@ -718,7 +751,11 @@
     if (R.onlyKsef.length) {
       hl.push('<div class="callout is-info"><strong>' + R.onlyKsef.length + ' ' +
         plural(R.onlyKsef.length, 'faktura z KSeF nie ma', 'faktury z KSeF nie mają', 'faktur z KSeF nie ma') +
-        ' odpowiednika w rejestrze</strong><span>Każda z nich to potencjalnie nieodliczony VAT i niezaksięgowany koszt. Sprawdź je przed zamknięciem miesiąca.</span></div>');
+        ' odpowiednika w rejestrze</strong><span>Każda z nich to potencjalnie nieodliczony VAT i niezaksięgowany koszt. Sprawdź je przed zamknięciem miesiąca.' +
+        (R.onlyKsef.length > st.rows / 2
+          ? ' <b>Ta liczba jest duża w stosunku do rejestru</b> — zanim potraktujesz ją jako braki, sprawdź, czy eksport z KSeF obejmuje tylko faktury zakupowe i tylko ten sam okres co rejestr. Faktury sprzedaży i szerszy zakres dat trafiają tutaj, bo w rejestrze zakupu ich nie ma.'
+          : '') +
+        '</span></div>');
     }
     if (st.fuzzy) {
       hl.push('<div class="callout is-warning"><strong>' + st.fuzzy + ' ' +
