@@ -48,19 +48,14 @@ Najwyższa dźwignia z całej listy. Nie chodzi o to, żeby Ci zapłaciła — c
 Księgowe znają księgowe. Jedno polecenie od kogoś z branży jest warte więcej niż
 pięćdziesiąt zimnych maili, bo zdejmuje pytanie „kto to w ogóle jest".
 
-### 2. Biuro obsługujące ANWIL Transport i znani kontrahenci (ten tydzień)
-
-Osoby, które już znają Twoje nazwisko z faktur i korespondencji. Nie jesteś dla nich
-obcy, więc pierwsza wiadomość nie musi się przebijać przez nieufność.
-
-### 3. Lokalnie, w promieniu 50 km (najbliższe dwa tygodnie)
+### 2. Lokalnie, w promieniu 50 km (najbliższe dwa tygodnie)
 
 Dąbrówka Leśna leży pod Obornikami, czyli **Poznań masz w zasięgu** — kilkuset biur
 rachunkowych i tysiące firm. To duża przewaga: możesz się spotkać osobiście, a przy
 sprzedaży narzędzia dotykającego danych księgowych spotkanie zamyka sprawę szybciej
 niż trzy maile.
 
-### 4. Zimne kontakty, dopiero po pierwszym płacącym kliencie
+### 3. Zimne kontakty, dopiero po pierwszym płacącym kliencie
 
 Zanim nie masz jednego klienta i jego zdania, zimna wysyłka spala listę i Twój czas.
 Najpierw dowód, potem skala.
@@ -77,9 +72,15 @@ Najpierw dowód, potem skala.
 |---|---|
 | `69.20.Z` | działalność rachunkowo-księgowa, doradztwo podatkowe — **główny cel** |
 | `70.22.Z` | doradztwo w zakresie prowadzenia działalności — częściowo pokrywa się |
-| `49.41.Z` | transport drogowy towarów — dla przepału floty, Twoja domowa branża |
 
 **KRS** (`ekrs.ms.gov.pl`) — biura prowadzone jako spółki, zwykle większe.
+
+**Czego nie ruszamy:** kontrahentów, biura rachunkowego ani klientów pracodawcy, i żadnej
+listy, która powstała z wiedzy z tamtej pracy. Nazwisko znane z faktur ANWIL Transport
+wygląda jak łatwe wejście, a jest najkrótszą drogą do konfliktu interesów — i do tego, że
+przy pierwszym problemie MBS przestaje być Twoją sprawą, a staje się sprawą pracodawcy.
+Branża transportowa jako cel też wypada: cała działalność MBS ma stać obok tamtej pracy,
+nie na niej.
 
 Rejestry dają nazwę i adres, ale rzadko mail. Mail i telefon uzupełnisz ze strony firmy
 albo z wizytówek poniżej.

@@ -14,9 +14,16 @@ Kontakt: `mbs.mroczkiewicz@gmail.com`. **Telefonu nie ma i celowo nie ma go
 w materiałach** — jedyny dostępny numer należy do pracodawcy. Do załatwienia przed
 pierwszą wysyłką: karta prepaid albo eSIM.
 
-Na co dzień pracuje w firmie transportowej (ANWIL Transport) — stamtąd bierze się
-znajomość procesów: KSeF/JPK na plikach z AS400, paliwo floty, szkolenia kierowców.
-MBS to działalność obok, sprzedawana biurom rachunkowym i firmom.
+Na co dzień pracuje na etacie w firmie transportowej. **MBS ma stać obok tamtej pracy,
+nie na niej** — i to jest twarda zasada, nie preferencja (decyzja z 23.08.2026):
+
+- w materiałach nie ma pracodawcy, jego branży ani „doświadczenia w firmie transportowej",
+- narzędzie do przepału floty **nie jest w ofercie** — usunięte ze strony i z tekstów,
+- transport drogowy nie jest segmentem docelowym,
+- kontrahenci, biuro rachunkowe i klienci pracodawcy **nie są źródłem kontaktów**.
+
+Uzgodnienia KSeF zostają: to problem każdego biura rachunkowego w Polsce, a nie proces
+pracodawcy. Cel sprzedaży to biura rachunkowe i firmy spoza transportu.
 
 ## Co jest zbudowane
 

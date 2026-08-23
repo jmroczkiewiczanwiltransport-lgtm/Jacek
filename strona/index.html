@@ -304,9 +304,6 @@
   /* Dwie odmiany etykiety niosa prawdziwa roznice: co jest gotowe, a co powstaje
      na zamowienie. Bez tego rozroznienia strona obiecuje polke, ktorej nie ma. */
   .svc .tag.custom { background: var(--surface-alt); color: var(--ink-muted); border: 1px solid var(--border); }
-  /* Ostatnia karta jest zbiorcza, wiec zajmuje cala szerokosc - inaczej zostaje sierotka */
-  @media (min-width: 48rem) { .svc.wide { grid-column: 1 / -1; } }
-  .svc.wide .io { max-width: 46rem; }
   .svc h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.015em; }
   .svc > p { color: var(--ink-muted); font-size: .9375rem; }
 
@@ -494,9 +491,9 @@
     <div class="hero" id="gora">
       <div>
         <h1>Robota, którą ktoś u Państwa robi ręcznie po nocach, <em>da się policzyć w minutę.</em></h1>
-        <p class="sub">Uzgodnienia KSeF, raporty paliwowe flot, szkolenia obowiązkowe, arkusze,
-          które nikt nie chce robić. Narzędzia liczące na Państwa komputerze — bez serwera,
-          bez instalacji, bez wysyłania danych w świat.</p>
+        <p class="sub">Uzgodnienia KSeF, szkolenia obowiązkowe, zestawienia z wielu plików,
+          arkusze, których nikt nie chce robić. Narzędzia liczące na Państwa komputerze —
+          bez serwera, bez instalacji, bez wysyłania danych w świat.</p>
         <div class="cta">
           <a class="btn btn-solid" href="#co-robie">Zobacz, co mogę policzyć</a>
           <a class="btn btn-line" href="#kontakt">Napisz w jednej sprawie</a>
@@ -551,10 +548,10 @@
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Co robię</span>
-      <h2>Trzy gotowe narzędzia i robota na zamówienie</h2>
-      <p>Narzędzia oznaczone jako gotowe działają i co miesiąc coś liczą — powstały, bo sam
-        ich potrzebowałem w firmie transportowej. Reszta to praca na zamówienie: opisują
-        Państwo czynność, ja robię narzędzie pod Państwa pliki.</p>
+      <h2>Dwa gotowe narzędzia i robota na zamówienie</h2>
+      <p>Narzędzia oznaczone jako gotowe działają i co miesiąc coś liczą — powstały z konkretnej
+        roboty, którą trzeba było zrobić, nie z pomysłu na produkt. Reszta to praca na
+        zamówienie: opisują Państwo czynność, ja robię narzędzie pod Państwa pliki.</p>
     </div>
 
     <div class="svcs">
@@ -587,18 +584,6 @@
 
       <article class="svc">
         <span class="tag">Gotowe narzędzie</span>
-        <h3>Przepał floty</h3>
-        <p>Liczy nadspalanie i oszczędność paliwa z miesięcznego eksportu tras — per kierowca
-          albo per ciągnik. Pokazuje, z kim trzeba porozmawiać, zamiast ogólnej średniej,
-          z której nic nie wynika.</p>
-        <div class="io">
-          <div><span class="k">Wysyłają</span><span class="v">miesięczny eksport tras z systemu pokładowego</span></div>
-          <div class="out"><span class="k">Dostają</span><span class="v">arkusz z przepałem per kierowca i per pojazd</span></div>
-        </div>
-      </article>
-
-      <article class="svc">
-        <span class="tag">Gotowe narzędzie</span>
         <h3>Szkolenia obowiązkowe</h3>
         <p>Platforma szkoleniowa z materiałem, testem i rejestrem wyników — działająca
           z dysku firmowego, bez serwera i bez abonamentu za każdego pracownika. Z lektorem
@@ -609,7 +594,7 @@
         </div>
       </article>
 
-      <article class="svc wide">
+      <article class="svc">
         <span class="tag custom">Na zamówienie</span>
         <h3>Coś innego, co robi się ręcznie</h3>
         <p>Jeśli u Państwa wzorzec wygląda inaczej — proszę opisać czynność, częstotliwość
@@ -689,7 +674,7 @@
         rozmową.</p>
     </div>
     <p class="price-note">Cennik dotyczy narzędzia <strong>Uzgodnienia KSeF</strong>.
-      Przepał floty i szkolenia obowiązkowe wyceniam podobnie, a pracę na zamówienie —
+      Szkolenia obowiązkowe wyceniam podobnie, a pracę na zamówienie —
       po obejrzeniu plików, zawsze z ceną podaną z góry.</p>
 
     <div class="prices">

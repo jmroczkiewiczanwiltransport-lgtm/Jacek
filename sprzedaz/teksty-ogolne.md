@@ -93,7 +93,7 @@ Kilkanaście plików od różnych osób, w różnych układach kolumn — jeden 
 
 **Policzyć wskaźniki z surowych danych.**
 Z tego, co wypluwa system, zrobić liczbę, którą da się komuś pokazać.
-*Przykład: przepał paliwa per kierowca, rentowność zlecenia po kosztach.*
+*Przykład: koszt na jednostkę po rozbiciu na składniki, rentowność zlecenia po kosztach.*
 
 **Sprawdzić poprawność i kompletność.**
 Braki, duplikaty, złe formaty, sumy które się nie spinają, pozycje bez pary.
@@ -168,7 +168,7 @@ zapamięta ani słowa.
 | optymalizacja procesów biznesowych | to samo, co teraz, tylko bez przepisywania ręcznie |
 | dedykowane narzędzia szyte na miarę | narzędzie pod Państwa pliki |
 | automatyzacja z wykorzystaniem AI | narzędzie, które liczy to samo za każdym razem |
-| wieloletnie doświadczenie w branży | powstało, bo sam tego potrzebowałem w firmie transportowej |
+| wieloletnie doświadczenie w branży | powstało z konkretnej roboty, nie z pomysłu na produkt |
 | zapraszam do kontaktu | proszę napisać, co się robi ręcznie |
 | innowacyjne podejście | *(usuń, nie zastępuj)* |
 | synergia, ekosystem, transformacja cyfrowa | *(usuń, nie zastępuj)* |
