@@ -43,9 +43,14 @@ komputera. **Granica bez zmian:** narzędzie liczy i składa plik; mapowanie kon
 klasyfikacje i zatwierdzenie wyniku należą do księgowej — kwota podatku jest
 wynikiem JEJ decyzji mapowania, do zweryfikowania z jej CIT-8, nie poradą podatkową.
 
-Cena: generator to inna półka niż kontroler — moduły JPK_CIT u producentów
-oprogramowania kosztują setki-tysiące zł rocznie. Szkic: 490 zł/rok za firmę
-albo w pakiecie z KSeF. Do decyzji po v0.
+Cena (kotwice rynkowe sprawdzone 24.08.2026): wdrożenia ERP z JPK_CIT to
+10–40 tys. zł + 6–15 tys./rok utrzymania; moduły programów księgowych od ~1,2 tys.
+za stanowisko + 30–50% licencji rocznie za aktualizacje, a JPK_CIT często wymusza
+płatny upgrade. Biuro rachunkowe nie kupi żadnej z tych opcji — nasza półka jest
+pomiędzy. Propozycja: **wdrożenie 2 900 zł netto za biuro** (z mapowaniem pierwszej
+spółki i wyjściem na wynik zgodny z CIT-8) + **utrzymanie 990 zł/rok** (aktualizacje
+struktur MF — wersja (2) przyjdzie — poprawki, wsparcie; bez limitu spółek);
+etap ŚT (+900 zł), gdy obowiązek dojdzie. Do decyzji po v0.
 
 ## Kontrole (wersja 0 — do zweryfikowania na prawdziwym pliku)
 
