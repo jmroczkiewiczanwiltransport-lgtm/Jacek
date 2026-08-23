@@ -298,16 +298,7 @@
     display: flex; flex-direction: column; gap: .8rem;
   }
   .svc.flag { border-color: var(--accent); border-width: 1.5px; }
-  .svc .tag {
-    align-self: flex-start;
-    font-family: var(--font-display); font-size: .625rem; font-weight: 700;
-    letter-spacing: .12em; text-transform: uppercase;
-    background: var(--accent-soft); color: var(--accent-ink);
-    padding: .2rem .55rem; border-radius: 100px;
-  }
-  /* Dwie odmiany etykiety niosa prawdziwa roznice: co jest gotowe, a co powstaje
-     na zamowienie. Bez tego rozroznienia strona obiecuje polke, ktorej nie ma. */
-  .svc .tag.custom { background: var(--surface-alt); color: var(--ink-muted); border: 1px solid var(--border); }
+  /* Roznice gotowe / na zamowienie niosa teraz osobne sekcje, nie etykiety na kartach. */
   .svc h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.015em; }
   .svc > p { color: var(--ink-muted); font-size: .9375rem; }
 
@@ -615,7 +606,8 @@
         <span class="desc">narzędzia liczące</span>
       </a>
       <nav>
-        <a href="#co-robie">Co robię</a>
+        <a href="#co-robie">Narzędzia</a>
+        <a href="#zamowienia">Na zamówienie</a>
         <a href="#szkolenia">Szkolenia</a>
         <a href="#cennik">Cennik</a>
         <a href="#jak">Jak to działa</a>
@@ -683,17 +675,15 @@
 <section id="co-robie">
   <div class="wrap">
     <div class="head">
-      <span class="eyebrow">Co robię</span>
-      <h2>Dwa gotowe narzędzia i robota na zamówienie</h2>
-      <p>Narzędzia oznaczone jako gotowe działają i co miesiąc coś liczą — powstały z konkretnej
-        roboty, którą trzeba było zrobić, nie z pomysłu na produkt. Reszta to praca na
-        zamówienie: opisują Państwo czynność, ja robię narzędzie pod Państwa pliki.</p>
+      <span class="eyebrow">Gotowe narzędzia</span>
+      <h2>Działają dziś — sprawdzają Państwo na własnym pliku</h2>
+      <p>Powstały z konkretnej roboty, którą trzeba było zrobić co miesiąc, nie z pomysłu
+        na produkt. Płatność po zobaczeniu wyniku na własnych danych.</p>
     </div>
 
     <div class="svcs">
 
       <article class="svc flag">
-        <span class="tag">Gotowe narzędzie</span>
         <h3>Uzgodnienia KSeF</h3>
         <p>Zestawia eksport z KSeF z rejestrem zakupu. Uzupełnia brakujące numery, wyłapuje
           wpisane błędnie, a przede wszystkim wskazuje faktury, które są w KSeF, ale nie ma
@@ -706,20 +696,6 @@
       </article>
 
       <article class="svc">
-        <span class="tag custom">Na zamówienie</span>
-        <h3>Wiele plików w jedno zestawienie</h3>
-        <p>Kilkanaście plików od różnych osób, w różnych układach kolumn, z nagłówkami
-          w różnych wierszach. Na wyjściu jeden arkusz o tej samej strukturze za każdym
-          razem. To najczęstsza robota po uzgodnieniach — i najczęściej ta, którą ktoś
-          składa ręcznie od lat.</p>
-        <div class="io">
-          <div><span class="k">Wysyłają</span><span class="v">pliki źródłowe i przykład gotowego zestawienia</span></div>
-          <div class="out"><span class="k">Dostają</span><span class="v">narzędzie, które składa je w jeden arkusz</span></div>
-        </div>
-      </article>
-
-      <article class="svc">
-        <span class="tag">Gotowe narzędzie</span>
         <h3>Szkolenia obowiązkowe</h3>
         <p>Platforma szkoleniowa z materiałem, testem i rejestrem wyników — działająca
           z dysku firmowego, bez serwera i bez abonamentu za każdego pracownika. Z lektorem
@@ -731,22 +707,50 @@
         <a class="more" href="#szkolenia">Zobacz, jak to jest zbudowane &rarr;</a>
       </article>
 
-      <article class="svc">
-        <span class="tag custom">Na zamówienie</span>
-        <h3>Coś innego, co robi się ręcznie</h3>
-        <p>Jeśli u Państwa wzorzec wygląda inaczej — proszę opisać czynność, częstotliwość
-          i liczbę pozycji. Odpowiem, czy da się to policzyć i ile by to kosztowało, także
-          wtedy gdy odpowiedź brzmi „nie". Nie biorę zleceń, których nie umiem policzyć,
-          i mówię to na pierwszej rozmowie, a nie po miesiącu.</p>
-        <div class="io">
-          <div><span class="k">Wysyłają</span><span class="v">opis czynności i przykładowe pliki</span></div>
-          <div class="out"><span class="k">Dostają</span><span class="v">odpowiedź w jeden dzień, a jeśli się da — wycenę</span></div>
-        </div>
-      </article>
-
     </div>
   </div>
 </section>
+
+<div class="band">
+  <section id="zamowienia">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Na zamówienie</span>
+        <h2>Narzędzie pod Państwa pliki, wycena przed startem</h2>
+        <p>Opisują Państwo czynność, ja robię narzędzie, które ją wykonuje. Cena podana
+          z góry, po obejrzeniu plików — i uczciwe „nie", jeśli czegoś nie umiem policzyć.</p>
+      </div>
+
+      <div class="svcs">
+
+        <article class="svc">
+          <h3>Wiele plików w jedno zestawienie</h3>
+          <p>Kilkanaście plików od różnych osób, w różnych układach kolumn, z nagłówkami
+            w różnych wierszach. Na wyjściu jeden arkusz o tej samej strukturze za każdym
+            razem. To najczęstsza robota po uzgodnieniach — i najczęściej ta, którą ktoś
+            składa ręcznie od lat.</p>
+          <div class="io">
+            <div><span class="k">Wysyłają</span><span class="v">pliki źródłowe i przykład gotowego zestawienia</span></div>
+            <div class="out"><span class="k">Dostają</span><span class="v">narzędzie, które składa je w jeden arkusz</span></div>
+          </div>
+        </article>
+
+        <article class="svc">
+          <h3>Coś innego, co robi się ręcznie</h3>
+          <p>Jeśli u Państwa wzorzec wygląda inaczej — proszę opisać czynność, częstotliwość
+            i liczbę pozycji. Odpowiem, czy da się to policzyć i ile by to kosztowało, także
+            wtedy gdy odpowiedź brzmi „nie". Nie biorę zleceń, których nie umiem policzyć,
+            i mówię to na pierwszej rozmowie, a nie po miesiącu.</p>
+          <div class="io">
+            <div><span class="k">Wysyłają</span><span class="v">opis czynności i przykładowe pliki</span></div>
+            <div class="out"><span class="k">Dostają</span><span class="v">odpowiedź w jeden dzień, a jeśli się da — wycenę</span></div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+</div>
 
 <section id="wzorzec">
   <div class="wrap">
