@@ -65,6 +65,19 @@ grup są tysiące — wszystkie z tym samym problemem w tym samym terminie.
 - uwaga wdrożeniowa: sprzedaż korporacyjna = umowa, wymagania zakupowe,
   odpowiedzialność — do przygotowania przed rozmową (wzór umowy, zakres SLA).
 
+**Warunki pilota (zaakceptowane przez właściciela 24.08.2026):** cena pilotażowa
+w zamian za pakiet referencyjny — wszystko wpisane do umowy, nie „na gębę":
+1. **referencja pisemna** podpisana przez główną księgową / dyrektora finansowego,
+2. **logo i nazwa firmy na stronie MBS** + zgoda na case study (jedna strona:
+   problem → wdrożenie → wynik; kwoty firmy nie padają) — wymaga zgody działu
+   marketingu/centrali, załatwić na początku, nie na końcu,
+3. **polecenie wewnątrz grupy**: przedstawienie do 2–3 innych polskich spółek
+   grupy albo zaprzyjaźnionych firm z tym samym problemem,
+4. prawo MBS do podawania firmy jako klienta referencyjnego w rozmowach handlowych.
+
+Jeśli firma nie może dać logo (polityka centrali) — cena pilotażowa rośnie o ~30%
+albo zamieniamy na referencję anonimizowaną („międzynarodowa grupa z branży X").
+
 **B. Biura rachunkowe (wolumen — później):** wdrożenie 2 900 zł + 990 zł/rok
 bez limitu spółek. Ten segment rusza po pilocie z segmentu A.
 
