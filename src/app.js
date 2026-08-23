@@ -1070,7 +1070,7 @@
     var fm = $('fillMsg'); if (fm) { fm.textContent = ''; fm.className = 'licmsg'; }
     note.innerHTML = (S.result && hasFormulas(S.regRef.file.wb, S.regRef.sheet))
       ? '<strong style="color:var(--warning)">Uwaga:</strong> ten rejestr zawiera formuły lub łącza zewnętrzne. Zapis przez przeglądarkę może je uszkodzić. Jeśli plik idzie pod JPK — użyj kolumny do wklejenia.'
-      : 'Twój plik rejestru z wpisanymi numerami KSeF.';
+      : 'Twój plik rejestru z wpisanymi numerami KSeF. Dopisane i poprawione numery są podświetlone na złoto — od razu widać, co zrobiło narzędzie.';
   }
 
   function csvCell(v) {
@@ -1298,13 +1298,21 @@
       if (!S.licensed && r - R.firstDataRow >= FREE_ROWS) { held++; continue; }
       written++;
       addr = XLSX.utils.encode_cell({ r: r - 1, c: col });
-      ws[addr] = { t: 's', v: v };
+      /* Dopisane i poprawione numery dostaja zlote podswietlenie - w pliku
+         od razu widac, co zrobilo narzedzie, a co bylo w rejestrze wczesniej. */
+      ws[addr] = { t: 's', v: v, s: {
+        fill: { patternType: 'solid', fgColor: { rgb: 'FFF1CC' } },
+        font: { bold: true, color: { rgb: '8A6220' } }
+      } };
     }
     if (ws['!ref']) {
       var rng = XLSX.utils.decode_range(ws['!ref']);
       if (col > rng.e.c) { rng.e.c = col; ws['!ref'] = XLSX.utils.encode_range(rng); }
     }
-    XLSX.writeFile(wb, ref.file.name.replace(/\.[^.]+$/, '') + '_UZUPELNIONY.xlsx');
+    /* Zapis silnikiem ze stylami, jesli jest w tym buildzie; podstawowy XLSX
+       zapisze plik poprawnie, tylko bez podswietlenia. */
+    (typeof XLSXStyle !== 'undefined' ? XLSXStyle : XLSX)
+      .writeFile(wb, ref.file.name.replace(/\.[^.]+$/, '') + '_UZUPELNIONY.xlsx');
     /* Bez tego zdania kazdy myli numery, ktore BYLY w rejestrze, z dopisanymi -
        i albo widzi "demo oddalo wszystko", albo "licencja nic nie dala". */
     var msg = $('fillMsg');

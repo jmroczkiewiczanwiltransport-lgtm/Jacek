@@ -35,6 +35,12 @@ FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="pre
   printf '</head>\n<body>\n'
   sed "s/__WERSJA__/$WERSJA/" src/app.body.html
   printf '<script>\n'; cat vendor/xlsx.full.min.js; printf '\n</script>\n'
+  # Drugi silnik, wylacznie do zapisu rejestru: ten sam SheetJS 0.18.5, ale
+  # z zapisem stylow (podswietlenie dopisanych numerow). Owiniety, zeby nie
+  # nadpisal globalnego XLSX.
+  printf '<script>\nvar XLSXStyle=(function(){var exports={};var module={exports:exports};\n'
+  cat vendor/xlsx.style.min.js
+  printf '\nreturn module.exports;})();\n</script>\n'
   printf '<script>\n'; cat src/app.js; printf '\n</script>\n'
   printf '</body>\n</html>\n'
 } > dist/ksef-uzgodnienia.html
