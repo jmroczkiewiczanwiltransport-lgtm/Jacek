@@ -1065,6 +1065,9 @@
       return;
     }
     btn.disabled = false;
+    fillArmed = false;
+    btn.textContent = 'Pobierz uzupełniony rejestr';
+    var fm = $('fillMsg'); if (fm) { fm.textContent = ''; fm.className = 'licmsg'; }
     note.innerHTML = (S.result && hasFormulas(S.regRef.file.wb, S.regRef.sheet))
       ? '<strong style="color:var(--warning)">Uwaga:</strong> ten rejestr zawiera formuły lub łącza zewnętrzne. Zapis przez przeglądarkę może je uszkodzić. Jeśli plik idzie pod JPK — użyj kolumny do wklejenia.'
       : 'Twój plik rejestru z wpisanymi numerami KSeF.';
@@ -1274,7 +1277,19 @@
     }
   });
 
+  /* Ostrzezenie tekstowe nie wystarczylo - uzytkownik pobral plik z formulami
+     i Excel go "naprawil" (#NAZWA?). Przy formulach pierwsze klikniecie tylko
+     uzbraja przycisk i mowi wprost, co grozi; pobiera dopiero drugie. */
+  var fillArmed = false;
   $('dlFilled').addEventListener('click', function () {
+    var fmsg = $('fillMsg');
+    if (!fillArmed && S.result && hasFormulas(S.regRef.file.wb, S.regRef.sheet)) {
+      fillArmed = true;
+      this.textContent = 'Pobierz mimo ryzyka utraty formuł';
+      fmsg.className = 'licmsg warn';
+      fmsg.textContent = 'Ten plik ma formuły — zapis przez przeglądarkę zamienia je na wartości albo psuje (#NAZWA?). Bezpieczna droga: „Kolumna do wklejenia”. Jeśli mimo to chcesz plik, kliknij jeszcze raz.';
+      return;
+    }
     var ref = S.regRef, wb = ref.file.wb, ws = wb.Sheets[ref.sheet];
     var col = ref.map.ksef, R = S.result, r, v, addr, written = 0, held = 0;
     for (r = R.firstDataRow; r <= R.lastDataRow; r++) {
@@ -1292,7 +1307,7 @@
     XLSX.writeFile(wb, ref.file.name.replace(/\.[^.]+$/, '') + '_UZUPELNIONY.xlsx');
     /* Bez tego zdania kazdy myli numery, ktore BYLY w rejestrze, z dopisanymi -
        i albo widzi "demo oddalo wszystko", albo "licencja nic nie dala". */
-    var msg = $('copyMsg');
+    var msg = $('fillMsg');
     msg.className = 'licmsg ' + (held ? 'warn' : 'ok');
     msg.textContent = 'Dopisano ' + written + ' ' + plural(written, 'numer', 'numery', 'numerów') +
       (held ? '; ' + held + ' ' + plural(held, 'dopisek wstrzymany', 'dopiski wstrzymane', 'dopisków wstrzymanych') +

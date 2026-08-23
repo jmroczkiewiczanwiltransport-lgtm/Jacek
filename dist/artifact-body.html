@@ -505,7 +505,7 @@ textarea.paste { font-family: var(--font-mono); font-size: .75rem; min-height: 8
             <h3>Rejestr z uzupełnioną kolumną <span class="demo-pill" data-demo hidden>DEMO</span></h3>
             <p id="fillNote">Twój plik rejestru z wpisanymi numerami KSeF.</p>
             <p class="demo-what" data-demo hidden>W wersji demo: dopisuje numery w pierwszych 100 wierszach rejestru. Numery, które już są w pliku, zostają nietknięte.</p>
-            <div class="rowbtns"><button class="btn" id="dlFilled">Pobierz uzupełniony rejestr</button></div>
+            <div class="rowbtns"><button class="btn" id="dlFilled">Pobierz uzupełniony rejestr</button><span id="fillMsg" class="licmsg" aria-live="polite"></span></div>
           </div>
         </div>
       </div>
@@ -529,7 +529,7 @@ textarea.paste { font-family: var(--font-mono); font-size: .75rem; min-height: 8
   <footer class="foot">
     <span>Cała praca odbywa się w przeglądarce. Żaden plik nie jest nigdzie wysyłany.</span>
     <span>Plik KSeF jest źródłem prawdy — korekty nanieś też w programie księgowym.</span>
-    <span>wersja 2026-08-23 19:37 · 084545b</span>
+    <span>wersja 2026-08-23 19:49 · 764c2f8</span>
   </footer>
 </div>
 <script>
@@ -1618,6 +1618,9 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       return;
     }
     btn.disabled = false;
+    fillArmed = false;
+    btn.textContent = 'Pobierz uzupełniony rejestr';
+    var fm = $('fillMsg'); if (fm) { fm.textContent = ''; fm.className = 'licmsg'; }
     note.innerHTML = (S.result && hasFormulas(S.regRef.file.wb, S.regRef.sheet))
       ? '<strong style="color:var(--warning)">Uwaga:</strong> ten rejestr zawiera formuły lub łącza zewnętrzne. Zapis przez przeglądarkę może je uszkodzić. Jeśli plik idzie pod JPK — użyj kolumny do wklejenia.'
       : 'Twój plik rejestru z wpisanymi numerami KSeF.';
@@ -1827,7 +1830,19 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     }
   });
 
+  /* Ostrzezenie tekstowe nie wystarczylo - uzytkownik pobral plik z formulami
+     i Excel go "naprawil" (#NAZWA?). Przy formulach pierwsze klikniecie tylko
+     uzbraja przycisk i mowi wprost, co grozi; pobiera dopiero drugie. */
+  var fillArmed = false;
   $('dlFilled').addEventListener('click', function () {
+    var fmsg = $('fillMsg');
+    if (!fillArmed && S.result && hasFormulas(S.regRef.file.wb, S.regRef.sheet)) {
+      fillArmed = true;
+      this.textContent = 'Pobierz mimo ryzyka utraty formuł';
+      fmsg.className = 'licmsg warn';
+      fmsg.textContent = 'Ten plik ma formuły — zapis przez przeglądarkę zamienia je na wartości albo psuje (#NAZWA?). Bezpieczna droga: „Kolumna do wklejenia”. Jeśli mimo to chcesz plik, kliknij jeszcze raz.';
+      return;
+    }
     var ref = S.regRef, wb = ref.file.wb, ws = wb.Sheets[ref.sheet];
     var col = ref.map.ksef, R = S.result, r, v, addr, written = 0, held = 0;
     for (r = R.firstDataRow; r <= R.lastDataRow; r++) {
@@ -1845,7 +1860,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     XLSX.writeFile(wb, ref.file.name.replace(/\.[^.]+$/, '') + '_UZUPELNIONY.xlsx');
     /* Bez tego zdania kazdy myli numery, ktore BYLY w rejestrze, z dopisanymi -
        i albo widzi "demo oddalo wszystko", albo "licencja nic nie dala". */
-    var msg = $('copyMsg');
+    var msg = $('fillMsg');
     msg.className = 'licmsg ' + (held ? 'warn' : 'ok');
     msg.textContent = 'Dopisano ' + written + ' ' + plural(written, 'numer', 'numery', 'numerów') +
       (held ? '; ' + held + ' ' + plural(held, 'dopisek wstrzymany', 'dopiski wstrzymane', 'dopisków wstrzymanych') +
