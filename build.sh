@@ -68,7 +68,7 @@ standalone() {
 }
 
 standalone strona/index.html dist/strona.html \
-  "Uzgodnienia KSeF, szkolenia obowiazkowe i arkusze na zamowienie. Narzedzia liczace lokalnie, bez serwera."
+  "Uzgodnienia KSeF, platforma e-learningowa dla firm i arkusze na zamowienie. Narzedzia liczace lokalnie, bez serwera."
 standalone sprzedaz/oferta.html dist/oferta.html \
   "Oferta narzedzia KSeF Uzgodnienia dla biur rachunkowych - cennik i zasady wspolpracy."
 standalone strona/dziekujemy.html dist/dziekujemy.html \

@@ -136,7 +136,15 @@ Materiał, pytania, próg i decyzja, kto szkoli, są klienta — tam, gdzie prze
 uprawnionego szkolącego, narzędzie go nie zastępuje. Bez tego zdania oferta obiecuje
 uprawnienia, których nie ma.
 
-Cena: **do ustalenia.** Na stronie stoi „wycena po obejrzeniu materiału, jednorazowo,
+Cena (propozycja Claude z 23.08.2026, jawnie na stronie): **2 900 zł netto jednorazowo**
+za platformę z pierwszym szkoleniem, **od 900 zł** każde kolejne szkolenie; dokładna cena
+po obejrzeniu materiału, z góry. Uzasadnienie: kotwica 20× abonament KSeF; zewnętrzne
+platformy e-learningowe to koszt rzędu dziesiątek tysięcy + abonamenty per pracownik.
+Hasło sekcji: „Platforma e-learningowa Twojej firmy". Do sekcji doszła też złota ramka:
+pracownik przechodzi szkolenie sam i sam wypełnia test, udział prowadzącego może
+ograniczyć się do podsumowania — tam, gdzie charakter szkolenia na to pozwala.
+
+Stara notatka: cena była **do ustalenia.** Na stronie stoi „wycena po obejrzeniu materiału, jednorazowo,
 z ceną podaną z góry" — to jest uczciwe, ale kwoty nadal nie ma i trzeba ją wymyślić
 przed pierwszą rozmową.
 

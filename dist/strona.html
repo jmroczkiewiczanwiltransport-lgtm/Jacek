@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Uzgodnienia KSeF, szkolenia obowiazkowe i arkusze na zamowienie. Narzedzia liczace lokalnie, bez serwera.">
+<meta name="description" content="Uzgodnienia KSeF, platforma e-learningowa dla firm i arkusze na zamowienie. Narzedzia liczace lokalnie, bez serwera.">
 <title>MBS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -367,6 +367,16 @@
   }
   .svc .more:hover { text-decoration: underline; }
   .svc .more:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ─ zlota ramka na obietnicy - to samo zloto, co przy gotowych narzedziach ─ */
+  .gold-note {
+    margin-top: 1.4rem; max-width: 58ch;
+    border: 1.5px solid var(--gold); border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    background: color-mix(in srgb, var(--gold) 7%, transparent);
+    color: var(--ink-muted);
+  }
+  .gold-note strong { color: var(--gold-deep); }
 
   /* ─ zloto gotowych narzedzi ─ */
   #co-robie .eyebrow { color: var(--gold); }
@@ -1023,11 +1033,19 @@
   <section id="szkolenia">
     <div class="wrap">
       <div class="head">
-        <span class="eyebrow">Szkolenia obowiązkowe</span>
+        <span class="eyebrow">Platforma e-learningowa Twojej firmy</span>
         <h2>Kontrola nie pyta, czy szkolenie było. Pyta o protokół</h2>
         <p>Materiał zwykle jest — w Wordzie, w prezentacji, w głowie jednej osoby. Nie ma
           narzędzia, które przeprowadzi przez niego pracownika, sprawdzi, że rozumie,
           i wypluje listę z datami i wynikami. To robię.</p>
+        <p>Dotyczy każdego szkolenia, które ma się w firmie odbyć i zostać udokumentowane:
+          <strong>obowiązkowych</strong> (BHP, RODO, procedury), <strong>stanowiskowych</strong>
+          przy wdrażaniu nowych pracowników i <strong>cyklicznych</strong> — powtarzanych
+          co rok czy dwa, z terminem następnego podejścia pilnowanym w protokole.</p>
+        <p class="gold-note"><strong>Pracownik przechodzi tak przygotowane szkolenie
+          sam</strong> — w swoim tempie i terminie, bez zbierania ludzi na sali — i sam
+          wypełnia test. Udział prowadzącego może ograniczyć się do podsumowania wyników,
+          tam gdzie charakter szkolenia na to pozwala.</p>
       </div>
 
       <div class="szk">
@@ -1162,7 +1180,12 @@
         </div>
       </div>
 
-      <a class="more" href="#zapytanie" style="margin-top:2rem;display:inline-flex">Zapytaj o wycenę platformy — wyślij materiał przez formularz &rarr;</a>
+      <p class="price-note" style="margin-top:2.5rem"><strong>Ile to kosztuje:</strong>
+        platforma z pierwszym szkoleniem — zwykle <strong>2&nbsp;900 zł netto</strong>,
+        jednorazowo, bez abonamentu. Każde kolejne szkolenie na tej samej platformie
+        od <strong>900 zł</strong>. Dokładna cena po obejrzeniu materiału — podana z góry,
+        przed rozpoczęciem.</p>
+      <a class="more" href="#zapytanie" style="margin-top:.9rem;display:inline-flex">Zapytaj o wycenę platformy — wyślij materiał przez formularz &rarr;</a>
 
       <div class="limit">
         <span class="pk">czego nie robię</span>
@@ -1184,8 +1207,9 @@
         rozmową.</p>
     </div>
     <p class="price-note">Cennik dotyczy narzędzia <strong>Uzgodnienia KSeF</strong>.
-      Platformę szkoleniową i pracę na zamówienie wyceniam po obejrzeniu materiału —
-      jednorazowo, zawsze z ceną podaną z góry, przed rozpoczęciem.
+      Platforma e-learningowa: zwykle 2&nbsp;900 zł netto jednorazowo z pierwszym
+      szkoleniem, kolejne szkolenia od 900 zł. Pracę na zamówienie wyceniam po obejrzeniu
+      plików — zawsze z ceną podaną z góry, przed rozpoczęciem.
       <a href="#zapytanie" style="color:var(--accent);font-weight:600;text-decoration:none">Wyślij materiał do wyceny &rarr;</a></p>
 
     <div class="prices">
