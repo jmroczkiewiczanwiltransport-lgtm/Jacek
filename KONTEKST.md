@@ -70,7 +70,7 @@ kandydacie. **Plik KSeF jest źródłem prawdy.**
 
 **Kwoty i daty (od 23.08.2026, na prośbę pierwszej użytkowniczki — księgowej):**
 opcjonalne kolumny w obu plikach — data wystawienia, data otrzymania, kwota netto,
-VAT, brutto. Porównywane tylko gdy wskazane w OBU plikach, dla pozycji dopasowanych
+kwota VAT. Brutto usunięte na wskazanie księgowej (nie ma go w ewidencji). Porównywane tylko gdy wskazane w OBU plikach, dla pozycji dopasowanych
 do faktury z KSeF. Rozbieżności lądują w zakładce „Kwoty i daty" i w osobnym arkuszu
 raportu. Próg kwot: 1 grosz. Daty: Excel-serial i tekst traktowane równoważnie.
 Pole wskazane tylko po jednej stronie nie blokuje uzgodnienia — jest o tym miękki
@@ -78,7 +78,7 @@ komunikat, żeby nikt nie myślał, że kwoty sprawdzono, gdy nie sprawdzono.
 
 **Kierunek potwierdzony przez księgową (23.08.2026): sprawdzenie kompleksowe pod JPK,
 nie tylko numery KSeF.** W związku z tym: słowniki nagłówków znają nazwy pól ewidencji
-JPK_V7 (NrDostawcy, DowodZakupu, DataZakupu, DataWpływu, NrKSeF, K_40–K_43) oraz
+JPK_V7 (NrDostawcy, DowodZakupu, DataZakupu, DataWpływu, NrKSeF, K_40–K_45; K_46/K_47 to korekty — celowo poza słownikiem) oraz
 angielskie (Invoice Date, Posting date/VAT Date, Net/Gross); NIP-y w rejestrze przechodzą
 walidację sumy kontrolnej (błędne → „Do wyjaśnienia" + komunikat — taki wpis nie
 przejdzie w JPK niezależnie od numeru KSeF); kolumna z „date/data" w nagłówku nigdy nie

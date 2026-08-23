@@ -29,9 +29,8 @@
        uzytkowniczki: sama zgodnosc numerow nie wystarcza, kwoty i daty tez. */
     iss:   /wystawien|data\s*wyst|invoice\s*date|data\s*fakt|data\s*_?zakupu|datazakupu/i,
     rec:   /otrzym|wpływ|wplyw|przyjec|przyjęc|data\s*otrz|do\s*vat|vat\s*date|posting|ksiegowan|księgowan/i,
-    net:   /netto|\bnet\b|^k_?4[02]$/i,
-    vat:   /kwota\s*vat|podatek|\bvat\b|^k_?4[13]$/i,
-    gross: /brutto|\bgross\b/i
+    net:   /netto|\bnet\b|^k_?4[024]$/i,
+    vat:   /kwota\s*vat|podatek|\bvat\b|^k_?4[135]$/i
   };
 
   /* Pola opcjonalne porownywane miedzy plikami: klucz, etykieta, typ wartosci. */
@@ -39,8 +38,7 @@
     ['iss',   'data wystawienia', 'date'],
     ['rec',   'data otrzymania',  'date'],
     ['net',   'kwota netto',      'amt'],
-    ['vat',   'kwota VAT',        'amt'],
-    ['gross', 'kwota brutto',     'amt']
+    ['vat',   'kwota VAT',        'amt']
   ];
 
   function txt(v) { return v === null || v === undefined ? '' : String(v).trim(); }
