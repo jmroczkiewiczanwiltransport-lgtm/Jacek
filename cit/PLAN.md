@@ -68,6 +68,17 @@ wiersza/zapisu, raport .xlsx, komunikaty po polsku, znaczniki DEMO + klucz
 licencyjny (ta sama sól i keygen — jeden klucz MBS może obsługiwać oba narzędzia
 albo osobne pule: do decyzji przy wdrożeniu).
 
+## Rok wzorcowy: 2025 (ustalone 24.08.2026)
+
+Testujemy na zamkniętym roku 2025 — właściciel ma dostęp do kompletu danych od
+Alicji. Rok zamknięty = znamy prawidłowy wynik i kwotę podatku z CIT-8, więc
+v0 ma jednoznaczny cel: **wyjść na jej liczby co do grosza.** Każda rozbieżność
+to albo błąd narzędzia, albo różnica w mapowaniu — obie rzeczy chcemy zobaczyć.
+
+Zasada przy danych: to są księgi prawdziwej spółki. Kwoty muszą zostać prawdziwe
+(inaczej wzorzec nie działa), ale nazwy kontrahentów można zanonimizować, jeśli
+Alicja sobie tego życzy — dla obliczeń są nieistotne. Decyzja należy do niej.
+
 ## Czego potrzebuję, zanim napiszę pierwszą linię (lista po odpowiedzi Alicji)
 
 1. **XSD struktury JPK_KR_PD(1) + broszura MF** — Alicja już deklaruje: „przygotuję
