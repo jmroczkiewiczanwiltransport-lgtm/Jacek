@@ -15,20 +15,23 @@
   var MARKERS = /^(OFF|BFK|DI)$/i;
 
   var PAT = {
-    nip: /\bnip\b|identyfikator\s*(sprzedawcy|nabywcy|podmiotu)|nr\s*ident|tax\s*id|vat\s*id/i,
-    inv: /nr\s*fakt|numer\s*fakt|nr\s*dokument|numer\s*dokument|invoice\s*(nr|no|number)|supplier\s*invoice|\bnr\s*fv\b|\bfaktura\b|dokument\s*zakupu/i,
+    /* Slowniki obejmuja tez nazwy pol z ewidencji JPK_V7 (NrDostawcy, DowodZakupu,
+       DataZakupu, DataWplywu) - rejestry eksportowane z programow ksiegowych
+       czesto nazywaja kolumny dokladnie tak. */
+    nip: /\bnip\b|identyfikator\s*(sprzedawcy|nabywcy|podmiotu)|nr\s*ident|tax\s*id|vat\s*id|nr\s*_?dostawcy|nrdostawcy|nr\s*kontrahenta/i,
+    inv: /nr\s*fakt|numer\s*fakt|nr\s*dokument|numer\s*dokument|invoice\s*(nr|no|number)|supplier\s*invoice|\bnr\s*fv\b|\bfaktura\b|dokument\s*zakupu|dowod\s*_?zakupu|dowodzakupu/i,
     ksef: /ksef/i,
     /* Kolumna z oznaczeniem OFF/BFK/DI. Slownik zaczynal sie od „flag" i „typ",
        ale najnaturalniejszy polski naglowek to „oznaczenie" - to samo slowo, ktorym
        aplikacja poslugiwala sie we wszystkich komunikatach, a ktorego nie rozpoznawala. */
-    flag: /ksef3|oznacz|znacznik|\bflag|\btyp\b|rodzaj|dowod|dowód/i,
+    flag: /ksef3|oznacz|znacznik|\bflag|\btyp\b|rodzaj/i,
     /* Kolumny do pelnego sprawdzenia pod JPK VAT - dodane po notatce pierwszej
        uzytkowniczki: sama zgodnosc numerow nie wystarcza, kwoty i daty tez. */
-    iss:   /wystawien|data\s*wyst/i,
-    rec:   /otrzym|wpływ|wplyw|przyjec|przyjęc|data\s*otrz/i,
-    net:   /netto/i,
-    vat:   /kwota\s*vat|podatek|\bvat\b/i,
-    gross: /brutto/i
+    iss:   /wystawien|data\s*wyst|invoice\s*date|data\s*fakt|data\s*_?zakupu|datazakupu/i,
+    rec:   /otrzym|wpływ|wplyw|przyjec|przyjęc|data\s*otrz|do\s*vat|vat\s*date|posting|ksiegowan|księgowan/i,
+    net:   /netto|\bnet\b|^k_?4[02]$/i,
+    vat:   /kwota\s*vat|podatek|\bvat\b|^k_?4[13]$/i,
+    gross: /brutto|\bgross\b/i
   };
 
   /* Pola opcjonalne porownywane miedzy plikami: klucz, etykieta, typ wartosci. */
@@ -73,6 +76,14 @@
   }
   function normInv(v) { return txt(v).toUpperCase().replace(/\s+/g, ''); }
   function alnum(v) { return txt(v).toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+  /* Wagi sumy kontrolnej NIP; ostatnia cyfra musi byc rowna sumie mod 11. */
+  function nipValid(n) {
+    if (!/^\d{10}$/.test(n)) return false;
+    var w = [6, 5, 7, 2, 3, 4, 5, 6, 7], sum = 0, i;
+    for (i = 0; i < 9; i++) sum += w[i] * +n[i];
+    return sum % 11 === +n[9];
+  }
+
   function normNip(v) { return txt(v).replace(/\D/g, ''); }
   function colLetter(i) { var s = ''; i++; while (i > 0) { var m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = (i - m - 1) / 26; } return s; }
   function esc(s) { return txt(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -282,7 +293,7 @@
     var fc = -1;
     if (kind === 'reg') {
       for (i = 0; i < cols; i++) {
-        if (i !== kc && PAT.flag.test(txt(hdr[i]))) { fc = i; break; }
+        if (i !== kc && i !== nc && i !== ic && PAT.flag.test(txt(hdr[i]))) { fc = i; break; }
       }
       /* Naglowek moze nazywac sie u klienta dowolnie, wiec gdy slownik nie trafi,
          szukamy kolumny po tresci: takiej, w ktorej wartosci sa oznaczeniami z JPK.
@@ -303,9 +314,10 @@
       guessed: { nip: nc >= 0, inv: ic >= 0, ksef: kc >= 0, flag: fc >= 0 } };
     var taken = {}; taken[kc] = taken[nc] = taken[ic] = taken[fc] = 1;
     OPTF.forEach(function (f) {
-      var k = f[0], cq = -1, q;
+      var k = f[0], cq = -1, q, isAmt = f[2] === 'amt';
       for (q = 0; q < cols; q++) {
         if (taken[q]) continue;
+        if (isAmt && /\bdat|date/i.test(txt(hdr[q]))) continue;
         if (PAT[k].test(txt(hdr[q]))) { cq = q; break; }
       }
       /* „data wystawienia" wygrywa z „data otrzymania" o te sama kolumne tylko
@@ -405,6 +417,13 @@
       out.lastDataRow = excel;
       out.stats.rows++;
       nip = normNip(nipRaw);
+      if (nip && !nipValid(nip)) {
+        out.stats.badNip = (out.stats.badNip || 0) + 1;
+        out.unclear.push({ excel: excel, nip: nipRaw, inv: invRaw, was: '',
+          note: nip.length !== 10
+            ? 'NIP ma ' + nip.length + ' cyfr zamiast 10'
+            : 'NIP nie przechodzi walidacji sumy kontrolnej — sprawdź, czy nie ma literówki' });
+      }
       var exact = uniq(km[nip + ' ' + normInv(invRaw)] || []);
       var base = { excel: excel, nip: nipRaw, inv: invRaw };
 
@@ -885,6 +904,11 @@
       hl.push('<div class="callout is-good"><strong>Kwoty i daty zgodne z KSeF</strong><span>Porównano: ' +
         R.cmpFields.map(function (f) { return f[1]; }).join(', ') + ' — bez rozbieżności na dopasowanych pozycjach.</span></div>');
     }
+    if (st.badNip) {
+      hl.push('<div class="callout is-warning"><strong>' + st.badNip + ' ' +
+        plural(st.badNip, 'NIP nie przechodzi', 'NIP-y nie przechodzą', 'NIP-ów nie przechodzi') +
+        ' walidacji</strong><span>Suma kontrolna się nie zgadza albo liczba cyfr jest inna niż 10 — taki wpis nie przejdzie w JPK niezależnie od numeru KSeF. Pozycje są w zakładce „Do wyjaśnienia".</span></div>');
+    }
     if (st.fuzzy) {
       hl.push('<div class="callout is-warning"><strong>' + st.fuzzy + ' ' +
         plural(st.fuzzy, 'numer wpisano', 'numery wpisano', 'numerów wpisano') +
@@ -1069,6 +1093,7 @@
             ? R.cmpFields.map(function (f) { return f[1]; }).join(', ')
             : 'nie - nie wskazano kolumn w obu plikach'],
           ['Rozbieznosci kwot i dat', R.cmpFields.length ? R.diffs.length : '—'],
+          ['NIP-y z bledna suma kontrolna', st.badNip || 0],
           [],
           ['Plik KSeF', S.ksefRef.file.name],
           ['Plik rejestru', S.regRef.file.name + ' › ' + S.regRef.sheet],

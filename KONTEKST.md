@@ -76,6 +76,14 @@ raportu. Próg kwot: 1 grosz. Daty: Excel-serial i tekst traktowane równoważni
 Pole wskazane tylko po jednej stronie nie blokuje uzgodnienia — jest o tym miękki
 komunikat, żeby nikt nie myślał, że kwoty sprawdzono, gdy nie sprawdzono.
 
+**Kierunek potwierdzony przez księgową (23.08.2026): sprawdzenie kompleksowe pod JPK,
+nie tylko numery KSeF.** W związku z tym: słowniki nagłówków znają nazwy pól ewidencji
+JPK_V7 (NrDostawcy, DowodZakupu, DataZakupu, DataWpływu, NrKSeF, K_40–K_43) oraz
+angielskie (Invoice Date, Posting date/VAT Date, Net/Gross); NIP-y w rejestrze przechodzą
+walidację sumy kontrolnej (błędne → „Do wyjaśnienia" + komunikat — taki wpis nie
+przejdzie w JPK niezależnie od numeru KSeF); kolumna z „date/data" w nagłówku nigdy nie
+jest brana za kwotę.
+
 Wyjście: raport `.xlsx` (z dysku) lub `.csv` (na stronie), kolumna do wklejenia
 (bezpieczna dla plików z formułami), opcjonalnie uzupełniony rejestr.
 
