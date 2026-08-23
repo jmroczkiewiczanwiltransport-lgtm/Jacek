@@ -16,12 +16,36 @@ sprzedaży KSeF — plan 14 dni biegnie równolegle i ma pierwszeństwo.
 Cel: narzędzie **gotowe i przetestowane jesienią 2026**, sprzedawane od momentu,
 gdy biura zaczną pytać.
 
-## Koncepcja
+## Koncepcja — ZMIENIONA po odpowiedzi Alicji (23.08.2026, wieczór)
 
-„KSeF Uzgodnienia dla ksiąg": program księgowy **generuje** JPK_KR_PD, ale nikt nie
-daje księgowej narzędzia, żeby plik **sprawdzić przed wysyłką**. Ta sama architektura:
-jeden plik HTML, wszystko w przeglądarce, księgi nie opuszczają komputera (dane
-wrażliwsze niż faktury — argument gra jeszcze mocniej).
+Alicja (WhatsApp): „my potrzebujemy takie narzędzie, które z zapisów
+«dziennik zapisów za dany rok» przygotuje jpk_kr_pd. Czyli pogrupuje odpowiednio
+konta, żeby wyjść na wynik netto. I kwotę podatku do zapłaty. Jeszcze będzie
+trzeba raportować Środki Trwałe."
+
+Czyli nie kontroler, tylko **GENERATOR**: jej program księgowy nie składa
+JPK_KR_PD (albo składa źle). Narzędzie ma:
+
+1. wczytać **eksport dziennika zapisów za rok** (xlsx/csv z programu) + plan kont,
+2. dać księgowej **ekran mapowania kont na znaczniki podatkowe MF** (jak mapowanie
+   kolumn w KSeF, ale większe — słownik znaczników, maks. 2 na konto, zapis mapowania
+   do pliku, żeby za rok wczytać gotowe),
+3. **policzyć**: ZOiS z dziennika (BO + obroty = BZ per konto), pogrupować konta
+   do wyniku rachunkowego, przejść na wynik podatkowy w RPD i pokazać **kwotę
+   podatku** (stawka 9/19% do wyboru, zaliczki wpisywane przez księgową),
+4. **złożyć poprawny XML JPK_KR_PD** zgodny z XSD — z wbudowaną kontrolą przed
+   zapisem (sumy, ciągłość dziennika, kompletność znaczników — cały plan kontrolera
+   staje się walidacją wewnętrzną generatora),
+5. etap 2: **JPK_ST_KR** (środki trwałe) — Alicja sygnalizuje, że też będzie trzeba.
+
+Architektura bez zmian: jeden HTML, wszystko w przeglądarce, księgi nie opuszczają
+komputera. **Granica bez zmian:** narzędzie liczy i składa plik; mapowanie kont,
+klasyfikacje i zatwierdzenie wyniku należą do księgowej — kwota podatku jest
+wynikiem JEJ decyzji mapowania, do zweryfikowania z jej CIT-8, nie poradą podatkową.
+
+Cena: generator to inna półka niż kontroler — moduły JPK_CIT u producentów
+oprogramowania kosztują setki-tysiące zł rocznie. Szkic: 490 zł/rok za firmę
+albo w pakiecie z KSeF. Do decyzji po v0.
 
 ## Kontrole (wersja 0 — do zweryfikowania na prawdziwym pliku)
 
@@ -44,19 +68,18 @@ wiersza/zapisu, raport .xlsx, komunikaty po polsku, znaczniki DEMO + klucz
 licencyjny (ta sama sól i keygen — jeden klucz MBS może obsługiwać oba narzędzia
 albo osobne pule: do decyzji przy wdrożeniu).
 
-## Czego potrzebuję, zanim napiszę pierwszą linię
+## Czego potrzebuję, zanim napiszę pierwszą linię (lista po odpowiedzi Alicji)
 
-Lekcja z KSeF: prawdziwy plik przemodelował narzędzie trzykrotnie
-(kolumny, zera, K_44/K_45). Nie budujemy na ślepo.
-
-1. **Oficjalny XSD struktury JPK_KR_PD(1)** + **broszura informacyjna MF** —
-   serwery gov.pl są zablokowane z sesji Claude; właściciel pobiera je u siebie
-   (podatki.gov.pl → struktury JPK / CRIP) i wrzuca do rozmowy jak zwykłe pliki.
-2. **Testowy JPK_KR_PD z prawdziwego programu księgowego** — poprosić Alicję,
-   żeby wygenerowała plik dla firmy testowej/zanonimizowanej ze swojego programu.
-   Jej program ma już moduł JPK_CIT (wszystkie mają od 2025).
-3. **Odpowiedź Alicji na pytanie:** „obsługujecie spółki z o.o.? co w JPK_CIT
-   boli najbardziej?" — jej ból = kolejność kafli, jak przy KSeF.
+1. **XSD struktury JPK_KR_PD(1) + broszura MF** — Alicja już deklaruje: „przygotuję
+   pliki z MF ze schemą". Może też wrzucić właściciel (podatki.gov.pl → struktury JPK).
+2. **Eksport dziennika zapisów za rok** z jej programu (xlsx/csv) — dane firmy
+   testowej albo zanonimizowane. To jest GŁÓWNE wejście narzędzia.
+3. **Plan kont** tej samej firmy (wykaz kont z nazwami).
+4. **Jak dziś grupują konta do wyniku** — ich robocze mapowanie (choćby w Excelu
+   albo opisane słowami), czyli które konta idą do jakiej pozycji wyniku.
+5. **Wyliczenie podatku za ten rok do porównania** (CIT-8 albo robocze wyliczenie) —
+   żeby v0 miało wzorzec: nasz wynik musi zgadzać się z jej wynikiem.
+6. Jeśli jej program jednak COŚ generuje (choćby stary JPK_KR) — plik jako odniesienie.
 
 ## Cennik (szkic — do decyzji przy premierze)
 
