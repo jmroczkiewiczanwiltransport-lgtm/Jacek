@@ -740,6 +740,7 @@
   .slab .io .k { color: var(--slab-faint); }
   .slab .io .v { color: var(--slab-ink); }
   .slab .io .out .v { color: var(--slab-accent); }
+  .slab .svc .more { color: var(--slab-accent); }
   @media (hover: hover) { .slab .svc:hover { border-color: var(--slab-accent); } }
 
   /* ═══ zdanie-plakat ═══ */
@@ -816,7 +817,7 @@
           bez serwera, bez instalacji, bez wysyłania danych w świat.</p>
         <div class="cta">
           <a class="btn btn-solid" href="#co-robie">Zobacz, co mogę policzyć</a>
-          <a class="btn btn-line" href="#kontakt">Napisz w jednej sprawie</a>
+          <a class="btn btn-line" href="#zapytanie">Napisz w jednej sprawie</a>
         </div>
       </div>
 
@@ -926,6 +927,7 @@
             <div><span class="k">Wysyłają</span><span class="v">pliki źródłowe i przykład gotowego zestawienia</span></div>
             <div class="out"><span class="k">Dostają</span><span class="v">narzędzie, które składa je w jeden arkusz</span></div>
           </div>
+          <a class="more" href="#zapytanie">Wyślij pliki do wyceny &rarr;</a>
         </article>
 
         <article class="svc">
@@ -938,6 +940,7 @@
             <div><span class="k">Wysyłają</span><span class="v">opis czynności i przykładowe pliki</span></div>
             <div class="out"><span class="k">Dostają</span><span class="v">odpowiedź w jeden dzień, a jeśli się da — wycenę</span></div>
           </div>
+          <a class="more" href="#zapytanie">Opisz czynność w formularzu &rarr;</a>
         </article>
 
       </div>
@@ -968,6 +971,7 @@
         </ul>
         <p class="after">Jeśli choć jeden punkt brzmi znajomo — proszę napisać.
           Odpowiem, czy da się to policzyć, także wtedy gdy odpowiedź brzmi „nie".</p>
+        <a class="more" href="#zapytanie" style="margin-top:.8rem;display:inline-flex">Opisz to w formularzu &rarr;</a>
       </div>
 
       <div class="formats">
@@ -1142,6 +1146,8 @@
         </div>
       </div>
 
+      <a class="more" href="#zapytanie" style="margin-top:2rem;display:inline-flex">Zapytaj o wycenę platformy — wyślij materiał przez formularz &rarr;</a>
+
       <div class="limit">
         <span class="pk">czego nie robię</span>
         <p>Nie prowadzę szkoleń i nie wystawiam zaświadczeń. Materiał, pytania, próg
@@ -1163,7 +1169,8 @@
     </div>
     <p class="price-note">Cennik dotyczy narzędzia <strong>Uzgodnienia KSeF</strong>.
       Platformę szkoleniową i pracę na zamówienie wyceniam po obejrzeniu materiału —
-      jednorazowo, zawsze z ceną podaną z góry, przed rozpoczęciem.</p>
+      jednorazowo, zawsze z ceną podaną z góry, przed rozpoczęciem.
+      <a href="#zapytanie" style="color:var(--accent);font-weight:600;text-decoration:none">Wyślij materiał do wyceny &rarr;</a></p>
 
     <div class="prices">
       <div class="price">
@@ -1277,7 +1284,7 @@
           <p class="note reply"><strong>Odpowiadam w ciągu jednego dnia roboczego.</strong>
             Jeśli wolą Państwo rozmowę, proszę napisać — oddzwonię w dogodnej porze.</p>
 
-          <form class="ask" style="margin-top:2rem" name="zapytanie" method="POST" action="/dziekujemy.html"
+          <form class="ask" style="margin-top:2rem" id="zapytanie" name="zapytanie" method="POST" action="/dziekujemy.html"
                 data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data">
             <input type="hidden" name="form-name" value="zapytanie">
             <p class="bf"><label>Nie wypełniaj tego pola<input name="bot-field"></label></p>
