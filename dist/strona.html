@@ -138,6 +138,20 @@
     mask-image: linear-gradient(to bottom, rgba(0,0,0,.7) 0%, rgba(0,0,0,.28) 38%, transparent 72%);
   }
   .slab > .wrap { position: relative; }
+  /* Aurora - smugi swiatla w barwie marki, tylko w ciemnych pasmach. Dryfuja
+     powoli transformacja (nie filtrem - filtr animowany kosztuje klatki). */
+  .aura {
+    position: absolute; inset: -25% -10%; pointer-events: none;
+    background:
+      radial-gradient(38% 60% at 76% 18%, rgba(76, 195, 173, .17), transparent 70%),
+      radial-gradient(26% 42% at 90% 65%, rgba(42, 133, 176, .13), transparent 72%),
+      radial-gradient(30% 48% at 12% 88%, rgba(76, 195, 173, .07), transparent 70%);
+    animation: drift 19s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    from { transform: translate3d(-1.5%, -1%, 0) scale(1); opacity: .85; }
+    to   { transform: translate3d(1.5%, 2%, 0) scale(1.07); opacity: 1; }
+  }
 
   .bar {
     display: flex; align-items: center; gap: 1rem;
@@ -583,6 +597,31 @@
     font-size: .8125rem; color: var(--ink-faint);
   }
 
+  /* ═══ zdanie-plakat ═══ */
+  .statement { text-align: center; padding: clamp(4rem, 9vw, 6.5rem) 0; }
+  .statement .big {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(1.9rem, 5vw, 3.3rem); line-height: 1.15; letter-spacing: -.03em;
+    color: var(--slab-ink); max-width: 24ch; margin: 0 auto; text-wrap: balance;
+  }
+  .statement .big em { font-style: normal; color: var(--slab-accent); }
+  /* Znak marki wpiety w zdanie - swieci, bo w ciemnym pasmie moze */
+  .statement .chip {
+    display: inline-flex; width: 1.05em; height: 1.05em; vertical-align: -.14em;
+    margin: 0 .08em; border-radius: .18em;
+    box-shadow: 0 0 26px rgba(76, 195, 173, .45);
+  }
+  .statement .chip svg { width: 100%; height: 100%; fill: var(--slab-accent); }
+  .statement .big-sub {
+    margin: 1.4rem auto 0; color: var(--slab-muted);
+    font-size: clamp(1rem, 2vw, 1.125rem); max-width: 52ch;
+  }
+
+  /* ─ pojawianie sie przy przewijaniu - klase .rv nadaje skrypt, wiec bez
+     JavaScriptu wszystko stoi widoczne od razu ─ */
+  .rv { opacity: 0; transform: translateY(12px); transition: opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1); }
+  .rv.on { opacity: 1; transform: none; }
+
   /* Karty reaguja na kursor, ale mechanicznie: obramowanie i jeden piksel w gore.
      Zadnych rosnacych cieni - to material biurowy, nie kafelek w aplikacji. */
   @media (hover: hover) {
@@ -605,6 +644,7 @@
 <body>
 
 <div class="slab">
+  <div class="aura" aria-hidden="true"></div>
   <div class="wrap">
     <div class="bar">
       <a class="logo" href="#gora">
@@ -995,13 +1035,26 @@
   </section>
 </div>
 
+<div class="slab">
+  <div class="aura" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="statement">
+      <p class="big">Pliki nie opuszczają
+        <span class="chip" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M 8 0 H 92 A 8 8 0 0 1 100 8 V 92 A 8 8 0 0 1 92 100 H 8 A 8 8 0 0 1 0 92 V 8 A 8 8 0 0 1 8 0 Z M 22 31 H 78 V 43 H 22 Z M 22 57 H 78 V 69 H 22 Z" fill-rule="evenodd"/></svg></span>
+        tego komputera. <em>Nawet na chwilę.</em></p>
+      <p class="big-sub">Całość liczy się w przeglądarce. Można odciąć internet — narzędzie
+        dalej działa. Dlatego biuro może na nim pracować na danych swoich klientów.</p>
+    </div>
+  </div>
+</div>
+
 <section id="bezpieczenstwo">
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Bezpieczeństwo</span>
-      <h2>Państwa dane zostają u Państwa</h2>
+      <h2>Skąd to wiadomo — trzy rzeczy do sprawdzenia</h2>
       <p>To nie jest hasło marketingowe, tylko sposób, w jaki te narzędzia są zbudowane.
-        Nie ma serwera, na który cokolwiek mogłoby trafić.</p>
+        Każdy punkt można zweryfikować samodzielnie, bez wiary na słowo.</p>
     </div>
     <div class="safes">
       <div class="safe">
@@ -1051,7 +1104,35 @@
 </div>
 
 <div class="wrap">
-  <footer>
+  <script>
+(function () {
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+  var sel = '.head, .svc, .price, .safe, .gate, .cond, .proto, .plat, .perks > div, ' +
+            'ol.steps li, .formats, .contact .pledge, .details, .statement .big, .statement .big-sub';
+  var els = Array.prototype.slice.call(document.querySelectorAll(sel));
+  /* rodzenstwo wchodzi kaskada - opoznienie rosnie w obrebie rodzica,
+     zeby karty jednej siatki nie wskakiwaly wszystkie naraz */
+  var perParent = [];
+  els.forEach(function (e) {
+    e.classList.add('rv');
+    var p = e.parentNode, i = perParent.indexOf(p);
+    if (i < 0) { perParent.push(p); p.__rv = 0; }
+    e.__d = (p.__rv++ % 4) * 70;
+  });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      en.target.style.transitionDelay = (en.target.__d || 0) + 'ms';
+      en.target.classList.add('on');
+      io.unobserve(en.target);
+    });
+  }, { rootMargin: '0px 0px -7% 0px' });
+  els.forEach(function (e) { io.observe(e); });
+})();
+</script>
+
+<footer>
     <span>Jacek Mroczkiewicz MBS Business Solutions · NIP 7871809487 · REGON 540507784</span>
     <span>Narzędzia wskazują rozbieżności i liczą wskaźniki. Nie są usługą doradztwa
       podatkowego — ocena wskazanych pozycji należy do osoby prowadzącej księgi.</span>
