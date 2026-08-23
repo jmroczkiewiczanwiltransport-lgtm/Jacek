@@ -27,9 +27,9 @@ Pierwszy klient nauczy Cię więcej o sprzedaży niż sto wysłanych maili.
       Nie „na razie za darmo" — ona używa narzędzia i współtworzy je od tygodnia.
 - [ ] Poproś o **zdanie-referencję** („co byś powiedziała koleżance z innego biura?")
       — wstawimy na stronę i do oferty.
-- [ ] Poproś o **dwa polecenia**: „znasz dwa biura, którym to by się przydało?
-      Mogę się powołać na Ciebie?". Polecenie od księgowej ma skuteczność
-      nieporównywalną z niczym innym.
+- [ ] Poproś o **dwa polecenia** — tak, żeby Alicja **sama zapytała** te biura,
+      czy możesz napisać. Jej „tak" od nich = Twoja zgoda (art. 398 PKE) i najlepsze
+      możliwe otwarcie.
 
 ## Dni 4–7: pierwszy post w grupie
 
@@ -44,9 +44,9 @@ Pierwszy klient nauczy Cię więcej o sprzedaży niż sto wysłanych maili.
 
 ## Dni 7–10: polecenia i druga grupa
 
-- [ ] **Maile do biur z poleceń Alicji** — szablon 1b z `wiadomosci.md`,
-      z dopiskiem w pierwszym zdaniu: „Pani [Alicja] podpowiedziała, że może
-      to być u Państwa aktualne". Imiennie, do właściciela/głównej księgowej.
+- [ ] **Maile do biur z poleceń Alicji** (zgoda już uzyskana przez nią) —
+      szablon 1b z `wiadomosci.md`, z dopiskiem: „Pani [Alicja] pytała, czy mogę
+      napisać". Imiennie, do właściciela/głównej księgowej.
 - [ ] **Post w drugiej grupie** — tekst przeredagowany, nie kopia.
 
 ## Dni 10–14: pierwsza fala zimnych maili
@@ -54,9 +54,10 @@ Pierwszy klient nauczy Cię więcej o sprzedaży niż sto wysłanych maili.
 - [ ] Zbuduj **listę 20 biur w promieniu 50 km** (Poznań w zasięgu):
       CEIDG po PKD 69.20.Z + strony biur po adresy mailowe —
       instrukcja w `gdzie-szukac-klientow.md`.
-- [ ] Wyślij **szablonem 1b** (termin lutowy jako powód „teraz"), imiennie.
-- [ ] Zaplanuj **follow-up po 4–5 dniach** (szablon 4 — „jeśli wyjdzie zero,
-      nie będę zawracał głowy").
+- [ ] Wyślij **szablon 0 — zapytanie o zgodę** (nie ofertę!), na adresy
+      ogólnofirmowe. Wymóg art. 398 PKE: informacja handlowa dopiero po „tak".
+- [ ] Odpowiedziom „tak" wysyłasz szablon 1b; **brak odpowiedzi = koniec**,
+      bez follow-upu (obiecujesz to w mailu i tego dotrzymujesz).
 
 ---
 

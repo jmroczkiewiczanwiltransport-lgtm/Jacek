@@ -1,5 +1,47 @@
 # Wiadomości do biur rachunkowych
 
+## Najpierw prawo: zimny mail wymaga zgody (art. 398 PKE)
+
+Od 10.11.2024 wysyłka informacji handlowej e-mailem **wymaga uprzedniej zgody
+odbiorcy — także między firmami** (art. 398 Prawa komunikacji elektronicznej;
+kara do 3% przychodu albo 1 mln zł). Twoi odbiorcy to księgowe — znają ten przepis.
+
+Co wolno bez zgody: **posty w grupach** (nie są wiadomością do oznaczonego odbiorcy)
+i odpowiedzi na **zapytania z formularza** (klient napisał pierwszy). Polecenia rób
+tak, żeby polecająca osoba **sama zapytała** znajome biuro „czy Jacek może napisać?" —
+jej „tak" to Twoja zgoda.
+
+Do obcych biur pierwszy mail to **szablon 0 poniżej** — zapytanie o zgodę, nie oferta.
+Szablony 1 i 1b wysyłasz **dopiero po zgodzie**. Zasady minimalizowania ryzyka:
+adresy ogólnofirmowe (`biuro@…`), mała skala, stopka z pełnymi danymi firmy,
+odmowa = natychmiastowe skreślenie z listy i nigdy więcej.
+
+---
+
+## 0. Zapytanie o zgodę — pierwszy mail do obcego biura
+
+**Temat:** jedno pytanie
+
+> Dzień dobry,
+>
+> prowadzę firmę narzędziową dla biur rachunkowych (MBS Business Solutions,
+> NIP 7871809487). Zanim cokolwiek prześlę: **czy mogą Państwo wyrazić zgodę
+> na przesłanie krótkiej informacji o narzędziu do kontroli ewidencji zakupu
+> pod nowe JPK_V7?**
+>
+> Wystarczy odpowiedź „tak". Jeśli odpowiedzi nie będzie — to jedyna wiadomość,
+> jaką Państwo ode mnie otrzymają.
+>
+> Z poważaniem
+> Jacek Mroczkiewicz
+> MBS Business Solutions · mbs.mroczkiewicz@gmail.com
+
+**Dlaczego tak:** bez ceny, bez linku, bez perswazji — samo nazwanie tematu (zgoda
+musi być „konkretna", więc temat trzeba wskazać). Obietnica „jedyna wiadomość"
+jest wiążąca: brak odpowiedzi = koniec, bez follow-upu.
+
+---
+
 ## Zasada, od której nie odchodź
 
 Nie sprzedajesz uzupełniania numerów KSeF. To brzmi jak dodatkowa robota i każdy
@@ -14,7 +56,7 @@ dwa pliki przez link. Nie sprzedawaj w mailu. Sprzedaje wynik na ich własnych d
 
 ---
 
-## 1. Mail zimny — wersja podstawowa
+## 1. Mail — wersja podstawowa *(wysyłaj po zgodzie: odpowiedzi „tak" na szablon 0, poleceniu z uzyskaną zgodą albo zapytaniu z formularza)*
 
 **Temat:** faktury z KSeF, których nie ma w Państwa księgach
 
@@ -43,7 +85,7 @@ niego biuro nie dotknie linku, bo to dane klientów.
 
 ---
 
-## 1b. Mail zimny — wersja z terminem (od lutego 2026 najmocniejsza)
+## 1b. Mail — wersja z terminem, od lutego 2026 najmocniejsza *(po zgodzie, jak wyżej)*
 
 **Temat:** pozycje, których JPK_V7 nie przyjmie
 
@@ -104,7 +146,7 @@ Cel rozmowy to zdobycie maila i zgody na link. Nie próbuj sprzedać przez telef
 
 ---
 
-## 4. Follow-up po braku odpowiedzi (po 4–5 dniach)
+## 4. Follow-up po braku odpowiedzi (po 4–5 dniach) *(tylko do osób, które wyraziły zgodę — po szablonie 0 bez odpowiedzi follow-upu NIE ma)*
 
 > Dzień dobry, wracam do wiadomości z [dnia].
 >
