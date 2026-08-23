@@ -435,6 +435,53 @@
   }
   .proto-note { margin-top: .8rem; font-size: .8125rem; color: var(--ink-faint); max-width: 42ch; }
 
+  /* Miniatura platformy - to, co widzi pracownik. Tresci sa zmyslone; pokazujemy
+     mechanike (postep, zablokowany test, jezyki), nie czyjkolwiek material. */
+  .plat {
+    margin-top: 2.75rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .plat-bar {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .7rem 1.15rem; border-bottom: 1px solid var(--border);
+  }
+  .plat-bar .t {
+    font-family: var(--font-mono); font-size: .625rem; font-weight: 500;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .plat-bar .langs { margin-left: auto; display: flex; gap: .3rem; }
+  .plat-bar .lang {
+    font-family: var(--font-mono); font-size: .625rem; letter-spacing: .06em;
+    padding: .1rem .45rem; border: 1px solid var(--border); border-radius: 2px;
+    color: var(--ink-faint);
+  }
+  .plat-bar .lang.on { border-color: var(--accent); color: var(--accent-ink); background: var(--accent-soft); }
+  .plat-body { padding: 1.15rem; display: grid; grid-template-columns: 1fr; gap: .9rem; }
+  @media (min-width: 48rem) { .plat-body { grid-template-columns: 1fr 1fr; } }
+  .pcourse {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .55rem;
+  }
+  .pcourse .ptag {
+    align-self: flex-start;
+    font-family: var(--font-display); font-size: .5625rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: var(--surface-alt); color: var(--ink-muted);
+    border: 1px solid var(--border); padding: .15rem .5rem; border-radius: 100px;
+  }
+  .pcourse h4 { font-size: .9375rem; font-weight: 700; letter-spacing: -.01em; }
+  .pcourse .pmeta {
+    font-family: var(--font-mono); font-size: .6875rem; color: var(--ink-faint);
+    display: flex; gap: .9rem; flex-wrap: wrap;
+  }
+  .pbar { height: 4px; background: var(--surface-alt); border-radius: 100px; overflow: hidden; }
+  .pbar span { display: block; height: 100%; background: var(--accent); border-radius: 100px; }
+  .pstate { font-family: var(--font-mono); font-size: .6875rem; letter-spacing: .02em; }
+  .pstate.lock { color: var(--warn); }
+  .pstate.pass { color: var(--accent-ink); }
+  .plat-note { margin-top: .8rem; font-size: .8125rem; color: var(--ink-faint); max-width: 56ch; }
+
   .perks { margin-top: 2.75rem; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
   @media (min-width: 48rem) { .perks { grid-template-columns: repeat(3, 1fr); gap: 2.25rem; } }
   .perks div { border-top: 1px solid var(--border-firm); padding-top: .9rem; display: flex; flex-direction: column; gap: .4rem; }
@@ -819,6 +866,33 @@
             są Państwa.</p>
         </div>
       </div>
+
+      <div class="plat" role="img" aria-label="Przykładowy widok platformy dla pracownika: dwie karty szkoleń z paskiem postępu — jedno w toku z zablokowanym testem, drugie ukończone z wynikiem.">
+        <div class="plat-bar">
+          <span class="t">Platforma szkoleniowa · widok pracownika</span>
+          <span class="langs"><span class="lang on">PL</span><span class="lang">EN</span></span>
+        </div>
+        <div class="plat-body">
+          <div class="pcourse">
+            <span class="ptag">Obowiązkowe</span>
+            <h4>BHP okresowe — pracownicy administracyjni</h4>
+            <div class="pmeta"><span>5 lekcji</span><span>24 pytania</span><span>~40 min</span></div>
+            <div class="pbar"><span style="width:60%"></span></div>
+            <div class="pmeta"><span>3 / 5 lekcji (60%)</span></div>
+            <div class="pstate lock">test zablokowany — zostały 2 lekcje</div>
+          </div>
+          <div class="pcourse">
+            <span class="ptag">Instruktaż</span>
+            <h4>Obsługa wózka widłowego — część teoretyczna</h4>
+            <div class="pmeta"><span>4 lekcje</span><span>16 pytań</span><span>~25 min</span></div>
+            <div class="pbar"><span style="width:100%"></span></div>
+            <div class="pmeta"><span>4 / 4 lekcje (100%)</span></div>
+            <div class="pstate pass">test zdany · 92% · 2026-02-11</div>
+          </div>
+        </div>
+      </div>
+      <p class="plat-note">Treści w przykładzie są zmyślone — nazwy szkoleń, lekcje, pytania
+        i języki są Państwa. Wygląd dopasowuję do firmy: kolory, znak, nazewnictwo.</p>
 
       <div class="perks">
         <div>

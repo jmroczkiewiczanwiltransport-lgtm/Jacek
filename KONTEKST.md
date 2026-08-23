@@ -97,6 +97,11 @@ przejrzany** → protokół. Ta blokada jest powodem, dla którego wynik w proto
 Argumenty handlowe: bez abonamentu za pracownika, z dysku firmowego bez serwera, dwie
 wersje językowe i lektor.
 
+W sekcji jest też **miniatura platformy** (widok pracownika: karty szkoleń, pasek postępu,
+zablokowany test, przełącznik języka). **Treści miniatury są zmyślone** (BHP, wózek
+widłowy) — zasada: nic z platformy zbudowanej dla pracodawcy nie trafia na stronę MBS,
+nawet poglądowo. Pokazujemy mechanikę, nie czyjkolwiek materiał.
+
 **Granica, która musi stać na stronie:** nie prowadzi szkoleń i nie wystawia zaświadczeń.
 Materiał, pytania, próg i decyzja, kto szkoli, są klienta — tam, gdzie przepis wymaga
 uprawnionego szkolącego, narzędzie go nie zastępuje. Bez tego zdania oferta obiecuje
