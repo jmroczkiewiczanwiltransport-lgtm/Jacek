@@ -68,6 +68,14 @@ Dopasowanie: NIP + znormalizowany numer faktury; zapasowo porównanie alfanumery
 i podciągiem w ramach NIP-u (oznaczane jako „przybliżone — sprawdź"). Tylko przy jednym
 kandydacie. **Plik KSeF jest źródłem prawdy.**
 
+**Kwoty i daty (od 23.08.2026, na prośbę pierwszej użytkowniczki — księgowej):**
+opcjonalne kolumny w obu plikach — data wystawienia, data otrzymania, kwota netto,
+VAT, brutto. Porównywane tylko gdy wskazane w OBU plikach, dla pozycji dopasowanych
+do faktury z KSeF. Rozbieżności lądują w zakładce „Kwoty i daty" i w osobnym arkuszu
+raportu. Próg kwot: 1 grosz. Daty: Excel-serial i tekst traktowane równoważnie.
+Pole wskazane tylko po jednej stronie nie blokuje uzgodnienia — jest o tym miękki
+komunikat, żeby nikt nie myślał, że kwoty sprawdzono, gdy nie sprawdzono.
+
 Wyjście: raport `.xlsx` (z dysku) lub `.csv` (na stronie), kolumna do wklejenia
 (bezpieczna dla plików z formułami), opcjonalnie uzupełniony rejestr.
 

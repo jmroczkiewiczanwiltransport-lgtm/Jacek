@@ -21,10 +21,56 @@
     /* Kolumna z oznaczeniem OFF/BFK/DI. Slownik zaczynal sie od „flag" i „typ",
        ale najnaturalniejszy polski naglowek to „oznaczenie" - to samo slowo, ktorym
        aplikacja poslugiwala sie we wszystkich komunikatach, a ktorego nie rozpoznawala. */
-    flag: /ksef3|oznacz|znacznik|\bflag|\btyp\b|rodzaj|dowod|dowód/i
+    flag: /ksef3|oznacz|znacznik|\bflag|\btyp\b|rodzaj|dowod|dowód/i,
+    /* Kolumny do pelnego sprawdzenia pod JPK VAT - dodane po notatce pierwszej
+       uzytkowniczki: sama zgodnosc numerow nie wystarcza, kwoty i daty tez. */
+    iss:   /wystawien|data\s*wyst/i,
+    rec:   /otrzym|wpływ|wplyw|przyjec|przyjęc|data\s*otrz/i,
+    net:   /netto/i,
+    vat:   /kwota\s*vat|podatek|\bvat\b/i,
+    gross: /brutto/i
   };
 
+  /* Pola opcjonalne porownywane miedzy plikami: klucz, etykieta, typ wartosci. */
+  var OPTF = [
+    ['iss',   'data wystawienia', 'date'],
+    ['rec',   'data otrzymania',  'date'],
+    ['net',   'kwota netto',      'amt'],
+    ['vat',   'kwota VAT',        'amt'],
+    ['gross', 'kwota brutto',     'amt']
+  ];
+
   function txt(v) { return v === null || v === undefined ? '' : String(v).trim(); }
+
+  /* Kwota moze przyjsc jako liczba, "1 234,56", "1234.56" albo z dopiskiem waluty. */
+  function parseAmt(v) {
+    if (v === null || v === undefined || v === '') return null;
+    if (typeof v === 'number') return isFinite(v) ? v : null;
+    var t = String(v).replace(/[\s\u00a0]/g, '').replace(/z[łl]|pln/ig, '');
+    if (!t) return null;
+    if (/,\d{1,2}$/.test(t)) t = t.replace(/\./g, '').replace(',', '.');
+    else t = t.replace(/,/g, '');
+    var n = parseFloat(t);
+    return isFinite(n) ? n : null;
+  }
+  function fmtAmt(n) { return n.toFixed(2).replace('.', ','); }
+
+  /* Data moze przyjsc jako liczba dni Excela, "2026-02-11", "11.02.2026" albo
+     z czasem na koncu. Zwracamy ISO, a przy nierozpoznanym zapisie pusty tekst -
+     wtedy pola nie porownujemy, zamiast zglaszac falszywa rozbieznosc. */
+  function parseDate(v) {
+    if (v === null || v === undefined || v === '') return '';
+    if (typeof v === 'number' && v > 20000 && v < 80000) {
+      var d = new Date(Math.round((Math.floor(v) - 25569) * 86400000));
+      return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') +
+        '-' + String(d.getUTCDate()).padStart(2, '0');
+    }
+    var t = txt(v), m;
+    if ((m = t.match(/^(\d{4})-(\d{2})-(\d{2})/))) return m[1] + '-' + m[2] + '-' + m[3];
+    if ((m = t.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/)))
+      return m[3] + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0');
+    return '';
+  }
   function normInv(v) { return txt(v).toUpperCase().replace(/\s+/g, ''); }
   function alnum(v) { return txt(v).toUpperCase().replace(/[^A-Z0-9]/g, ''); }
   function normNip(v) { return txt(v).replace(/\D/g, ''); }
@@ -253,7 +299,22 @@
       }
     }
 
-    return { nip: nc, inv: ic, ksef: kc, flag: fc, cols: cols, guessed: { nip: nc >= 0, inv: ic >= 0, ksef: kc >= 0, flag: fc >= 0 } };
+    var out = { nip: nc, inv: ic, ksef: kc, flag: fc, cols: cols,
+      guessed: { nip: nc >= 0, inv: ic >= 0, ksef: kc >= 0, flag: fc >= 0 } };
+    var taken = {}; taken[kc] = taken[nc] = taken[ic] = taken[fc] = 1;
+    OPTF.forEach(function (f) {
+      var k = f[0], cq = -1, q;
+      for (q = 0; q < cols; q++) {
+        if (taken[q]) continue;
+        if (PAT[k].test(txt(hdr[q]))) { cq = q; break; }
+      }
+      /* „data wystawienia" wygrywa z „data otrzymania" o te sama kolumne tylko
+         wtedy, gdy naglowki naprawde sie roznia - taken to zalatwia. */
+      if (cq >= 0) taken[cq] = 1;
+      out[k] = cq;
+      out.guessed[k] = cq >= 0;
+    });
+    return out;
   }
 
   function buildRef(file, kind) {
@@ -276,7 +337,7 @@
   /* ---------- uzgodnienie ---------- */
 
   function reconcile(ksefRef, regRef) {
-    var km = {}, am = {}, byNip = {}, ksefSet = {}, ksefRows = [];
+    var km = {}, am = {}, byNip = {}, ksefSet = {}, ksefRows = [], byNum = {};
     var K = ksefRef.map, R = regRef.map;
     var r, row, nip, inv, num, key;
 
@@ -287,6 +348,7 @@
       nip = normNip(row[K.nip]);
       inv = row[K.inv];
       ksefSet[num] = 1;
+      if (!byNum[num]) byNum[num] = row;
       ksefRows.push({ excel: r + 1, nip: nip, nipRaw: txt(row[K.nip]), inv: txt(inv), num: num });
       key = nip + ' ' + normInv(inv);
       (km[key] = km[key] || []).push(num);
@@ -302,8 +364,36 @@
       firstDataRow: regRef.headerRow + 1,
       lastDataRow: regRef.headerRow,
       fillByRow: {},
-      used: {}
+      used: {},
+      diffs: [],
+      /* Porownywane sa tylko pola wskazane w OBU plikach. */
+      cmpFields: OPTF.filter(function (f) { return K[f[0]] >= 0 && R[f[0]] >= 0; })
     };
+
+    /* Kwoty i daty pozycji dopasowanej do faktury z KSeF. Zle sparsowana wartosc
+       po ktorejkolwiek stronie wylacza porownanie tego pola w tym wierszu -
+       falszywy alarm kosztuje zaufanie drozej niz przemilczenie. */
+    function compareOpt(regRow, num, excel, nipRaw, invRaw) {
+      if (!out.cmpFields.length) return;
+      var kr = byNum[num];
+      if (!kr) return;
+      out.cmpFields.forEach(function (f) {
+        var k = f[0], a, b;
+        if (f[2] === 'amt') {
+          a = parseAmt(regRow[R[k]]); b = parseAmt(kr[K[k]]);
+          if (a === null || b === null) return;
+          if (Math.abs(a - b) > 0.005)
+            out.diffs.push({ excel: excel, nip: nipRaw, inv: invRaw, num: num,
+              field: f[1], reg: fmtAmt(a), ksef: fmtAmt(b) });
+        } else {
+          a = parseDate(regRow[R[k]]); b = parseDate(kr[K[k]]);
+          if (!a || !b) return;
+          if (a !== b)
+            out.diffs.push({ excel: excel, nip: nipRaw, inv: invRaw, num: num,
+              field: f[1], reg: a, ksef: b });
+        }
+      });
+    }
 
     for (r = regRef.headerRow; r < regRef.aoa.length; r++) {
       row = regRef.aoa[r] || [];
@@ -324,16 +414,19 @@
             out.stats.ok++;
             out.used[cur] = 1;
             out.ok.push({ excel: excel, nip: nipRaw, inv: invRaw, num: cur, note: 'zgodny z KSeF' });
+            compareOpt(row, cur, excel, nipRaw, invRaw);
           } else {
             out.stats.corr++;
             out.used[exact[0]] = 1;
             out.corrections.push({ excel: excel, nip: nipRaw, inv: invRaw, was: cur, num: exact[0] });
             out.fillByRow[excel] = exact[0];
+            compareOpt(row, exact[0], excel, nipRaw, invRaw);
           }
         } else if (ksefSet[cur]) {
           out.stats.okAlt++;
           out.used[cur] = 1;
           out.ok.push({ excel: excel, nip: nipRaw, inv: invRaw, num: cur, note: 'numer istnieje w KSeF, inna pisownia nr faktury' });
+          compareOpt(row, cur, excel, nipRaw, invRaw);
         } else {
           var note = 'numeru nie ma w pliku KSeF';
           if (!KSEF_FMT.test(cur)) note += ' — niepoprawny format';
@@ -346,6 +439,7 @@
         out.used[exact[0]] = 1;
         out.filled.push({ excel: excel, nip: nipRaw, inv: invRaw, num: exact[0], how: 'dokładne', approx: false });
         out.fillByRow[excel] = exact[0];
+        compareOpt(row, exact[0], excel, nipRaw, invRaw);
       } else if (exact.length > 1) {
         out.stats.ambig++;
         /* Faktura jest w rejestrze - problem jest w KSeF (kilka numerow na ten sam
@@ -370,6 +464,7 @@
           out.used[m[0]] = 1;
           out.filled.push({ excel: excel, nip: nipRaw, inv: invRaw, num: m[0], how: 'przybliżone — sprawdź', approx: true });
           out.fillByRow[excel] = m[0];
+          compareOpt(row, m[0], excel, nipRaw, invRaw);
         } else {
           out.stats.none++;
           if (m.length > 1) m.forEach(function (n) { out.used[n] = 1; });
@@ -549,19 +644,25 @@
     return h + '</div></div>';
   }
 
+  /* Pola do sprawdzenia kwot i dat - opcjonalne, porownywane gdy wskazane w obu
+     plikach. Etykiety te same w obu kartach, zeby bylo widac, ze to pary. */
+  var OPT_FIELDS = OPTF.map(function (f) {
+    return { k: f[0], label: f[1].charAt(0).toUpperCase() + f[1].slice(1), note: '— opcjonalnie' };
+  });
+
   function renderMapping() {
     $('mapgrid').innerHTML =
       mapCard(S.ksefRef, 'Eksport z KSeF', [
         { k: 'nip', label: 'NIP sprzedawcy' },
         { k: 'inv', label: 'Numer faktury' },
         { k: 'ksef', label: 'Numer KSeF' }
-      ]) +
+      ].concat(OPT_FIELDS)) +
       mapCard(S.regRef, 'Twój rejestr', [
         { k: 'nip', label: 'NIP dostawcy' },
         { k: 'inv', label: 'Numer faktury' },
         { k: 'ksef', label: 'Kolumna na numer KSeF', note: '— tu program wpisuje wynik' },
         { k: 'flag', label: 'Kolumna z flagą', note: '— opcjonalnie, np. BFK/DI' }
-      ]);
+      ].concat(OPT_FIELDS));
 
     Array.prototype.forEach.call($('mapgrid').querySelectorAll('select,input'), function (el) {
       el.addEventListener('change', function () {
@@ -592,13 +693,22 @@
   }
 
   function validateMap() {
-    var K = S.ksefRef.map, R = S.regRef.map, bad = [];
+    var K = S.ksefRef.map, R = S.regRef.map, bad = [], soft = [];
     if (K.nip < 0 || K.inv < 0 || K.ksef < 0) bad.push('W eksporcie z KSeF muszą być wskazane wszystkie trzy kolumny: NIP, numer faktury i numer KSeF.');
     if (R.nip < 0 || R.inv < 0) bad.push('W rejestrze muszą być wskazane kolumny NIP i numer faktury.');
     if (R.ksef < 0) bad.push('W rejestrze wskaż kolumnę, w której mają wylądować numery KSeF.');
-    $('mapWarn').innerHTML = bad.length
-      ? '<div class="callout is-warning"><strong>Brakuje przypisania</strong><span>' + bad.map(esc).join('<br>') + '</span></div>'
-      : '';
+    /* Pola kwot i dat sa opcjonalne, wiec polowiczne wskazanie nie blokuje
+       uzgodnienia - ale mowimy o nim wprost, bo inaczej ktos mysli, ze kwoty
+       zostaly sprawdzone, a nie zostaly. */
+    OPTF.forEach(function (f) {
+      var inK = K[f[0]] >= 0, inR = R[f[0]] >= 0;
+      if (inK !== inR) soft.push('Pole „' + f[1] + '” jest wskazane tylko w ' +
+        (inK ? 'pliku KSeF' : 'rejestrze') + ' — bez drugiej strony nie będzie porównane.');
+    });
+    var h = '';
+    if (bad.length) h += '<div class="callout is-warning"><strong>Brakuje przypisania</strong><span>' + bad.map(esc).join('<br>') + '</span></div>';
+    if (soft.length) h += '<div class="callout is-info"><strong>Porównanie kwot i dat będzie częściowe</strong><span>' + soft.map(esc).join('<br>') + '</span></div>';
+    $('mapWarn').innerHTML = h;
     $('goRun').disabled = bad.length > 0;
     return !bad.length;
   }
@@ -648,6 +758,16 @@
           '</td><td class="was">' + esc(x.was) + '</td><td class="now">' + esc(x.num) + '</td>';
       },
       empty: 'Brak korekt — wszystkie wpisane numery zgadzają się z KSeF.'
+    },
+    {
+      id: 'diffs', name: 'Kwoty i daty', sig: 'warning',
+      cols: ['Wiersz', 'Nr faktury', 'Pole', 'W rejestrze', 'W KSeF'],
+      row: function (x) {
+        return '<td class="r">' + x.excel + '</td><td class="wide">' + esc(x.inv) +
+          '</td><td>' + esc(x.field) + '</td><td class="was">' + esc(x.reg) +
+          '</td><td class="now">' + esc(x.ksef) + '</td>';
+      },
+      empty: 'Kwoty i daty zgodne z KSeF — albo nie wskazano kolumn do porównania w obu plikach.'
     },
     {
       id: 'jpkBlock', name: 'Bez numeru i bez oznaczenia', sig: 'critical',
@@ -756,6 +876,14 @@
           ? ' <b>Ta liczba jest duża w stosunku do rejestru</b> — zanim potraktujesz ją jako braki, sprawdź, czy eksport z KSeF obejmuje tylko faktury zakupowe i tylko ten sam okres co rejestr. Faktury sprzedaży i szerszy zakres dat trafiają tutaj, bo w rejestrze zakupu ich nie ma.'
           : '') +
         '</span></div>');
+    }
+    if (R.diffs.length) {
+      hl.push('<div class="callout is-warning"><strong>' + R.diffs.length + ' ' +
+        plural(R.diffs.length, 'rozbieżność kwoty lub daty', 'rozbieżności kwot lub dat', 'rozbieżności kwot lub dat') +
+        ' względem KSeF</strong><span>Numer faktury się zgadza, ale kwota albo data w rejestrze różni się od danych z KSeF — szczegóły w zakładce „Kwoty i daty". Dla JPK liczą się dane z KSeF.</span></div>');
+    } else if (R.cmpFields.length) {
+      hl.push('<div class="callout is-good"><strong>Kwoty i daty zgodne z KSeF</strong><span>Porównano: ' +
+        R.cmpFields.map(function (f) { return f[1]; }).join(', ') + ' — bez rozbieżności na dopasowanych pozycjach.</span></div>');
     }
     if (st.fuzzy) {
       hl.push('<div class="callout is-warning"><strong>' + st.fuzzy + ' ' +
@@ -937,6 +1065,10 @@
           ['W KSeF, brak w rejestrze', R.onlyKsef.length],
       ['Bez numeru KSeF i bez oznaczenia OFF/BFK/DI', R.jpkBlock.length],
       ['Kontrola oznaczen wykonana', R.hasFlagCol ? 'tak' : 'nie - nie wskazano kolumny'],
+          ['Porownanie kwot i dat', R.cmpFields.length
+            ? R.cmpFields.map(function (f) { return f[1]; }).join(', ')
+            : 'nie - nie wskazano kolumn w obu plikach'],
+          ['Rozbieznosci kwot i dat', R.cmpFields.length ? R.diffs.length : '—'],
           [],
           ['Plik KSeF', S.ksefRef.file.name],
           ['Plik rejestru', S.regRef.file.name + ' › ' + S.regRef.sheet],
@@ -952,6 +1084,11 @@
         name: 'Bez numeru i oznaczenia', header: ['Wiersz', 'NIP', 'Nr faktury', 'Oznaczenie', 'Uwaga'],
         widths: [9, 15, 28, 14, 52],
         rows: R.jpkBlock.map(function (x) { return [x.excel, x.nip, x.inv, x.flag || '', x.note]; })
+      },
+      {
+        name: 'Kwoty i daty', header: ['Wiersz', 'NIP', 'Nr faktury', 'Numer KSeF', 'Pole', 'W rejestrze', 'W KSeF'],
+        widths: [9, 15, 28, 40, 20, 18, 18],
+        rows: R.diffs.map(function (x) { return [x.excel, x.nip, x.inv, x.num, x.field, x.reg, x.ksef]; })
       },
       {
         name: 'W KSeF brak w rejestrze', header: ['Wiersz KSeF', 'NIP', 'Nr faktury', 'Numer KSeF'],
