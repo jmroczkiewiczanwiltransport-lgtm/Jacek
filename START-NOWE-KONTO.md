@@ -4,14 +4,33 @@ Instrukcja przeniesienia projektu na własne konto. Wykonuje się raz.
 
 ---
 
-## Krok 1 — konto GitHub (5 minut)
+## Krok 1 — repozytorium na własnym koncie GitHub (2 minuty)
 
-Wejdź na `github.com`, **Sign up**, adres **`mbs.mroczkiewicz@gmail.com`**.
+Konto GitHub już istnieje: **`mbsmroczkiewic…`** (nazwa na MBS, nie na pracodawcę).
+Konta zakładać nie trzeba.
 
-Nazwa użytkownika: coś prostego i Twojego, np. `mbs-mroczkiewicz`. Będzie widoczna
-w adresie repozytorium, więc nie wpisuj nazwy pracodawcy.
+Najprostsza droga to funkcja **importu** — kopiuje całą historię w przeglądarce, bez
+komend gita i bez hasła do starego konta. Zaloguj się na swoje konto i wejdź na
+`github.com/new/import` (albo „+" w prawym górnym rogu → *Import repository*):
 
-Nie twórz jeszcze żadnego repozytorium — zrobi się samo w kroku 3.
+| Pole | Wartość |
+|---|---|
+| Your old repository's clone URL | `https://github.com/jmroczkiewiczanwiltransport-lgtm/Jacek` |
+| Owner | Twoje konto |
+| Repository name | `mbs-narzedzia` |
+| Visibility | **Private** — to najważniejsze pole |
+
+**Begin import.** Stare repozytorium jest publiczne, więc import je odczyta bez żadnych
+uprawnień — ta jedna niedogodność wreszcie działa na Twoją korzyść.
+
+Uwaga: import **kopiuje, nie przenosi**. Stare repozytorium zostaje publiczne i trzeba
+poprosić o jego usunięcie osobę zarządzającą tamtym kontem.
+
+### Droga zapasowa, jeśli import zawiedzie
+
+Utwórz ręcznie prywatne repozytorium `mbs-narzedzia`, a potem w pierwszej rozmowie na
+nowym koncie załącz plik **`MBS-historia.bundle`** — cała historia jest w nim i da się
+z niego odtworzyć repozytorium bez GitHuba.
 
 ## Krok 2 — konto Claude (5 minut)
 
@@ -22,21 +41,25 @@ W ustawieniach nowego konta podłącz GitHub (konektor GitHub) do konta z kroku 
 
 ## Krok 3 — pierwsza rozmowa
 
-Otwórz nową sesję Claude Code. **Załącz plik `MBS-historia.bundle`** i wklej tekst
+Otwórz nową sesję Claude Code z podłączonym repozytorium `mbs-narzedzia` i wklej tekst
 poniżej. To wszystko — nie musisz nic wpisywać w terminalu ani znać gita.
+
+Jeśli szedłeś drogą zapasową (bez importu), **załącz też `MBS-historia.bundle`**.
 
 ---
 
 ### Tekst do wklejenia
 
-> Przenoszę projekt na nowe konto. W załączniku `MBS-historia.bundle` jest całe
-> repozytorium razem z historią (17 commitów) — to kompletny projekt, nie fragment.
+> Przenoszę projekt na własne konto. Repozytorium `mbs-narzedzia` zawiera komplet:
+> aplikację, stronę, ofertę, znak marki i materiały sprzedażowe (18 commitów, 50 plików).
+> Jeśli w załączniku jest `MBS-historia.bundle`, to znaczy że import się nie udał —
+> wtedy odtwórz repozytorium z niego i wypchnij na moje konto jako **prywatne**.
 >
 > Zrób proszę po kolei:
 >
-> 1. Sklonuj repozytorium z bundla i sprawdź, że masz 17 commitów i 49 plików.
-> 2. Utwórz na moim koncie GitHub **prywatne** repozytorium `mbs-narzedzia`
->    i wypchnij tam całą historię.
+> 1. Sprawdź, że repozytorium jest **prywatne** i kompletne (18 commitów, 50 plików).
+> 2. Sprawdź, że `./build.sh` przechodzi i że `node tools/keygen.js 1` nie zgłasza
+>    rozjazdu soli licencyjnej.
 > 3. Przeczytaj `KONTEKST.md` — jest tam wszystko o projekcie i firmie.
 > 4. Przeczytaj `PRZENIESIENIE.md` — są tam pozostałe kroki przeniesienia.
 > 5. Opublikuj od nowa trzy strony: aplikację (`dist/artifact-body.html`),
