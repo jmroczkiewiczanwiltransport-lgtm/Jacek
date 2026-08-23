@@ -526,6 +526,45 @@
   .pstate { font-family: var(--font-mono); font-size: .6875rem; letter-spacing: .02em; }
   .pstate.lock { color: var(--warn); }
   .pstate.pass { color: var(--accent-ink); }
+  .pquiz, .pres {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .55rem;
+  }
+  .pquiz .pq-no {
+    font-family: var(--font-mono); font-size: .625rem; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .pquiz .pq-q { font-weight: 600; font-size: .9375rem; line-height: 1.45; }
+  .popt {
+    display: grid; grid-template-columns: 1.35rem 1fr; gap: .5rem; align-items: baseline;
+    font-size: .875rem; color: var(--ink-muted);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: .45rem .6rem;
+  }
+  .popt b { font-family: var(--font-mono); font-weight: 500; font-size: .75rem; color: var(--ink-faint); }
+  .popt.ok { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+  .popt.ok b { color: var(--accent-ink); }
+  .pq-explain {
+    font-size: .8125rem; color: var(--ink-muted);
+    border-left: 2px solid var(--accent); padding-left: .7rem;
+  }
+  .pq-explain .src { display: block; font-family: var(--font-mono); font-size: .6875rem; color: var(--ink-faint); margin-top: .2rem; }
+
+  .pres { text-align: center; justify-content: center; }
+  .pres .pct {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 3rem; line-height: 1; letter-spacing: -.03em; color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .pres .pr-meta { font-family: var(--font-mono); font-size: .75rem; color: var(--ink-muted); }
+  .pres .pr-pass {
+    align-self: center; font-family: var(--font-display); font-size: .6875rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: var(--accent-soft); color: var(--accent-ink);
+    padding: .25rem .7rem; border-radius: 100px;
+  }
+  .pres .pr-next { font-family: var(--font-mono); font-size: .6875rem; color: var(--ink-faint); }
+
   .plat-note { margin-top: .8rem; font-size: .8125rem; color: var(--ink-faint); max-width: 56ch; }
 
   .perks { margin-top: 2.75rem; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
@@ -971,7 +1010,7 @@
         </div>
       </div>
 
-      <div class="plat" role="img" aria-label="Przykładowy widok platformy dla pracownika: dwie karty szkoleń z paskiem postępu — jedno w toku z zablokowanym testem, drugie ukończone z wynikiem.">
+      <div class="plat" role="img" aria-label="Przykładowy widok platformy dla pracownika: karty szkoleń z paskiem postępu, pytanie testowe z odpowiedziami do wyboru i zaznaczoną poprawną z wyjaśnieniem, oraz ekran wyniku: 88 procent, próg 80, status zaliczone i termin następnego szkolenia.">
         <div class="plat-bar">
           <span class="t">Platforma szkoleniowa · widok pracownika</span>
           <span class="langs"><span class="lang on">PL</span><span class="lang">EN</span></span>
@@ -992,6 +1031,24 @@
             <div class="pbar"><span style="width:100%"></span></div>
             <div class="pmeta"><span>4 / 4 lekcje (100%)</span></div>
             <div class="pstate pass">test zdany · 92% · 2026-02-11</div>
+          </div>
+          <div class="pquiz">
+            <span class="pq-no">Pytanie 7 / 24 · BHP okresowe</span>
+            <p class="pq-q">Zauważasz pożar w pomieszczeniu biurowym. Co robisz w pierwszej kolejności?</p>
+            <div class="popt"><b>A</b><span>Gaszę samodzielnie, zanim ktokolwiek zauważy</span></div>
+            <div class="popt ok"><b>B</b><span>Uruchamiam alarm i ostrzegam osoby w pobliżu</span></div>
+            <div class="popt"><b>C</b><span>Zbieram dokumenty i sprzęt z biurka</span></div>
+            <div class="popt"><b>D</b><span>Czekam, aż zadziała instalacja gaśnicza</span></div>
+            <p class="pq-explain">Najpierw alarm i ostrzeżenie ludzi — gaszenie tylko, gdy pożar
+              jest w zarodku i masz drogę odwrotu.
+              <span class="src">Lekcja 3 · Postępowanie w razie pożaru</span></p>
+          </div>
+          <div class="pres">
+            <span class="pq-no" style="font-family:var(--font-mono);font-size:.625rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)">Wynik testu</span>
+            <span class="pct">88%</span>
+            <span class="pr-meta">22 / 25 poprawnych · próg 80% (20 / 25)</span>
+            <span class="pr-pass">✓ Zaliczone</span>
+            <span class="pr-next">następne szkolenie: do 2027-02-11</span>
           </div>
         </div>
       </div>
