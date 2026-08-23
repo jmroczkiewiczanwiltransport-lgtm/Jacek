@@ -43,14 +43,33 @@ komputera. **Granica bez zmian:** narzędzie liczy i składa plik; mapowanie kon
 klasyfikacje i zatwierdzenie wyniku należą do księgowej — kwota podatku jest
 wynikiem JEJ decyzji mapowania, do zweryfikowania z jej CIT-8, nie poradą podatkową.
 
-Cena (kotwice rynkowe sprawdzone 24.08.2026): wdrożenia ERP z JPK_CIT to
-10–40 tys. zł + 6–15 tys./rok utrzymania; moduły programów księgowych od ~1,2 tys.
-za stanowisko + 30–50% licencji rocznie za aktualizacje, a JPK_CIT często wymusza
-płatny upgrade. Biuro rachunkowe nie kupi żadnej z tych opcji — nasza półka jest
-pomiędzy. Propozycja: **wdrożenie 2 900 zł netto za biuro** (z mapowaniem pierwszej
-spółki i wyjściem na wynik zgodny z CIT-8) + **utrzymanie 990 zł/rok** (aktualizacje
-struktur MF — wersja (2) przyjdzie — poprawki, wsparcie; bez limitu spółek);
-etap ŚT (+900 zł), gdy obowiązek dojdzie. Do decyzji po v0.
+### Rynek — skorygowany twardym faktem (24.08.2026)
+
+**Alicja jest główną księgową w międzynarodowym koncernie, nie w biurze
+rachunkowym.** Jej firma dostała ofertę na takie narzędzie: **100 000 zł
+jednorazowo + 2 300 zł/mies. utrzymania** — i, co ważniejsze: **„nikt inny się
+nie odezwał do nas z ofertą, mimo pisania z prośbą o ofertę"**. Popyt przerasta
+podaż: firmy proszą o oferty i dostają ciszę.
+
+Dlaczego: koncerny mają zagraniczne ERP (SAP itp.), które nie produkują polskiego
+JPK_KR_PD; lokalizacja to projekt za setki tysięcy. Polskich spółek zagranicznych
+grup są tysiące — wszystkie z tym samym problemem w tym samym terminie.
+
+### Dwa segmenty, dwie ceny
+
+**A. Koncerny / spółki z zagranicznym ERP (premium — nowy segment):**
+- pilot u pracodawcy Alicji: **wdrożenie 25 000–35 000 zł netto + 1 500 zł/mies.**
+  utrzymania — ok. 1/3 ceny konkurencji (100k + 2,3k/mc), przy architekturze,
+  którą dział bezpieczeństwa koncernu pokocha (dane nie opuszczają ich komputera);
+- w zamian za cenę pilotażową: referencja koncernu + zgoda na case study;
+- uwaga wdrożeniowa: sprzedaż korporacyjna = umowa, wymagania zakupowe,
+  odpowiedzialność — do przygotowania przed rozmową (wzór umowy, zakres SLA).
+
+**B. Biura rachunkowe (wolumen — później):** wdrożenie 2 900 zł + 990 zł/rok
+bez limitu spółek. Ten segment rusza po pilocie z segmentu A.
+
+Kotwice tła: wdrożenia ERP 10–40 tys. + 6–15 tys./rok; moduły programów
+księgowych od ~1,2 tys./stanowisko + 30–50% licencji rocznie.
 
 ## Kontrole (wersja 0 — do zweryfikowania na prawdziwym pliku)
 

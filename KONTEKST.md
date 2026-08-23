@@ -90,6 +90,16 @@ Wyjście: raport `.xlsx` (z dysku) lub `.csv` (na stronie), kolumna do wklejenia
 Licencja: pełny wynik na ekranie, eksport ograniczony do 100 pozycji bez klucza.
 Klucze: `node tools/keygen.js`. Sól jest w kodzie strony, więc to bariera, nie zabezpieczenie.
 
+## Korekta ważnego założenia (24.08.2026)
+
+**Alicja nie pracuje w biurze rachunkowym — jest główną księgową w międzynarodowym
+koncernie.** Wcześniejsze zapisy o „jej biurze" czytać z tą poprawką. Skutki:
+- jej firma dostała ofertę na narzędzie JPK_CIT: **100 tys. zł + 2 300 zł/mies.**,
+  a inni dostawcy w ogóle nie odpowiadają na zapytania ofertowe — rynek niedomknięty;
+- pierwszy klient generatora JPK_CIT to potencjalnie JEJ koncern (pilot premium),
+  segment biur rachunkowych dopiero po pilocie;
+- sprzedaż KSeF Uzgodnienia do niej = licencja dla firmy, nie dla biura.
+
 ## Formularz zapytań (od 23.08.2026)
 
 Sekcja Kontakt ma formularz „Zapytanie indywidualne" (imię/firma, e-mail, telefon
