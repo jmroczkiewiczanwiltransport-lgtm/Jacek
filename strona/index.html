@@ -35,6 +35,7 @@
 
     --info:      #2A5DB0;
     --info-soft: #E7EEF9;
+    --warn:      #9A5B1B;
 
     --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --font-body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -63,6 +64,7 @@
       --slab-grid:   rgba(255, 255, 255, .03);
       --info:        #8AB0EE;
       --info-soft:   #15202F;
+      --warn:        #D9A05C;
     }
   }
 
@@ -83,6 +85,7 @@
     --slab-grid:   rgba(255, 255, 255, .03);
     --info:        #8AB0EE;
     --info-soft:   #15202F;
+    --warn:        #D9A05C;
   }
 
   html { scroll-behavior: smooth; }
@@ -175,6 +178,7 @@
     align-items: start;
   }
   @media (min-width: 64rem) { .hero { grid-template-columns: 1.06fr .94fr; gap: 4rem; align-items: center; } }
+  .hero > div { min-width: 0; }
   .hero h1 {
     font-size: clamp(2.05rem, 5vw, 3.05rem); font-weight: 800; letter-spacing: -.03em;
     max-width: 28ch;
@@ -361,6 +365,90 @@
     border-radius: 2px; padding: .05rem .3rem; color: var(--ink);
   }
 
+  /* ─ szkolenia ─ */
+  .szk { margin-top: 2.25rem; display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
+  .szk > div { min-width: 0; }
+  @media (min-width: 52rem) { .szk { grid-template-columns: 1.05fr .95fr; gap: 3rem; } }
+
+  /* Pionowa linia jest przebiegiem szkolenia: ciagla przy etapie, przerywana przy
+     warunku, ktory trzeba spelnic, zeby przejsc dalej. Test jest zamkniety, dopoki
+     material nie zostal przejrzany - i to jest cala wartosc protokolu. */
+  .gate {
+    border-left: 2px solid var(--accent); padding: .15rem 0 .15rem 1.15rem;
+    display: flex; flex-direction: column; gap: .3rem;
+  }
+  .gate h3 { font-size: 1.0625rem; font-weight: 700; }
+  .gate p { color: var(--ink-muted); font-size: .9375rem; }
+  .cond {
+    border-left: 2px dashed var(--border-firm); padding: .6rem 0 .6rem 1.15rem;
+    font-family: var(--font-mono); font-size: .75rem; letter-spacing: .02em;
+    color: var(--ink-faint);
+  }
+
+  /* Protokol to dokument, nie pulpit - dlatego jest cichy, bez ruchu i bez koloru
+     poza jednym miejscem, w ktorym ktos nie zaliczyl. */
+  .proto {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .proto .p-head { padding: 1rem 1.15rem .8rem; border-bottom: 1px solid var(--border); }
+  .proto h3 { font-size: 1rem; font-weight: 700; }
+  .proto .p-meta {
+    margin-top: .3rem; font-family: var(--font-mono); font-size: .6875rem;
+    letter-spacing: .04em; color: var(--ink-faint);
+  }
+  .proto .scroll { overflow-x: auto; }
+  .proto table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: .75rem; }
+  .proto th {
+    text-align: left; font-weight: 500; font-size: .5625rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
+    padding: .5rem .6rem .4rem; border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  .proto td {
+    padding: .4rem .6rem; border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .proto th:first-child, .proto td:first-child { padding-left: 1.15rem; }
+  .proto th:last-child,  .proto td:last-child  { padding-right: 1.15rem; }
+  .proto tbody tr:last-child td { border-bottom: 0; }
+  .proto .num { text-align: right; }
+  .proto .st { text-align: right; }
+  .proto .st.ok { color: var(--ink-faint); }
+  .proto .st.no { color: var(--warn); }
+  .proto .dim { color: var(--ink-faint); }
+  /* Na waskim ekranie brakowalo 31 px - mniejszy stopien i wezsze krawedzie mieszcza
+     protokol bez przewijania w bok, ktore w karcie czyta sie jak blad. */
+  @media (max-width: 27rem) {
+    .proto table { font-size: .6875rem; }
+    .proto th:first-child, .proto td:first-child { padding-left: .8rem; }
+    .proto th:last-child,  .proto td:last-child  { padding-right: .8rem; }
+  }
+  .proto .p-foot {
+    padding: .65rem 1.15rem; border-top: 1px solid var(--border);
+    background: var(--surface-alt); font-size: .75rem; color: var(--ink-muted);
+    font-family: var(--font-mono); letter-spacing: .02em;
+  }
+  .proto-note { margin-top: .8rem; font-size: .8125rem; color: var(--ink-faint); max-width: 42ch; }
+
+  .perks { margin-top: 2.75rem; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 48rem) { .perks { grid-template-columns: repeat(3, 1fr); gap: 2.25rem; } }
+  .perks div { border-top: 1px solid var(--border-firm); padding-top: .9rem; display: flex; flex-direction: column; gap: .4rem; }
+  .perks .pk {
+    font-family: var(--font-mono); font-size: .6875rem; font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .perks p { color: var(--ink-muted); font-size: .9375rem; }
+  .perks strong { color: var(--ink); font-weight: 600; }
+
+  /* Granica oferty stoi na wierzchu, nie w drobnym druku na dole. */
+  .limit { margin-top: 2.75rem; border-top: 1px solid var(--border-firm); padding-top: .9rem; }
+  .limit .pk {
+    font-family: var(--font-mono); font-size: .6875rem; font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint);
+    display: block; margin-bottom: .4rem;
+  }
+  .limit p { color: var(--ink-muted); font-size: .9375rem; max-width: 66ch; }
+
   /* ─ cennik ─ */
   .price-note { margin-top: .4rem; color: var(--ink-muted); font-size: .9375rem; max-width: 62ch; }
   .prices { margin-top: 2rem; display: grid; grid-template-columns: 1fr; gap: 1rem; }
@@ -481,6 +569,7 @@
       </a>
       <nav>
         <a href="#co-robie">Co robię</a>
+        <a href="#szkolenia">Szkolenia</a>
         <a href="#cennik">Cennik</a>
         <a href="#jak">Jak to działa</a>
         <a href="#bezpieczenstwo">Bezpieczeństwo</a>
@@ -592,6 +681,7 @@
           <div><span class="k">Wysyłają</span><span class="v">materiał szkoleniowy i listę pytań</span></div>
           <div class="out"><span class="k">Dostają</span><span class="v">gotowe szkolenie z testem i protokołem zaliczeń</span></div>
         </div>
+        <a class="more" href="#szkolenia">Zobacz, jak to jest zbudowane &rarr;</a>
       </article>
 
       <article class="svc">
@@ -665,6 +755,93 @@
   </div>
 </section>
 
+<div class="band">
+  <section id="szkolenia">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Szkolenia obowiązkowe</span>
+        <h2>Kontrola nie pyta, czy szkolenie było. Pyta o protokół</h2>
+        <p>Materiał zwykle jest — w Wordzie, w prezentacji, w głowie jednej osoby. Nie ma
+          narzędzia, które przeprowadzi przez niego pracownika, sprawdzi, że rozumie,
+          i wypluje listę z datami i wynikami. To robię.</p>
+      </div>
+
+      <div class="szk">
+        <div>
+          <div class="gate">
+            <h3>Materiał</h3>
+            <p>Państwa dokument rozbity na lekcje, w kolejności. Można dodać lektora —
+              czytanie na głos ma znaczenie tam, gdzie nie każdy chętnie czyta z ekranu.</p>
+          </div>
+          <div class="cond">warunek: wszystkie lekcje przejrzane</div>
+          <div class="gate">
+            <h3>Test</h3>
+            <p>Pytania i próg zaliczenia ustalają Państwo. Dopóki materiał nie jest
+              przejrzany, testu nie da się otworzyć — i właśnie dlatego wynik coś znaczy.</p>
+          </div>
+          <div class="cond">warunek: wynik nie niższy niż próg</div>
+          <div class="gate">
+            <h3>Protokół</h3>
+            <p>Lista osób z datami i wynikami, do wydruku albo do arkusza. Widać też tych,
+              którzy jeszcze nie zaczęli — w praktyce to najczęściej potrzebna kolumna.</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="proto">
+            <div class="p-head">
+              <h3>Protokół zaliczeń</h3>
+              <div class="p-meta">BHP okresowe · luty 2026 · próg 80%</div>
+            </div>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr><th>pracownik</th><th class="num">wynik</th><th>data</th><th class="st">status</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Kowalski A.</td><td class="num">92%</td><td>2026-02-11</td><td class="st ok">zaliczone</td></tr>
+                  <tr><td>Nowak M.</td><td class="num">84%</td><td>2026-02-11</td><td class="st ok">zaliczone</td></tr>
+                  <tr><td>Wiśniewski P.</td><td class="num">68%</td><td>2026-02-12</td><td class="st no">powtórka</td></tr>
+                  <tr><td>Lewandowska K.</td><td class="num dim">—</td><td class="dim">—</td><td class="st no">nie zaczęte</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="p-foot">18 z 21 osób zaliczyło · plik .xls albo .csv</div>
+          </div>
+          <p class="proto-note">Przykład, nie czyjeś dane. Nazwy szkolenia, pytania i próg
+            są Państwa.</p>
+        </div>
+      </div>
+
+      <div class="perks">
+        <div>
+          <span class="pk">koszt</span>
+          <p><strong>Bez abonamentu za pracownika.</strong> Płacą Państwo raz za narzędzie,
+            a nie co roku za każdą osobę na liście. Przy rotacji to jest cała różnica.</p>
+        </div>
+        <div>
+          <span class="pk">wdrożenie</span>
+          <p><strong>Z dysku firmowego, bez serwera.</strong> Działa z dysku sieciowego albo
+            z pendrive'a. Nie trzeba nikomu zakładać konta ani otwierać niczego na świat.</p>
+        </div>
+        <div>
+          <span class="pk">język</span>
+          <p><strong>Dwie wersje językowe i lektor.</strong> Ten sam materiał w drugim języku,
+            z przełącznikiem — jeśli część załogi nie czyta po polsku.</p>
+        </div>
+      </div>
+
+      <div class="limit">
+        <span class="pk">czego nie robię</span>
+        <p>Nie prowadzę szkoleń i nie wystawiam zaświadczeń. Materiał, pytania, próg
+          zaliczenia i decyzja, kto ma szkolić, są Państwa — tam, gdzie przepis wymaga
+          uprawnionego szkolącego, ja go nie zastępuję. Robię narzędzie, które przeprowadza
+          przez materiał, sprawdza wynik i dokumentuje, że to się odbyło.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
 <section id="cennik">
   <div class="wrap">
     <div class="head">
@@ -674,8 +851,8 @@
         rozmową.</p>
     </div>
     <p class="price-note">Cennik dotyczy narzędzia <strong>Uzgodnienia KSeF</strong>.
-      Szkolenia obowiązkowe wyceniam podobnie, a pracę na zamówienie —
-      po obejrzeniu plików, zawsze z ceną podaną z góry.</p>
+      Platformę szkoleniową i pracę na zamówienie wyceniam po obejrzeniu materiału —
+      jednorazowo, zawsze z ceną podaną z góry, przed rozpoczęciem.</p>
 
     <div class="prices">
       <div class="price">

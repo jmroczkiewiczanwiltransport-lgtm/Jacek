@@ -85,6 +85,27 @@ Klucze: `node tools/keygen.js`. Sól jest w kodzie strony, więc to bariera, nie
   bez uprawnień) i wstrzymania zwrotu VAT (brak solidnego źródła). Szczegóły i źródła:
   `sprzedaz/podstawa-prawna.md`.
 
+## Szkolenia obowiązkowe — druga noga oferty
+
+Rozbudowane 23.08.2026 do własnej sekcji na stronie (`#szkolenia`). Teza: **kontrola nie
+pyta, czy szkolenie było — pyta o protokół.** Materiał u klienta zwykle jest; brakuje
+narzędzia, które przez niego przeprowadzi, sprawdzi wynik i wypluje listę z datami.
+
+Mechanizm, który sprzedaje: materiał → **test zamknięty, dopóki materiał nie jest
+przejrzany** → protokół. Ta blokada jest powodem, dla którego wynik w protokole coś znaczy.
+
+Argumenty handlowe: bez abonamentu za pracownika, z dysku firmowego bez serwera, dwie
+wersje językowe i lektor.
+
+**Granica, która musi stać na stronie:** nie prowadzi szkoleń i nie wystawia zaświadczeń.
+Materiał, pytania, próg i decyzja, kto szkoli, są klienta — tam, gdzie przepis wymaga
+uprawnionego szkolącego, narzędzie go nie zastępuje. Bez tego zdania oferta obiecuje
+uprawnienia, których nie ma.
+
+Cena: **do ustalenia.** Na stronie stoi „wycena po obejrzeniu materiału, jednorazowo,
+z ceną podaną z góry" — to jest uczciwe, ale kwoty nadal nie ma i trzeba ją wymyślić
+przed pierwszą rozmową.
+
 ## Zasady, których się trzymamy
 
 - **Żadnych liczb, których nie mamy.** Bez „oszczędzamy 20 godzin miesięcznie", bez
