@@ -930,26 +930,73 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     /* Kwoty i daty pozycji dopasowanej do faktury z KSeF. Zle sparsowana wartosc
        po ktorejkolwiek stronie wylacza porownanie tego pola w tym wierszu -
        falszywy alarm kosztuje zaufanie drozej niz przemilczenie. */
+    /* Kwota netto jako kontrola dopasowania przybliżonego. Przechodzi: zgodna,
+       ujeta na minusie albo dokladna polowa (odliczenie 50%). Bez wskazanych
+       kolumn kwot kontrola nie dziala i przyblizenie przechodzi jak dotad. */
+    function fuzzyAmtOk(regRow, num) {
+      if (R.net < 0 || K.net < 0) return true;
+      var kr = byNum[num];
+      if (!kr) return true;
+      var a = parseAmt(regRow[R.net]), b = parseAmt(kr[K.net]);
+      if (a === null || b === null) return true;
+      return Math.abs(a - b) <= 0.011 || Math.abs(a + b) <= 0.011 || Math.abs(a * 2 - b) <= 0.021;
+    }
+
+    var amtQueue = [];
     function compareOpt(regRow, num, excel, nipRaw, invRaw) {
       if (!out.cmpFields.length) return;
       var kr = byNum[num];
       if (!kr) return;
+      /* Kwoty ida do kolejki i sa porownywane po zsumowaniu wierszy tej samej
+         faktury - rejestr czesto rozbija fakture na kilka wierszy i kazdy
+         z osobna "nie zgadzalby sie" z caloscia. Daty porownujemy od razu,
+         wiersz po wierszu. */
+      amtQueue.push({ row: regRow, num: num, excel: excel, nip: nipRaw, inv: invRaw });
       out.cmpFields.forEach(function (f) {
-        var k = f[0], a, b;
-        if (f[2] === 'amt') {
-          a = parseAmt(regRow[R[k]]); b = parseAmt(kr[K[k]]);
-          if (a === null || b === null) return;
-          if (Math.abs(a - b) > 0.005)
-            out.diffs.push({ excel: excel, nip: nipRaw, inv: invRaw, num: num,
-              field: f[1], reg: fmtAmt(a), ksef: fmtAmt(b) });
-        } else {
-          a = parseDate(regRow[R[k]]); b = parseDate(kr[K[k]]);
-          if (!a || !b) return;
-          if (a !== b)
-            out.diffs.push({ excel: excel, nip: nipRaw, inv: invRaw, num: num,
-              field: f[1], reg: a, ksef: b });
-        }
+        if (f[2] !== 'date') return;
+        var a = parseDate(regRow[R[f[0]]]), b = parseDate(kr[K[f[0]]]);
+        if (!a || !b) return;
+        if (a !== b)
+          out.diffs.push({ excel: excel, nip: nipRaw, inv: invRaw, num: num,
+            field: f[1], reg: a, ksef: b, note: '' });
       });
+    }
+
+    /* Po przejsciu rejestru: kwoty per faktura, z rozpoznaniem trzech wzorcow,
+       ktore NIE sa bledami ksiegowej - roznicy tylko znaku (korekta na minusie),
+       dokladnej polowy (odliczenie 50% VAT od aut) i sumy wielu wierszy. */
+    function flushAmounts() {
+      var groups = {}, num;
+      amtQueue.forEach(function (q) { (groups[q.num] = groups[q.num] || []).push(q); });
+      for (num in groups) {
+        var g = groups[num], kr = byNum[num];
+        if (!kr) continue;
+        out.cmpFields.forEach(function (f) {
+          if (f[2] !== 'amt') return;
+          var k = f[0], kv = parseAmt(kr[K[k]]);
+          if (kv === null) return;
+          var sum = 0, got = 0;
+          g.forEach(function (q) {
+            var v = parseAmt(q.row[R[k]]);
+            if (v !== null) { sum += v; got++; }
+          });
+          if (!got) return;
+          var rows = g.map(function (q) { return q.excel; }).join('+');
+          var base = { excel: rows, nip: g[0].nip, inv: g[0].inv, num: num, field: f[1] };
+          var multi = g.length > 1 ? ' (suma ' + g.length + ' wierszy)' : '';
+          if (Math.abs(sum - kv) <= 0.011) return;
+          if (Math.abs(sum + kv) <= 0.011) {
+            out.diffs.push(Object.assign(base, { reg: fmtAmt(sum), ksef: fmtAmt(kv),
+              note: 'różnica tylko znaku — jeśli to korekta ujęta na minusie, tak może być' + multi }));
+          } else if (Math.abs(sum * 2 - kv) <= 0.021) {
+            out.diffs.push(Object.assign(base, { reg: fmtAmt(sum), ksef: fmtAmt(kv),
+              note: 'dokładnie połowa kwoty z KSeF — wygląda na odliczenie 50% (auta), sprawdź czy tak ma być' + multi }));
+          } else {
+            out.diffs.push(Object.assign(base, { reg: fmtAmt(sum), ksef: fmtAmt(kv),
+              note: multi ? 'suma ' + g.length + ' wierszy rejestru' : '' }));
+          }
+        });
+      }
     }
 
     for (r = regRef.headerRow; r < regRef.aoa.length; r++) {
@@ -1023,7 +1070,14 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
           }
           m = uniq(acc);
         }
-        if (m.length === 1) {
+        if (m.length === 1 && !fuzzyAmtOk(row, m[0])) {
+          /* Numer faktury pasowal tylko w przyblizeniu, a kwota netto jest
+             zupelnie inna - to prawie na pewno INNA faktura tego dostawcy.
+             Wpisanie numeru byloby gorsze niz brak numeru. */
+          out.stats.none++;
+          out.unmatched.push({ excel: excel, nip: nipRaw, inv: invRaw, flag: flag,
+            note: 'kandydat przybliżony odrzucony — kwota netto w rejestrze inna niż w KSeF (' + m[0] + ')' });
+        } else if (m.length === 1) {
           out.stats.fuzzy++;
           out.used[m[0]] = 1;
           out.filled.push({ excel: excel, nip: nipRaw, inv: invRaw, num: m[0], how: 'przybliżone — sprawdź', approx: true });
@@ -1054,6 +1108,8 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         note: fl ? 'oznaczenie „' + fl + '” nie jest jednym z OFF / BFK / DI' : 'brak numeru KSeF i brak oznaczenia'
       });
     }
+
+    flushAmounts();
 
     var seenNum = {}, i, kr;
     for (i = 0; i < ksefRows.length; i++) {
@@ -1325,11 +1381,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     },
     {
       id: 'diffs', name: 'Kwoty i daty', sig: 'warning',
-      cols: ['Wiersz', 'Nr faktury', 'Pole', 'W rejestrze', 'W KSeF'],
+      cols: ['Wiersz', 'Nr faktury', 'Pole', 'W rejestrze', 'W KSeF', 'Uwaga'],
       row: function (x) {
         return '<td class="r">' + x.excel + '</td><td class="wide">' + esc(x.inv) +
           '</td><td>' + esc(x.field) + '</td><td class="was">' + esc(x.reg) +
-          '</td><td class="now">' + esc(x.ksef) + '</td>';
+          '</td><td class="now">' + esc(x.ksef) + '</td><td>' + esc(x.note || '') + '</td>';
       },
       empty: 'Kwoty i daty zgodne z KSeF — albo nie wskazano kolumn do porównania w obu plikach.'
     },
@@ -1656,9 +1712,9 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         rows: R.jpkBlock.map(function (x) { return [x.excel, x.nip, x.inv, x.flag || '', x.note]; })
       },
       {
-        name: 'Kwoty i daty', header: ['Wiersz', 'NIP', 'Nr faktury', 'Numer KSeF', 'Pole', 'W rejestrze', 'W KSeF'],
-        widths: [9, 15, 28, 40, 20, 18, 18],
-        rows: R.diffs.map(function (x) { return [x.excel, x.nip, x.inv, x.num, x.field, x.reg, x.ksef]; })
+        name: 'Kwoty i daty', header: ['Wiersz', 'NIP', 'Nr faktury', 'Numer KSeF', 'Pole', 'W rejestrze', 'W KSeF', 'Uwaga'],
+        widths: [9, 15, 28, 40, 20, 18, 18, 52],
+        rows: R.diffs.map(function (x) { return [x.excel, x.nip, x.inv, x.num, x.field, x.reg, x.ksef, x.note || '']; })
       },
       {
         name: 'W KSeF brak w rejestrze', header: ['Wiersz KSeF', 'NIP', 'Nr faktury', 'Numer KSeF'],
