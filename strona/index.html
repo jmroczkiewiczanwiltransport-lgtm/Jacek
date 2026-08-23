@@ -36,6 +36,7 @@
     --info:      #2A5DB0;
     --info-soft: #E7EEF9;
     --warn:      #9A5B1B;
+    --band-bg:   #E6EEEA;
 
     --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --font-body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -65,6 +66,7 @@
       --info:        #8AB0EE;
       --info-soft:   #15202F;
       --warn:        #D9A05C;
+      --band-bg:     #121B1C;
     }
   }
 
@@ -86,6 +88,7 @@
     --info:        #8AB0EE;
     --info-soft:   #15202F;
     --warn:        #D9A05C;
+    --band-bg:     #121B1C;
   }
 
   html { scroll-behavior: smooth; }
@@ -530,7 +533,9 @@
   .price .amt.free { color: var(--ink); }
 
   /* ─ kroki ─ */
-  .band { background: var(--surface-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .band { background: var(--band-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  /* Karty na pasie stoja na powierzchni, nie na odcieniu pasa - inaczej gina */
+  .band .price, .band .formats { background: var(--surface); }
   ol.steps { margin: 2rem 0 0; padding: 0; list-style: none; display: grid; gap: 1.25rem; counter-reset: s; }
   @media (min-width: 48rem) { ol.steps { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
   ol.steps li { counter-increment: s; display: flex; flex-direction: column; gap: .45rem; }
@@ -591,6 +596,19 @@
     display: flex; flex-wrap: wrap; gap: .5rem 2rem;
     font-size: .8125rem; color: var(--ink-faint);
   }
+
+  /* ─ sekcja na ciemnym pasie: szklane karty, te same tokeny co naglowek ─ */
+  .slab .head h2 { color: var(--slab-ink); }
+  .slab .head p { color: var(--slab-muted); }
+  .slab .eyebrow { color: var(--slab-faint); }
+  .slab .svc { background: rgba(255, 255, 255, .028); border-color: var(--slab-line); }
+  .slab .svc h3 { color: var(--slab-ink); }
+  .slab .svc > p { color: var(--slab-muted); }
+  .slab .io { border-top-color: var(--slab-line); }
+  .slab .io .k { color: var(--slab-faint); }
+  .slab .io .v { color: var(--slab-ink); }
+  .slab .io .out .v { color: var(--slab-accent); }
+  @media (hover: hover) { .slab .svc:hover { border-color: var(--slab-accent); } }
 
   /* ═══ zdanie-plakat ═══ */
   .statement { text-align: center; padding: clamp(4rem, 9vw, 6.5rem) 0; }
@@ -751,7 +769,8 @@
   </div>
 </section>
 
-<div class="band">
+<div class="slab">
+  <div class="aura" aria-hidden="true"></div>
   <section id="zamowienia">
     <div class="wrap">
       <div class="head">
