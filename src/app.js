@@ -312,11 +312,16 @@
       guessed: { nip: nc >= 0, inv: ic >= 0, ksef: kc >= 0, flag: fc >= 0 } };
     var taken = {}; taken[kc] = taken[nc] = taken[ic] = taken[fc] = 1;
     OPTF.forEach(function (f) {
-      var k = f[0], cq = -1, q, isAmt = f[2] === 'amt';
+      var k = f[0], cq = -1, q, isAmt = f[2] === 'amt', best = -1;
       for (q = 0; q < cols; q++) {
         if (taken[q]) continue;
         if (isAmt && /\bdat|date/i.test(txt(hdr[q]))) continue;
-        if (PAT[k].test(txt(hdr[q]))) { cq = q; break; }
+        if (!PAT[k].test(txt(hdr[q]))) continue;
+        /* Kilka kolumn pasuje (K_40, K_42, K_44...) - wygrywa najpelniejsza.
+           W ewidencji kolumny srodkow trwalych sa zwykle prawie puste, wiec
+           pierwsza od lewej bywa najgorszym wyborem. */
+        var fill = ratio(q, function (v) { return v !== ''; });
+        if (fill > best) { best = fill; cq = q; }
       }
       /* „data wystawienia" wygrywa z „data otrzymania" o te sama kolumne tylko
          wtedy, gdy naglowki naprawde sie roznia - taken to zalatwia. */
