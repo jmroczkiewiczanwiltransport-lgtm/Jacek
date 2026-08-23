@@ -110,4 +110,6 @@ Klucze: `node tools/keygen.js`. Sól jest w kodzie strony, więc to bariera, nie
 Zero wysłanych wiadomości, zero klientów. Plan: zacząć od własnej księgowej (już
 zobaczyła narzędzie i potwierdziła, że ma sens), potem jej polecenia, potem biura
 w promieniu 50 km. Zimne kontakty dopiero po pierwszym płacącym kliencie.
-Cennik: 149 zł/mies. za biuro albo 990 zł jednorazowo za stanowisko — do zmiany.
+Cennik: 149 zł/mies. za biuro albo 990 zł jednorazowo za stanowisko, plus sprawdzenie
+próbne za 0 zł. Stoi **jawnie na stronie** w sekcji „Cennik" — przy tej kwocie ukryta
+cena odstrasza bardziej niż sama liczba.

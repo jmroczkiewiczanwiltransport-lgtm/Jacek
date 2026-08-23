@@ -254,6 +254,34 @@
     border-radius: 2px; padding: .05rem .3rem; color: var(--ink);
   }
 
+  /* ─ cennik ─ */
+  .price-note { margin-top: .4rem; color: var(--ink-muted); font-size: .9375rem; max-width: 62ch; }
+  .prices { margin-top: 2rem; display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (min-width: 52rem) { .prices { grid-template-columns: repeat(3, 1fr); } }
+  .price {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem 1.6rem;
+    display: flex; flex-direction: column; gap: .55rem;
+  }
+  .price.pick { border-color: var(--accent); border-width: 1.5px; }
+  .price .tier { font-family: var(--font-display); font-weight: 700; font-size: 1.0625rem; }
+  .price .amt {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 2.25rem; line-height: 1; letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .price.pick .amt { color: var(--accent); }
+  .price .per { font-size: .8125rem; color: var(--ink-faint); }
+  .price p { color: var(--ink-muted); font-size: .9375rem; }
+  .price .top { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .price .flag {
+    font-family: var(--font-display); font-size: .625rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: var(--accent-soft); color: var(--accent-ink);
+    padding: .2rem .55rem; border-radius: 100px;
+  }
+  .price .amt.free { color: var(--ink); }
+
   /* ─ kroki ─ */
   .band { background: var(--surface-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   ol.steps { margin: 2rem 0 0; padding: 0; list-style: none; display: grid; gap: 1.25rem; counter-reset: s; }
@@ -330,6 +358,7 @@
       </a>
       <nav>
         <a href="#co-robie">Co robię</a>
+        <a href="#cennik">Cennik</a>
         <a href="#jak">Jak to działa</a>
         <a href="#bezpieczenstwo">Bezpieczeństwo</a>
         <a href="#kontakt">Kontakt</a>
@@ -483,6 +512,44 @@
             arkuszu, daty jako tekst. To normalny stan plików — nie trzeba ich wcześniej
             porządkować.</span>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cennik">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Cennik</span>
+      <h2>Uzgodnienia KSeF — cena jawna</h2>
+      <p>Bez „zapytaj o wycenę". Widzą Państwo, ile to kosztuje, jeszcze przed pierwszą
+        rozmową.</p>
+    </div>
+    <p class="price-note">Cennik dotyczy narzędzia <strong>Uzgodnienia KSeF</strong>.
+      Przepał floty i szkolenia obowiązkowe wyceniam podobnie, a pracę na zamówienie —
+      po obejrzeniu plików, zawsze z ceną podaną z góry.</p>
+
+    <div class="prices">
+      <div class="price">
+        <div class="top"><span class="tier">Sprawdzenie próbne</span></div>
+        <span class="amt free">0 zł</span>
+        <span class="per">jeden miesiąc, Państwa dane</span>
+        <p>Pełny wynik na ekranie, eksport do 100 pozycji. Tyle wystarczy, żeby zobaczyć,
+          czy u Państwa są rozbieżności.</p>
+      </div>
+      <div class="price pick">
+        <div class="top"><span class="tier">Abonament</span><span class="flag">Zalecane</span></div>
+        <span class="amt">149 zł</span>
+        <span class="per">miesięcznie, za biuro, netto</span>
+        <p>Bez limitu pozycji i plików. Poprawki i nowe funkcje w cenie. Rezygnacja
+          w dowolnym miesiącu, bez okresu wypowiedzenia.</p>
+      </div>
+      <div class="price">
+        <div class="top"><span class="tier">Licencja jednorazowa</span></div>
+        <span class="amt">990 zł</span>
+        <span class="per">jednorazowo, za stanowisko, netto</span>
+        <p>Wersja w chwili zakupu, bez ograniczeń czasowych. Późniejsze aktualizacje
+          osobno.</p>
       </div>
     </div>
   </div>

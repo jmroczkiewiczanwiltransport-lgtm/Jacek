@@ -140,8 +140,10 @@ zaczyna się cykl nagabywania. Paradoksalnie zwiększa to odsetek osób, które 
 >
 > [imię]
 
-To jedyna wiadomość, w której podajesz cenę. Wcześniej cena nie ma kontekstu — po demie
-ma, bo obok niej stoją ich własne liczby.
+To jedyna **wiadomość**, w której podajesz cenę — ale cena stoi też jawnie na stronie
+(sekcja „Cennik"), więc część odbiorców zna ją, zanim odpisze. To celowe: przy 149 zł
+miesięcznie ukrywanie ceny odstrasza bardziej niż sama kwota. W wiadomości cena działa
+mocniej, bo obok niej stoją ich własne liczby z dema — dlatego nadal ją tu powtarzasz.
 
 ---
 
