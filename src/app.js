@@ -117,7 +117,7 @@
 
   function paintLicense() {
     var el = $('licState');
-    el.textContent = S.licensed ? 'Licencja aktywna' : 'Wersja demonstracyjna — eksport do ' + FREE_ROWS + ' wierszy';
+    el.textContent = S.licensed ? 'Licencja aktywna' : 'Wersja demonstracyjna — eksporty obejmują pierwsze ' + FREE_ROWS + ' wierszy rejestru';
     el.className = 'lic-state' + (S.licensed ? ' on' : '');
   }
 
@@ -1231,18 +1231,16 @@
   });
 
   function buildPasteColumn() {
-    var R = S.result, lines = [], n = 0, r, v;
+    var R = S.result, lines = [], n = 0, cut = false, r, v;
     for (r = R.firstDataRow; r <= R.lastDataRow; r++) {
       v = R.fillByRow[r] || '';
-      if (v) {
-        n++;
-        if (!S.licensed && n > FREE_ROWS) v = '';
-      }
+      if (v) n++;
+      if (!S.licensed && r - R.firstDataRow >= FREE_ROWS && v) { v = ''; cut = true; }
       lines.push(v);
     }
     var text = lines.join('\n');
     $('pasteCol').value = text;
-    return { text: text, total: n, capped: !S.licensed && n > FREE_ROWS };
+    return { text: text, total: n, capped: cut };
   }
 
   $('showCol').addEventListener('click', function () {
@@ -1272,12 +1270,11 @@
 
   $('dlFilled').addEventListener('click', function () {
     var ref = S.regRef, wb = ref.file.wb, ws = wb.Sheets[ref.sheet];
-    var col = ref.map.ksef, R = S.result, n = 0, r, v, addr;
+    var col = ref.map.ksef, R = S.result, r, v, addr;
     for (r = R.firstDataRow; r <= R.lastDataRow; r++) {
       v = R.fillByRow[r];
       if (!v) continue;
-      n++;
-      if (!S.licensed && n > FREE_ROWS) break;
+      if (!S.licensed && r - R.firstDataRow >= FREE_ROWS) break;
       addr = XLSX.utils.encode_cell({ r: r - 1, c: col });
       ws[addr] = { t: 's', v: v };
     }
