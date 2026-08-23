@@ -28,6 +28,7 @@
 
     /* pasmo nagłówka jest zawsze ciemne - w obu motywach, celowo */
     --slab:        #101A1B;
+    --slab-glass:  rgba(16, 26, 27, .85);
     --slab-ink:    #EDF2F0;
     --slab-muted:  #9BB0AE;
     --slab-accent: #4CC3AD;
@@ -71,6 +72,7 @@
       --accent-soft: #10302C;
       --accent-ink:  #7FD4C4;
       --slab:        #08100F;
+      --slab-glass:  rgba(8, 16, 15, .85);
       --slab-line:   #1A2724;
       --slab-grid:   rgba(255, 255, 255, .03);
       --info:        #8AB0EE;
@@ -96,6 +98,7 @@
     --accent-soft: #10302C;
     --accent-ink:  #7FD4C4;
     --slab:        #08100F;
+    --slab-glass:  rgba(8, 16, 15, .85);
     --slab-line:   #1A2724;
     --slab-grid:   rgba(255, 255, 255, .03);
     --info:        #8AB0EE;
@@ -108,7 +111,8 @@
   }
 
   html { scroll-behavior: smooth; }
-  [id] { scroll-margin-top: 2rem; }
+  [id] { scroll-margin-top: 5.25rem; }
+  @media (max-width: 40rem) { [id] { scroll-margin-top: 10rem; } }
 
   body {
     margin: 0;
@@ -167,9 +171,17 @@
     to   { transform: translate3d(1.5%, 2%, 0) scale(1.07); opacity: 1; }
   }
 
+  /* Pasek jedzie ze strona: przyklejony do gory, szklane tlo z rozmyciem.
+     Stoi we wlasnym pasmie (nie w hero), wiec sticky trzyma az do stopki. */
+  .topnav {
+    position: sticky; top: 0; z-index: 60;
+    background: var(--slab-glass);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--slab-line);
+  }
   .bar {
     display: flex; align-items: center; gap: 1rem;
-    padding: 1.1rem 0; border-bottom: 1px solid var(--slab-line);
+    padding: 1.1rem 0;
   }
   .logo {
     font-family: var(--font-display);
@@ -789,8 +801,7 @@
 </head>
 <body>
 
-<div class="slab">
-  <div class="aura" aria-hidden="true"></div>
+<div class="slab topnav">
   <div class="wrap">
     <div class="bar">
       <a class="logo" href="#gora">
@@ -808,7 +819,12 @@
         <a href="#kontakt">Kontakt</a>
       </nav>
     </div>
+  </div>
+</div>
 
+<div class="slab">
+  <div class="aura" aria-hidden="true"></div>
+  <div class="wrap">
     <div class="hero" id="gora">
       <div>
         <h1>Robota, którą ktoś u Państwa robi ręcznie po nocach, <em>da się policzyć w minutę.</em></h1>
