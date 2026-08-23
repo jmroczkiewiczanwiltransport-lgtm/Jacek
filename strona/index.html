@@ -37,6 +37,11 @@
     --info-soft: #E7EEF9;
     --warn:      #9A5B1B;
     --band-bg:   #E6EEEA;
+    /* Zloto jest zarezerwowane dla sekcji gotowych narzedzi - oznacza range
+       (sprawdzone, dziala dzis), nie dekoracje. Nigdzie indziej go nie ma. */
+    --gold:      #A8792B;
+    --gold-deep: #8A6220;
+    --gold-hi:   #E3C079;
 
     --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --font-body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -67,6 +72,9 @@
       --info-soft:   #15202F;
       --warn:        #D9A05C;
       --band-bg:     #121B1C;
+      --gold:        #C9A053;
+      --gold-deep:   #A8792B;
+      --gold-hi:     #F0D9A6;
     }
   }
 
@@ -89,6 +97,9 @@
     --info-soft:   #15202F;
     --warn:        #D9A05C;
     --band-bg:     #121B1C;
+    --gold:        #C9A053;
+    --gold-deep:   #A8792B;
+    --gold-hi:     #F0D9A6;
   }
 
   html { scroll-behavior: smooth; }
@@ -339,6 +350,38 @@
   }
   .svc .more:hover { text-decoration: underline; }
   .svc .more:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ─ zloto gotowych narzedzi ─ */
+  #co-robie .eyebrow { color: var(--gold); }
+  #co-robie .eyebrow::before {
+    content: ""; display: inline-block; width: 1.6rem; height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-hi));
+    vertical-align: .22em; margin-right: .6rem; border-radius: 1px;
+  }
+  #co-robie .svc { position: relative; overflow: hidden; }
+  /* Refleks: zlota krawedz u gory karty, po ktorej raz na kilka sekund
+     przebiega swiatlo - jak po krawedzi metalu. Jedyna stala animacja
+     na stronie poza wejsciem naglowka. */
+  #co-robie .svc::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg,
+      var(--gold-deep) 0%, var(--gold) 38%, var(--gold-hi) 50%,
+      var(--gold) 62%, var(--gold-deep) 100%);
+    background-size: 250% 100%;
+    animation: sheen 5.5s ease-in-out infinite;
+  }
+  @keyframes sheen {
+    0%   { background-position: 125% 0; }
+    55%  { background-position: -25% 0; }
+    100% { background-position: -25% 0; }
+  }
+  #co-robie .svc.flag { border-color: var(--gold); }
+  @media (hover: hover) {
+    #co-robie .svc:hover {
+      border-color: var(--gold);
+      box-shadow: 0 6px 24px -12px rgba(168, 121, 43, .45);
+    }
+  }
 
   /* ─ rozpoznanie wzorca ─ */
   .diag { margin-top: 2.25rem; display: grid; grid-template-columns: 1fr; gap: 1.75rem; }
