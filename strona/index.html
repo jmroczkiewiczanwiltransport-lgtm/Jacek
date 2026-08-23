@@ -27,6 +27,11 @@
     --slab-muted:  #9BB0AE;
     --slab-accent: #4CC3AD;
     --slab-line:   #22322F;
+    --slab-faint:  #6E8583;
+    /* Jedyny drugi odcien na calej stronie. Jest tylko w panelu wyniku, bo tylko
+       tam znaczy coz konkretnego: pozycja, ktora ktos musi tknac reka. */
+    --slab-warn:   #E3A857;
+    --slab-grid:   rgba(255, 255, 255, .032);
 
     --info:      #2A5DB0;
     --info-soft: #E7EEF9;
@@ -55,6 +60,7 @@
       --accent-ink:  #7FD4C4;
       --slab:        #08100F;
       --slab-line:   #1A2724;
+      --slab-grid:   rgba(255, 255, 255, .03);
       --info:        #8AB0EE;
       --info-soft:   #15202F;
     }
@@ -74,9 +80,13 @@
     --accent-ink:  #7FD4C4;
     --slab:        #08100F;
     --slab-line:   #1A2724;
+    --slab-grid:   rgba(255, 255, 255, .03);
     --info:        #8AB0EE;
     --info-soft:   #15202F;
   }
+
+  html { scroll-behavior: smooth; }
+  [id] { scroll-margin-top: 2rem; }
 
   body {
     margin: 0;
@@ -89,8 +99,11 @@
   }
 
   h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; line-height: 1.12; text-wrap: balance; }
-  p { margin: 0; }
+  p { margin: 0; text-wrap: pretty; }
   a { color: inherit; }
+
+  ::selection { background: var(--accent-soft); color: var(--accent-ink); }
+  .slab ::selection { background: var(--slab-accent); color: #06201C; }
 
   .wrap { max-width: var(--wide); margin: 0 auto; padding: 0 var(--gutter); }
   .stack { display: flex; flex-direction: column; }
@@ -103,8 +116,20 @@
   }
 
   /* ═══ pasmo nagłówka ═══ */
-  .slab { background: var(--slab); color: var(--slab-ink); }
+  .slab { background: var(--slab); color: var(--slab-ink); position: relative; overflow: hidden; }
   .slab a { color: var(--slab-ink); }
+  /* Tlem naglowka jest arkusz. Nie dekoracja - to material, z ktorego zrobiona jest
+     cala robota: siatka komorek, ktora gasnie, zanim zaczna sie sekcje. */
+  .slab::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(to right, var(--slab-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--slab-grid) 1px, transparent 1px);
+    background-size: 4.5rem 2.75rem;
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.7) 0%, rgba(0,0,0,.28) 38%, transparent 72%);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.7) 0%, rgba(0,0,0,.28) 38%, transparent 72%);
+  }
+  .slab > .wrap { position: relative; }
 
   .bar {
     display: flex; align-items: center; gap: 1rem;
@@ -137,16 +162,27 @@
   }
   .bar nav a:hover { color: var(--slab-ink); }
   .bar nav a:focus-visible, .logo:focus-visible { outline: 2px solid var(--slab-accent); outline-offset: 3px; }
+  /* Na waskim ekranie odsylacze lamaly sie w dwa wiersze obok logotypu i znak marki
+     wisial w polowie ich wysokosci. Logotyp dostaje swoj wiersz, nawigacja swoj. */
+  @media (max-width: 40rem) {
+    .bar { flex-wrap: wrap; row-gap: .8rem; }
+    .bar nav { margin-left: 0; flex-basis: 100%; gap: .9rem 1.15rem; }
+  }
 
-  .hero { padding: clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 7vw, 5rem); }
+  .hero {
+    padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(3rem, 7vw, 4.5rem);
+    display: grid; grid-template-columns: 1fr; gap: clamp(2.5rem, 6vw, 3rem);
+    align-items: start;
+  }
+  @media (min-width: 64rem) { .hero { grid-template-columns: 1.06fr .94fr; gap: 4rem; align-items: center; } }
   .hero h1 {
-    font-size: clamp(2.1rem, 6vw, 3.75rem); font-weight: 800; letter-spacing: -.03em;
-    max-width: 30ch;
+    font-size: clamp(2.05rem, 5vw, 3.05rem); font-weight: 800; letter-spacing: -.03em;
+    max-width: 28ch;
   }
   .hero h1 em { font-style: normal; color: var(--slab-accent); }
   .hero .sub {
     margin-top: 1.35rem; color: var(--slab-muted);
-    font-size: clamp(1.0625rem, 2.2vw, 1.25rem); max-width: 54ch;
+    font-size: clamp(1.0625rem, 2.2vw, 1.1875rem); max-width: 44ch;
   }
   .hero .cta { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: .75rem 1rem; align-items: center; }
 
@@ -161,6 +197,77 @@
   .btn-line { border-color: var(--slab-line); color: var(--slab-ink); }
   .btn-line:hover { border-color: var(--slab-accent); color: var(--slab-accent); }
   .btn:focus-visible { outline: 2px solid var(--slab-accent); outline-offset: 3px; }
+
+  /* ═══ panel wyniku - jedyny mocny akcent na stronie ═══
+     Naglowek nie opisuje, co narzedzie robi. Pokazuje wynik: rejestr zakupu
+     z kolumna KSeF i statusem kazdego wiersza. Kolumny, nazwy i statusy sa te
+     same, co w aplikacji, wiec ksiegowa rozpoznaje wlasna robote od razu. */
+  .panel {
+    border: 1px solid var(--slab-line); border-radius: var(--radius);
+    background: rgba(255, 255, 255, .022);
+    font-family: var(--font-mono); font-size: .78125rem;
+    overflow: hidden;
+  }
+  .panel .cap {
+    display: flex; align-items: baseline; gap: .75rem;
+    padding: .65rem .9rem; border-bottom: 1px solid var(--slab-line);
+    font-size: .625rem; font-weight: 500; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--slab-faint);
+  }
+  .panel .cap b { color: var(--slab-muted); font-weight: 500; }
+  .panel .cap .when { margin-left: auto; letter-spacing: .08em; }
+  .panel .scroll { overflow-x: auto; }
+  .panel table { width: 100%; border-collapse: collapse; }
+  .panel th {
+    text-align: left; font-weight: 500; font-size: .5625rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--slab-faint);
+    padding: .5rem .9rem .45rem; border-bottom: 1px solid var(--slab-line);
+    white-space: nowrap;
+  }
+  .panel td {
+    padding: .44rem .9rem; border-bottom: 1px solid var(--slab-line);
+    color: var(--slab-ink); font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .panel tbody tr:last-child td { border-bottom: 0; }
+  .panel .c-row { color: var(--slab-faint); }
+  .panel .c-num { color: var(--slab-muted); }
+  .panel .st { text-align: right; }
+  /* Trzy stany, trzy zachowania. „zgodne" ma byc niewidoczne - to wiersz, ktorego
+     nikt nie tyka. Uwage ma przyciagac tylko to, co wymaga reki. */
+  .panel .st.ok   { color: var(--slab-faint); }
+  .panel .st.add  { color: var(--slab-accent); }
+  .panel .st.warn { color: var(--slab-warn); }
+  .panel .none { color: var(--slab-faint); }
+  .panel .sum {
+    display: flex; flex-wrap: wrap; gap: .35rem .9rem;
+    padding: .6rem .9rem; border-top: 1px solid var(--slab-line);
+    background: rgba(255, 255, 255, .015);
+    font-size: .6875rem; color: var(--slab-muted);
+  }
+  .panel .sum b { color: var(--slab-ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .panel-note {
+    margin-top: .85rem; font-family: var(--font-body); font-size: .8125rem;
+    color: var(--slab-faint); max-width: 40ch;
+  }
+  @media (max-width: 27rem) {
+    .panel { font-size: .71875rem; }
+    .panel .c-row, .panel th.c-row { display: none; }
+  }
+
+  /* Jeden ruch przy wejsciu: nagłowek, potem panel wypelnia sie wiersz po wierszu.
+     Nigdzie wiecej na stronie nie ma animacji - inaczej przestaje cokolwiek znaczyc. */
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .hero h1   { animation: rise .55s cubic-bezier(.2,.7,.3,1) both; }
+  .hero .sub { animation: rise .55s cubic-bezier(.2,.7,.3,1) .09s both; }
+  .hero .cta { animation: rise .55s cubic-bezier(.2,.7,.3,1) .18s both; }
+  .panel     { animation: rise .6s cubic-bezier(.2,.7,.3,1) .24s both; }
+  .panel tbody tr { animation: rise .4s cubic-bezier(.2,.7,.3,1) both; }
+  .panel tbody tr:nth-child(1) { animation-delay: .48s; }
+  .panel tbody tr:nth-child(2) { animation-delay: .56s; }
+  .panel tbody tr:nth-child(3) { animation-delay: .64s; }
+  .panel tbody tr:nth-child(4) { animation-delay: .72s; }
+  .panel tbody tr:nth-child(5) { animation-delay: .80s; }
+  .panel .sum { animation: rise .45s cubic-bezier(.2,.7,.3,1) .92s both; }
 
   .assure {
     border-top: 1px solid var(--slab-line);
@@ -203,7 +310,10 @@
   .svc h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.015em; }
   .svc > p { color: var(--ink-muted); font-size: .9375rem; }
 
-  .io { margin-top: auto; display: grid; gap: .5rem; padding-top: .3rem; }
+  .io {
+    margin-top: auto; display: grid; gap: .5rem;
+    padding-top: .95rem; border-top: 1px solid var(--border);
+  }
   .io div { display: grid; grid-template-columns: 5.5rem 1fr; gap: .75rem; align-items: baseline; }
   .io dt, .io .k {
     font-family: var(--font-mono); font-size: .6875rem; font-weight: 500;
@@ -229,8 +339,8 @@
   ul.signals li { display: grid; grid-template-columns: 1.5rem 1fr; gap: .6rem; align-items: baseline; }
   /* Znacznik listy powtarza znak marki - te same dwie kreski, ta sama mysl: zgadza sie albo nie. */
   ul.signals li::before {
-    content: "="; font-family: var(--font-mono); font-weight: 500;
-    color: var(--accent); font-size: 1rem; line-height: inherit;
+    content: "="; font-family: var(--font-mono); font-weight: 700;
+    color: var(--accent); font-size: 1.0625rem; line-height: inherit;
   }
   ul.signals li > span { line-height: 1.5; }
   ul.signals strong { font-weight: 600; }
@@ -244,8 +354,8 @@
   .formats h3 { font-size: 1.0625rem; font-weight: 700; }
   .formats div { display: flex; flex-direction: column; gap: .2rem; }
   .formats dt, .formats .ft {
-    font-family: var(--font-display); font-size: .6875rem; font-weight: 600;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
+    font-family: var(--font-mono); font-size: .6875rem; font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint);
   }
   .formats .fv { font-size: .9375rem; color: var(--ink-muted); }
   .formats code {
@@ -327,8 +437,8 @@
   }
   .details .row { display: flex; flex-direction: column; gap: .1rem; }
   .details .k {
-    font-family: var(--font-display); font-size: .6875rem; font-weight: 600;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint);
+    font-family: var(--font-mono); font-size: .6875rem; font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint);
   }
   .details .v { font-size: 1.0625rem; font-weight: 600; font-family: var(--font-display); }
   .ph { border-bottom: 1.5px dashed var(--border-firm); color: var(--ink-faint); font-style: italic; font-weight: 400; }
@@ -345,7 +455,23 @@
     font-size: .8125rem; color: var(--ink-faint);
   }
 
-  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+  /* Karty reaguja na kursor, ale mechanicznie: obramowanie i jeden piksel w gore.
+     Zadnych rosnacych cieni - to material biurowy, nie kafelek w aplikacji. */
+  @media (hover: hover) {
+    .svc, .price, .formats, .details, .safe {
+      transition: border-color .18s ease, transform .18s ease;
+    }
+    .svc:hover, .price:hover { border-color: var(--border-firm); transform: translateY(-2px); }
+    .svc.flag:hover, .price.pick:hover { border-color: var(--accent); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: .01ms !important; animation-delay: 0s !important;
+      animation-iteration-count: 1 !important; transition-duration: .01ms !important;
+    }
+  }
 </style>
 
 <div class="slab">
@@ -366,13 +492,50 @@
     </div>
 
     <div class="hero" id="gora">
-      <h1>Robota, którą ktoś u Państwa robi ręcznie po nocach, <em>da się policzyć w minutę</em>.</h1>
-      <p class="sub">Uzgodnienia KSeF, raporty paliwowe flot, szkolenia obowiązkowe, arkusze,
-        które nikt nie chce robić. Narzędzia liczące na Państwa komputerze — bez serwera,
-        bez instalacji, bez wysyłania danych w świat.</p>
-      <div class="cta">
-        <a class="btn btn-solid" href="#co-robie">Zobacz, co mogę policzyć</a>
-        <a class="btn btn-line" href="#kontakt">Napisz w jednej sprawie</a>
+      <div>
+        <h1>Robota, którą ktoś u Państwa robi ręcznie po nocach, <em>da się policzyć w minutę.</em></h1>
+        <p class="sub">Uzgodnienia KSeF, raporty paliwowe flot, szkolenia obowiązkowe, arkusze,
+          które nikt nie chce robić. Narzędzia liczące na Państwa komputerze — bez serwera,
+          bez instalacji, bez wysyłania danych w świat.</p>
+        <div class="cta">
+          <a class="btn btn-solid" href="#co-robie">Zobacz, co mogę policzyć</a>
+          <a class="btn btn-line" href="#kontakt">Napisz w jednej sprawie</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel" role="img" aria-label="Przykładowy wynik uzgodnienia rejestru zakupu z eksportem KSeF za luty 2026: dwanaście numerów uzupełnionych, trzy korekty, jedna pozycja bez numeru KSeF i bez oznaczenia, jedna faktura z KSeF nieujęta w rejestrze.">
+          <div class="cap">
+            <b>rejestr zakupu × KSeF</b>
+            <span class="when">luty 2026</span>
+          </div>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="c-row">wiersz</th>
+                  <th>faktura</th>
+                  <th>numer KSeF</th>
+                  <th class="st">status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="c-row">214</td><td>FV/2026/02/318</td><td class="c-num">…9C41A2-7F</td><td class="st add">uzupełniono</td></tr>
+                <tr><td class="c-row">215</td><td>FV/2026/02/319</td><td class="c-num">…0B88D4-31</td><td class="st ok">zgodne</td></tr>
+                <tr><td class="c-row">216</td><td>FA 26/02/71</td><td class="none">—</td><td class="st warn">bez numeru</td></tr>
+                <tr><td class="c-row">217</td><td>FV/2026/02/320</td><td class="c-num">…7E15C9-6D</td><td class="st warn">korekta</td></tr>
+                <tr><td class="c-row">218</td><td>FV/2026/02/321</td><td class="c-num">…3D02F8-14</td><td class="st add">uzupełniono</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sum">
+            <span><b>12</b> uzupełnionych</span>
+            <span><b>3</b> korekty</span>
+            <span><b>1</b> bez numeru</span>
+            <span><b>1</b> nieujęta w rejestrze</span>
+          </div>
+        </div>
+        <p class="panel-note">Przykład, nie czyjeś dane. Na Państwa pliku liczby będą inne.</p>
       </div>
     </div>
 
