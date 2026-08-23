@@ -101,16 +101,18 @@
       </div>
 
       <div class="stack-tight">
-        <span class="label">Pobierz wynik</span>
+        <span class="label">Pobierz wynik <span class="demo-pill" data-demo hidden>DEMO</span></span>
         <div class="exports">
           <div class="exp">
-            <h3>Raport kontrolny</h3>
+            <h3>Raport kontrolny <span class="demo-pill" data-demo hidden>DEMO</span></h3>
             <p>Arkusz <span class="mono">.xlsx</span> — każda kategoria na osobnej karcie, z numerem wiersza w Twoim pliku. To dokument do wpięcia w dokumentację kontrolną.</p>
+            <p class="demo-what" data-demo hidden>W wersji demo: pierwsze 100 pozycji każdej kategorii.</p>
             <div class="rowbtns"><button class="btn btn-primary" id="dlReport">Pobierz raport .xlsx</button><span id="dlMsg" class="licmsg" aria-live="polite"></span></div>
           </div>
           <div class="exp">
-            <h3>Kolumna do wklejenia</h3>
+            <h3>Kolumna do wklejenia <span class="demo-pill" data-demo hidden>DEMO</span></h3>
             <p>Gotowe numery KSeF w kolejności wierszy rejestru — wklej wprost do swojego pliku. Bezpieczne: nie rusza formuł ani łączy zewnętrznych.</p>
+            <p class="demo-what" data-demo hidden>W wersji demo: numery dla pierwszych 100 wierszy rejestru.</p>
             <div class="rowbtns">
               <button class="btn" id="copyCol">Skopiuj kolumnę</button>
               <button class="btn btn-ghost" id="showCol">Pokaż</button>
@@ -119,8 +121,9 @@
             <textarea class="paste" id="pasteCol" hidden readonly aria-label="Kolumna numerów KSeF do wklejenia"></textarea>
           </div>
           <div class="exp" id="expFilled">
-            <h3>Rejestr z uzupełnioną kolumną</h3>
+            <h3>Rejestr z uzupełnioną kolumną <span class="demo-pill" data-demo hidden>DEMO</span></h3>
             <p id="fillNote">Twój plik rejestru z wpisanymi numerami KSeF.</p>
+            <p class="demo-what" data-demo hidden>W wersji demo: dopisuje numery w pierwszych 100 wierszach rejestru. Numery, które już są w pliku, zostają nietknięte.</p>
             <div class="rowbtns"><button class="btn" id="dlFilled">Pobierz uzupełniony rejestr</button></div>
           </div>
         </div>

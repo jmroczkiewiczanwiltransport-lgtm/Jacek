@@ -349,6 +349,16 @@ textarea.paste { font-family: var(--font-mono); font-size: .75rem; min-height: 8
 .licmsg { font-size: var(--step-0); }
 .licmsg.ok  { color: var(--accent); }
 .licmsg.bad { color: var(--critical); }
+.licmsg.warn { color: var(--warning); }
+/* Znak DEMO przy eksportach - widoczny tylko bez licencji, gasnie po kluczu */
+.demo-pill {
+  display: inline-block; vertical-align: middle; margin-left: .4rem;
+  font-family: var(--font-display, inherit); font-size: .5625rem; font-weight: 700;
+  letter-spacing: .12em; padding: .12rem .45rem; border-radius: 100px;
+  background: var(--warning-soft); color: var(--warning);
+  border: 1px solid currentColor;
+}
+.demo-what { font-size: .8125rem; color: var(--warning); }
 
 .foot { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: .8125rem; color: var(--ink-faint); display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
 

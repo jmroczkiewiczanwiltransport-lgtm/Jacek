@@ -358,6 +358,16 @@ textarea.paste { font-family: var(--font-mono); font-size: .75rem; min-height: 8
 .licmsg { font-size: var(--step-0); }
 .licmsg.ok  { color: var(--accent); }
 .licmsg.bad { color: var(--critical); }
+.licmsg.warn { color: var(--warning); }
+/* Znak DEMO przy eksportach - widoczny tylko bez licencji, gasnie po kluczu */
+.demo-pill {
+  display: inline-block; vertical-align: middle; margin-left: .4rem;
+  font-family: var(--font-display, inherit); font-size: .5625rem; font-weight: 700;
+  letter-spacing: .12em; padding: .12rem .45rem; border-radius: 100px;
+  background: var(--warning-soft); color: var(--warning);
+  border: 1px solid currentColor;
+}
+.demo-what { font-size: .8125rem; color: var(--warning); }
 
 .foot { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: .8125rem; color: var(--ink-faint); display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
 
@@ -480,16 +490,18 @@ textarea.paste { font-family: var(--font-mono); font-size: .75rem; min-height: 8
       </div>
 
       <div class="stack-tight">
-        <span class="label">Pobierz wynik</span>
+        <span class="label">Pobierz wynik <span class="demo-pill" data-demo hidden>DEMO</span></span>
         <div class="exports">
           <div class="exp">
-            <h3>Raport kontrolny</h3>
+            <h3>Raport kontrolny <span class="demo-pill" data-demo hidden>DEMO</span></h3>
             <p>Arkusz <span class="mono">.xlsx</span> — każda kategoria na osobnej karcie, z numerem wiersza w Twoim pliku. To dokument do wpięcia w dokumentację kontrolną.</p>
+            <p class="demo-what" data-demo hidden>W wersji demo: pierwsze 100 pozycji każdej kategorii.</p>
             <div class="rowbtns"><button class="btn btn-primary" id="dlReport">Pobierz raport .xlsx</button><span id="dlMsg" class="licmsg" aria-live="polite"></span></div>
           </div>
           <div class="exp">
-            <h3>Kolumna do wklejenia</h3>
+            <h3>Kolumna do wklejenia <span class="demo-pill" data-demo hidden>DEMO</span></h3>
             <p>Gotowe numery KSeF w kolejności wierszy rejestru — wklej wprost do swojego pliku. Bezpieczne: nie rusza formuł ani łączy zewnętrznych.</p>
+            <p class="demo-what" data-demo hidden>W wersji demo: numery dla pierwszych 100 wierszy rejestru.</p>
             <div class="rowbtns">
               <button class="btn" id="copyCol">Skopiuj kolumnę</button>
               <button class="btn btn-ghost" id="showCol">Pokaż</button>
@@ -498,8 +510,9 @@ textarea.paste { font-family: var(--font-mono); font-size: .75rem; min-height: 8
             <textarea class="paste" id="pasteCol" hidden readonly aria-label="Kolumna numerów KSeF do wklejenia"></textarea>
           </div>
           <div class="exp" id="expFilled">
-            <h3>Rejestr z uzupełnioną kolumną</h3>
+            <h3>Rejestr z uzupełnioną kolumną <span class="demo-pill" data-demo hidden>DEMO</span></h3>
             <p id="fillNote">Twój plik rejestru z wpisanymi numerami KSeF.</p>
+            <p class="demo-what" data-demo hidden>W wersji demo: dopisuje numery w pierwszych 100 wierszach rejestru. Numery, które już są w pliku, zostają nietknięte.</p>
             <div class="rowbtns"><button class="btn" id="dlFilled">Pobierz uzupełniony rejestr</button></div>
           </div>
         </div>
@@ -524,7 +537,7 @@ textarea.paste { font-family: var(--font-mono); font-size: .75rem; min-height: 8
   <footer class="foot">
     <span>Cała praca odbywa się w przeglądarce. Żaden plik nie jest nigdzie wysyłany.</span>
     <span>Plik KSeF jest źródłem prawdy — korekty nanieś też w programie księgowym.</span>
-    <span>wersja 2026-08-23 19:30 · 456238f</span>
+    <span>wersja 2026-08-23 19:37 · 084545b</span>
   </footer>
 </div>
 <script>
@@ -674,6 +687,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     var el = $('licState');
     el.textContent = S.licensed ? 'Licencja aktywna' : 'Wersja demonstracyjna — eksporty obejmują pierwsze ' + FREE_ROWS + ' wierszy rejestru';
     el.className = 'lic-state' + (S.licensed ? ' on' : '');
+    /* Znaki DEMO przy eksportach: widoczne bez licencji, znikaja po kluczu. */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-demo]'), function (d) {
+      d.hidden = S.licensed;
+    });
   }
 
   /* ---------- wczytywanie plikow uzytkownika ---------- */
@@ -1812,7 +1829,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       msg.className = 'licmsg ' + (ok ? 'ok' : 'bad');
       msg.textContent = ok
         ? 'Skopiowano — wklej do komórki ' + colLetter(S.regRef.map.ksef) + S.result.firstDataRow +
-          (d.capped ? ' (demo: tylko pierwsze ' + FREE_ROWS + ')' : '')
+          (d.capped ? ' (demo: numery tylko dla pierwszych ' + FREE_ROWS + ' wierszy rejestru)' : '')
         : 'Kopiowanie zablokowane — użyj „Pokaż” i skopiuj ręcznie.';
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1827,11 +1844,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   $('dlFilled').addEventListener('click', function () {
     var ref = S.regRef, wb = ref.file.wb, ws = wb.Sheets[ref.sheet];
-    var col = ref.map.ksef, R = S.result, r, v, addr;
+    var col = ref.map.ksef, R = S.result, r, v, addr, written = 0, held = 0;
     for (r = R.firstDataRow; r <= R.lastDataRow; r++) {
       v = R.fillByRow[r];
       if (!v) continue;
-      if (!S.licensed && r - R.firstDataRow >= FREE_ROWS) break;
+      if (!S.licensed && r - R.firstDataRow >= FREE_ROWS) { held++; continue; }
+      written++;
       addr = XLSX.utils.encode_cell({ r: r - 1, c: col });
       ws[addr] = { t: 's', v: v };
     }
@@ -1840,6 +1858,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       if (col > rng.e.c) { rng.e.c = col; ws['!ref'] = XLSX.utils.encode_range(rng); }
     }
     XLSX.writeFile(wb, ref.file.name.replace(/\.[^.]+$/, '') + '_UZUPELNIONY.xlsx');
+    /* Bez tego zdania kazdy myli numery, ktore BYLY w rejestrze, z dopisanymi -
+       i albo widzi "demo oddalo wszystko", albo "licencja nic nie dala". */
+    var msg = $('copyMsg');
+    msg.className = 'licmsg ' + (held ? 'warn' : 'ok');
+    msg.textContent = 'Dopisano ' + written + ' ' + plural(written, 'numer', 'numery', 'numerów') +
+      (held ? '; ' + held + ' ' + plural(held, 'dopisek wstrzymany', 'dopiski wstrzymane', 'dopisków wstrzymanych') +
+        ' — demo dopisuje tylko w pierwszych ' + FREE_ROWS + ' wierszach rejestru, klucz zdejmuje limit.'
+        : '.') + ' Numery, które były w rejestrze wcześniej, zostały nietknięte.';
   });
 
   /* ---------- licencja: interfejs ---------- */

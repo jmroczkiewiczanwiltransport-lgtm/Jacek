@@ -119,6 +119,10 @@
     var el = $('licState');
     el.textContent = S.licensed ? 'Licencja aktywna' : 'Wersja demonstracyjna — eksporty obejmują pierwsze ' + FREE_ROWS + ' wierszy rejestru';
     el.className = 'lic-state' + (S.licensed ? ' on' : '');
+    /* Znaki DEMO przy eksportach: widoczne bez licencji, znikaja po kluczu. */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-demo]'), function (d) {
+      d.hidden = S.licensed;
+    });
   }
 
   /* ---------- wczytywanie plikow uzytkownika ---------- */
@@ -1257,7 +1261,7 @@
       msg.className = 'licmsg ' + (ok ? 'ok' : 'bad');
       msg.textContent = ok
         ? 'Skopiowano — wklej do komórki ' + colLetter(S.regRef.map.ksef) + S.result.firstDataRow +
-          (d.capped ? ' (demo: tylko pierwsze ' + FREE_ROWS + ')' : '')
+          (d.capped ? ' (demo: numery tylko dla pierwszych ' + FREE_ROWS + ' wierszy rejestru)' : '')
         : 'Kopiowanie zablokowane — użyj „Pokaż” i skopiuj ręcznie.';
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1272,11 +1276,12 @@
 
   $('dlFilled').addEventListener('click', function () {
     var ref = S.regRef, wb = ref.file.wb, ws = wb.Sheets[ref.sheet];
-    var col = ref.map.ksef, R = S.result, r, v, addr;
+    var col = ref.map.ksef, R = S.result, r, v, addr, written = 0, held = 0;
     for (r = R.firstDataRow; r <= R.lastDataRow; r++) {
       v = R.fillByRow[r];
       if (!v) continue;
-      if (!S.licensed && r - R.firstDataRow >= FREE_ROWS) break;
+      if (!S.licensed && r - R.firstDataRow >= FREE_ROWS) { held++; continue; }
+      written++;
       addr = XLSX.utils.encode_cell({ r: r - 1, c: col });
       ws[addr] = { t: 's', v: v };
     }
@@ -1285,6 +1290,14 @@
       if (col > rng.e.c) { rng.e.c = col; ws['!ref'] = XLSX.utils.encode_range(rng); }
     }
     XLSX.writeFile(wb, ref.file.name.replace(/\.[^.]+$/, '') + '_UZUPELNIONY.xlsx');
+    /* Bez tego zdania kazdy myli numery, ktore BYLY w rejestrze, z dopisanymi -
+       i albo widzi "demo oddalo wszystko", albo "licencja nic nie dala". */
+    var msg = $('copyMsg');
+    msg.className = 'licmsg ' + (held ? 'warn' : 'ok');
+    msg.textContent = 'Dopisano ' + written + ' ' + plural(written, 'numer', 'numery', 'numerów') +
+      (held ? '; ' + held + ' ' + plural(held, 'dopisek wstrzymany', 'dopiski wstrzymane', 'dopisków wstrzymanych') +
+        ' — demo dopisuje tylko w pierwszych ' + FREE_ROWS + ' wierszach rejestru, klucz zdejmuje limit.'
+        : '.') + ' Numery, które były w rejestrze wcześniej, zostały nietknięte.';
   });
 
   /* ---------- licencja: interfejs ---------- */
