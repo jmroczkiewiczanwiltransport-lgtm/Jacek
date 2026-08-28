@@ -70,6 +70,79 @@ przed wysyłką. Jeśli nie masz pod ręką, dobiorę je sam.
 
 ---
 
+---
+
+## Wersja na WhatsApp (skrócona, do wklejenia)
+
+Trzy wiadomości. Można wysłać 1 i 2 od razu, a pytania po jej odpowiedzi —
+blokuje nas wyłącznie dziennik.
+
+### Wiadomość 1
+
+```
+Alicja, dokumentacja komplet, dzięki. Przeszedłem broszury i schemę.
+
+Pierwsza rzecz gotowa: Wasze 508 kont z propozycją znacznika MF do
+każdego konta. 97% ma konkretny znacznik, do rozmowy zostaje 13. Przy
+każdym jest napisane, dlaczego taki, i dwie puste kolumny na Twoje
+poprawki. Poprawki zapamiętuję jako mapowanie Waszej firmy — w kolejnym
+roku wczytuje się gotowe, bez klikania od nowa.
+```
+
+### Wiadomość 2
+
+```
+Żeby policzyć wynik, potrzebuję trzech plików:
+
+1. eksport dziennika zapisów za cały 2025 (xlsx albo csv)
+2. roczne zestawienie obrotów i sald z BO i BZ — porównam z tym, co sam
+   wyliczę z dziennika, wtedy wiemy, że liczy dobrze
+3. CIT-8 albo Twoje robocze wyliczenie podatku za 2025, jako wzorzec
+
+Cel: wyjść na Twoje liczby co do grosza.
+```
+
+### Wiadomość 3
+
+```
+I pytania:
+
+1. ZOiS7 czy ZOiS8? Schema ma 8 wariantów zestawienia obrotów i sald.
+Dla normalnej spółki to ZOiS7 i tam znacznik jest obowiązkowy przy
+KAŻDYM koncie. Jeśli księgi statutowe prowadzicie wg MSSF, to ZOiS8 —
+tam znacznik jest opcjonalny. Ustawa o rachunkowości czy MSSF?
+
+2. Kwota podatku — powiem, jak jest: w strukturze JPK_KR_PD nie ma pola
+na wynik ani na kwotę podatku. RPD to 8 pozycji korekt, a fiskus
+zestawia to sobie z CIT-8. Narzędzie kwotę policzy i pokaże, bo to
+najlepsza kontrola mapowania i Ty tej liczby potrzebujesz — ale w samym
+pliku ona nie występuje. Mówię od razu, żeby nie było niespodzianki.
+
+3. Nazwy kont przyszły uszkodzone: "SPRZEDA© CZÊ¡CI KSA" zamiast
+"SPRZEDAŻ CZĘŚCI KSA". Umiem naprawić i pytam, czy naprawiać — nazwa
+konta wchodzi do pliku XML, więc inaczej idą do urzędu krzaczki.
+Proponuję: naprawiam, Ty widzisz podgląd przed zapisem.
+
+4. Konto 397140 ma nazwę "ODPIS AKTUAL.MASZ.KSA", identyczną jak 397110,
+choć wg numeracji powinno dotyczyć KBL (jak 370140). Pozycja bilansowa
+wychodzi ta sama, ale ktoś kiedyś skopiował nazwę. Zerknij, czy celowo.
+
+5. Znaczniki MF rozdzielają pozycje na "od jednostek powiązanych" i "od
+pozostałych". Widzę konta wewnątrzgrupowe (KUHN, CASH POOL IC,
+wewnątrzgrupowe rozliczenia). Które konta są powiązane — albo daj listę
+spółek grupy, dopiszę regułę.
+
+6. Konta techniczne, do każdego to samo pytanie: ma własne zapisy na
+ostatnim poziomie analitycznym, czy tylko zbiera analitykę? Jeśli tylko
+zbiera, do pliku nie wchodzi. Chodzi o 580000 i 580001 (INTERNAL
+ENTRIES), 400000, 600000 i 601010, 409100, 409800, 460000, 467490
+i 476000.
+
+7. Techniczne: przydałyby się same pliki .xsd ze strony MF, nie PDF-y ze
+schemą (te mam) — z nich program sam sprawdza plik przed wysyłką. Nie
+masz pod ręką, dobiorę sam.
+```
+
 ## Notatka dla właściciela — czego NIE pisać
 
 - Nie obiecuj terminu, dopóki nie zobaczysz dziennika. Nie wiemy, ile wierszy
