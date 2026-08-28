@@ -121,16 +121,128 @@ Alicja sobie tego życzy — dla obliczeń są nieistotne. Decyzja należy do ni
 
 ## Czego potrzebuję, zanim napiszę pierwszą linię (lista po odpowiedzi Alicji)
 
-1. **XSD struktury JPK_KR_PD(1) + broszura MF** — Alicja już deklaruje: „przygotuję
-   pliki z MF ze schemą". Może też wrzucić właściciel (podatki.gov.pl → struktury JPK).
+1. ~~**XSD struktury JPK_KR_PD(1) + broszura MF**~~ — **DOSTARCZONE 28.08.2026**
+   (broszury + schematy jako PDF; brakuje samych plików `.xsd` do walidacji).
+   Struktura rozpisana w `cit/STRUKTURA-KR_PD.md`.
 2. **Eksport dziennika zapisów za rok** z jej programu (xlsx/csv) — dane firmy
    testowej albo zanonimizowane. To jest GŁÓWNE wejście narzędzia.
-3. **Plan kont** tej samej firmy (wykaz kont z nazwami).
+3. ~~**Plan kont** tej samej firmy~~ — **DOSTARCZONY 28.08.2026** (508 kont),
+   mapowanie wstępne gotowe (97% kont z propozycją znacznika).
 4. **Jak dziś grupują konta do wyniku** — ich robocze mapowanie (choćby w Excelu
    albo opisane słowami), czyli które konta idą do jakiej pozycji wyniku.
 5. **Wyliczenie podatku za ten rok do porównania** (CIT-8 albo robocze wyliczenie) —
    żeby v0 miało wzorzec: nasz wynik musi zgadzać się z jej wynikiem.
 6. Jeśli jej program jednak COŚ generuje (choćby stary JPK_KR) — plik jako odniesienie.
+
+## Pierwsze dane projektowe — 28.08.2026
+
+Właściciel dostał od Alicji dwie rzeczy: **dokumentację MF** (6 PDF-ów:
+broszury i schematy JPK_KR_PD(1) oraz JPK_ST_KR(1), wraz z aktualizacjami
+obowiązującymi od 01.07.2026) i **plan kont** spółki (`KONTA1.xlsx`, 508 kont).
+
+Struktura rozpisana w `cit/STRUKTURA-KR_PD.md`. Słowniki znaczników wyciągnięte
+do `cit/slowniki/znaczniki-KR_PD.json` i `znaczniki-ST_KR.json`
+(skrypt `cit/narzedzia/wyciag-slownikow.py`).
+
+### Co wyszło z dokumentacji — trzy rzeczy zmieniające zakres
+
+1. **`wersjaSchemy` to `1-1`, nie `1-0`.** Pierwsze wydanie broszury podaje
+   `1-0`; aktualizacja MF to zmienia. Plik z `1-0` byłby odrzucony.
+2. **W JPK_KR_PD nie ma pola na wynik ani na kwotę podatku.** Węzeł RPD to
+   osiem korekt (K_1–K_8) między wynikiem księgowym a podatkowym — i nic więcej.
+   Kwotę podatku narzędzie liczy **jako pomoc do CIT-8 i jako kontrolę
+   mapowania**, nie jako element raportu. Trzeba to Alicji powiedzieć wprost,
+   bo prosiła o „kwotę podatku do zapłaty" jako o wynik pliku.
+3. **Znacznik `S_12_1` jest obowiązkowy dla każdego konta** w węźle ZOiS7
+   (jednostki pozostałe) — słownik ma 244 pozycje. Ale w ZOiS8 (jednostki
+   stosujące MSSF) ten znacznik jest **opcjonalny i dowolnym tekstem**.
+   Do potwierdzenia u każdego klienta: księgi statutowe wg UoR (→ ZOiS7,
+   pełne mapowanie) czy wg MSSF (→ ZOiS8, mapowanie prawie zbędne).
+   Dla koncernów to pytanie warte dziesiątek godzin pracy.
+
+Bonus sprzedażowy: od 16.06.2026 **pełnomocnictwo UPL-1 obejmuje podpisywanie
+JPK_KR_PD** — nie trzeba nowych pełnomocnictw.
+
+### Co wyszło z planu kont
+
+- **Plan kont nie jest polski.** Układ zespołów: 1 kapitały i rezerwy,
+  2 aktywa trwałe i umorzenia, 3 zapasy, 4 rozrachunki, 5 środki pieniężne,
+  6 koszty, 7 przychody, 8 zamknięcie. To układ zachodni (SAP/SKR), a nie
+  wzorcowy polski. **Wniosek dla architektury: żadnych podpowiedzi po numerze
+  konta bez wskazania profilu planu.** Podpowiadamy z nazwy konta, a numer jest
+  tylko wsparciem. Profile planów kont trzymamy w
+  `cit/slowniki/reguly-mapowania.json` (`pl_standard`, `erp_zagraniczny_a`).
+  To potwierdza całą tezę o rynku: skoro plan kont jest zachodni, to i program
+  nie złoży polskiego JPK.
+- **Nazwy kont przychodzą w rozsypanym kodowaniu.** Osiem znaków spoza ASCII,
+  żadne standardowe kodowanie nie odtwarza ich poprawnie (sprawdzone wszystkie
+  kodowania Pythona) — tabela wyprowadzona z kontekstu:
+  `¡`→Ś, `£`→Ą, `©`→Ż, `¬`→Ł, `Ê`→Ę, `ù`→Ń (`Ó` i `Ö` są poprawne).
+  Ma znaczenie, bo **nazwa konta wchodzi do pliku XML w polu `S_2`** — bez
+  naprawy fiskus dostaje „SPRZEDA© CZÊ¡CI". Do potwierdzenia z Alicją, czy
+  naprawiać (proponuję: tak, z podglądem przed zapisem).
+- **Plan kont sam nosi klasyfikację podatkową.** 16 kont ma w nazwie „(NKUP)"
+  albo „NIEKOSZTOWA", 2 wprost „KUP". Czyli firma już rozdziela KUP/NKUP na
+  poziomie konta — dokładnie to, czego potrzebują znaczniki PD. Znaczniki
+  podatkowe da się w dużej części wyprowadzić automatycznie.
+- Znaleziona przy okazji **niespójność w ich planie kont**: konto 397140 nosi
+  nazwę „ODPIS AKTUAL.MASZ.KSA", identyczną z 397110, choć wg numeracji powinno
+  dotyczyć segmentu KBL. Do zgłoszenia Alicji — pozycja bilansowa wychodzi ta
+  sama, ale ktoś kiedyś skopiował nazwę.
+
+### Silnik mapowania — działa, 97% na pierwszym prawdziwym planie kont
+
+`cit/narzedzia/propozycja-mapowania.py` + reguły w
+`cit/slowniki/reguly-mapowania.json` (99 reguł S_12_1, 4 reguły PD).
+Prototyp w Pythonie, żeby szybko sprawdzać trafność na prawdziwych danych;
+te same reguły przenosimy potem do narzędzia w przeglądarce.
+
+Wynik na 508 kontach spółki Alicji:
+
+| | |
+|---|---|
+| konkretny znacznik `S_12_1` | **495 kont (97%)** |
+| pewność wysoka | 287 (56%) |
+| pewność średnia | 184 (36%) |
+| pewność niska | 37 (7%) |
+| bez żadnej reguły | 0 |
+| do decyzji księgowej („?") | 13 |
+| znacznik podatkowy `S_12_3` | 16 |
+
+Dwa mechanizmy, które to wyciągnęły z 73% do 97%:
+
+1. **Parowanie kont korygujących.** Konto umorzeniowe albo odpisowe dziedziczy
+   znacznik konta wartości brutto z końcówką `_U` / `_A` (MF przewiduje takie
+   warianty). Para dobierana po rdzeniu nazwy — z rozwinięciem skrótów
+   („ODPIS AKTUAL.CZ.KSA" → „MAGAZYN CZESCI KSA") i wsparciem zbieżności
+   numeru konta. Sparowało 54 konta.
+2. **Kara za niezgodność kodu segmentu.** Krótkie kody w nazwach (KSA, KHU,
+   KBL, JD) to segmenty i marki. Jeśli kod z jednej nazwy nie występuje
+   w drugiej, ocena pary jest ścinana — dzięki temu narzędzie **odmawia
+   sparowania** zamiast wpisać sąsiedni magazyn. Na tym pliku poprawiło dwie
+   pary (KMB → KBR (EX KMB)) i jedną słusznie zostawiło otwartą.
+
+Każdy znacznik z reguł jest sprawdzany wobec słownika MF przed użyciem —
+literówka w regule wysypuje skrypt, a nie produkuje plik odrzucony przez schemę.
+
+Wyjście to xlsx dla księgowej: propozycja + opis znacznika ze słownika MF +
+pewność + **dlaczego tak** + dwie kolumny na poprawki. Poprawki wracają do nas
+i stają się mapowaniem tej firmy — w kolejnych latach wczytywanym gotowym.
+To jest jednocześnie pierwsza rzecz do pokazania na spotkaniu: „wasze 508 kont,
+97% przypisane, zostaje 13 do rozmowy".
+
+### Czego nadal brakuje, żeby policzyć wynik
+
+1. **Eksport dziennika zapisów za 2025** — bez tego nie ma ZOiS, nie ma sum
+   kontrolnych, nie ma wyniku. To jest jedyna rzecz naprawdę blokująca.
+2. **ZOiS roczny z BO i BZ** z ich programu — do porównania z tym, co policzymy
+   z dziennika. Bez tego nie odróżnimy błędu narzędzia od błędu mapowania.
+3. **CIT-8 albo robocze wyliczenie podatku za 2025** — wzorzec do trafienia.
+4. **Pliki `.xsd`** (nie PDF) — do automatycznej walidacji gotowego pliku.
+   PDF wystarcza do generowania, ale walidacja schemą jest tańsza niż debugowanie
+   odrzuconego pliku. Do dobrania z BIP MF.
+5. Odpowiedzi na pytania z listy dla Alicji (ZOiS7 czy ZOiS8, naprawa nazw kont,
+   podział na jednostki powiązane, konta techniczne).
 
 ## Cennik (szkic — do decyzji przy premierze)
 

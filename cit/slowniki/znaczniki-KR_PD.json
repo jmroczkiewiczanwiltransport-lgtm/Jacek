@@ -1,0 +1,5025 @@
+{
+ "slowniki": {
+  "TCelZlozenia": [
+   {
+    "kod": "1",
+    "opis": "złożenie JPK po raz pierwszy"
+   },
+   {
+    "kod": "2",
+    "opis": "Złożenie korekty JPK"
+   }
+  ],
+  "TKodWaluty": [
+   {
+    "kod": "AED",
+    "opis": "DIRHAM ZEA"
+   },
+   {
+    "kod": "AFN",
+    "opis": "AFGANI"
+   },
+   {
+    "kod": "ALL",
+    "opis": "LEK"
+   },
+   {
+    "kod": "AMD",
+    "opis": "DRAM"
+   },
+   {
+    "kod": "ANG",
+    "opis": "GULDEN ANTYLI HOLENDERSKICH"
+   },
+   {
+    "kod": "AOA",
+    "opis": "KWANZA"
+   },
+   {
+    "kod": "ARS",
+    "opis": "PESO ARGENTYŃSKIE"
+   },
+   {
+    "kod": "AUD",
+    "opis": "DOLAR AUSTRALIJSKI"
+   },
+   {
+    "kod": "AWG",
+    "opis": "GULDEN ARUBAŃSKI"
+   },
+   {
+    "kod": "AZN",
+    "opis": "MANAT AZERBEJDŻAŃSKI"
+   },
+   {
+    "kod": "BAM",
+    "opis": "MARKA ZAMIENNA"
+   },
+   {
+    "kod": "BBD",
+    "opis": "DOLAR BARBADOSKI"
+   },
+   {
+    "kod": "BDT",
+    "opis": "TAKA"
+   },
+   {
+    "kod": "BGN",
+    "opis": "LEW"
+   },
+   {
+    "kod": "BHD",
+    "opis": "DINAR BAHRAJSKI"
+   },
+   {
+    "kod": "BIF",
+    "opis": "FRANK BURUNDYJSKI"
+   },
+   {
+    "kod": "BMD",
+    "opis": "DOLAR BERMUDZKI"
+   },
+   {
+    "kod": "BND",
+    "opis": "DOLAR BRUNEJSKI"
+   },
+   {
+    "kod": "BOB",
+    "opis": "BOLIWIANO"
+   },
+   {
+    "kod": "BOV",
+    "opis": "BOLIWIANO MVDOL"
+   },
+   {
+    "kod": "BRL",
+    "opis": "REAL"
+   },
+   {
+    "kod": "BSD",
+    "opis": "DOLAR BAHAMSKI"
+   },
+   {
+    "kod": "BTN",
+    "opis": "NGULTRUM"
+   },
+   {
+    "kod": "BWP",
+    "opis": "PULA"
+   },
+   {
+    "kod": "BYN",
+    "opis": "RUBEL BIAŁORUSKI"
+   },
+   {
+    "kod": "BZD",
+    "opis": "DOLAR BELIZEŃSKI"
+   },
+   {
+    "kod": "CAD",
+    "opis": "DOLAR KANADYJSKI"
+   },
+   {
+    "kod": "CDF",
+    "opis": "FRANK KONGIJSKI"
+   },
+   {
+    "kod": "CHE",
+    "opis": "FRANK SZWAJCARSKI VIR EURO"
+   },
+   {
+    "kod": "CHF",
+    "opis": "FRANK SZWAJCARSKI"
+   },
+   {
+    "kod": "CHW",
+    "opis": "FRANK SZWAJCARSKI VIR FRANK"
+   },
+   {
+    "kod": "CLF",
+    "opis": "JEDNOSTKA ROZLICZENIOWA CHILIJSKA"
+   },
+   {
+    "kod": "CLP",
+    "opis": "PESO CHILIJSKIE"
+   },
+   {
+    "kod": "CNY",
+    "opis": "YUAN RENMINBI"
+   },
+   {
+    "kod": "COP",
+    "opis": "PESO KOLUMBIJSKIE"
+   },
+   {
+    "kod": "COU",
+    "opis": "UNIDAD DE VALOR REAL KOLUMBILSKIE"
+   },
+   {
+    "kod": "CRC",
+    "opis": "COLON KOSTARYKAŃSKI"
+   },
+   {
+    "kod": "CUC",
+    "opis": "PESO WYMIENIALNE"
+   },
+   {
+    "kod": "CUP",
+    "opis": "PESO KUBAŃSKIE"
+   },
+   {
+    "kod": "CVE",
+    "opis": "ESCUDO REPUBLIKI ZIELONEGO PRZYLĄDKA"
+   },
+   {
+    "kod": "CZK",
+    "opis": "KORONA CZESKA"
+   },
+   {
+    "kod": "DJF",
+    "opis": "FRANK DŻIBUTI"
+   },
+   {
+    "kod": "DKK",
+    "opis": "KORONA DUŃSKA"
+   },
+   {
+    "kod": "DOP",
+    "opis": "PESO DOMINIKAŃSKIE"
+   },
+   {
+    "kod": "DZD",
+    "opis": "DINAR ALGIERSKI"
+   },
+   {
+    "kod": "EGP",
+    "opis": "FUNT EGIPSKI"
+   },
+   {
+    "kod": "ERN",
+    "opis": "NAKFA"
+   },
+   {
+    "kod": "ETB",
+    "opis": "BIRR"
+   },
+   {
+    "kod": "EUR",
+    "opis": "EURO"
+   },
+   {
+    "kod": "FJD",
+    "opis": "DOLAR FIDŻI"
+   },
+   {
+    "kod": "FKP",
+    "opis": "FUNT FALKLANDZKI"
+   },
+   {
+    "kod": "GBP",
+    "opis": "FUNT SZTERLING"
+   },
+   {
+    "kod": "GEL",
+    "opis": "LARI"
+   },
+   {
+    "kod": "GGP",
+    "opis": "FUNT GUERNSEY"
+   },
+   {
+    "kod": "GHS",
+    "opis": "GHANA CEDI"
+   },
+   {
+    "kod": "GIP",
+    "opis": "FUNT GIBRALTARSKI"
+   },
+   {
+    "kod": "GMD",
+    "opis": "DALASI"
+   },
+   {
+    "kod": "GNF",
+    "opis": "FRANK GWINEJSKI"
+   },
+   {
+    "kod": "GTQ",
+    "opis": "QUETZAL"
+   },
+   {
+    "kod": "GYD",
+    "opis": "DOLAR GUJAŃSKI"
+   },
+   {
+    "kod": "HKD",
+    "opis": "DOLAR HONGKONGU"
+   },
+   {
+    "kod": "HNL",
+    "opis": "LEMPIRA"
+   },
+   {
+    "kod": "HRK",
+    "opis": "KUNA"
+   },
+   {
+    "kod": "HTG",
+    "opis": "GOURDE"
+   },
+   {
+    "kod": "HUF",
+    "opis": "FORINT"
+   },
+   {
+    "kod": "IDR",
+    "opis": "RUPIA INDONEZYJSKA"
+   },
+   {
+    "kod": "ILS",
+    "opis": "SZEKEL"
+   },
+   {
+    "kod": "IMP",
+    "opis": "FUNT MANX"
+   },
+   {
+    "kod": "INR",
+    "opis": "RUPIA INDYJSKA"
+   },
+   {
+    "kod": "IQD",
+    "opis": "DINAR IRACKI"
+   },
+   {
+    "kod": "IRR",
+    "opis": "RIAL IRAŃSKI"
+   },
+   {
+    "kod": "ISK",
+    "opis": "KORONA ISLANDZKA"
+   },
+   {
+    "kod": "JEP",
+    "opis": "FUNT JERSEY"
+   },
+   {
+    "kod": "JMD",
+    "opis": "DOLAR JAMAJSKI"
+   },
+   {
+    "kod": "JOD",
+    "opis": "DINAR JORDAŃSKI"
+   },
+   {
+    "kod": "JPY",
+    "opis": "JEN"
+   },
+   {
+    "kod": "KES",
+    "opis": "SZYLING KENIJSKI"
+   },
+   {
+    "kod": "KGS",
+    "opis": "SOM"
+   },
+   {
+    "kod": "KHR",
+    "opis": "RIEL"
+   },
+   {
+    "kod": "KMF",
+    "opis": "FRANK KOMORÓW"
+   },
+   {
+    "kod": "KPW",
+    "opis": "WON PÓŁNOCNO­KOREAŃSKI"
+   },
+   {
+    "kod": "KRW",
+    "opis": "WON POŁUDNIOWO­KOREAŃSKI"
+   },
+   {
+    "kod": "KWD",
+    "opis": "DINAR KUWEJCKI"
+   },
+   {
+    "kod": "KYD",
+    "opis": "DOLAR KAJMAŃSKI"
+   },
+   {
+    "kod": "KZT",
+    "opis": "TENGE"
+   },
+   {
+    "kod": "LAK",
+    "opis": "KIP"
+   },
+   {
+    "kod": "LBP",
+    "opis": "FUNT LIBAŃSKI"
+   },
+   {
+    "kod": "LKR",
+    "opis": "RUPIA LANKIJSKA"
+   },
+   {
+    "kod": "LRD",
+    "opis": "DOLAR LIBERYJSKI"
+   },
+   {
+    "kod": "LSL",
+    "opis": "LOTI"
+   },
+   {
+    "kod": "LYD",
+    "opis": "DINAR LIBIJSKI"
+   },
+   {
+    "kod": "MAD",
+    "opis": "DIRHAM MAROKAŃSKI"
+   },
+   {
+    "kod": "MDL",
+    "opis": "LEJ MOŁDAWII"
+   },
+   {
+    "kod": "MGA",
+    "opis": "ARIARY"
+   },
+   {
+    "kod": "MKD",
+    "opis": "DENAR"
+   },
+   {
+    "kod": "MMK",
+    "opis": "KYAT"
+   },
+   {
+    "kod": "MNT",
+    "opis": "TUGRIK"
+   },
+   {
+    "kod": "MOP",
+    "opis": "PATACA"
+   },
+   {
+    "kod": "MRU",
+    "opis": "OUGUIYA"
+   },
+   {
+    "kod": "MUR",
+    "opis": "RUPIA MAURITIUSU"
+   },
+   {
+    "kod": "MVR",
+    "opis": "RUPIA MALEDIWSKA"
+   },
+   {
+    "kod": "MWK",
+    "opis": "KWACHA MALAWIJSKA"
+   },
+   {
+    "kod": "MXN",
+    "opis": "PESO MEKSYKAŃSKIE"
+   },
+   {
+    "kod": "MXV",
+    "opis": "UNIDAD DE INVERSION (UDI) MEKSYKAŃSKIE"
+   },
+   {
+    "kod": "MYR",
+    "opis": "RINGGIT"
+   },
+   {
+    "kod": "MZN",
+    "opis": "METICAL"
+   },
+   {
+    "kod": "NAD",
+    "opis": "DOLAR NAMIBIJSKI"
+   },
+   {
+    "kod": "NGN",
+    "opis": "NAIRA"
+   },
+   {
+    "kod": "NIO",
+    "opis": "CORDOBA ORO"
+   },
+   {
+    "kod": "NOK",
+    "opis": "KORONA NORWESKA"
+   },
+   {
+    "kod": "NPR",
+    "opis": "RUPIA NEPALSKA"
+   },
+   {
+    "kod": "NZD",
+    "opis": "DOLAR NOWOZELANDZKI"
+   },
+   {
+    "kod": "OMR",
+    "opis": "RIAL OMAŃSKI"
+   },
+   {
+    "kod": "PAB",
+    "opis": "BALBOA"
+   },
+   {
+    "kod": "PEN",
+    "opis": "SOL"
+   },
+   {
+    "kod": "PGK",
+    "opis": "KINA"
+   },
+   {
+    "kod": "PHP",
+    "opis": "PESO FILIPIŃSKIE"
+   },
+   {
+    "kod": "PKR",
+    "opis": "RUPIA PAKISTAŃSKA"
+   },
+   {
+    "kod": "PLN",
+    "opis": "ZŁOTY"
+   },
+   {
+    "kod": "PYG",
+    "opis": "GUARANI"
+   },
+   {
+    "kod": "QAR",
+    "opis": "RIAL KATARSKI"
+   },
+   {
+    "kod": "RON",
+    "opis": "LEJ RUMUŃSKI"
+   },
+   {
+    "kod": "RSD",
+    "opis": "DINAR SERBSKI"
+   },
+   {
+    "kod": "RUB",
+    "opis": "RUBEL ROSYJSKI"
+   },
+   {
+    "kod": "RWF",
+    "opis": "FRANK RWANDYJSKI"
+   },
+   {
+    "kod": "SAR",
+    "opis": "RIAL SAUDYJSKI"
+   },
+   {
+    "kod": "SBD",
+    "opis": "DOLAR WYSP SALOMONA"
+   },
+   {
+    "kod": "SCR",
+    "opis": "RUPIA SESZELSKA"
+   },
+   {
+    "kod": "SDG",
+    "opis": "FUNT SUDAŃSKI"
+   },
+   {
+    "kod": "SEK",
+    "opis": "KORONA SZWEDZKA"
+   },
+   {
+    "kod": "SGD",
+    "opis": "DOLAR SINGAPURSKI"
+   },
+   {
+    "kod": "SHP",
+    "opis": "FUNT ŚWIĘTEJ HELENY (ŚWIĘTA HELENA I WYSPA WNIEBOWSTĄPIENIA)"
+   },
+   {
+    "kod": "SLL",
+    "opis": "LEONE"
+   },
+   {
+    "kod": "SOS",
+    "opis": "SZYLING SOMALIJSKI"
+   },
+   {
+    "kod": "SRD",
+    "opis": "DOLAR SURINAMSKI"
+   },
+   {
+    "kod": "SSP",
+    "opis": "FUNT POŁUDNIOWOSUDAŃSKI"
+   },
+   {
+    "kod": "STN",
+    "opis": "DOBRA"
+   },
+   {
+    "kod": "SVC",
+    "opis": "COLON SALWADORSKI (SV1)"
+   },
+   {
+    "kod": "SYP",
+    "opis": "FUNT SYRYJSKI"
+   },
+   {
+    "kod": "SZL",
+    "opis": "LILANGENI"
+   },
+   {
+    "kod": "THB",
+    "opis": "BAT"
+   },
+   {
+    "kod": "TJS",
+    "opis": "SOMONI"
+   },
+   {
+    "kod": "TMT",
+    "opis": "MANAT TURKMEŃSKI"
+   },
+   {
+    "kod": "TND",
+    "opis": "DINAR TUNEZYJSKI"
+   },
+   {
+    "kod": "TOP",
+    "opis": "PAANGA"
+   },
+   {
+    "kod": "TRY",
+    "opis": "LIRA TURECKA"
+   },
+   {
+    "kod": "TTD",
+    "opis": "DOLAR TRYNIDADU I TOBAGO"
+   },
+   {
+    "kod": "TWD",
+    "opis": "NOWY DOLAR TAJWAŃSKI"
+   },
+   {
+    "kod": "TZS",
+    "opis": "SZYLING TANZAŃSKI"
+   },
+   {
+    "kod": "UAH",
+    "opis": "HRYWNA"
+   },
+   {
+    "kod": "UGX",
+    "opis": "SZYLING UGANDYJSKI"
+   },
+   {
+    "kod": "USD",
+    "opis": "DOLAR AMERYKAŃSKI"
+   },
+   {
+    "kod": "USN",
+    "opis": "DOLAR AMERYKAŃSKI (NEXT DAY)"
+   },
+   {
+    "kod": "UYI",
+    "opis": "PESO EN UNIDADES INDEXADAS URUGWAJSKIE"
+   },
+   {
+    "kod": "UYU",
+    "opis": "PESO URUGWAJSKIE"
+   },
+   {
+    "kod": "UYW",
+    "opis": "PESO EN UNIDADES INDEXADAS URUGWAJSKIE"
+   },
+   {
+    "kod": "UZS",
+    "opis": "SUM"
+   },
+   {
+    "kod": "VES",
+    "opis": "BOLIWAR SOBERANO"
+   },
+   {
+    "kod": "VND",
+    "opis": "DONG"
+   },
+   {
+    "kod": "VUV",
+    "opis": "VATU"
+   },
+   {
+    "kod": "WST",
+    "opis": "TALA"
+   },
+   {
+    "kod": "XAF",
+    "opis": "FRANK CFA (BEAC)"
+   },
+   {
+    "kod": "XAG",
+    "opis": "SREBRO"
+   },
+   {
+    "kod": "XAU",
+    "opis": "ZŁOTO"
+   },
+   {
+    "kod": "XBA",
+    "opis": "BOND MARKETS UNIT EUROPEAN COMPOSITE UNIT (EURCO)"
+   },
+   {
+    "kod": "XBB",
+    "opis": "BOND MARKETS UNIT EUROPEAN MONETARY UNIT (E.M.U.-6)"
+   },
+   {
+    "kod": "XBC",
+    "opis": "BOND MARKETS UNIT EUROPEAN UNIT OF ACCOUNT 9 (E.U.A.-9)"
+   },
+   {
+    "kod": "XBD",
+    "opis": "BOND MARKETS UNIT EUROPEAN UNIT OF ACCOUNT 17 (E.U.A.-17)"
+   },
+   {
+    "kod": "XCD",
+    "opis": "DOLAR WSCHODNIO­KARAIBSKI"
+   },
+   {
+    "kod": "XDR",
+    "opis": "SDR MIĘDZYNARODOWY FUNDUSZ WALUTOWY"
+   },
+   {
+    "kod": "XOF",
+    "opis": "FRANK CFA (BCEAO)"
+   },
+   {
+    "kod": "XPD",
+    "opis": "PALLAD"
+   },
+   {
+    "kod": "XPF",
+    "opis": "FRANK CFP"
+   },
+   {
+    "kod": "XPT",
+    "opis": "PLATYNA"
+   },
+   {
+    "kod": "XSU",
+    "opis": "SUCRE SISTEMA UNITARIO DE COMPENSACION REGIONAL DE PAGOS SUCRE"
+   },
+   {
+    "kod": "XUA",
+    "opis": "ADB UNIT OF ACCOUNT MEMBER COUNTRIES OF THE AFRICAN DEVELOPMENT BANK GROUP"
+   },
+   {
+    "kod": "XXX",
+    "opis": "BRAK WALUTY"
+   },
+   {
+    "kod": "YER",
+    "opis": "RIAL JEMEŃSKI"
+   },
+   {
+    "kod": "ZAR",
+    "opis": "RAND"
+   },
+   {
+    "kod": "ZMW",
+    "opis": "KWACHA ZAMBIJSKA"
+   },
+   {
+    "kod": "ZWL",
+    "opis": "DOLAR ZIMBABWE"
+   }
+  ],
+  "TMapKontaBanki": [
+   {
+    "kod": "B2AI1",
+    "opis": "AKTYWA | Kasa, operacje z Bankiem Centralnym | W rachunku bieżącym"
+   },
+   {
+    "kod": "B2AI2",
+    "opis": "AKTYWA | Kasa, operacje z Bankiem Centralnym | Rezerwa obowiązkowa"
+   },
+   {
+    "kod": "B2AI3",
+    "opis": "AKTYWA | Kasa, operacje z Bankiem Centralnym | Inne środki"
+   },
+   {
+    "kod": "B2AI_A",
+    "opis": "AKTYWA | Kasa, operacje z Bankiem Centralnym | Odpisy aktualizujące wartość należności / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AII_W",
+    "opis": "AKTYWA | Dłużne papiery wartościowe uprawnione do redyskontowania w Banku Centralnym"
+   },
+   {
+    "kod": "B2AII_A",
+    "opis": "AKTYWA | Dłużne papiery wartościowe uprawnione do redyskontowania w Banku Centralnym | Odpisy aktualizujące wartość dłużnych papierów wartościowych uprawnionych do redyskontowania w Banku Centralnym / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AIII1_W",
+    "opis": "AKTYWA | Należności od sektora finansowego | W rachunku bieżącym"
+   },
+   {
+    "kod": "B2AIII1_rc",
+    "opis": "AKTYWA | Należności od sektora finansowego | W rachunku bieżącym | Rezerwy celowe"
+   },
+   {
+    "kod": "B2AIII1_A",
+    "opis": "AKTYWA | Należności od sektora finansowego | W rachunku bieżącym | Odpisy aktualizujące wartość należności kredytowych od sektora finansowego w rachunku bieżącym / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AIII2_W",
+    "opis": "AKTYWA | Należności od sektora finansowego | Terminowe"
+   },
+   {
+    "kod": "B2AIII2_rc",
+    "opis": "AKTYWA | Należności od sektora finansowego | Terminowe | Rezerwy celowe"
+   },
+   {
+    "kod": "B2AIII2_A",
+    "opis": "AKTYWA | Należności od sektora finansowego | Terminowe | Odpisy aktualizujące wartość należności kredytowych terminowych od sektora finansowego / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AIV1_W",
+    "opis": "AKTYWA | Należności od sektora niefinansowego | W rachunku bieżącym"
+   },
+   {
+    "kod": "B2AIV1_rc",
+    "opis": "AKTYWA | Należności od sektora niefinansowego | W rachunku bieżącym | Rezerwy celowe"
+   },
+   {
+    "kod": "B2AIV1_A",
+    "opis": "AKTYWA | Należności od sektora niefinansowego | W rachunku bieżącym | Odpisy aktualizujące wartość należności kredytowych od sektora niefinansowego w rachunku bieżącym / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AIV2_W",
+    "opis": "AKTYWA | Należności od sektora niefinansowego | Terminowe"
+   },
+   {
+    "kod": "B2AIV2_rc",
+    "opis": "AKTYWA | Należności od sektora niefinansowego | Terminowe | Rezerwy celowe"
+   },
+   {
+    "kod": "B2AIV2_A",
+    "opis": "AKTYWA | Należności od sektora niefinansowego | Terminowe | Odpisy aktualizujące wartość należności kredytowych terminowych od sektora niefinansowego / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AV1_W",
+    "opis": "AKTYWA | Należności od sektora budżetowego | W rachunku bieżącym"
+   },
+   {
+    "kod": "B2AV1_rc",
+    "opis": "AKTYWA | Należności od sektora budżetowego | W rachunku bieżącym | Rezerwy celowe"
+   },
+   {
+    "kod": "B2AV1_A",
+    "opis": "AKTYWA | Należności od sektora budżetowego | W rachunku bieżącym | Odpisy aktualizujące wartość należności kredytowych od sektora budżetowego w rachunku bieżącym / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AV2_W",
+    "opis": "AKTYWA | Należności od sektora budżetowego | Terminowe"
+   },
+   {
+    "kod": "B2AV2_rc",
+    "opis": "AKTYWA | Należności od sektora budżetowego | Terminowe | Rezerwy celowe"
+   },
+   {
+    "kod": "B2AV2_A",
+    "opis": "AKTYWA | Należności od sektora budżetowego | Terminowe | Odpisy aktualizujące wartość należności kredytowych terminowych od sektora budżetowego / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AVI_W",
+    "opis": "AKTYWA | Należności z tytułu zakupionych papierów wartościowych z otrzymanym przyrzeczeniem odkupu"
+   },
+   {
+    "kod": "B2AVI_A",
+    "opis": "AKTYWA | Należności z tytułu zakupionych papierów wartościowych z otrzymanym przyrzeczeniem odkupu | Odpisy aktualizujące wartość należności z tytułu zakupionych papierów wartościowych z otrzymanym przyrzeczeniem odkupu / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AVII1",
+    "opis": "AKTYWA | Dłużne papiery wartościowe | Banków"
+   },
+   {
+    "kod": "B2AVII1_A",
+    "opis": "AKTYWA | Dłużne papiery wartościowe | Banków | Odpisy aktualizujące wartość dłużnych papierów wartościowych banków / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AVII2",
+    "opis": "AKTYWA | Dłużne papiery wartościowe | Budżetu Państwa i budżetów terenowych"
+   },
+   {
+    "kod": "B2AVII2_A",
+    "opis": "AKTYWA | Dłużne papiery wartościowe | Budżetu Państwa i budżetów terenowych | Odpisy aktualizujące wartość należności dłużnych papierów wartościowych Budżetu Państwa i budżetów terenowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AVII3_W",
+    "opis": "AKTYWA | Dłużne papiery wartościowe | Pozostałe"
+   },
+   {
+    "kod": "B2AVII3_A",
+    "opis": "AKTYWA | Dłużne papiery wartościowe | Pozostałe | Odpisy aktualizujące wartość należności pozostałych dłużnych papierów wartościowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AVIII1_W",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach zależnych | W instytucjach finansowych"
+   },
+   {
+    "kod": "B2AVIII1_A",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach zależnych | W instytucjach finansowych | Odpisy aktualizujące wartość udziałów lub akcji w jednostkach zależnych w instytucjach finansowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AVIII2_W",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach zależnych | W pozostałych jednostkach"
+   },
+   {
+    "kod": "B2AVIII2_A",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach zależnych | W pozostałych jednostkach | Odpisy aktualizujące wartość udziałów lub akcji w pozostałych jednostkach zależnych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AIX1_W",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach współzależnych | W instytucjach finansowych"
+   },
+   {
+    "kod": "B2AIX1_A",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach współzależnych | W instytucjach finansowych | Odpisy aktualizujące wartość udziałów lub akcji w jednostkach współzależnych w instytucjach finansowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AIX2_W",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach współzależnych | W pozostałych jednostkach"
+   },
+   {
+    "kod": "B2AIX2_A",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach współzależnych | W pozostałych jednostkach | Odpisy aktualizujące wartość udziałów lub akcji w pozostałych jednostkach współzależnych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AX1_W",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach stowarzyszonych | W instytucjach finansowych"
+   },
+   {
+    "kod": "B2AX1_A",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach stowarzyszonych | W instytucjach finansowych | Odpisy aktualizujące wartość udziałów lub akcji w jednostkach stowarzyszonych w instytucjach finansowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AX2_W",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach stowarzyszonych | W pozostałych jednostkach"
+   },
+   {
+    "kod": "B2AX2_A",
+    "opis": "AKTYWA | Udziały lub akcje w jednostkach stowarzyszonych | W pozostałych jednostkach | Odpisy aktualizujące wartość udziałów lub akcji w pozostałych jednostkach stowarzyszonych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXI1_W",
+    "opis": "AKTYWA | Udziały lub akcje w innych jednostkach | W instytucjach finansowych"
+   },
+   {
+    "kod": "B2AXI1_A",
+    "opis": "AKTYWA | Udziały lub akcje w innych jednostkach | W instytucjach finansowych | Odpisy aktualizujące wartość udziałów lub akcji w innych jednostkach w instytucjach finansowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXI2_W",
+    "opis": "AKTYWA | Udziały lub akcje w innych jednostkach | W pozostałych jednostkach"
+   },
+   {
+    "kod": "B2AXI2_A",
+    "opis": "AKTYWA | Udziały lub akcje w innych jednostkach | W pozostałych jednostkach | Odpisy aktualizujące wartość udziałów lub akcji w innych jednostkach w pozostałych instytucjach finansowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXII_W",
+    "opis": "AKTYWA | Pozostałe papiery wartościowe i inne aktywa finansowe"
+   },
+   {
+    "kod": "B2AXII_A",
+    "opis": "AKTYWA | Pozostałe papiery wartościowe i inne aktywa finansowe | Odpisy aktualizujące wartość pozostałych papierów wartościowych i innych aktywów finansowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXIII1_WF",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Wartość firmy"
+   },
+   {
+    "kod": "B2AXIII1_WF_A",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Wartość firmy | Odpisy aktualizujące wartość firmy / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXIII1_WF_U",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Wartość firmy | Umorzenie wartości firmy"
+   },
+   {
+    "kod": "B2AXIII2_inne_W",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne"
+   },
+   {
+    "kod": "B2AXIII1_inne_A",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne | Odpisy aktualizujące inne wartości niematerialne i prawne / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXIII1_inne_U",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne | Umorzenie innych wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "B2AXIV_W",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe"
+   },
+   {
+    "kod": "B2AXIV_U",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe | Umorzenie rzeczowych aktywów trwałych"
+   },
+   {
+    "kod": "B2AXIV_A",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe | Odpisy aktualizujące wartość rzeczowych aktywów trwałych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXV1_W",
+    "opis": "AKTYWA | Inne aktywa | Przejęte aktywa do zbycia"
+   },
+   {
+    "kod": "B2AXV1_A",
+    "opis": "AKTYWA | Inne aktywa | Przejęte aktywa do zbycia | Odpisy aktualizujące wartość innych aktywów przejętych do zbycia / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXV2_W",
+    "opis": "AKTYWA | Inne aktywa | Pozostałe"
+   },
+   {
+    "kod": "B2AXV2_A",
+    "opis": "AKTYWA | Inne aktywa | Pozostałe | Odpisy aktualizujące wartość innych aktywów pozostałych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXVI1_W",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Aktywa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "B2AXVI1_A",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Aktywa z tytułu odroczonego podatku dochodowego | Odpisy aktualizujące wartość aktywów z tytułu odroczonego podatku dochodowego / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXVI2_W",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Pozostałe rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "B2AXVI2_A",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Pozostałe rozliczenia międzyokresowe | Odpisy aktualizujące wartość pozostałych rozliczeń międzyokresowych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B2AXVII",
+    "opis": "AKTYWA | Należne wpłaty na kapitał (fundusz) podstawowy"
+   },
+   {
+    "kod": "B2AXVIII",
+    "opis": "AKTYWA | Akcje własne"
+   },
+   {
+    "kod": "B2PI1",
+    "opis": "PASYWA | Zobowiązania wobec Banku Centralnego"
+   },
+   {
+    "kod": "B2PII1",
+    "opis": "PASYWA | Zobowiązania wobec sektora finansowego | W rachunku bieżącym"
+   },
+   {
+    "kod": "B2PII2",
+    "opis": "PASYWA | Zobowiązania wobec sektora finansowego | Terminowe"
+   },
+   {
+    "kod": "B2PIII1a",
+    "opis": "PASYWA | Zobowiązania wobec sektora niefinansowego | Rachunki oszczędnościowe, w tym: | Bieżące"
+   },
+   {
+    "kod": "B2PIII1b",
+    "opis": "PASYWA | Zobowiązania wobec sektora niefinansowego | Rachunki oszczędnościowe, w tym: | Terminowe"
+   },
+   {
+    "kod": "B2PIII2a",
+    "opis": "PASYWA | Zobowiązania wobec sektora niefinansowego | Pozostałe, w tym: | Bieżące"
+   },
+   {
+    "kod": "B2PIII2b",
+    "opis": "PASYWA | Zobowiązania wobec sektora niefinansowego | Pozostałe, w tym: | Terminowe"
+   },
+   {
+    "kod": "B2PIV1",
+    "opis": "PASYWA | Zobowiązania wobec sektora budżetowego | Bieżące"
+   },
+   {
+    "kod": "B2PIV2",
+    "opis": "PASYWA | Zobowiązania wobec sektora budżetowego | Terminowe"
+   },
+   {
+    "kod": "B2PV",
+    "opis": "PASYWA | Zobowiązania z tytułu sprzedanych papierów wartościowych z udzielonym przyrzeczeniem odkupu"
+   },
+   {
+    "kod": "B2PVI",
+    "opis": "PASYWA | Zobowiązania z tytułu emisji dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "B2PVII",
+    "opis": "PASYWA | Inne zobowiązania z tytułu instrumentów finansowych"
+   },
+   {
+    "kod": "B2PVIII",
+    "opis": "PASYWA | Fundusze specjalne i inne zobowiązania"
+   },
+   {
+    "kod": "B2PIX1",
+    "opis": "PASYWA | Koszty i przychody rozliczane w czasie | Rozliczenia międzyokresowe kosztów"
+   },
+   {
+    "kod": "B2PIX2",
+    "opis": "PASYWA | Koszty i przychody rozliczane w czasie | Ujemna wartość firmy"
+   },
+   {
+    "kod": "B2PIX3",
+    "opis": "PASYWA | Koszty i przychody rozliczane w czasie | Pozostałe rozliczenia międzyokresowe przychodów"
+   },
+   {
+    "kod": "B2PX1",
+    "opis": "PASYWA | Rezerwy | Rezerwa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "B2PX2",
+    "opis": "PASYWA | Rezerwy | Pozostałe rezerwy"
+   },
+   {
+    "kod": "B2PXI",
+    "opis": "PASYWA | Zobowiązania podporządkowane"
+   },
+   {
+    "kod": "B2PXII",
+    "opis": "PASYWA | Kapitał (fundusz) podstawowy"
+   },
+   {
+    "kod": "B2PXIII",
+    "opis": "PASYWA | Kapitał (fundusz) zapasowy"
+   },
+   {
+    "kod": "B2PXIV",
+    "opis": "PASYWA | Kapitał (fundusz) z aktualizacji wyceny"
+   },
+   {
+    "kod": "B2PXV1",
+    "opis": "PASYWA | Pozostałe kapitały (fundusze) rezerwowe | Fundusz ogólnego ryzyka bankowego"
+   },
+   {
+    "kod": "B2PXV2",
+    "opis": "PASYWA | Pozostałe kapitały (fundusze) rezerwowe"
+   },
+   {
+    "kod": "B2PXVI",
+    "opis": "PASYWA | Zysk (strata) z lat ubiegłych"
+   },
+   {
+    "kod": "B2PXVII",
+    "opis": "PASYWA | Zysk (strata) netto"
+   },
+   {
+    "kod": "B2PXVIII",
+    "opis": "PASYWA | Odpisy z zysku netto w ciągu roku obrotowego (wielkość ujemna)"
+   },
+   {
+    "kod": "R2I1",
+    "opis": "WYNIKOWE | Przychody z tytułu odsetek | Od sektora finansowego"
+   },
+   {
+    "kod": "R2I2",
+    "opis": "WYNIKOWE | Przychody z tytułu odsetek | Od sektora niefinansowego"
+   },
+   {
+    "kod": "R2I3",
+    "opis": "WYNIKOWE | Przychody z tytułu odsetek | Od sektora budżetowego"
+   },
+   {
+    "kod": "R2I4",
+    "opis": "WYNIKOWE | Przychody z tytułu odsetek | Z papierów wartościowych o stałej kwocie dochodu"
+   },
+   {
+    "kod": "R2II1",
+    "opis": "WYNIKOWE | Koszty odsetek | Od sektora finansowego"
+   },
+   {
+    "kod": "R2II2",
+    "opis": "WYNIKOWE | Koszty odsetek | Od sektora niefinansowego"
+   },
+   {
+    "kod": "R2II3",
+    "opis": "WYNIKOWE | Koszty odsetek | Od sektora budżetowego"
+   },
+   {
+    "kod": "R2IV",
+    "opis": "WYNIKOWE | Przychody z tytułu prowizji"
+   },
+   {
+    "kod": "R2V",
+    "opis": "WYNIKOWE | Koszty prowizji"
+   },
+   {
+    "kod": "R2VII1",
+    "opis": "WYNIKOWE | Przychody z udziałów lub akcji, pozostałych papierów wartościowych i innych instrumentów finansowych, o zmiennej kwocie dochodu | Od jednostek zależnych"
+   },
+   {
+    "kod": "R2VII2",
+    "opis": "WYNIKOWE | Przychody z udziałów lub akcji, pozostałych papierów wartościowych i innych instrumentów finansowych, o zmiennej kwocie dochodu | Od jednostek współzależnych"
+   },
+   {
+    "kod": "R2VII3",
+    "opis": "WYNIKOWE | Przychody z udziałów lub akcji, pozostałych papierów wartościowych i innych instrumentów finansowych, o zmiennej kwocie dochodu | Od jednostek stowarzyszonych"
+   },
+   {
+    "kod": "R2VII4",
+    "opis": "WYNIKOWE | Przychody z udziałów lub akcji, pozostałych papierów wartościowych i innych instrumentów finansowych, o zmiennej kwocie dochodu | Od pozostałych jednostek"
+   },
+   {
+    "kod": "R2VIII1_P",
+    "opis": "WYNIKOWE | Przychody z tytułu operacji finansowych papierami wartościowymi i innymi instrumentami finansowymi"
+   },
+   {
+    "kod": "R2VIII1_K",
+    "opis": "WYNIKOWE | Koszty z tytułu operacji finansowych papierami wartościowymi i innymi instrumentami finansowymi"
+   },
+   {
+    "kod": "R2VIII2_P",
+    "opis": "WYNIKOWE | Przychody z tytułu pozostałych operacji finansowych"
+   },
+   {
+    "kod": "R2VIII2_K",
+    "opis": "WYNIKOWE | Koszty z tytułu pozostałych operacji finansowych"
+   },
+   {
+    "kod": "R2IX_P",
+    "opis": "WYNIKOWE | Przychody z pozycji wymiany"
+   },
+   {
+    "kod": "R2IX_K",
+    "opis": "WYNIKOWE | Koszty z pozycji wymiany"
+   },
+   {
+    "kod": "R2XI",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne"
+   },
+   {
+    "kod": "R2XII",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne"
+   },
+   {
+    "kod": "R2XIII1",
+    "opis": "WYNIKOWE | Koszty działania banku | Wynagrodzenia"
+   },
+   {
+    "kod": "R2XIII2",
+    "opis": "WYNIKOWE | Koszty działania banku | Ubezpieczenia i inne świadczenia"
+   },
+   {
+    "kod": "R2XIII3",
+    "opis": "WYNIKOWE | Koszty działania banku | Pozostałe"
+   },
+   {
+    "kod": "R2XIV",
+    "opis": "WYNIKOWE | Amortyzacja środków trwałych oraz wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "R2XV1",
+    "opis": "WYNIKOWE | Odpisy na rezerwy i aktualizacja wartości | Odpisy na rezerwy celowe i na ogólne ryzyko bankowe"
+   },
+   {
+    "kod": "R2XV2",
+    "opis": "WYNIKOWE | Odpisy na rezerwy i aktualizacja wartości | Aktualizacja wartości aktywów finansowych"
+   },
+   {
+    "kod": "R2XVI1",
+    "opis": "WYNIKOWE | Rozwiązanie rezerw i aktualizacja wartości | Rozwiązanie rezerw celowych i rezerw na ogólne ryzyko bankowe"
+   },
+   {
+    "kod": "R2XVI2",
+    "opis": "WYNIKOWE | Rozwiązanie rezerw i aktualizacja wartości | Aktualizacja wartości aktywów finansowych"
+   },
+   {
+    "kod": "R2XIX1",
+    "opis": "WYNIKOWE | Zyski nadzwyczajne"
+   },
+   {
+    "kod": "R2XIX2",
+    "opis": "WYNIKOWE | Straty nadzwyczajne"
+   },
+   {
+    "kod": "R2XXI_B",
+    "opis": "WYNIKOWE | Podatek dochodowy | Bieżący"
+   },
+   {
+    "kod": "R2XXI_O",
+    "opis": "WYNIKOWE | Podatek dochodowy | Odroczony"
+   },
+   {
+    "kod": "R2XXII",
+    "opis": "WYNIKOWE | Pozostałe obowiązkowe zmniejszenie zysku (zwiększenie straty)"
+   },
+   {
+    "kod": "INNE",
+    "opis": "Inne, niewskazane w słowniku"
+   }
+  ],
+  "TMapKontaDM": [
+   {
+    "kod": "BDMA_I1",
+    "opis": "AKTYWA | Środki pieniężne i inne aktywa pieniężne | W kasie"
+   },
+   {
+    "kod": "BDMA_I2",
+    "opis": "AKTYWA | Środki pieniężne i inne aktywa pieniężne | Na rachunkach bankowych"
+   },
+   {
+    "kod": "BDMA_I3",
+    "opis": "AKTYWA | Środki pieniężne i inne aktywa pieniężne | Inne środki pieniężne"
+   },
+   {
+    "kod": "BDMA_I4",
+    "opis": "AKTYWA | Środki pieniężne i inne aktywa pieniężne | Inne aktywa pieniężne"
+   },
+   {
+    "kod": "BDMA_II1",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od klientów"
+   },
+   {
+    "kod": "BDMA_II2",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od jednostek powiązanych"
+   },
+   {
+    "kod": "BDMA_II3A",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od banków prowadzących działalność maklerską, innych domów maklerskich i towarowych domów maklerskich | Z tytułu zawartych transakcji"
+   },
+   {
+    "kod": "BDMA_II3B",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od banków prowadzących działalność maklerską, innych domów maklerskich i towarowych domów maklerskich | Pozostałe"
+   },
+   {
+    "kod": "BDMA_II4",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od podmiotów prowadzących rynki regulowane i giełdy towarowe"
+   },
+   {
+    "kod": "BDMA_II5",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od Krajowego Depozytu i izb rozrachunkowych oraz izb rozliczeniowych"
+   },
+   {
+    "kod": "BDMA_II5A",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od CCP"
+   },
+   {
+    "kod": "BDMA_II6",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od towarzystw funduszy inwestycyjnych i emerytalnych oraz funduszy inwestycyjnych i emerytalnych"
+   },
+   {
+    "kod": "BDMA_II7",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od emitentów papierów wartościowych lub wprowadzających"
+   },
+   {
+    "kod": "BDMA_II8",
+    "opis": "AKTYWA | Należności krótkoterminowe | Od izby gospodarczej"
+   },
+   {
+    "kod": "BDMA_II9",
+    "opis": "AKTYWA | Należności krótkoterminowe | Z tytułu podatków, dotacji i ubezpieczeń społecznych"
+   },
+   {
+    "kod": "BDMA_II10",
+    "opis": "AKTYWA | Należności krótkoterminowe | Dochodzone na drodze sądowej, nieobjęte odpisami aktualizującymi należności"
+   },
+   {
+    "kod": "BDMA_II11",
+    "opis": "AKTYWA | Należności krótkoterminowe | Wynikające z zawartych umów pożyczek papierów wartościowych"
+   },
+   {
+    "kod": "BDMA_II12",
+    "opis": "AKTYWA | Należności krótkoterminowe | Pozostałe"
+   },
+   {
+    "kod": "BDMA_III1",
+    "opis": "AKTYWA | Instrumenty finansowe przeznaczone do obrotu | Akcje"
+   },
+   {
+    "kod": "BDMA_III2",
+    "opis": "AKTYWA | Instrumenty finansowe przeznaczone do obrotu | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BDMA_III3",
+    "opis": "AKTYWA | Instrumenty finansowe przeznaczone do obrotu | Certyfikaty inwestycyjne"
+   },
+   {
+    "kod": "BDMA_III4",
+    "opis": "AKTYWA | Instrumenty finansowe przeznaczone do obrotu | Warranty"
+   },
+   {
+    "kod": "BDMA_III5",
+    "opis": "AKTYWA | Instrumenty finansowe przeznaczone do obrotu | Pozostałe papiery wartościowe"
+   },
+   {
+    "kod": "BDMA_III6",
+    "opis": "AKTYWA | Instrumenty finansowe przeznaczone do obrotu | Instrumenty pochodne"
+   },
+   {
+    "kod": "BDMA_III7",
+    "opis": "AKTYWA | Instrumenty finansowe przeznaczone do obrotu | Towary giełdowe"
+   },
+   {
+    "kod": "BDMA_III8",
+    "opis": "AKTYWA | Instrumenty finansowe przeznaczone do obrotu | Pozostałe"
+   },
+   {
+    "kod": "BDMA_IV",
+    "opis": "AKTYWA | Krótkoterminowe rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "BDMA_IVA1",
+    "opis": "AKTYWA | Udzielone pożyczki krótkoterminowe | Jednostce dominującej"
+   },
+   {
+    "kod": "BDMA_IVA2",
+    "opis": "AKTYWA | Udzielone pożyczki krótkoterminowe | Znaczącemu inwestorowi"
+   },
+   {
+    "kod": "BDMA_IVA3",
+    "opis": "AKTYWA | Udzielone pożyczki krótkoterminowe | Wspólnikowi jednostki współzależnej"
+   },
+   {
+    "kod": "BDMA_IVA4",
+    "opis": "AKTYWA | Udzielone pożyczki krótkoterminowe | Jednostkom podporządkowanym"
+   },
+   {
+    "kod": "BDMA_IVA5",
+    "opis": "AKTYWA | Udzielone pożyczki krótkoterminowe | Pozostałe"
+   },
+   {
+    "kod": "BDMA_V1",
+    "opis": "AKTYWA | Instrumenty finansowe utrzymywane do terminu zapadalności | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BDMA_V2",
+    "opis": "AKTYWA | Instrumenty finansowe utrzymywane do terminu zapadalności | Pozostałe papiery wartościowe"
+   },
+   {
+    "kod": "BDMA_V3",
+    "opis": "AKTYWA | Instrumenty finansowe utrzymywane do terminu zapadalności | Towary giełdowe"
+   },
+   {
+    "kod": "BDMA_V4",
+    "opis": "AKTYWA | Instrumenty finansowe utrzymywane do terminu zapadalności | Pozostałe"
+   },
+   {
+    "kod": "BDMA_VI1A",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Akcje i udziały | Jednostki dominującej"
+   },
+   {
+    "kod": "BDMA_VI1B",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Akcje i udziały | Znaczącego inwestora"
+   },
+   {
+    "kod": "BDMA_VI1C",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Akcje i udziały | Wspólnika jednostki współzależnej"
+   },
+   {
+    "kod": "BDMA_VI1D",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Akcje i udziały | Jednostek podporządkowanych"
+   },
+   {
+    "kod": "BDMA_VI1E",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Akcje i udziały | Pozostałe"
+   },
+   {
+    "kod": "BDMA_VI2",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BDMA_VI3",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Jednostki uczestnictwa funduszy inwestycyjnych"
+   },
+   {
+    "kod": "BDMA_VI4",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Certyfikaty inwestycyjne"
+   },
+   {
+    "kod": "BDMA_VI5",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Pozostałe papiery wartościowe"
+   },
+   {
+    "kod": "BDMA_VI6",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Towary giełdowe"
+   },
+   {
+    "kod": "BDMA_VI7",
+    "opis": "AKTYWA | Instrumenty finansowe dostępne do sprzedaży | Pozostałe"
+   },
+   {
+    "kod": "BDMA_VII",
+    "opis": "AKTYWA | Należności długoterminowe"
+   },
+   {
+    "kod": "BDMA_VIII1",
+    "opis": "AKTYWA | Udzielone pożyczki długoterminowe | Jednostce dominującej"
+   },
+   {
+    "kod": "BDMA_VIII2",
+    "opis": "AKTYWA | Udzielone pożyczki długoterminowe | Znaczącemu inwestorowi"
+   },
+   {
+    "kod": "BDMA_VIII3",
+    "opis": "AKTYWA | Udzielone pożyczki długoterminowe | Wspólnikowi jednostki współzależnej"
+   },
+   {
+    "kod": "BDMA_VIII4",
+    "opis": "AKTYWA | Udzielone pożyczki długoterminowe | Jednostkom podporządkowanym"
+   },
+   {
+    "kod": "BDMA_VIII5",
+    "opis": "AKTYWA | Udzielone pożyczki długoterminowe | Pozostałe"
+   },
+   {
+    "kod": "BDMA_IX1",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Wartość firmy"
+   },
+   {
+    "kod": "BDMA_IX2A",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Nabyte koncesje, patenty, licencje i podobne wartości | Oprogramowanie komputerowe"
+   },
+   {
+    "kod": "BDMA_IX2B",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Nabyte koncesje, patenty, licencje i podobne wartości | Pozostałe"
+   },
+   {
+    "kod": "BDMA_IX3",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BDMA_IX4",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Zaliczki na wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BDMA_X1A",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe | Środki trwałe | Grunty (w tym prawo użytkowania wieczystego gruntu)"
+   },
+   {
+    "kod": "BDMA_X1B",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe | Środki trwałe | Budynki i lokale"
+   },
+   {
+    "kod": "BDMA_X1C",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe | Środki trwałe | Zespoły komputerowe"
+   },
+   {
+    "kod": "BDMA_X1D",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe | Środki trwałe | Pozostałe środki trwałe"
+   },
+   {
+    "kod": "BDMA_X2",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe | Środki trwałe w budowie"
+   },
+   {
+    "kod": "BDMA_X3",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe | Zaliczki na środki trwałe w budowie"
+   },
+   {
+    "kod": "BDMA_XI1",
+    "opis": "AKTYWA | Długoterminowe rozliczenia międzyokresowe | Aktywa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "BDMA_XI2",
+    "opis": "AKTYWA | Długoterminowe rozliczenia międzyokresowe | Pozostałe rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "BDMA_XII",
+    "opis": "AKTYWA | Należne wpłaty na kapitał (fundusz) podstawowy"
+   },
+   {
+    "kod": "BDMA_XIII",
+    "opis": "AKTYWA | Udziały (akcje) własne"
+   },
+   {
+    "kod": "BDMP_I1",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec klientów"
+   },
+   {
+    "kod": "BDMP_I2",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec jednostek powiązanych"
+   },
+   {
+    "kod": "BDMP_I3A",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec banków prowadzących działalność maklerską, innych domów maklerskich i towarowych domów maklerskich | Z tytułu zawartych transakcji"
+   },
+   {
+    "kod": "BDMP_I3B",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec banków prowadzących działalność maklerską, innych domów maklerskich i towarowych domów maklerskich | Pozostałe"
+   },
+   {
+    "kod": "BDMP_I4",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec podmiotów prowadzących rynki regulowane i giełdy towarowe"
+   },
+   {
+    "kod": "BDMP_I5",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec Krajowego Depozytu i izb rozrachunkowych oraz izb rozliczeniowych"
+   },
+   {
+    "kod": "BDMP_I5A",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec CCP"
+   },
+   {
+    "kod": "BDMP_I6",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec izby gospodarczej"
+   },
+   {
+    "kod": "BDMP_I7",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec emitentów papierów wartościowych lub wprowadzających"
+   },
+   {
+    "kod": "BDMP_I8A",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Kredyty i pożyczki | Od jednostek powiązanych"
+   },
+   {
+    "kod": "BDMP_I8B",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Kredyty i pożyczki | Pozostałe"
+   },
+   {
+    "kod": "BDMP_I9",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BDMP_I9A",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Ujemna wycena z tytułu instrumentów finansowych przeznaczonych do obrotu"
+   },
+   {
+    "kod": "BDMP_I10",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wekslowe"
+   },
+   {
+    "kod": "BDMP_I11",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Z tytułu podatków, ceł, ubezpieczeń społecznych"
+   },
+   {
+    "kod": "BDMP_I12",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Z tytułu wynagrodzeń"
+   },
+   {
+    "kod": "BDMP_I13",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wobec towarzystw funduszy inwestycyjnych i emerytalnych oraz funduszy inwestycyjnych i emerytalnych"
+   },
+   {
+    "kod": "BDMP_I14",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Wynikające z zawartych umów pożyczek papierów wartościowych"
+   },
+   {
+    "kod": "BDMP_I15",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Fundusze specjalne"
+   },
+   {
+    "kod": "BDMP_I16",
+    "opis": "PASYWA | Zobowiązania krótkoterminowe | Pozostałe"
+   },
+   {
+    "kod": "BDMP_II1A",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Kredyty bankowe | Od jednostek powiązanych"
+   },
+   {
+    "kod": "BDMP_II1B",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Kredyty bankowe | Pozostałe"
+   },
+   {
+    "kod": "BDMP_II2A",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Pożyczki | Od jednostek powiązanych"
+   },
+   {
+    "kod": "BDMP_II2B",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Pożyczki | Pozostałe"
+   },
+   {
+    "kod": "BDMP_II3",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BDMP_II4",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Z tytułu innych instrumentów finansowych"
+   },
+   {
+    "kod": "BDMP_II5A",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Z tytułu umów leasingu finansowego | Od jednostek powiązanych"
+   },
+   {
+    "kod": "BDMP_II5B",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Z tytułu umów leasingu finansowego | Pozostałe"
+   },
+   {
+    "kod": "BDMP_II6",
+    "opis": "PASYWA | Zobowiązania długoterminowe | Pozostałe"
+   },
+   {
+    "kod": "BDMP_III1",
+    "opis": "PASYWA | Rozliczenia międzyokresowe | Ujemna wartość firmy"
+   },
+   {
+    "kod": "BDMP_III2A",
+    "opis": "PASYWA | Rozliczenia międzyokresowe | Inne rozliczenia międzyokresowe | Długoterminowe"
+   },
+   {
+    "kod": "BDMP_III2B",
+    "opis": "PASYWA | Rozliczenia międzyokresowe | Inne rozliczenia międzyokresowe | Krótkoterminowe"
+   },
+   {
+    "kod": "BDMP_IV1",
+    "opis": "PASYWA | Rezerwy na zobowiązania | Z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "BDMP_IV2A",
+    "opis": "PASYWA | Rezerwy na zobowiązania | Na świadczenia emerytalne i podobne | Długoterminowe"
+   },
+   {
+    "kod": "BDMP_IV2B",
+    "opis": "PASYWA | Rezerwy na zobowiązania | Na świadczenia emerytalne i podobne | Krótkoterminowe"
+   },
+   {
+    "kod": "BDMP_IV3A",
+    "opis": "PASYWA | Rezerwy na zobowiązania | Pozostałe | Długoterminowe"
+   },
+   {
+    "kod": "BDMP_IV3B",
+    "opis": "PASYWA | Rezerwy na zobowiązania | Pozostałe | Krótkoterminowe"
+   },
+   {
+    "kod": "BDMP_V",
+    "opis": "PASYWA | Zobowiązania podporządkowane"
+   },
+   {
+    "kod": "BDMP_VI1",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) podstawowy"
+   },
+   {
+    "kod": "BDMP_VI4A",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Ze sprzedaży akcji powyżej ich wartości nominalnej"
+   },
+   {
+    "kod": "BDMP_VI4B",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Utworzony ustawowo"
+   },
+   {
+    "kod": "BDMP_VI4C",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Utworzony zgodnie ze statutem"
+   },
+   {
+    "kod": "BDMP_VI4D",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Z dopłat akcjonariuszy"
+   },
+   {
+    "kod": "BDMP_VI4E",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Inny"
+   },
+   {
+    "kod": "BDMP_VI5",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) z aktualizacji wyceny"
+   },
+   {
+    "kod": "BDMP_VI6",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Pozostałe kapitały (fundusze) rezerwowe"
+   },
+   {
+    "kod": "BDMP_VI7A",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) z lat ubiegłych | Zysk z lat ubiegłych (wartość dodatnia)"
+   },
+   {
+    "kod": "BDMP_VI7B",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) z lat ubiegłych | Strata z lat ubiegłych (wartość ujemna)"
+   },
+   {
+    "kod": "BDMP_VI8",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) netto"
+   },
+   {
+    "kod": "BDMP_VI9",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Odpisy z zysku netto w ciągu roku obrotowego (wielkość ujemna)"
+   },
+   {
+    "kod": "RDM_I1A_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu przyjmowania i przekazywania zleceń nabycia lub zbycia instrumentów finansowych | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I1B_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu wykonywania zleceń nabycia lub zbycia instrumentów finansowych na rachunek dającego zlecenie | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I1C_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu zarządzania portfelami, w skład których wchodzi jeden instrument finansowy lub ich większa liczba | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I1D_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu doradztwa inwestycyjnego | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I1E_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu oferowania instrumentów finansowych | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I1F_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu świadczenia usług w wykonywaniu zawartych umów o subemisje inwestycyjne i usługowe lub zawierania i wykonywania innych umów o podobnym charakterze, jeżeli ich przedmiotem są instrumenty finansowe | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I1G_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu prowadzenia rachunków pieniężnych, przechowywania lub rejestrowania instrumentów finansowych, w tym prowadzenia rachunków, o których mowa w art. 69 ust. 4 pkt 1 ustawy o obrocie instrumentami finansowymi | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I1H_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Pozostałe | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I2_pow",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z pozostałej działalności podstawowej | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_I1A_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu przyjmowania i przekazywania zleceń nabycia lub zbycia instrumentów finansowych | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_I1B_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu wykonywania zleceń nabycia lub zbycia instrumentów finansowych na rachunek dającego zlecenie | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_I1C_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu zarządzania portfelami, w skład których wchodzi jeden instrument finansowy lub ich większa liczba | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_I1D_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu doradztwa inwestycyjnego | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_I1E_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu oferowania instrumentów finansowych | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_I1F_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu świadczenia usług w wykonywaniu zawartych umów o subemisje inwestycyjne i usługowe lub zawierania i wykonywania innych umów o podobnym charakterze, jeżeli ich przedmiotem są instrumenty finansowe | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_I1G_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Z tytułu prowadzenia rachunków pieniężnych, przechowywania lub rejestrowania instrumentów finansowych, w tym prowadzenia rachunków, o których mowa w art. 69 ust. 4 pkt 1 ustawy o obrocie instrumentami finansowymi | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_I1H_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z działalności maklerskiej | Pozostałe | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_I2_poz",
+    "opis": "RZIS | Przychody z podstawowej działalności | Przychody z pozostałej działalności podstawowej | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_II1",
+    "opis": "RZIS | Koszty działalności podstawowej | Opłaty na rzecz rynków regulowanych, giełd towarowych, Krajowego Depozytu i izb rozrachunkowych oraz izb rozliczeniowych"
+   },
+   {
+    "kod": "RDM_II2",
+    "opis": "RZIS | Koszty działalności podstawowej | Opłaty na rzecz CCP"
+   },
+   {
+    "kod": "RDM_II3",
+    "opis": "RZIS | Koszty działalności podstawowej | Opłaty na rzecz izby gospodarczej"
+   },
+   {
+    "kod": "RDM_II4",
+    "opis": "RZIS | Koszty działalności podstawowej | Wynagrodzenia"
+   },
+   {
+    "kod": "RDM_II5",
+    "opis": "RZIS | Koszty działalności podstawowej | Ubezpieczenia społeczne i inne świadczenia"
+   },
+   {
+    "kod": "RDM_II6",
+    "opis": "RZIS | Koszty działalności podstawowej | Świadczenia na rzecz pracowników"
+   },
+   {
+    "kod": "RDM_II7",
+    "opis": "RZIS | Koszty działalności podstawowej | Zużycie materiałów i energii"
+   },
+   {
+    "kod": "RDM_II8",
+    "opis": "RZIS | Koszty działalności podstawowej | Usługi obce"
+   },
+   {
+    "kod": "RDM_II9",
+    "opis": "RZIS | Koszty działalności podstawowej | Koszty utrzymania i wynajmu nieruchomości"
+   },
+   {
+    "kod": "RDM_II10",
+    "opis": "RZIS | Koszty działalności podstawowej | Pozostałe koszty rzeczowe"
+   },
+   {
+    "kod": "RDM_II11",
+    "opis": "RZIS | Koszty działalności podstawowej | Amortyzacja"
+   },
+   {
+    "kod": "RDM_II12",
+    "opis": "RZIS | Koszty działalności podstawowej | Podatki i inne opłaty o charakterze publicznoprawnym"
+   },
+   {
+    "kod": "RDM_II13",
+    "opis": "RZIS | Koszty działalności podstawowej | Prowizje i inne opłaty"
+   },
+   {
+    "kod": "RDM_II14",
+    "opis": "RZIS | Koszty działalności podstawowej | Pozostałe"
+   },
+   {
+    "kod": "RDM_IV1_pow",
+    "opis": "RZIS | Przychody z instrumentów finansowych przeznaczonych do obrotu | Dywidendy i inne udziały w zyskach | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_IV1_poz",
+    "opis": "RZIS | Przychody z instrumentów finansowych przeznaczonych do obrotu | Dywidendy i inne udziały w zyskach | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_IV2_pow",
+    "opis": "RZIS | Przychody z instrumentów finansowych przeznaczonych do obrotu | Odsetki | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_IV2_poz",
+    "opis": "RZIS | Przychody z instrumentów finansowych przeznaczonych do obrotu | Odsetki | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_IV3",
+    "opis": "RZIS | Przychody z instrumentów finansowych przeznaczonych do obrotu | Korekty aktualizujące wartość"
+   },
+   {
+    "kod": "RDM_IV4",
+    "opis": "RZIS | Przychody z instrumentów finansowych przeznaczonych do obrotu | Przychody ze sprzedaży / z umorzenia"
+   },
+   {
+    "kod": "RDM_IV5",
+    "opis": "RZIS | Przychody z instrumentów finansowych przeznaczonych do obrotu | Pozostałe"
+   },
+   {
+    "kod": "RDM_V1",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych przeznaczonych do obrotu | Korekty aktualizujące wartość"
+   },
+   {
+    "kod": "RDM_V2",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych przeznaczonych do obrotu | Koszty sprzedaży/umorzenia"
+   },
+   {
+    "kod": "RDM_V3",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych przeznaczonych do obrotu | Pozostałe"
+   },
+   {
+    "kod": "RDM_VII1_pow",
+    "opis": "RZIS | Przychody z instrumentów finansowych utrzymywanych do terminu zapadalności | Odsetki | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_VII1_poz",
+    "opis": "RZIS | Przychody z instrumentów finansowych utrzymywanych do terminu zapadalności | Odsetki | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_VII2",
+    "opis": "RZIS | Przychody z instrumentów finansowych utrzymywanych do terminu zapadalności | Korekty aktualizujące wartość"
+   },
+   {
+    "kod": "RDM_VII3",
+    "opis": "RZIS | Przychody z instrumentów finansowych utrzymywanych do terminu zapadalności | Odpis dyskonta od dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "RDM_VII4",
+    "opis": "RZIS | Przychody z instrumentów finansowych utrzymywanych do terminu zapadalności | Przychody ze sprzedaży / z umorzenia"
+   },
+   {
+    "kod": "RDM_VII5",
+    "opis": "RZIS | Przychody z instrumentów finansowych utrzymywanych do terminu zapadalności | Pozostałe"
+   },
+   {
+    "kod": "RDM_VIII1",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych utrzymywanych do terminu zapadalności | Korekty aktualizujące wartość"
+   },
+   {
+    "kod": "RDM_VIII2",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych utrzymywanych do terminu zapadalności | Amortyzacja premii od dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "RDM_VIII3",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych utrzymywanych do terminu zapadalności | Koszty sprzedaży/umorzenia"
+   },
+   {
+    "kod": "RDM_VIII4",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych utrzymywanych do terminu zapadalności | Pozostałe"
+   },
+   {
+    "kod": "RDM_X1_pow",
+    "opis": "RZIS | Przychody z instrumentów finansowych dostępnych do sprzedaży | Dywidendy i inne udziały w zyskach | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_X1_poz",
+    "opis": "RZIS | Przychody z instrumentów finansowych dostępnych do sprzedaży | Dywidendy i inne udziały w zyskach | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_X2_pow",
+    "opis": "RZIS | Przychody z instrumentów finansowych dostępnych do sprzedaży | Odsetki | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_X2_poz",
+    "opis": "RZIS | Przychody z instrumentów finansowych dostępnych do sprzedaży | Odsetki | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_X3",
+    "opis": "RZIS | Przychody z instrumentów finansowych dostępnych do sprzedaży | Korekty aktualizujące wartość"
+   },
+   {
+    "kod": "RDM_X4",
+    "opis": "RZIS | Przychody z instrumentów finansowych dostępnych do sprzedaży | Przychody ze sprzedaży / z umorzenia"
+   },
+   {
+    "kod": "RDM_X5",
+    "opis": "RZIS | Przychody z instrumentów finansowych dostępnych do sprzedaży | Odpis dyskonta od dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "RDM_X6",
+    "opis": "RZIS | Przychody z instrumentów finansowych dostępnych do sprzedaży | Pozostałe"
+   },
+   {
+    "kod": "RDM_XI1",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych dostępnych do sprzedaży | Korekty aktualizujące wartość"
+   },
+   {
+    "kod": "RDM_XI2",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych dostępnych do sprzedaży | Koszty sprzedaży/umorzenia"
+   },
+   {
+    "kod": "RDM_XI3",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych dostępnych do sprzedaży | Amortyzacja premii od dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "RDM_XI4",
+    "opis": "RZIS | Koszty z tytułu instrumentów finansowych dostępnych do sprzedaży | Pozostałe"
+   },
+   {
+    "kod": "RDM_XIII1",
+    "opis": "RZIS | Pozostałe przychody operacyjne | Przychody ze sprzedaży rzeczowych składników aktywów trwałych i wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "RDM_XIII2",
+    "opis": "RZIS | Pozostałe przychody operacyjne | Rozwiązanie rezerw"
+   },
+   {
+    "kod": "RDM_XIII3",
+    "opis": "RZIS | Pozostałe przychody operacyjne | Zmniejszenie odpisów aktualizujących należności"
+   },
+   {
+    "kod": "RDM_XIII4",
+    "opis": "RZIS | Pozostałe przychody operacyjne | Dotacje"
+   },
+   {
+    "kod": "RDM_XIII5",
+    "opis": "RZIS | Pozostałe przychody operacyjne | Pozostałe"
+   },
+   {
+    "kod": "RDM_XIV1",
+    "opis": "RZIS | Pozostałe koszty operacyjne | Koszty sprzedaży rzeczowych składników aktywów trwałych i wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "RDM_XIV2",
+    "opis": "RZIS | Pozostałe koszty operacyjne | Utworzenie rezerw"
+   },
+   {
+    "kod": "RDM_XIV3",
+    "opis": "RZIS | Pozostałe koszty operacyjne | Odpisy aktualizujące należności"
+   },
+   {
+    "kod": "RDM_XIV4",
+    "opis": "RZIS | Pozostałe koszty operacyjne | Odpisy aktualizujące wartość rzeczowych składników aktywów trwałych i wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "RDM_XIV5",
+    "opis": "RZIS | Pozostałe koszty operacyjne | Pozostałe"
+   },
+   {
+    "kod": "RDM_XVII1_pow",
+    "opis": "RZIS | Przychody finansowe | Odsetki od udzielonych pożyczek | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_XVII1_poz",
+    "opis": "RZIS | Przychody finansowe | Odsetki od udzielonych pożyczek | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_XVII2_pow",
+    "opis": "RZIS | Przychody finansowe | Odsetki od lokat i depozytów | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_XVII2_poz",
+    "opis": "RZIS | Przychody finansowe | Odsetki od lokat i depozytów | Od jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_XVII3",
+    "opis": "RZIS | Przychody finansowe | Pozostałe odsetki"
+   },
+   {
+    "kod": "RDM_XVII4A",
+    "opis": "RZIS | Przychody finansowe | Dodatnie różnice kursowe | Zrealizowane"
+   },
+   {
+    "kod": "RDM_XVII4B",
+    "opis": "RZIS | Przychody finansowe | Dodatnie różnice kursowe | Niezrealizowane"
+   },
+   {
+    "kod": "RDM_XVII5",
+    "opis": "RZIS | Przychody finansowe | Pozostałe"
+   },
+   {
+    "kod": "RDM_XVIII1_pow",
+    "opis": "RZIS | Koszty finansowe | Odsetki od kredytów i pożyczek | Dla jednostek powiązanych"
+   },
+   {
+    "kod": "RDM_XVIII1_poz",
+    "opis": "RZIS | Koszty finansowe | Odsetki od kredytów i pożyczek | Dla jednostek pozostałych"
+   },
+   {
+    "kod": "RDM_XVIII2",
+    "opis": "RZIS | Koszty finansowe | Pozostałe odsetki"
+   },
+   {
+    "kod": "RDM_XVIII3A",
+    "opis": "RZIS | Koszty finansowe | Ujemne różnice kursowe | Zrealizowane"
+   },
+   {
+    "kod": "RDM_XVIII3B",
+    "opis": "RZIS | Koszty finansowe | Ujemne różnice kursowe | Niezrealizowane"
+   },
+   {
+    "kod": "RDM_XVIII4",
+    "opis": "RZIS | Koszty finansowe | Pozostałe"
+   },
+   {
+    "kod": "RDM_PD",
+    "opis": "RZIS | Podatek dochodowy"
+   },
+   {
+    "kod": "RDM_XXIV",
+    "opis": "RZIS | Pozostałe obowiązkowe zmniejszenia zysku (zwiększenia straty)"
+   },
+   {
+    "kod": "INNE",
+    "opis": "Inne, niewskazane w słowniku"
+   }
+  ],
+  "TMapKontaFI": [
+   {
+    "kod": "BFI_I1",
+    "opis": "BILANS | Aktywa | Środki pieniężne i ich ekwiwalenty"
+   },
+   {
+    "kod": "BFI_I2",
+    "opis": "BILANS | Aktywa | Należności"
+   },
+   {
+    "kod": "BFI_I3",
+    "opis": "BILANS | Aktywa | Transakcje reverse repo / buy-sell back"
+   },
+   {
+    "kod": "BFI_I4",
+    "opis": "BILANS | Aktywa | Składniki lokat notowane na aktywnym rynku"
+   },
+   {
+    "kod": "BFI_I5",
+    "opis": "BILANS | Aktywa | Składniki lokat nienotowane na aktywnym rynku"
+   },
+   {
+    "kod": "BFI_I7",
+    "opis": "BILANS | Aktywa | Pozostałe aktywa"
+   },
+   {
+    "kod": "BFI_II",
+    "opis": "BILANS | Zobowiązania"
+   },
+   {
+    "kod": "BFI_IV1A",
+    "opis": "BILANS | Kapitał funduszu | Kapitał wpłacony | Certyfikaty inwestycyjne nie w pełni opłacone"
+   },
+   {
+    "kod": "BFI_IV1B",
+    "opis": "BILANS | Kapitał funduszu | Kapitał wpłacony | Pozostałe"
+   },
+   {
+    "kod": "BFI_IV2",
+    "opis": "BILANS | Kapitał funduszu | Kapitał wypłacony (wielkość ujemna)"
+   },
+   {
+    "kod": "BFI_V1",
+    "opis": "BILANS | Dochody zatrzymane | Zakumulowane, nierozdysponowane przychody z lokat netto"
+   },
+   {
+    "kod": "BFI_V2",
+    "opis": "BILANS | Dochody zatrzymane | Zakumulowany, nierozdysponowany zrealizowany zysk (strata) ze zbycia lokat"
+   },
+   {
+    "kod": "BFI_VI",
+    "opis": "BILANS | Wzrost (spadek) wartości lokat w odniesieniu do ceny nabycia"
+   },
+   {
+    "kod": "RFI_I1",
+    "opis": "RW | Przychody z lokat | Dywidendy i inne udziały w zyskach"
+   },
+   {
+    "kod": "RFI_I2",
+    "opis": "RW | Przychody z lokat | Przychody odsetkowe"
+   },
+   {
+    "kod": "RFI_I3",
+    "opis": "RW | Przychody z lokat | Przychody związane z posiadaniem nieruchomości"
+   },
+   {
+    "kod": "RFI_I4",
+    "opis": "RW | Przychody z lokat | Dodatnie różnice kursowe"
+   },
+   {
+    "kod": "RFI_I5",
+    "opis": "RW | Przychody z lokat | Pozostałe"
+   },
+   {
+    "kod": "RFI_II1A",
+    "opis": "RW | Koszty funduszu | Wynagrodzenie dla towarzystwa | Stała część wynagrodzenia"
+   },
+   {
+    "kod": "RFI_II1B",
+    "opis": "RW | Koszty funduszu | Wynagrodzenie dla towarzystwa | Zmienna część wynagrodzenia"
+   },
+   {
+    "kod": "RFI_II2",
+    "opis": "RW | Koszty funduszu | Wynagrodzenia dla podmiotów prowadzących dystrybucję"
+   },
+   {
+    "kod": "RFI_II3",
+    "opis": "RW | Koszty funduszu | Opłaty dla depozytariusza"
+   },
+   {
+    "kod": "RFI_II4",
+    "opis": "RW | Koszty funduszu | Opłaty związane z prowadzeniem rejestru aktywów funduszu"
+   },
+   {
+    "kod": "RFI_II5",
+    "opis": "RW | Koszty funduszu | Opłaty za zezwolenia oraz opłaty rejestracyjne"
+   },
+   {
+    "kod": "RFI_II6",
+    "opis": "RW | Koszty funduszu | Usługi w zakresie rachunkowości"
+   },
+   {
+    "kod": "RFI_II7",
+    "opis": "RW | Koszty funduszu | Usługi w zakresie zarządzania aktywami funduszu"
+   },
+   {
+    "kod": "RFI_II8",
+    "opis": "RW | Koszty funduszu | Usługi prawne"
+   },
+   {
+    "kod": "RFI_II9",
+    "opis": "RW | Koszty funduszu | Usługi wydawnicze, w tym poligraficzne"
+   },
+   {
+    "kod": "RFI_II10",
+    "opis": "RW | Koszty funduszu | Koszty odsetkowe"
+   },
+   {
+    "kod": "RFI_II11",
+    "opis": "RW | Koszty funduszu | Koszty związane z posiadaniem nieruchomości"
+   },
+   {
+    "kod": "RFI_II12",
+    "opis": "RW | Koszty funduszu | Ujemne różnice kursowe"
+   },
+   {
+    "kod": "RFI_II13",
+    "opis": "RW | Koszty funduszu | Pozostałe"
+   },
+   {
+    "kod": "RFI_III",
+    "opis": "RW | Koszty pokrywane przez towarzystwo"
+   },
+   {
+    "kod": "RFI_VI1A",
+    "opis": "RW | Zrealizowany i niezrealizowany zysk (strata) | Przychody ze zbycia lokat"
+   },
+   {
+    "kod": "RFI_VI1B",
+    "opis": "RW | Zrealizowany i niezrealizowany zysk (strata) | Koszty zbycia lokat"
+   },
+   {
+    "kod": "RFI_VI2A",
+    "opis": "RW | Zrealizowany i niezrealizowany zysk (strata) | Wzrost (spadek) niezrealizowanego zysku (straty) z wyceny lokat | Z tytułu różnic kursowych"
+   },
+   {
+    "kod": "RFI_VI2B",
+    "opis": "RW | Zrealizowany i niezrealizowany zysk (strata) | Wzrost (spadek) niezrealizowanego zysku (straty) z wyceny lokat | Pozostałe"
+   },
+   {
+    "kod": "RFI_PD",
+    "opis": "RW | Podatek dochodowy"
+   },
+   {
+    "kod": "INNE",
+    "opis": "Inne, niewskazane w słowniku"
+   }
+  ],
+  "TMapKontaPD": [
+   {
+    "kod": "PD1",
+    "opis": "Przychody zwolnione z opodatkowania (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych)"
+   },
+   {
+    "kod": "PD1_1",
+    "opis": "Przychody zwolnione z opodatkowania (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Przychody, w stosunku do których nie stosuje się przepisów ustawy"
+   },
+   {
+    "kod": "PD1_2",
+    "opis": "Przychody zwolnione z opodatkowania (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Przychody, które nie są zaliczane do przychodów podatkowych"
+   },
+   {
+    "kod": "PD1_3",
+    "opis": "Przychody zwolnione z opodatkowania (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Dochody (przychody) wolne"
+   },
+   {
+    "kod": "PD2",
+    "opis": "Przychody niepodlegające opodatkowaniu w roku bieżącym"
+   },
+   {
+    "kod": "PD4",
+    "opis": "Koszty niestanowiące kosztów uzyskania przychodów (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych)"
+   },
+   {
+    "kod": "PD4_1",
+    "opis": "Koszty niestanowiące kosztów uzyskania przychodów (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Koszty związane z przychodami w stosunku do których przepisów ustawy o podatku dochodowym nie stosuje się"
+   },
+   {
+    "kod": "PD4_2",
+    "opis": "Koszty niestanowiące kosztów uzyskania przychodów (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Koszty związane z przychodami, które nie są zaliczane do przychodów podatkowych"
+   },
+   {
+    "kod": "PD4_3",
+    "opis": "Koszty niestanowiące kosztów uzyskania przychodów (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Koszty związane z dochodami (przychodami) wolnymi"
+   },
+   {
+    "kod": "PD5",
+    "opis": "Koszty nieuznawane za koszty uzyskania przychodów w bieżącym roku"
+   },
+   {
+    "kod": "PD7",
+    "opis": "Koszty uzyskania przychodów poniesione na działalność badawczo-rozwojową (ulga B+R)"
+   },
+   {
+    "kod": "PD8_1",
+    "opis": "Kwalifikowane prawa własności intelektualnej (IP Box) – przychody będące przychodami podatkowymi"
+   },
+   {
+    "kod": "PD8_2",
+    "opis": "Kwalifikowane prawa własności intelektualnej (IP Box) – koszty stanowiące koszty uzyskania przychodu"
+   },
+   {
+    "kod": "PD1_PB",
+    "opis": "POZABILANSOWE | Przychody zwolnione z opodatkowania (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych)"
+   },
+   {
+    "kod": "PD1_PB_1",
+    "opis": "POZABILANSOWE | Przychody zwolnione z opodatkowania (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Przychody, w stosunku do których nie stosuje się przepisów ustawy"
+   },
+   {
+    "kod": "PD1_PB_2",
+    "opis": "POZABILANSOWE | Przychody zwolnione z opodatkowania (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Przychody, które nie są zaliczane do przychodów podatkowych"
+   },
+   {
+    "kod": "PD1_PB_3",
+    "opis": "POZABILANSOWE | Przychody zwolnione z opodatkowania (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Dochody (przychody) wolne"
+   },
+   {
+    "kod": "PD2_PB",
+    "opis": "POZABILANSOWE | Przychody niepodlegające opodatkowaniu w roku bieżącym"
+   },
+   {
+    "kod": "PD3_PB",
+    "opis": "POZABILANSOWE | Przychody podlegające opodatkowaniu w roku bieżącym, ujęte w księgach rachunkowych lat ubiegłych"
+   },
+   {
+    "kod": "PD4_PB",
+    "opis": "POZABILANSOWE | Koszty niestanowiące kosztów uzyskania przychodów (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych)"
+   },
+   {
+    "kod": "PD4_PB_1",
+    "opis": "POZABILANSOWE | Koszty niestanowiące kosztów uzyskania przychodów (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Koszty związane z przychodami, w stosunku do których nie stosuje się przepisów ustawy"
+   },
+   {
+    "kod": "PD4_PB_2",
+    "opis": "POZABILANSOWE | Koszty niestanowiące kosztów uzyskania przychodów (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Koszty związane z przychodami, które nie są zaliczane do przychodów podatkowych"
+   },
+   {
+    "kod": "PD4_PB_3",
+    "opis": "POZABILANSOWE | Koszty niestanowiące kosztów uzyskania przychodów (trwałe różnice pomiędzy zyskiem/stratą dla celów rachunkowych a dochodem/stratą dla celów podatkowych) | Koszty związane z dochodami (przychodami) wolnymi"
+   },
+   {
+    "kod": "PD5_PB",
+    "opis": "POZABILANSOWE | Koszty nieuznawane za koszty uzyskania przychodów w bieżącym roku"
+   },
+   {
+    "kod": "PD6_PB",
+    "opis": "POZABILANSOWE | Koszty uznawane za koszty uzyskania przychodów w roku bieżącym, ujęte w księgach lat ubiegłych"
+   },
+   {
+    "kod": "PD7_PB",
+    "opis": "POZABILANSOWE | Koszty uzyskania przychodów poniesione na działalność badawczo-rozwojową (ulga B+R)"
+   },
+   {
+    "kod": "PD8_PB_1",
+    "opis": "POZABILANSOWE | Kwalifikowane prawa własności intelektualnej (IP Box) – przychody będące przychodami podatkowymi"
+   },
+   {
+    "kod": "PD8_PB_2",
+    "opis": "POZABILANSOWE | Kwalifikowane prawa własności intelektualnej (IP Box) – koszty stanowiące koszty uzyskania przychodu"
+   }
+  ],
+  "TMapKontaPOZ": [
+   {
+    "kod": "BAAI1_W",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Koszty zakończonych prac rozwojowych"
+   },
+   {
+    "kod": "BAAI1_A",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Koszty zakończonych prac rozwojowych | Odpisy aktualizujące wartość kosztów zakończonych prac rozwojowych"
+   },
+   {
+    "kod": "BAAI1_U",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Koszty zakończonych prac rozwojowych | Umorzenie zakończonych prac rozwojowych"
+   },
+   {
+    "kod": "BAAI2_W",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Wartość firmy"
+   },
+   {
+    "kod": "BAAI2_A",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Wartość firmy | Odpisy aktualizujące wartość firmy"
+   },
+   {
+    "kod": "BAAI2_U",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Wartość firmy | Umorzenie wartości firmy"
+   },
+   {
+    "kod": "BAAI3_W",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BAAI3_A",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne | Odpisy aktualizujące inne wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BAAI3_U",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne | Umorzenie innych wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "BAAI4_W",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Zaliczki na wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BAAI4_A",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Zaliczki na wartości niematerialne i prawne | Odpisy aktualizujące zaliczki na wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BAAII1a_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Grunty (w tym prawo użytkowania wieczystego gruntu)"
+   },
+   {
+    "kod": "BAAII1a_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Grunty (w tym prawo użytkowania wieczystego gruntu) | Odpisy aktualizujące wartość gruntów (w tym prawa użytkowania wieczystego gruntu)"
+   },
+   {
+    "kod": "BAAII1a_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Grunty (w tym prawo użytkowania wieczystego gruntu) | Umorzenie gruntów (w tym prawa użytkowania wieczystego gruntu)"
+   },
+   {
+    "kod": "BAAII1b_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Budynki, lokale i obiekty inżynierii lądowej i wodnej"
+   },
+   {
+    "kod": "BAAII1b_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Budynki, lokale i obiekty inżynierii lądowej i wodnej | Odpisy aktualizujące wartość budynków, lokali i obiektów inżynierii lądowej i wodnej"
+   },
+   {
+    "kod": "BAAII1b_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Budynki, lokale i obiekty inżynierii lądowej i wodnej | Umorzenie budynków, lokali i obiektów inżynierii lądowej i wodnej"
+   },
+   {
+    "kod": "BAAII1c_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Urządzenia techniczne i maszyny"
+   },
+   {
+    "kod": "BAAII1c_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Urządzenia techniczne i maszyny | Odpisy aktualizujące wartość urządzeń technicznych i maszyn"
+   },
+   {
+    "kod": "BAAII1c_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Urządzenia techniczne i maszyny | Umorzenie urządzeń technicznych i maszyn"
+   },
+   {
+    "kod": "BAAII1d_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Środki transportu"
+   },
+   {
+    "kod": "BAAII1d_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Środki transportu | Odpisy aktualizujące wartość środków transportu"
+   },
+   {
+    "kod": "BAAII1d_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Środki transportu | Umorzenie środków transportu"
+   },
+   {
+    "kod": "BAAII1e_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Inne środki trwałe"
+   },
+   {
+    "kod": "BAAII1e_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Inne środki trwałe | Odpisy aktualizujące wartość innych środków trwałych"
+   },
+   {
+    "kod": "BAAII1e_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Inne środki trwałe | Umorzenie innych środków trwałych"
+   },
+   {
+    "kod": "BAAII2_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe w budowie"
+   },
+   {
+    "kod": "BAAII2_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe w budowie | Odpisy aktualizujące wartość środków trwałych w budowie"
+   },
+   {
+    "kod": "BAAII3_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Zaliczki na środki trwałe w budowie"
+   },
+   {
+    "kod": "BAAII3_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Zaliczki na środki trwałe w budowie | Odpisy aktualizujące wartość zaliczek na środki trwałe w budowie"
+   },
+   {
+    "kod": "BAAIII1_W",
+    "opis": "AKTYWA | Aktywa trwałe | Należności długoterminowe | Od jednostek powiązanych"
+   },
+   {
+    "kod": "BAAIII1_A",
+    "opis": "AKTYWA | Aktywa trwałe | Należności długoterminowe | Od jednostek powiązanych | Odpisy aktualizujące wartość należności od jednostek powiązanych"
+   },
+   {
+    "kod": "BAAIII2_W",
+    "opis": "AKTYWA | Aktywa trwałe | Należności długoterminowe | Od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "BAAIII2_A",
+    "opis": "AKTYWA | Aktywa trwałe | Należności długoterminowe | Od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Odpisy aktualizujące wartość należności od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "BAAIII3_W",
+    "opis": "AKTYWA | Aktywa trwałe | Należności długoterminowe | Od pozostałych jednostek"
+   },
+   {
+    "kod": "BAAIII3_A",
+    "opis": "AKTYWA | Aktywa trwałe | Należności długoterminowe | Od pozostałych jednostek | Odpisy aktualizujące wartość należności od pozostałych jednostek"
+   },
+   {
+    "kod": "BAAIV1_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Nieruchomości"
+   },
+   {
+    "kod": "BAAIV1_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Nieruchomości | Odpisy aktualizujące wartość inwestycji długoterminowych w nieruchomości"
+   },
+   {
+    "kod": "BAAIV1_U",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Nieruchomości | Umorzenie inwestycji długoterminowych w nieruchomości"
+   },
+   {
+    "kod": "BAAIV2_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BAAIV2_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Wartości niematerialne i prawne | Odpisy aktualizujące wartość inwestycji długoterminowych w wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BAAIV2_U",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Wartości niematerialne i prawne | Umorzenie wartości inwestycji długoterminowych w wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BAAIV3a_ULA_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W jednostkach powiązanych | Udziały lub akcje"
+   },
+   {
+    "kod": "BAAIV3a_ULA_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W jednostkach powiązanych | Udziały lub akcje | Odpisy aktualizujące wartość udziałów lub akcji w jednostkach powiązanych"
+   },
+   {
+    "kod": "BAAIV3a_IPW_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W jednostkach powiązanych | Inne papiery wartościowe"
+   },
+   {
+    "kod": "BAAIV3a_IPW_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W jednostkach powiązanych | Inne papiery wartościowe | Odpisy aktualizujące wartość innych papierów wartościowych w jednostkach powiązanych"
+   },
+   {
+    "kod": "BAAIV3a_UP_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W jednostkach powiązanych | Udzielone pożyczki"
+   },
+   {
+    "kod": "BAAIV3a_UP_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W jednostkach powiązanych | Udzielone pożyczki | Odpisy aktualizujące wartość udzielonych pożyczek w jednostkach powiązanych"
+   },
+   {
+    "kod": "BAAIV3a_IDAF_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W jednostkach powiązanych | Inne długoterminowe aktywa finansowe"
+   },
+   {
+    "kod": "BAAIV3a_IDAF_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W jednostkach powiązanych | Inne długoterminowe aktywa finansowe | Odpisy aktualizujące wartość innych długoterminowych aktywów finansowych w jednostkach powiązanych"
+   },
+   {
+    "kod": "BAAIV3b_ULA_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale | Udziały lub akcje"
+   },
+   {
+    "kod": "BAAIV3b_ULA_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale | Udziały lub akcje | Odpisy aktualizujące wartość udziałów lub akcji w pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "BAAIV3b_IPW_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale | Inne papiery wartościowe"
+   },
+   {
+    "kod": "BAAIV3b_IPW_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale | Inne papiery wartościowe | Odpisy aktualizujące wartość innych papierów wartościowych w pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "BAAIV3b_UP_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale | Udzielone pożyczki"
+   },
+   {
+    "kod": "BAAIV3b_UP_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale | Udzielone pożyczki | Odpisy aktualizujące wartość udzielonych pożyczek w pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "BAAIV3b_IDAF_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale | Inne długoterminowe aktywa finansowe"
+   },
+   {
+    "kod": "BAAIV3b_IDAF_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale | Inne długoterminowe aktywa finansowe | Odpisy aktualizujące wartość innych długoterminowych aktywów finansowych w pozostałych jednostkach, w których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "BAAIV3c_ULA_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach | Udziały lub akcje"
+   },
+   {
+    "kod": "BAAIV3c_ULA_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach | Udziały lub akcje | Odpisy aktualizujące wartość udziałów lub akcji w pozostałych jednostkach"
+   },
+   {
+    "kod": "BAAIV3c_IPW_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach | Inne papiery wartościowe"
+   },
+   {
+    "kod": "BAAIV3c_IPW_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach | Inne papiery wartościowe | Odpisy aktualizujące wartość innych papierów wartościowych w pozostałych jednostkach"
+   },
+   {
+    "kod": "BAAIV3c_UP_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach | Udzielone pożyczki"
+   },
+   {
+    "kod": "BAAIV3c_UP_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach | Udzielone pożyczki | Odpisy aktualizujące wartość udzielonych pożyczek w pozostałych jednostkach"
+   },
+   {
+    "kod": "BAAIV3c_IDAF_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach | Inne długoterminowe aktywa finansowe"
+   },
+   {
+    "kod": "BAAIV3c_IDAF_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | W pozostałych jednostkach | Inne długoterminowe aktywa finansowe | Odpisy aktualizujące wartość innych długoterminowych aktywów finansowych w pozostałych jednostkach"
+   },
+   {
+    "kod": "BAAIV4_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Inne inwestycje długoterminowe"
+   },
+   {
+    "kod": "BAAIV4_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Inne inwestycje długoterminowe | Odpisy aktualizujące wartość innych inwestycji długoterminowych"
+   },
+   {
+    "kod": "BAAV1_W",
+    "opis": "AKTYWA | Aktywa trwałe | Długoterminowe rozliczenia międzyokresowe | Aktywa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "BAAV1_A",
+    "opis": "AKTYWA | Aktywa trwałe | Długoterminowe rozliczenia międzyokresowe | Aktywa z tytułu odroczonego podatku dochodowego | Odpisy aktualizujące aktywa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "BAAV2_W",
+    "opis": "AKTYWA | Aktywa trwałe | Długoterminowe rozliczenia międzyokresowe | Inne rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "BAAV2_A",
+    "opis": "AKTYWA | Aktywa trwałe | Długoterminowe rozliczenia międzyokresowe | Inne rozliczenia międzyokresowe | Odpisy aktualizujące inne rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "BABI1",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Materiały"
+   },
+   {
+    "kod": "BABI1_O",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Materiały | Odchylenia od cen ewidencyjnych materiałów"
+   },
+   {
+    "kod": "BABI1_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Materiały | Odpisy aktualizujące wartość materiałów"
+   },
+   {
+    "kod": "BABI2",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Półprodukty i produkty w toku"
+   },
+   {
+    "kod": "BABI2_O",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Półprodukty i produkty w toku | Odchylenia od cen ewidencyjnych półproduktów i produktów w toku"
+   },
+   {
+    "kod": "BABI2_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Półprodukty i produkty w toku | Odpisy aktualizujące wartość półproduktów i produktów w toku"
+   },
+   {
+    "kod": "BABI3",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Produkty gotowe"
+   },
+   {
+    "kod": "BABI3_O",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Produkty gotowe | Odchylenia od cen ewidencyjnych produktów gotowych"
+   },
+   {
+    "kod": "BABI3_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Produkty gotowe | Odpisy aktualizujące wartość produktów gotowych"
+   },
+   {
+    "kod": "BABI4",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Towary"
+   },
+   {
+    "kod": "BABI4_O",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Towary | Odchylenia od cen ewidencyjnych towarów"
+   },
+   {
+    "kod": "BABI4_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Towary | Odpisy aktualizujące wartość towarów"
+   },
+   {
+    "kod": "BABI5",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Zaliczki na dostawy i usługi"
+   },
+   {
+    "kod": "BABI5_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Zaliczki na dostawy i usługi | Odpisy aktualizujące zaliczki na dostawy i usługi"
+   },
+   {
+    "kod": "BABII1a_D12",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od jednostek powiązanych | Z tytułu dostaw i usług | o okresie spłaty do 12 miesięcy"
+   },
+   {
+    "kod": "BABII1a_D12_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od jednostek powiązanych | Z tytułu dostaw i usług | o okresie spłaty do 12 miesięcy | Odpisy aktualizujące wartość należności z tytułu dostaw i usług od jednostek powiązanych w okresie spłaty do 12 miesięcy"
+   },
+   {
+    "kod": "BABII1a_P12",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od jednostek powiązanych | Z tytułu dostaw i usług | o okresie spłaty powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BABII1a_P12_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od jednostek powiązanych | Z tytułu dostaw i usług | o okresie spłaty powyżej 12 miesięcy | Odpisy aktualizujące wartość należności z tytułu dostaw i usług od jednostek powiązanych w okresie spłaty powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BABII1b",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od jednostek powiązanych | Inne"
+   },
+   {
+    "kod": "BABII1b_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od jednostek powiązanych | Inne | Odpisy aktualizujące wartość innych należności od jednostek powiązanych"
+   },
+   {
+    "kod": "BABII2a_D12",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Z tytułu dostaw i usług | o okresie spłaty do 12 miesięcy"
+   },
+   {
+    "kod": "BABII2a_D12_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Z tytułu dostaw i usług | o okresie spłaty do 12 miesięcy | Odpisy aktualizujące wartość należności z tytułu dostaw i usług od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale, o okresie spłaty do 12 miesięcy"
+   },
+   {
+    "kod": "BABII2a_P12",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Z tytułu dostaw i usług | o okresie spłaty powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BABII2a_P12_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Z tytułu dostaw i usług | o okresie spłaty powyżej 12 miesięcy | Odpisy aktualizujące wartość należności z tytułu dostaw i usług od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale, o okresie spłaty powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BABII2b",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Inne"
+   },
+   {
+    "kod": "BABII2b_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Inne | Odpisy aktualizujące wartość innych należności od pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "BABII3a_D12",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Z tytułu dostaw i usług | o okresie spłaty do 12 miesięcy"
+   },
+   {
+    "kod": "BABII3a_D12_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Z tytułu dostaw i usług | o okresie spłaty do 12 miesięcy | Odpisy aktualizujące wartość należności z tytułu dostaw i usług od pozostałych jednostek o okresie spłaty do 12 miesięcy"
+   },
+   {
+    "kod": "BABII3a_P12",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Z tytułu dostaw i usług | o okresie spłaty powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BABII3a_P12_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Z tytułu dostaw i usług | o okresie spłaty powyżej 12 miesięcy | Odpisy aktualizujące wartość należności z tytułu dostaw i usług od pozostałych jednostek o okresie spłaty powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BABII3b",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Z tytułu podatków, dotacji, ceł, ubezpieczeń społecznych i zdrowotnych oraz innych świadczeń"
+   },
+   {
+    "kod": "BABII3b_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Z tytułu podatków, dotacji, ceł, ubezpieczeń społecznych i zdrowotnych oraz innych świadczeń | Odpisy aktualizujące wartość należności z tytułu podatków, dotacji, ceł, ubezpieczeń, społecznych i zdrowotnych oraz innych świadczeń"
+   },
+   {
+    "kod": "BABII3c_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Inne"
+   },
+   {
+    "kod": "BABII3c_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Inne | Odpisy aktualizujące wartość innych należności"
+   },
+   {
+    "kod": "BABII3d_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Dochodzone na drodze sądowej"
+   },
+   {
+    "kod": "BABII3d_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Należności od pozostałych jednostek | Dochodzone na drodze sądowej | Odpisy aktualizujące wartość należności dochodzonych na drodze sądowej"
+   },
+   {
+    "kod": "BABIII1a1_ULA_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W jednostkach powiązanych | Udziały lub akcje"
+   },
+   {
+    "kod": "BABIII1a1_ULA_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W jednostkach powiązanych | Udziały lub akcje | Odpisy aktualizujące wartość udziałów lub akcji w jednostkach powiązanych"
+   },
+   {
+    "kod": "BABIII1a2_IPW_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W jednostkach powiązanych | Inne papiery wartościowe"
+   },
+   {
+    "kod": "BABIII1a2_IPW_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W jednostkach powiązanych | Inne papiery wartościowe | Odpisy aktualizujące wartość innych papierów wartościowych w jednostkach powiązanych"
+   },
+   {
+    "kod": "BABIII1a3_UP_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W jednostkach powiązanych | Udzielone pożyczki"
+   },
+   {
+    "kod": "BABIII1a3_UP_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W jednostkach powiązanych | Udzielone pożyczki | Odpisy aktualizujące wartość udzielonych pożyczek w jednostkach powiązanych"
+   },
+   {
+    "kod": "BABIII1a4_IKAF_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W jednostkach powiązanych | Inne krótkoterminowe aktywa finansowe"
+   },
+   {
+    "kod": "BABIII1a4_IKAF_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W jednostkach powiązanych | Inne krótkoterminowe aktywa finansowe | Odpisy aktualizujące wartość innych krótkoterminowych aktywów finansowych w jednostkach powiązanych"
+   },
+   {
+    "kod": "BABIII1b1_ULA_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W pozostałych jednostkach | Udziały lub akcje"
+   },
+   {
+    "kod": "BABIII1b1_ULA_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W pozostałych jednostkach | Udziały lub akcje | Odpisy aktualizujące wartość udziałów lub akcji w pozostałych jednostkach"
+   },
+   {
+    "kod": "BABIII1b2_IPW_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W pozostałych jednostkach | Inne papiery wartościowe"
+   },
+   {
+    "kod": "BABIII1b2_IPW_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W pozostałych jednostkach | Inne papiery wartościowe | Odpisy aktualizujące wartość innych papierów wartościowych w pozostałych jednostkach"
+   },
+   {
+    "kod": "BABIII1b3_UP_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W pozostałych jednostkach | Udzielone pożyczki"
+   },
+   {
+    "kod": "BABIII1b3_UP_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W pozostałych jednostkach | Udzielone pożyczki | Odpisy aktualizujące wartość udzielonych pożyczek w pozostałych jednostkach"
+   },
+   {
+    "kod": "BABIII1b4_IKAF_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W pozostałych jednostkach | Inne krótkoterminowe aktywa finansowe"
+   },
+   {
+    "kod": "BABIII1b4_IKAF_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | W pozostałych jednostkach | Inne krótkoterminowe aktywa finansowe | Odpisy aktualizujące wartość innych krótkoterminowych aktywów finansowych w pozostałych jednostkach"
+   },
+   {
+    "kod": "BABIII1c1_SPKR",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | Środki pieniężne i inne aktywa pieniężne | Środki pieniężne w kasie i na rachunkach"
+   },
+   {
+    "kod": "BABIII1c2_ISP",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | Środki pieniężne i inne aktywa pieniężne | Inne środki pieniężne"
+   },
+   {
+    "kod": "BABIII1c2_ISP_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | Środki pieniężne i inne aktywa pieniężne | Inne środki pieniężne | Odpisy aktualizujące wartość innych środków pieniężnych"
+   },
+   {
+    "kod": "BABIII1c3_IAP",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | Środki pieniężne i inne aktywa pieniężne | Inne aktywa pieniężne"
+   },
+   {
+    "kod": "BABIII1c3_IAP_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Krótkoterminowe aktywa finansowe | Środki pieniężne i inne aktywa pieniężne | Inne aktywa pieniężne | Odpisy aktualizujące wartość innych aktywów pieniężnych"
+   },
+   {
+    "kod": "BABIII2_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Inne inwestycje krótkoterminowe"
+   },
+   {
+    "kod": "BABIII2_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Inne inwestycje krótkoterminowe | Odpisy aktualizujące wartość innych inwestycji krótkoterminowych"
+   },
+   {
+    "kod": "BABIV",
+    "opis": "AKTYWA | Aktywa obrotowe | Krótkoterminowe rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "BABIV_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Krótkoterminowe rozliczenia międzyokresowe | Odpisy aktualizujące wartość krótkoterminowych rozliczeń międzyokresowych"
+   },
+   {
+    "kod": "BAC",
+    "opis": "AKTYWA | Należne wpłaty na kapitał (fundusz) podstawowy"
+   },
+   {
+    "kod": "BAD",
+    "opis": "AKTYWA | Udziały (akcje) własne"
+   },
+   {
+    "kod": "BPAI",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) podstawowy"
+   },
+   {
+    "kod": "BPAIIWS",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Z nadwyżki wartości sprzedaży (wartości emisyjnej) nad wartością nominalną udziałów (akcji)"
+   },
+   {
+    "kod": "BPAII_INN",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Z innych źródeł"
+   },
+   {
+    "kod": "BPAII_ES_ZP",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Kwota zysku wypracowanego w latach przed opodatkowaniem ryczałtem od dochodów spółek"
+   },
+   {
+    "kod": "BPAII_ES_ZR",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) zapasowy | Kwota zysku wypracowanego w latach opodatkowania ryczałtem od dochodów spółek"
+   },
+   {
+    "kod": "BPAIIIAWG",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) z aktualizacji wyceny | Z tytułu aktualizacji wartości godziwej"
+   },
+   {
+    "kod": "BPAIII_INN",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Kapitał (fundusz) z aktualizacji wyceny | Z innego tytułu"
+   },
+   {
+    "kod": "BPAIVU",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Pozostałe kapitały (fundusze) rezerwowe | Tworzone zgodnie z umową (ze statutem)"
+   },
+   {
+    "kod": "BPAIVUW",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Pozostałe kapitały (fundusze) rezerwowe | Na udziały (akcje) własne"
+   },
+   {
+    "kod": "BPAIV_INN",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Pozostałe kapitały (fundusze) rezerwowe | Inne"
+   },
+   {
+    "kod": "BPAIV_ES_ZP",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Pozostałe kapitały (fundusze) rezerwowe | Kwota zysku wypracowanego w latach przed opodatkowaniem ryczałtem od dochodów spółek"
+   },
+   {
+    "kod": "BPAIV_ES_ZR",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Pozostałe kapitały (fundusze) rezerwowe | Kwota zysku wypracowanego w latach opodatkowania ryczałtem od dochodów spółek"
+   },
+   {
+    "kod": "BPAV",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) z lat ubiegłych"
+   },
+   {
+    "kod": "BPAV_ES_NZP",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) z lat ubiegłych | Kwota niepodzielonych zysków wypracowanych w latach przed opodatkowaniem ryczałtem od dochodów spółek"
+   },
+   {
+    "kod": "BPAV_ES_NPR",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) z lat ubiegłych | Kwota niepodzielonych zysków wypracowanych w latach opodatkowania ryczałtem od dochodów spółek"
+   },
+   {
+    "kod": "BPAV_ES_NSP",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) z lat ubiegłych | Kwota niepokrytych strat poniesionych w latach przed opodatkowaniem ryczałtem od dochodów spółek"
+   },
+   {
+    "kod": "BPAV_ES_NSR",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) z lat ubiegłych | Kwota niepokrytych strat poniesionych w latach opodatkowania ryczałtem od dochodów spółek"
+   },
+   {
+    "kod": "BPAVI",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Zysk (strata) netto"
+   },
+   {
+    "kod": "BPAVII",
+    "opis": "PASYWA | Kapitał (fundusz) własny | Odpisy z zysku netto w ciągu roku obrotowego (wielkość ujemna)"
+   },
+   {
+    "kod": "BPBI1",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rezerwy na zobowiązania | Rezerwa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "BPBI2_D",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rezerwy na zobowiązania | Rezerwa na świadczenia emerytalne i podobne | Długoterminowa"
+   },
+   {
+    "kod": "BPBI2_K",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rezerwy na zobowiązania | Rezerwa na świadczenia emerytalne i podobne | Krótkoterminowa"
+   },
+   {
+    "kod": "BPBI3_D",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rezerwy na zobowiązania | Pozostałe rezerwy | Długoterminowe"
+   },
+   {
+    "kod": "BPBI3_K",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rezerwy na zobowiązania | Pozostałe rezerwy | Krótkoterminowe"
+   },
+   {
+    "kod": "BPBII1",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania długoterminowe | Wobec jednostek powiązanych"
+   },
+   {
+    "kod": "BPBII2",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania długoterminowe | Wobec pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "BPBII3a",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania długoterminowe | Wobec pozostałych jednostek | Kredyty i pożyczki"
+   },
+   {
+    "kod": "BPBII3b",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania długoterminowe | Wobec pozostałych jednostek | Z tytułu emisji dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "BPBII3c",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania długoterminowe | Wobec pozostałych jednostek | Inne zobowiązania finansowe"
+   },
+   {
+    "kod": "BPBII3d",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania długoterminowe | Wobec pozostałych jednostek | Zobowiązania wekslowe"
+   },
+   {
+    "kod": "BPBII3e",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania długoterminowe | Wobec pozostałych jednostek | Inne"
+   },
+   {
+    "kod": "BPBIII1a_D12",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec jednostek powiązanych | Z tytułu dostaw i usług | O okresie wymagalności do 12 miesięcy"
+   },
+   {
+    "kod": "BPBIII1a_P12",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec jednostek powiązanych | Z tytułu dostaw i usług | O okresie wymagalności powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BPBIII1b",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec jednostek powiązanych | Inne"
+   },
+   {
+    "kod": "BPBIII2a_D12",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Z tytułu dostaw i usług | O okresie wymagalności do 12 miesięcy"
+   },
+   {
+    "kod": "BPBIII2a_P12",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Z tytułu dostaw i usług | O okresie wymagalności powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BPBIII2b",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek, w których jednostka posiada zaangażowanie w kapitale | Inne"
+   },
+   {
+    "kod": "BPBIII3a",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Kredyty i pożyczki"
+   },
+   {
+    "kod": "BPBIII3b",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Z tytułu emisji dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "BPBIII3c",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Inne zobowiązania finansowe"
+   },
+   {
+    "kod": "BPBIII3d_D12",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Z tytułu dostaw i usług | O okresie wymagalności do 12 miesięcy"
+   },
+   {
+    "kod": "BPBIII3d_P12",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Z tytułu dostaw i usług | O okresie wymagalności powyżej 12 miesięcy"
+   },
+   {
+    "kod": "BPBIII3e",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Zaliczki otrzymane na dostawy i usługi"
+   },
+   {
+    "kod": "BPBIII3f",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Zobowiązania wekslowe"
+   },
+   {
+    "kod": "BPBIII3g",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Z tytułu podatków, ceł, ubezpieczeń i innych świadczeń"
+   },
+   {
+    "kod": "BPBIII3h",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Z tytułu wynagrodzeń"
+   },
+   {
+    "kod": "BPBIII3i",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Wobec pozostałych jednostek | Inne"
+   },
+   {
+    "kod": "BPBIII4",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe | Fundusze specjalne"
+   },
+   {
+    "kod": "BPBIV1",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rozliczenia międzyokresowe | Ujemna wartość firmy"
+   },
+   {
+    "kod": "BPBIV2_D",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rozliczenia międzyokresowe | Inne rozliczenia międzyokresowe | Długoterminowe"
+   },
+   {
+    "kod": "BPBIV2_K",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rozliczenia międzyokresowe | Inne rozliczenia międzyokresowe | Krótkoterminowe"
+   },
+   {
+    "kod": "RPAI_RKAI_POW",
+    "opis": "WYNIKOWE | Przychody netto ze sprzedaży i zrównane z nimi / przychody netto ze sprzedaży produktów, towarów i materiałów | Przychody netto ze sprzedaży produktów | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RPAI_RKAI_POZ",
+    "opis": "WYNIKOWE | Przychody netto ze sprzedaży i zrównane z nimi / przychody netto ze sprzedaży produktów, towarów i materiałów | Przychody netto ze sprzedaży produktów | Od pozostałych jednostek"
+   },
+   {
+    "kod": "RPAII",
+    "opis": "WYNIKOWE | Przychody netto ze sprzedaży i zrównane z nimi | Zmiana stanu produktów"
+   },
+   {
+    "kod": "RPAIII",
+    "opis": "WYNIKOWE | Przychody netto ze sprzedaży i zrównane z nimi | Koszt wytworzenia produktów na własne potrzeby"
+   },
+   {
+    "kod": "RPAIV_RKAII_POW",
+    "opis": "WYNIKOWE | Przychody netto ze sprzedaży i zrównane z nimi / przychody netto ze sprzedaży produktów, towarów i materiałów | Przychody netto ze sprzedaży towarów i materiałów | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RPAIV_RKAII_POZ",
+    "opis": "WYNIKOWE | Przychody netto ze sprzedaży i zrównane z nimi / przychody netto ze sprzedaży produktów, towarów i materiałów | Przychody netto ze sprzedaży towarów i materiałów | Od pozostałych jednostek"
+   },
+   {
+    "kod": "RPBI",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Amortyzacja"
+   },
+   {
+    "kod": "RPBII",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Zużycie materiałów i energii"
+   },
+   {
+    "kod": "RPBIII",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Usługi obce"
+   },
+   {
+    "kod": "RPBIV_AKC",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Podatki i opłaty | Podatek akcyzowy"
+   },
+   {
+    "kod": "RPBIV_POZ",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Podatki i opłaty | Pozostałe podatki i opłaty"
+   },
+   {
+    "kod": "RPBV",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Wynagrodzenia"
+   },
+   {
+    "kod": "RPBVI",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Ubezpieczenia społeczne i inne świadczenia"
+   },
+   {
+    "kod": "RPBVI_E",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Ubezpieczenia społeczne i inne świadczenia | Emerytalne"
+   },
+   {
+    "kod": "RPBVII",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej | Pozostałe koszty rodzajowe"
+   },
+   {
+    "kod": "RPBVIII_RKBII_POW",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej / koszty sprzedanych produktów, towarów i materiałów | Wartość sprzedanych towarów i materiałów | Dla jednostek powiązanych"
+   },
+   {
+    "kod": "RPBVIII_RKBII_POZ",
+    "opis": "WYNIKOWE | Koszty działalności operacyjnej / koszty sprzedanych produktów, towarów i materiałów | Wartość sprzedanych towarów i materiałów | Dla pozostałych jednostek"
+   },
+   {
+    "kod": "RKBI_POW",
+    "opis": "WYNIKOWE | Koszty sprzedanych produktów, towarów i materiałów | Koszt wytworzenia sprzedanych produktów | Jednostkom powiązanym"
+   },
+   {
+    "kod": "RKBI_POZ",
+    "opis": "WYNIKOWE | Koszty sprzedanych produktów, towarów i materiałów | Koszt wytworzenia sprzedanych produktów | Pozostałym jednostkom"
+   },
+   {
+    "kod": "RKD",
+    "opis": "WYNIKOWE | Koszty sprzedaży"
+   },
+   {
+    "kod": "RKE",
+    "opis": "WYNIKOWE | Koszty ogólnego zarządu"
+   },
+   {
+    "kod": "RPDI_RKGI_POW",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Przychody ze zbycia niefinansowych aktywów trwałych | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RPDI_RKGI_POZ",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Przychody ze zbycia niefinansowych aktywów trwałych | Od pozostałych jednostek"
+   },
+   {
+    "kod": "RPDII_RKGII",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Dotacje"
+   },
+   {
+    "kod": "RPDIII_RKGIII",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Aktualizacja wartości aktywów niefinansowych"
+   },
+   {
+    "kod": "RPDIV_RKGIV",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Inne pozostałe przychody operacyjne"
+   },
+   {
+    "kod": "RPDIV_RKGIV_ZCP",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Inne pozostałe przychody operacyjne | Ze zbycia zorganizowanej części przedsiębiorstwa"
+   },
+   {
+    "kod": "RPDIV_RKGIV_WF",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Inne pozostałe przychody operacyjne | Odpis ujemnej wartości firmy"
+   },
+   {
+    "kod": "RPDIV_RKGIV_P",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Inne pozostałe przychody operacyjne | Pozostałe"
+   },
+   {
+    "kod": "RPEI_RKHI_POW",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Koszty zbycia niefinansowych aktywów trwałych | Dla jednostek powiązanych"
+   },
+   {
+    "kod": "RPEI_RKHI_POZ",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Koszty zbycia niefinansowych aktywów trwałych | Dla pozostałych jednostek"
+   },
+   {
+    "kod": "RPEII_RKHII",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Aktualizacja wartości aktywów niefinansowych"
+   },
+   {
+    "kod": "RPEIII_RKHIII",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Inne"
+   },
+   {
+    "kod": "RPEIII_RKHIII_ZCP",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Inne | Koszty zbycia zorganizowanej części przedsiębiorstwa"
+   },
+   {
+    "kod": "RPEIII_RKHIII_WF",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Inne | Odpis wartości firmy"
+   },
+   {
+    "kod": "RPEIII_RKHIII_P",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Inne | Pozostałe"
+   },
+   {
+    "kod": "RPGIa_RKJIa_POW_k",
+    "opis": "WYNIKOWE | Przychody finansowe | Dywidendy i udziały w zyskach | Od jednostek powiązanych | W których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "RPGIa_RKJIa_POW_p",
+    "opis": "WYNIKOWE | Przychody finansowe | Dywidendy i udziały w zyskach | Od jednostek powiązanych | W innych jednostkach powiązanych"
+   },
+   {
+    "kod": "RPGIb_RKJIb_POZ_k",
+    "opis": "WYNIKOWE | Przychody finansowe | Dywidendy i udziały w zyskach | Od pozostałych jednostek | W których jednostka posiada zaangażowanie w kapitale"
+   },
+   {
+    "kod": "RPGIb_RKJIb_POZ_p",
+    "opis": "WYNIKOWE | Przychody finansowe | Dywidendy i udziały w zyskach | Od pozostałych jednostek | W innych pozostałych jednostkach"
+   },
+   {
+    "kod": "RPGII_RKJII_POW",
+    "opis": "WYNIKOWE | Przychody finansowe | Odsetki | Od jednostek powiązanych"
+   },
+   {
+    "kod": "RPGII_RKJII_POZ",
+    "opis": "WYNIKOWE | Przychody finansowe | Odsetki | Od pozostałych jednostek"
+   },
+   {
+    "kod": "RPGIII_RKJIII_POW",
+    "opis": "WYNIKOWE | Przychody finansowe | Przychód z tytułu rozchodu aktywów finansowych | W jednostkach powiązanych"
+   },
+   {
+    "kod": "RPGIII_RKJIII_POZ",
+    "opis": "WYNIKOWE | Przychody finansowe | Przychód z tytułu rozchodu aktywów finansowych | W pozostałych jednostkach"
+   },
+   {
+    "kod": "RPGIV_RKJIV",
+    "opis": "WYNIKOWE | Przychody finansowe | Aktualizacja wartości aktywów finansowych"
+   },
+   {
+    "kod": "RPGV_RKJV_RK",
+    "opis": "WYNIKOWE | Przychody finansowe | Inne | Przychody z tytułu dodatnich różnic kursowych"
+   },
+   {
+    "kod": "RPGV_RKJV_POZ",
+    "opis": "WYNIKOWE | Przychody finansowe | Inne | Pozostałe"
+   },
+   {
+    "kod": "RPHI_RKKI_POW",
+    "opis": "WYNIKOWE | Koszty finansowe | Odsetki | Dla jednostek powiązanych"
+   },
+   {
+    "kod": "RPHI_RKKI_POZ",
+    "opis": "WYNIKOWE | Koszty finansowe | Odsetki | Dla pozostałych jednostek"
+   },
+   {
+    "kod": "RPHII_RKKII_POW",
+    "opis": "WYNIKOWE | Koszty finansowe | Koszty z tytułu rozchodu aktywów finansowych | W jednostkach powiązanych"
+   },
+   {
+    "kod": "RPHII_RKKII_POZ",
+    "opis": "WYNIKOWE | Koszty finansowe | Koszty z tytułu rozchodu aktywów finansowych | W pozostałych jednostkach"
+   },
+   {
+    "kod": "RPHIII_RKKIII",
+    "opis": "WYNIKOWE | Koszty finansowe | Aktualizacja wartości aktywów finansowych"
+   },
+   {
+    "kod": "RPHIV_RKKIV_RK",
+    "opis": "WYNIKOWE | Koszty finansowe | Inne | Koszty z tytułu ujemnych różnic kursowych"
+   },
+   {
+    "kod": "RPHIV_RKKIV_POZ",
+    "opis": "WYNIKOWE | Koszty finansowe | Inne | Pozostałe"
+   },
+   {
+    "kod": "RPJ_RKM_B",
+    "opis": "WYNIKOWE | Podatek dochodowy | Bieżący"
+   },
+   {
+    "kod": "RPJ_RKM_O",
+    "opis": "WYNIKOWE | Podatek dochodowy | Odroczony"
+   },
+   {
+    "kod": "RPK_RKN",
+    "opis": "WYNIKOWE | Pozostałe obowiązkowe zmniejszenia zysku (zwiększenia straty)"
+   },
+   {
+    "kod": "INNE",
+    "opis": "Inne, niewskazane w słowniku"
+   }
+  ],
+  "TMapKontaPP": [
+   {
+    "kod": "B6AAI1_W",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne"
+   },
+   {
+    "kod": "B6AAI1_A",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Odpisy aktualizujące wartości niematerialne i prawne"
+   },
+   {
+    "kod": "B6AAI1_U",
+    "opis": "AKTYWA | Aktywa trwałe | Wartości niematerialne i prawne | Umorzenie wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "B6AAII1a_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Grunty (w tym prawo użytkowania wieczystego gruntu)"
+   },
+   {
+    "kod": "B6AAII1a_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Grunty (w tym prawo użytkowania wieczystego gruntu) | Odpisy aktualizujące wartość gruntów (w tym prawa użytkowania wieczystego gruntu)"
+   },
+   {
+    "kod": "B6AAII1b_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Budynki, lokale i obiekty inżynierii lądowej i wodnej"
+   },
+   {
+    "kod": "B6AAII1b_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Budynki, lokale i obiekty inżynierii lądowej i wodnej | Odpisy aktualizujące wartość budynków, lokali i obiektów inżynierii lądowej i wodnej"
+   },
+   {
+    "kod": "B6AAII1b_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Budynki, lokale i obiekty inżynierii lądowej i wodnej | Umorzenie budynków, lokali i obiektów inżynierii lądowej i wodnej"
+   },
+   {
+    "kod": "B6AAII1c_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Urządzenia techniczne i maszyny"
+   },
+   {
+    "kod": "B6AAII1c_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Urządzenia techniczne i maszyny | Odpisy aktualizujące wartość urządzeń technicznych i maszyn"
+   },
+   {
+    "kod": "B6AAII1c_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Urządzenia techniczne i maszyny | Umorzenie urządzeń technicznych i maszyn"
+   },
+   {
+    "kod": "B6AAII1d_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Środki transportu"
+   },
+   {
+    "kod": "B6AAII1d_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Środki transportu | Odpisy aktualizujące wartość środków transportu"
+   },
+   {
+    "kod": "B6AAII1d_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Środki transportu | Umorzenie środków transportu"
+   },
+   {
+    "kod": "B6AAII1e_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Inne środki trwałe"
+   },
+   {
+    "kod": "B6AAII1e_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Inne środki trwałe | Odpisy aktualizujące wartość innych środków trwałych"
+   },
+   {
+    "kod": "B6AAII1e_U",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe | Inne środki trwałe | Umorzenie innych środków trwałych"
+   },
+   {
+    "kod": "B6AAII2_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe w budowie"
+   },
+   {
+    "kod": "B6AAII2_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Środki trwałe w budowie | Odpisy aktualizujące wartość środków trwałych w budowie"
+   },
+   {
+    "kod": "B6AAII3_W",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Zaliczki na środki trwałe w budowie"
+   },
+   {
+    "kod": "B6AAII3_A",
+    "opis": "AKTYWA | Aktywa trwałe | Rzeczowe aktywa trwałe | Zaliczki na środki trwałe w budowie | Odpisy aktualizujące zaliczki na środki trwałe w budowie"
+   },
+   {
+    "kod": "B6AAIII_W",
+    "opis": "AKTYWA | Aktywa trwałe | Należności długoterminowe"
+   },
+   {
+    "kod": "B6AAIII_A",
+    "opis": "AKTYWA | Aktywa trwałe | Należności długoterminowe | Odpisy aktualizujące wartość należności długoterminowych"
+   },
+   {
+    "kod": "B6AAIV1_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Inwestycje w nieruchomości"
+   },
+   {
+    "kod": "B6AAIV1_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Inwestycje w nieruchomości | Odpisy aktualizujące wartość inwestycji w nieruchomości"
+   },
+   {
+    "kod": "B6AAIV1_U",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Inwestycje w nieruchomości | Umorzenie inwestycji w nieruchomości"
+   },
+   {
+    "kod": "B6AAIV2_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Wartości niematerialne i prawne"
+   },
+   {
+    "kod": "B6AAIV2_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Wartości niematerialne i prawne | Odpisy aktualizujące wartość inwestycji w wartości niematerialne i prawne"
+   },
+   {
+    "kod": "B6AAIV2_U",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Wartości niematerialne i prawne | Umorzenie wartości inwestycji w wartości niematerialne i prawne"
+   },
+   {
+    "kod": "B6AAIV3_uia_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | Udziały lub akcje"
+   },
+   {
+    "kod": "B6AAIV3_uia_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | Udziały lub akcje | Odpisy aktualizujące wartość udziałów lub akcji"
+   },
+   {
+    "kod": "B6AAIV3_ipw_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | Inne papiery wartościowe"
+   },
+   {
+    "kod": "B6AAIV3_ipw_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | Inne papiery wartościowe | Odpisy aktualizujące wartość innych papierów wartościowych"
+   },
+   {
+    "kod": "B6AAIV3_up_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | Udzielone pożyczki"
+   },
+   {
+    "kod": "B6AAIV3_up_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | Udzielone pożyczki | Odpisy aktualizujące wartość udzielonych pożyczek"
+   },
+   {
+    "kod": "B6AAIV3_inne_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | Inne długoterminowe aktywa finansowe"
+   },
+   {
+    "kod": "B6AAIV3_inne_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Długoterminowe aktywa finansowe | Inne długoterminowe aktywa finansowe | Odpisy aktualizujące wartość innych długoterminowych aktywów finansowych"
+   },
+   {
+    "kod": "B6AAIV4_W",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Inne inwestycje długoterminowe"
+   },
+   {
+    "kod": "B6AAIV4_A",
+    "opis": "AKTYWA | Aktywa trwałe | Inwestycje długoterminowe | Inne inwestycje długoterminowe | Odpisy aktualizujące wartość innych inwestycji długoterminowych"
+   },
+   {
+    "kod": "B6AAV_W",
+    "opis": "AKTYWA | Aktywa trwałe | Długoterminowe rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "B6AAV_A",
+    "opis": "AKTYWA | Aktywa trwałe | Długoterminowe rozliczenia międzyokresowe | Odpisy aktualizujące wartość innych rozliczeń międzyokresowych"
+   },
+   {
+    "kod": "B6ABI1_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Materiały"
+   },
+   {
+    "kod": "B6ABI1_OCE",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Materiały | Odchylenia od cen ewidencyjnych materiałów"
+   },
+   {
+    "kod": "B6ABI1_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Materiały | Odpisy aktualizujące wartość materiałów"
+   },
+   {
+    "kod": "B6ABI2_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Pozostałe"
+   },
+   {
+    "kod": "B6ABI2_OCE",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Pozostałe | Odchylenia od cen ewidencyjnych pozostałych zapasów"
+   },
+   {
+    "kod": "B6ABI_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Pozostałe | Odpisy aktualizujące wartość pozostałych zapasów"
+   },
+   {
+    "kod": "B6ABI3_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Zaliczki na dostawy i usługi"
+   },
+   {
+    "kod": "B6ABI3_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Zapasy | Zaliczki na dostawy i usługi | Odpisy aktualizujące zaliczki na dostawy i usługi"
+   },
+   {
+    "kod": "B6ABII_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe"
+   },
+   {
+    "kod": "B6ABII_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Należności krótkoterminowe | Odpisy aktualizujące wartość należności krótkoterminowych"
+   },
+   {
+    "kod": "B6ABIII_uia_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Udziały lub akcje"
+   },
+   {
+    "kod": "B6ABIII_uia_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Udziały lub akcje | Odpisy aktualizujące wartość udziałów lub akcji"
+   },
+   {
+    "kod": "B6ABIII_ipw_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Inne papiery wartościowe"
+   },
+   {
+    "kod": "B6ABIII_ipw_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Inne papiery wartościowe | Odpisy aktualizujące wartość innych papierów wartościowych"
+   },
+   {
+    "kod": "B6ABIII_up_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Udzielone pożyczki"
+   },
+   {
+    "kod": "B6ABIII_up_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Udzielone pożyczki | Odpisy aktualizujące wartość udzielonych pożyczek"
+   },
+   {
+    "kod": "B6ABIII_inne_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Inne krótkoterminowe aktywa finansowe"
+   },
+   {
+    "kod": "B6ABIII_inne_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Inwestycje krótkoterminowe | Inne krótkoterminowe aktywa finansowe | Odpisy aktualizujące wartość innych krótkoterminowych aktywów finansowych"
+   },
+   {
+    "kod": "B6ABIV_W",
+    "opis": "AKTYWA | Aktywa obrotowe | Krótkoterminowe rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "B6ABIV_A",
+    "opis": "AKTYWA | Aktywa obrotowe | Krótkoterminowe rozliczenia międzyokresowe | Odpisy aktualizujące wartość krótkoterminowych rozliczeń międzyokresowych"
+   },
+   {
+    "kod": "B6AC",
+    "opis": "AKTYWA | Należne wpłaty na fundusz statutowy"
+   },
+   {
+    "kod": "B6PAI",
+    "opis": "PASYWA | Fundusz własny | Fundusz statutowy"
+   },
+   {
+    "kod": "B6PAII",
+    "opis": "PASYWA | Fundusz własny | Pozostałe fundusze"
+   },
+   {
+    "kod": "B6PAIII",
+    "opis": "PASYWA | Fundusz własny | Zysk (strata) z lat ubiegłych"
+   },
+   {
+    "kod": "B6PAIV",
+    "opis": "PASYWA | Fundusz własny | Zysk (strata) netto"
+   },
+   {
+    "kod": "B6PBI",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rezerwy na zobowiązania"
+   },
+   {
+    "kod": "B6PBII",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania długoterminowe"
+   },
+   {
+    "kod": "B6PBIII",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Zobowiązania krótkoterminowe"
+   },
+   {
+    "kod": "B6PBIV",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania | Rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "R6AI_darowizny_PRYW",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Darowizny | Ze źródeł prywatnych"
+   },
+   {
+    "kod": "R6AI_darowizny_PUBL",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Darowizny | Ze źródeł publicznych"
+   },
+   {
+    "kod": "R6AI_dotacje",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Dotacje"
+   },
+   {
+    "kod": "R6AI_subwencje",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Subwencje"
+   },
+   {
+    "kod": "R6AI_ofiarnosc",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Przychody pochodzące z ofiarności publicznej"
+   },
+   {
+    "kod": "R6AI_poddoch",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Przychody z tytułu % podatku dochodowego od osób fizycznych"
+   },
+   {
+    "kod": "R6AI_SZ",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Spadki, zapisy"
+   },
+   {
+    "kod": "R6AI_inne_PRYW",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Pozostałe | Ze źródeł prywatnych"
+   },
+   {
+    "kod": "R6AI_inne_PUBL",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z nieodpłatnej działalności pożytku publicznego | Pozostałe | Ze źródeł publicznych"
+   },
+   {
+    "kod": "R6AII_sprzedaz",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z odpłatnej działalności pożytku publicznego | Przychody netto ze sprzedaży produktów, towarów i materiałów"
+   },
+   {
+    "kod": "R6AII_inne",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z odpłatnej działalności pożytku publicznego | Pozostałe"
+   },
+   {
+    "kod": "R6AIII_skladki",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z pozostałej działalności statutowej | Składki członkowskie"
+   },
+   {
+    "kod": "R6AIII_inne",
+    "opis": "WYNIKOWE | Przychody z działalności statutowej | Przychody z pozostałej działalności statutowej | Pozostałe"
+   },
+   {
+    "kod": "R6BI_poddoch",
+    "opis": "WYNIKOWE | Koszty działalności statutowej | Koszty nieodpłatnej działalności pożytku publicznego"
+   },
+   {
+    "kod": "R6BII_poddoch",
+    "opis": "WYNIKOWE | Koszty działalności statutowej | Koszty odpłatnej działalności pożytku publicznego"
+   },
+   {
+    "kod": "R6BIII",
+    "opis": "WYNIKOWE | Koszty działalności statutowej | Koszty pozostałej działalności statutowej"
+   },
+   {
+    "kod": "R6DI",
+    "opis": "WYNIKOWE | Przychody z działalności gospodarczej | Przychody netto ze sprzedaży produktów, towarów i materiałów"
+   },
+   {
+    "kod": "R6EI",
+    "opis": "WYNIKOWE | Koszty działalności gospodarczej | Koszt sprzedanych produktów, towarów i materiałów"
+   },
+   {
+    "kod": "R6G",
+    "opis": "WYNIKOWE | Koszty ogólnego zarządu"
+   },
+   {
+    "kod": "R6I",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Przychody z tytułu rozchodu niefinansowych aktywów trwałych"
+   },
+   {
+    "kod": "R6II",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Dotacje"
+   },
+   {
+    "kod": "R6III",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Aktualizacja wartości aktywów niefinansowych"
+   },
+   {
+    "kod": "R6IV",
+    "opis": "WYNIKOWE | Pozostałe przychody operacyjne | Inne przychody operacyjne"
+   },
+   {
+    "kod": "R6JI",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Koszty z tytułu rozchodu niefinansowych aktywów trwałych"
+   },
+   {
+    "kod": "R6JII",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Aktualizacja wartości aktywów niefinansowych"
+   },
+   {
+    "kod": "R6JIII",
+    "opis": "WYNIKOWE | Pozostałe koszty operacyjne | Inne koszty operacyjne"
+   },
+   {
+    "kod": "R6KI",
+    "opis": "WYNIKOWE | Przychody finansowe | Dywidendy i udziały w zyskach"
+   },
+   {
+    "kod": "R6KII",
+    "opis": "WYNIKOWE | Przychody finansowe | Odsetki"
+   },
+   {
+    "kod": "R6KIII",
+    "opis": "WYNIKOWE | Przychody finansowe | Przychód z tytułu rozchodu aktywów finansowych"
+   },
+   {
+    "kod": "R6KIV",
+    "opis": "WYNIKOWE | Przychody finansowe | Aktualizacja wartości aktywów finansowych"
+   },
+   {
+    "kod": "R6KVI_RK",
+    "opis": "WYNIKOWE | Przychody finansowe | Inne | Przychody z tytułu dodatnich różnic kursowych"
+   },
+   {
+    "kod": "R6KVI_POZ",
+    "opis": "WYNIKOWE | Przychody finansowe | Inne | Pozostałe"
+   },
+   {
+    "kod": "R6LI",
+    "opis": "WYNIKOWE | Koszty finansowe | Odsetki"
+   },
+   {
+    "kod": "R6LII",
+    "opis": "WYNIKOWE | Koszty finansowe | Koszty z tytułu rozchodu aktywów finansowych"
+   },
+   {
+    "kod": "R6LIII",
+    "opis": "WYNIKOWE | Koszty finansowe | Aktualizacja wartości inwestycji"
+   },
+   {
+    "kod": "R6LV_RK",
+    "opis": "WYNIKOWE | Koszty finansowe | Inne | Koszty z tytułu ujemnych różnic kursowych"
+   },
+   {
+    "kod": "R6LV_POZ",
+    "opis": "WYNIKOWE | Koszty finansowe | Inne | Pozostałe"
+   },
+   {
+    "kod": "R6N",
+    "opis": "WYNIKOWE | Podatek dochodowy"
+   },
+   {
+    "kod": "INNE",
+    "opis": "Inne, niewskazane w słowniku"
+   }
+  ],
+  "TMapKontaSKOK": [
+   {
+    "kod": "BSA_I1",
+    "opis": "AKTYWA | Aktywa pieniężne | Środki pieniężne w kasie"
+   },
+   {
+    "kod": "BSA_I2",
+    "opis": "AKTYWA | Aktywa pieniężne | Środki na rachunkach"
+   },
+   {
+    "kod": "BSA_II1A",
+    "opis": "AKTYWA | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym aktywa finansowe przeznaczone do obrotu | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy | Instrumenty kapitałowe"
+   },
+   {
+    "kod": "BSA_II1B",
+    "opis": "AKTYWA | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym aktywa finansowe przeznaczone do obrotu | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BSA_II1C",
+    "opis": "AKTYWA | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym aktywa finansowe przeznaczone do obrotu | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy | Pozostałe"
+   },
+   {
+    "kod": "BSA_II2A",
+    "opis": "AKTYWA | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym aktywa finansowe przeznaczone do obrotu | Aktywa finansowe przeznaczone do obrotu | Instrumenty kapitałowe"
+   },
+   {
+    "kod": "BSA_II2B",
+    "opis": "AKTYWA | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym aktywa finansowe przeznaczone do obrotu | Aktywa finansowe przeznaczone do obrotu | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BSA_II2C",
+    "opis": "AKTYWA | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym aktywa finansowe przeznaczone do obrotu | Aktywa finansowe przeznaczone do obrotu | Pozostałe"
+   },
+   {
+    "kod": "BSA_III1",
+    "opis": "AKTYWA | Aktywa finansowe dostępne do sprzedaży | Instrumenty kapitałowe"
+   },
+   {
+    "kod": "BSA_III2",
+    "opis": "AKTYWA | Aktywa finansowe dostępne do sprzedaży | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BSA_III3",
+    "opis": "AKTYWA | Aktywa finansowe dostępne do sprzedaży | Pozostałe"
+   },
+   {
+    "kod": "BSA_IV1",
+    "opis": "AKTYWA | Kredyty i pożyczki oraz inne należności | Kredyty i pożyczki"
+   },
+   {
+    "kod": "BSA_IV2",
+    "opis": "AKTYWA | Kredyty i pożyczki oraz inne należności | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BSA_IV3",
+    "opis": "AKTYWA | Kredyty i pożyczki oraz inne należności | Pozostałe"
+   },
+   {
+    "kod": "BSA_V1",
+    "opis": "AKTYWA | Aktywa finansowe utrzymywane do terminu wymagalności | Dłużne papiery wartościowe"
+   },
+   {
+    "kod": "BSA_V2",
+    "opis": "AKTYWA | Aktywa finansowe utrzymywane do terminu wymagalności | Pozostałe"
+   },
+   {
+    "kod": "BSA_VI",
+    "opis": "AKTYWA | Rzeczowe aktywa trwałe"
+   },
+   {
+    "kod": "BSA_VII",
+    "opis": "AKTYWA | Wartości niematerialne i prawne"
+   },
+   {
+    "kod": "BSA_VIII1",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Aktywa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "BSA_VIII2",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Pozostałe rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "BSA_IX1",
+    "opis": "AKTYWA | Inne aktywa | Wkłady na fundusz stabilizacyjny"
+   },
+   {
+    "kod": "BSA_IX2",
+    "opis": "AKTYWA | Inne aktywa | Pozostałe"
+   },
+   {
+    "kod": "BSP_I1A",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym zobowiązania finansowe przeznaczone do obrotu | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy | Oszczędności"
+   },
+   {
+    "kod": "BSP_I1B",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym zobowiązania finansowe przeznaczone do obrotu | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy | Zobowiązania finansowe z tytułu własnej emisji"
+   },
+   {
+    "kod": "BSP_I1C",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym zobowiązania finansowe przeznaczone do obrotu | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy | Pozostałe zobowiązania"
+   },
+   {
+    "kod": "BSP_I2A",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym zobowiązania finansowe przeznaczone do obrotu | Zobowiązania finansowe przeznaczone do obrotu | Oszczędności"
+   },
+   {
+    "kod": "BSP_I2B",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym zobowiązania finansowe przeznaczone do obrotu | Zobowiązania finansowe przeznaczone do obrotu | Zobowiązania finansowe z tytułu własnej emisji"
+   },
+   {
+    "kod": "BSP_I2C",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym zobowiązania finansowe przeznaczone do obrotu | Zobowiązania finansowe przeznaczone do obrotu | Pozostałe zobowiązania"
+   },
+   {
+    "kod": "BSP_II1",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane według skorygowanej ceny nabycia | Oszczędności"
+   },
+   {
+    "kod": "BSP_II2",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane według skorygowanej ceny nabycia | Zobowiązania finansowe z tytułu własnej emisji"
+   },
+   {
+    "kod": "BSP_II3",
+    "opis": "PASYWA | Zobowiązania finansowe wyceniane według skorygowanej ceny nabycia | Pozostałe zobowiązania"
+   },
+   {
+    "kod": "BSP_III1",
+    "opis": "PASYWA | Rezerwy | Rezerwa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "BSP_III2",
+    "opis": "PASYWA | Rezerwy | Inne rezerwy"
+   },
+   {
+    "kod": "BSP_IV",
+    "opis": "PASYWA | Zobowiązania z tytułu podatków"
+   },
+   {
+    "kod": "BSP_V",
+    "opis": "PASYWA | Rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "BSP_VI",
+    "opis": "PASYWA | Fundusze specjalne i inne zobowiązania"
+   },
+   {
+    "kod": "BSP_VII",
+    "opis": "PASYWA | Zobowiązania i rezerwy na zobowiązania łącznie"
+   },
+   {
+    "kod": "BSP_VIII",
+    "opis": "PASYWA | Fundusz udziałowy"
+   },
+   {
+    "kod": "BSP_IX",
+    "opis": "PASYWA | Fundusz zasobowy"
+   },
+   {
+    "kod": "BSP_X1",
+    "opis": "PASYWA | Fundusz z aktualizacji wyceny | Rzeczowy majątek stały"
+   },
+   {
+    "kod": "BSP_X2",
+    "opis": "PASYWA | Fundusz z aktualizacji wyceny | Aktywa finansowe dostępne do sprzedaży"
+   },
+   {
+    "kod": "BSP_X3",
+    "opis": "PASYWA | Fundusz z aktualizacji wyceny | Pozostałe"
+   },
+   {
+    "kod": "BSP_XI",
+    "opis": "PASYWA | Zysk (strata) z lat ubiegłych"
+   },
+   {
+    "kod": "BSP_XII",
+    "opis": "PASYWA | Zysk (strata) netto"
+   },
+   {
+    "kod": "RS_I1",
+    "opis": "RZIS | Przychody z tytułu odsetek | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym aktywa finansowe przeznaczone do obrotu"
+   },
+   {
+    "kod": "RS_I2",
+    "opis": "RZIS | Przychody z tytułu odsetek | Aktywa finansowe dostępne do sprzedaży"
+   },
+   {
+    "kod": "RS_I3",
+    "opis": "RZIS | Przychody z tytułu odsetek | Aktywa finansowe utrzymywane do terminu wymagalności"
+   },
+   {
+    "kod": "RS_I4",
+    "opis": "RZIS | Przychody z tytułu odsetek | Kredyty i pożyczki oraz inne należności"
+   },
+   {
+    "kod": "RS_I5",
+    "opis": "RZIS | Przychody z tytułu odsetek | Inne aktywa"
+   },
+   {
+    "kod": "RS_II1",
+    "opis": "RZIS | Koszty z tytułu odsetek | Aktywa finansowe wyceniane w wartości godziwej przez wynik finansowy, w tym aktywa finansowe przeznaczone do obrotu"
+   },
+   {
+    "kod": "RS_II2",
+    "opis": "RZIS | Koszty z tytułu odsetek | Zobowiązania finansowe wyceniane metodą skorygowanej ceny nabycia"
+   },
+   {
+    "kod": "RS_II3",
+    "opis": "RZIS | Koszty z tytułu odsetek | Pozostałe zobowiązania"
+   },
+   {
+    "kod": "RS_IV",
+    "opis": "RZIS | Przychody z tytułu dywidend"
+   },
+   {
+    "kod": "RS_V",
+    "opis": "RZIS | Przychody z tytułu prowizji"
+   },
+   {
+    "kod": "RS_VI",
+    "opis": "RZIS | Koszty z tytułu prowizji"
+   },
+   {
+    "kod": "RS_VIII1",
+    "opis": "RZIS | Zrealizowany wynik z aktywów finansowych i zobowiązań finansowych innych niż wyceniane w wartości godziwej przez wynik finansowy oraz innych niż przeznaczone do obrotu – netto | Aktywa finansowe dostępne do sprzedaży"
+   },
+   {
+    "kod": "RS_VIII2",
+    "opis": "RZIS | Zrealizowany wynik z aktywów finansowych i zobowiązań finansowych innych niż wyceniane w wartości godziwej przez wynik finansowy oraz innych niż przeznaczone do obrotu – netto | Aktywa finansowe utrzymywane do terminu wymagalności"
+   },
+   {
+    "kod": "RS_VIII3",
+    "opis": "RZIS | Zrealizowany wynik z aktywów finansowych i zobowiązań finansowych innych niż wyceniane w wartości godziwej przez wynik finansowy oraz innych niż przeznaczone do obrotu – netto | Kredyty i pożyczki oraz inne należności"
+   },
+   {
+    "kod": "RS_VIII4",
+    "opis": "RZIS | Zrealizowany wynik z aktywów finansowych i zobowiązań finansowych innych niż wyceniane w wartości godziwej przez wynik finansowy oraz innych niż przeznaczone do obrotu – netto | Zobowiązania finansowe wyceniane metodą skorygowanej ceny nabycia"
+   },
+   {
+    "kod": "RS_VIII5",
+    "opis": "RZIS | Zrealizowany wynik z aktywów finansowych i zobowiązań finansowych innych niż wyceniane w wartości godziwej przez wynik finansowy oraz innych niż przeznaczone do obrotu – netto | Pozostałe zrealizowane zyski (straty)"
+   },
+   {
+    "kod": "RS_IX1",
+    "opis": "RZIS | Wynik z tytułu aktywów finansowych i zobowiązań finansowych wycenianych w wartości godziwej przez wynik finansowy, w tym przeznaczonych do obrotu | Przychody z tytułu aktywów finansowych i zobowiązań finansowych wycenianych w wartości godziwej przez wynik finansowy, w tym przeznaczonych do obrotu"
+   },
+   {
+    "kod": "RS_IX2",
+    "opis": "RZIS | Wynik z tytułu aktywów finansowych i zobowiązań finansowych wycenianych w wartości godziwej przez wynik finansowy, w tym przeznaczonych do obrotu | Koszty z tytułu aktywów finansowych i zobowiązań finansowych wycenianych w wartości godziwej przez wynik finansowy, w tym przeznaczonych do obrotu"
+   },
+   {
+    "kod": "RS_X1",
+    "opis": "RZIS | Wynik z tytułu różnic kursowych | Przychody z tytułu różnic kursowych"
+   },
+   {
+    "kod": "RS_X2",
+    "opis": "RZIS | Wynik z tytułu różnic kursowych | Koszty z tytułu różnic kursowych"
+   },
+   {
+    "kod": "RS_XII1",
+    "opis": "RZIS | Pozostałe przychody operacyjne | Rozwiązane odpisy aktualizujące z tytułu utraty wartości aktywów niefinansowych"
+   },
+   {
+    "kod": "RS_XII2",
+    "opis": "RZIS | Pozostałe przychody operacyjne | Pozostałe"
+   },
+   {
+    "kod": "RS_XIII1",
+    "opis": "RZIS | Pozostałe koszty operacyjne | Odpisy aktualizujące z tytułu utraty wartości aktywów niefinansowych"
+   },
+   {
+    "kod": "RS_XIII2",
+    "opis": "RZIS | Pozostałe koszty operacyjne | Pozostałe"
+   },
+   {
+    "kod": "RS_XIV1",
+    "opis": "RZIS | Koszty działania kasy | Amortyzacja"
+   },
+   {
+    "kod": "RS_XIV2",
+    "opis": "RZIS | Koszty działania kasy | Zużycie materiałów i energii"
+   },
+   {
+    "kod": "RS_XIV3",
+    "opis": "RZIS | Koszty działania kasy | Usługi obce"
+   },
+   {
+    "kod": "RS_XIV4",
+    "opis": "RZIS | Koszty działania kasy | Bieżące wpłaty na fundusz stabilizacyjny"
+   },
+   {
+    "kod": "RS_XIV5",
+    "opis": "RZIS | Koszty działania kasy | Podatki i opłaty"
+   },
+   {
+    "kod": "RS_XIV6",
+    "opis": "RZIS | Koszty działania kasy | Wynagrodzenia oraz ubezpieczenia społeczne i inne świadczenia"
+   },
+   {
+    "kod": "RS_XIV7",
+    "opis": "RZIS | Koszty działania kasy | Pozostałe koszty rodzajowe"
+   },
+   {
+    "kod": "RS_XV1",
+    "opis": "RZIS | Rezerwy i rozwiązane rezerwy – netto | Na zobowiązania pozabilansowe finansowe"
+   },
+   {
+    "kod": "RS_XV2",
+    "opis": "RZIS | Rezerwy i rozwiązane rezerwy – netto | Pozostałe rezerwy"
+   },
+   {
+    "kod": "RS_XVI1",
+    "opis": "RZIS | Odpisy aktualizujące z tytułu utraty wartości i rozwiązane odpisy aktualizujące z tytułu utraty wartości aktywów finansowych – netto | Aktywa finansowe dostępne do sprzedaży"
+   },
+   {
+    "kod": "RS_XVI2",
+    "opis": "RZIS | Odpisy aktualizujące z tytułu utraty wartości i rozwiązane odpisy aktualizujące z tytułu utraty wartości aktywów finansowych – netto | Aktywa finansowe utrzymywane do terminu wymagalności"
+   },
+   {
+    "kod": "RS_XVI3",
+    "opis": "RZIS | Odpisy aktualizujące z tytułu utraty wartości i rozwiązane odpisy aktualizujące z tytułu utraty wartości aktywów finansowych – netto | Kredyty i pożyczki oraz inne należności"
+   },
+   {
+    "kod": "RS_XVIII1",
+    "opis": "RZIS | Wynik operacji nadzwyczajnych | Zyski nadzwyczajne"
+   },
+   {
+    "kod": "RS_XVIII2",
+    "opis": "RZIS | Wynik operacji nadzwyczajnych | Straty nadzwyczajne"
+   },
+   {
+    "kod": "RS_XX_PD",
+    "opis": "RZIS | Podatek dochodowy"
+   },
+   {
+    "kod": "RS_XXI",
+    "opis": "RZIS | Pozostałe obowiązkowe zmniejszenie zysku (zmniejszenie straty)"
+   },
+   {
+    "kod": "INNE",
+    "opis": "Inne, niewskazane w słowniku"
+   }
+  ],
+  "TMapKontaUbezp": [
+   {
+    "kod": "B3AA1_W",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Wartość firmy"
+   },
+   {
+    "kod": "B3AA1_A",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Wartość firmy | Odpisy aktualizujące wartość firmy / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B3AA1_U",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Wartość firmy | Umorzenie wartości firmy"
+   },
+   {
+    "kod": "B3AA2_W",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne i zaliczki na poczet wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "B3AA2_A",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne i zaliczki na poczet wartości niematerialnych i prawnych | Odpisy aktualizujące inne wartości niematerialne i prawne / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B3AA2_U",
+    "opis": "AKTYWA | Wartości niematerialne i prawne | Inne wartości niematerialne i prawne i zaliczki na poczet wartości niematerialnych i prawnych | Umorzenie innych wartości niematerialnych i prawnych"
+   },
+   {
+    "kod": "B3ABI1_W",
+    "opis": "AKTYWA | Lokaty | Nieruchomości | Grunty własne oraz prawo wieczystego użytkowania gruntu"
+   },
+   {
+    "kod": "B3ABI1_A",
+    "opis": "AKTYWA | Lokaty | Nieruchomości | Grunty własne oraz prawo wieczystego użytkowania gruntu | Odpisy aktualizujące wartość gruntów własnych oraz prawa wieczystego użytkowania gruntu / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B3ABI2_W",
+    "opis": "AKTYWA | Lokaty | Nieruchomości | Budynki, budowle oraz spółdzielcze własnościowe prawo do lokalu"
+   },
+   {
+    "kod": "B3ABI2_A",
+    "opis": "AKTYWA | Lokaty | Nieruchomości | Budynki, budowle oraz spółdzielcze własnościowe prawo do lokalu | Odpisy aktualizujące wartość budynków, budowli oraz spółdzielczego własnościowego prawa do lokalu / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B3ABI2_U",
+    "opis": "AKTYWA | Lokaty | Nieruchomości | Budynki, budowle oraz spółdzielcze własnościowe prawo do lokalu | Umorzenie wartości budynków, budowli oraz spółdzielczego własnościowego prawa do lokalu"
+   },
+   {
+    "kod": "B3ABI3_W",
+    "opis": "AKTYWA | Lokaty | Nieruchomości | Inwestycje budowlane i zaliczki na poczet tych inwestycji"
+   },
+   {
+    "kod": "B3ABI3_A",
+    "opis": "AKTYWA | Lokaty | Nieruchomości | Inwestycje budowlane i zaliczki na poczet tych inwestycji | Odpisy aktualizujące wartość inwestycji budowlanych / odpisy z tytułu utraty wartości"
+   },
+   {
+    "kod": "B3ABI3_U",
+    "opis": "AKTYWA | Lokaty | Nieruchomości | Inwestycje budowlane i zaliczki na poczet tych inwestycji | Umorzenie inwestycji budowlanych"
+   },
+   {
+    "kod": "B3ABII1_W",
+    "opis": "AKTYWA | Lokaty | Lokaty w jednostkach podporządkowanych | Udziały lub akcje w jednostkach podporządkowanych"
+   },
+   {
+    "kod": "B3ABII1_A",
+    "opis": "AKTYWA | Lokaty | Lokaty w jednostkach podporządkowanych | Udziały lub akcje w jednostkach podporządkowanych | Odpisy aktualizujące wartość udziałów lub akcji w jednostkach podporządkowanych"
+   },
+   {
+    "kod": "B3ABII2_W",
+    "opis": "AKTYWA | Lokaty | Lokaty w jednostkach podporządkowanych | Pożyczki udzielone jednostkom podporządkowanym oraz dłużne papiery wartościowe emitowane przez te jednostki"
+   },
+   {
+    "kod": "B3ABII2_A",
+    "opis": "AKTYWA | Lokaty | Lokaty w jednostkach podporządkowanych | Pożyczki udzielone jednostkom podporządkowanym oraz dłużne papiery wartościowe emitowane przez te jednostki | Odpisy aktualizujące wartość pożyczek udzielonych jednostkom podporządkowanym oraz dłużnych papierów wartościowych emitowanych przez te jednostki"
+   },
+   {
+    "kod": "B3ABII3_W",
+    "opis": "AKTYWA | Lokaty | Lokaty w jednostkach podporządkowanych | Pozostałe lokaty"
+   },
+   {
+    "kod": "B3ABII3_A",
+    "opis": "AKTYWA | Lokaty | Lokaty w jednostkach podporządkowanych | Pozostałe lokaty | Odpisy aktualizujące wartość pozostałych lokat"
+   },
+   {
+    "kod": "B3ABIII1_W",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Udziały, akcje oraz inne papiery wartościowe, o zmiennej kwocie dochodu oraz jednostki uczestnictwa i certyfikaty inwestycyjne w funduszach inwestycyjnych"
+   },
+   {
+    "kod": "B3ABIII1_A",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Udziały, akcje oraz inne papiery wartościowe o zmiennej kwocie dochodu oraz jednostki uczestnictwa i certyfikaty inwestycyjne w funduszach inwestycyjnych | Odpisy aktualizujące wartość udziałów, akcji oraz innych papierów wartościowych o zmiennej kwocie dochodu oraz jednostek uczestnictwa i certyfikatów inwestycyjnych w funduszach inwestycyjnych"
+   },
+   {
+    "kod": "B3ABIII2_W",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Dłużne papiery wartościowe i inne papiery wartościowe o stałej kwocie dochodu"
+   },
+   {
+    "kod": "B3ABIII2_A",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Dłużne papiery wartościowe i inne papiery wartościowe o stałej kwocie dochodu | Odpisy aktualizujące wartość dłużnych papierów wartościowych i innych papierów wartościowych o stałej kwocie dochodu"
+   },
+   {
+    "kod": "B3ABIII3_W",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Udziały we wspólnych przedsięwzięciach lokacyjnych"
+   },
+   {
+    "kod": "B3ABIII3_A",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Udziały we wspólnych przedsięwzięciach lokacyjnych | Odpisy aktualizujące wartość udziałów we wspólnych przedsięwzięciach lokacyjnych"
+   },
+   {
+    "kod": "B3ABIII4_W",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Pożyczki zabezpieczone hipotecznie"
+   },
+   {
+    "kod": "B3ABIII4_A",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Pożyczki zabezpieczone hipotecznie | Odpisy aktualizujące wartość pożyczek zabezpieczonych hipotecznie"
+   },
+   {
+    "kod": "B3ABIII5_W",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Pozostałe pożyczki"
+   },
+   {
+    "kod": "B3ABIII5_A",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Pozostałe pożyczki | Odpisy aktualizujące wartość pozostałych pożyczek"
+   },
+   {
+    "kod": "B3ABIII6_W",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Lokaty terminowe w instytucjach kredytowych"
+   },
+   {
+    "kod": "B3ABIII6_A",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Lokaty terminowe w instytucjach kredytowych | Odpisy aktualizujące wartość lokat terminowych w instytucjach kredytowych"
+   },
+   {
+    "kod": "B3ABIII7_W",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Pozostałe lokaty"
+   },
+   {
+    "kod": "B3ABIII7_A",
+    "opis": "AKTYWA | Lokaty | Inne lokaty finansowe | Pozostałe lokaty | Odpisy aktualizujące wartość pozostałych lokat"
+   },
+   {
+    "kod": "B3ABIV_W",
+    "opis": "AKTYWA | Lokaty | Należności depozytowe od cedentów"
+   },
+   {
+    "kod": "B3ABIV_A",
+    "opis": "AKTYWA | Lokaty | Należności depozytowe od cedentów | Odpisy aktualizujące wartość należności depozytowych od cedentów"
+   },
+   {
+    "kod": "B3AC",
+    "opis": "AKTYWA | Aktywa netto ubezpieczeń na życie, gdy ryzyko lokaty (inwestycyjne) ponosi ubezpieczający"
+   },
+   {
+    "kod": "B3AC_K",
+    "opis": "AKTYWA | Aktywa netto ubezpieczeń na życie, gdy ryzyko lokaty (inwestycyjne) ponosi ubezpieczający | Korekta wartości aktywów wynikająca z korekty zobowiązań dotyczących tych aktywów"
+   },
+   {
+    "kod": "B3ADI11_1_W",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Należności od ubezpieczających | Od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADI11_1_A",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Należności od ubezpieczających | Od jednostek podporządkowanych | Odpisy aktualizujące wartość należności z tytułu ubezpieczeń bezpośrednich należności od ubezpieczających / utrata wartości – od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADI11_2_W",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Należności od ubezpieczających | Od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADI11_2_A",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Należności od ubezpieczających | Od pozostałych jednostek | Odpisy aktualizujące wartość należności z tytułu ubezpieczeń bezpośrednich należności od ubezpieczających / utrata wartości – od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADI22_1_W",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Należności od pośredników ubezpieczeniowych | Od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADI22_1_A",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Należności od pośredników ubezpieczeniowych | Od jednostek podporządkowanych | Odpisy aktualizujące wartość należności od pośredników ubezpieczeniowych / utrata wartości – od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADI22_2_W",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Należności od pośredników ubezpieczeniowych | Od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADI22_2_A",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Należności od pośredników ubezpieczeniowych | Od pozostałych jednostek | Odpisy aktualizujące wartość należności od pośredników ubezpieczeniowych / utrata wartości – od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADI33_1_W",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Inne należności | Od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADI33_1_A",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Inne należności | Od jednostek podporządkowanych | Odpisy aktualizujące wartość innych należności / utrata wartości – od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADI33_2_W",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Inne należności | Od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADI33_2_A",
+    "opis": "AKTYWA | Należności | Należności z tytułu ubezpieczeń bezpośrednich | Inne należności | Od pozostałych jednostek | Odpisy aktualizujące wartość innych należności / utrata wartości –od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADII1_W",
+    "opis": "AKTYWA | Należności | Należności z tytułu reasekuracji | Od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADII1_A",
+    "opis": "AKTYWA | Należności | Należności z tytułu reasekuracji | Od jednostek podporządkowanych | Odpisy aktualizujące wartość należności z tytułu reasekuracji / utrata wartości – od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADII2_W",
+    "opis": "AKTYWA | Należności | Należności z tytułu reasekuracji | Od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADII2_A",
+    "opis": "AKTYWA | Należności | Należności z tytułu reasekuracji | Od pozostałych jednostek | Odpisy aktualizujące wartość należności z tytułu reasekuracji / utrata wartości – od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADIII1",
+    "opis": "AKTYWA | Należności | Inne należności | Należności od budżetu"
+   },
+   {
+    "kod": "B3ADIII22_1_W",
+    "opis": "AKTYWA | Należności | Inne należności | Pozostałe należności | Od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADIII22_1_A",
+    "opis": "AKTYWA | Należności | Inne należności | Pozostałe należności | Od jednostek podporządkowanych | Odpisy aktualizujące wartość pozostałych należności / utrata wartości – od jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3ADIII22_2_W",
+    "opis": "AKTYWA | Należności | Inne należności | Pozostałe należności | Od pozostałych jednostek"
+   },
+   {
+    "kod": "B3ADIII22_2_A",
+    "opis": "AKTYWA | Należności | Inne należności | Pozostałe należności | Od pozostałych jednostek | Odpisy aktualizujące wartość pozostałych należności / utrata wartości – od pozostałych jednostek"
+   },
+   {
+    "kod": "B3AEI_W",
+    "opis": "AKTYWA | Inne składniki aktywów | Rzeczowe składniki aktywów"
+   },
+   {
+    "kod": "B3AEI_U",
+    "opis": "AKTYWA | Inne składniki aktywów | Rzeczowe składniki aktywów | Umorzenie rzeczowych składników aktywów"
+   },
+   {
+    "kod": "B3AEI_A",
+    "opis": "AKTYWA | Inne składniki aktywów | Rzeczowe składniki aktywów | Odpisy aktualizujące wartość rzeczowych składników aktywów / utrata wartości"
+   },
+   {
+    "kod": "B3AEII",
+    "opis": "AKTYWA | Inne składniki aktywów | Środki pieniężne"
+   },
+   {
+    "kod": "B3AEIII_W",
+    "opis": "AKTYWA | Inne składniki aktywów | Pozostałe składniki aktywów"
+   },
+   {
+    "kod": "B3AEIII_A",
+    "opis": "AKTYWA | Inne składniki aktywów | Pozostałe składniki aktywów | Odpisy aktualizujące wartość pozostałych składników aktywów / utrata wartości"
+   },
+   {
+    "kod": "B3AFI_W",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Aktywa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "B3AFI_A",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Aktywa z tytułu odroczonego podatku dochodowego | Odpisy aktualizujące aktywa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "B3AFII_W",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Aktywowane koszty akwizycji"
+   },
+   {
+    "kod": "B3AFII_A",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Aktywowane koszty akwizycji | Odpisy aktualizujące aktywowane koszty akwizycji"
+   },
+   {
+    "kod": "B3AFIII_W",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Zarachowane odsetki i czynsze"
+   },
+   {
+    "kod": "B3AFIII_A",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Zarachowane odsetki i czynsze | Odpisy aktualizujące zarachowane odsetki i czynsze"
+   },
+   {
+    "kod": "B3AFIV_W",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Inne rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "B3AFIV_A",
+    "opis": "AKTYWA | Rozliczenia międzyokresowe | Inne rozliczenia międzyokresowe | Odpisy aktualizujące inne rozliczenia międzyokresowe"
+   },
+   {
+    "kod": "B3AG",
+    "opis": "AKTYWA | Należne wpłaty na kapitał podstawowy"
+   },
+   {
+    "kod": "B3AH",
+    "opis": "AKTYWA | Akcje własne"
+   },
+   {
+    "kod": "B3PAI",
+    "opis": "PASYWA | Kapitał własny | Kapitał podstawowy"
+   },
+   {
+    "kod": "B3PAII",
+    "opis": "PASYWA | Kapitał własny | Kapitał zapasowy"
+   },
+   {
+    "kod": "B3PAIII",
+    "opis": "PASYWA | Kapitał własny | Kapitał z aktualizacji wyceny"
+   },
+   {
+    "kod": "B3PAIV",
+    "opis": "PASYWA | Kapitał własny | Pozostałe kapitały rezerwowe"
+   },
+   {
+    "kod": "B3PAV",
+    "opis": "PASYWA | Kapitał własny | Zysk (strata) z lat ubiegłych"
+   },
+   {
+    "kod": "B3PAVI",
+    "opis": "PASYWA | Kapitał własny | Zysk (strata) netto"
+   },
+   {
+    "kod": "B3PAVII",
+    "opis": "PASYWA | Kapitał własny | Odpisy z zysku netto w ciągu roku obrotowego (wielkość ujemna)"
+   },
+   {
+    "kod": "B3PB",
+    "opis": "PASYWA | Zobowiązania podporządkowane"
+   },
+   {
+    "kod": "B3PCI",
+    "opis": "PASYWA | Rezerwy techniczno-ubezpieczeniowe | Rezerwa składek i rezerwa na pokrycie ryzyka niewygasłego"
+   },
+   {
+    "kod": "B3PCII",
+    "opis": "PASYWA | Rezerwy techniczno-ubezpieczeniowe | Rezerwa ubezpieczeń na życie"
+   },
+   {
+    "kod": "B3PCIII",
+    "opis": "PASYWA | Rezerwy techniczno-ubezpieczeniowe | Rezerwy na niewypłacone odszkodowania i świadczenia"
+   },
+   {
+    "kod": "B3PCIV",
+    "opis": "PASYWA | Rezerwy techniczno-ubezpieczeniowe | Rezerwy na premie i rabaty dla ubezpieczonych"
+   },
+   {
+    "kod": "B3PCV",
+    "opis": "PASYWA | Rezerwy techniczno-ubezpieczeniowe | Rezerwy na wyrównanie szkodowości (ryzyka)"
+   },
+   {
+    "kod": "B3PCVI",
+    "opis": "PASYWA | Rezerwy techniczno-ubezpieczeniowe | Rezerwy na zwrot składek dla członków"
+   },
+   {
+    "kod": "B3PCVII",
+    "opis": "PASYWA | Rezerwy techniczno-ubezpieczeniowe | Pozostałe rezerwy techniczno-ubezpieczeniowe określone w statucie"
+   },
+   {
+    "kod": "B3PCVIII",
+    "opis": "PASYWA | Rezerwy techniczno-ubezpieczeniowe | Rezerwa ubezpieczeń na życie, gdy ryzyko lokaty (inwestycyjne) ponosi ubezpieczający"
+   },
+   {
+    "kod": "B3PDI",
+    "opis": "PASYWA | Udział reasekuratorów w rezerwach techniczno-ubezpieczeniowych (wartość ujemna) | Udział reasekuratorów w rezerwie składek i w rezerwie na pokrycie ryzyka niewygasłego"
+   },
+   {
+    "kod": "B3PDII",
+    "opis": "PASYWA | Udział reasekuratorów w rezerwach techniczno-ubezpieczeniowych (wartość ujemna) | Udział reasekuratorów w rezerwie ubezpieczeń na życie"
+   },
+   {
+    "kod": "B3PDIII",
+    "opis": "PASYWA | Udział reasekuratorów w rezerwach techniczno-ubezpieczeniowych (wartość ujemna) | Udział reasekuratorów w rezerwie na niewypłacone odszkodowania i świadczenia"
+   },
+   {
+    "kod": "B3PDIV",
+    "opis": "PASYWA | Udział reasekuratorów w rezerwach techniczno-ubezpieczeniowych (wartość ujemna) | Udział reasekuratorów w rezerwie na premie i rabaty dla ubezpieczonych"
+   },
+   {
+    "kod": "B3PDV",
+    "opis": "PASYWA | Udział reasekuratorów w rezerwach techniczno-ubezpieczeniowych (wartość ujemna) | Udział reasekuratorów w pozostałych rezerwach techniczno-ubezpieczeniowych określonych w statucie"
+   },
+   {
+    "kod": "B3PDVI",
+    "opis": "PASYWA | Udział reasekuratorów w rezerwach techniczno-ubezpieczeniowych (wartość ujemna) | Udział reasekuratorów w rezerwie ubezpieczeń na życie, gdy ryzyko lokaty (inwestycyjne) ponosi ubezpieczający"
+   },
+   {
+    "kod": "B3PE1",
+    "opis": "PASYWA | Oszacowane regresy i odzyski (wielkość ujemna) | Oszacowane regresy i odzyski brutto"
+   },
+   {
+    "kod": "B3PE2",
+    "opis": "PASYWA | Oszacowane regresy i odzyski (wielkość ujemna) | Udział reasekuratorów w oszacowanych regresach i odzyskach"
+   },
+   {
+    "kod": "B3PFI",
+    "opis": "PASYWA | Pozostałe rezerwy | Rezerwy na świadczenia emerytalne oraz inne obowiązkowe świadczenia pracowników"
+   },
+   {
+    "kod": "B3PFII",
+    "opis": "PASYWA | Pozostałe rezerwy | Rezerwa z tytułu odroczonego podatku dochodowego"
+   },
+   {
+    "kod": "B3PFIII",
+    "opis": "PASYWA | Pozostałe rezerwy | Inne rezerwy"
+   },
+   {
+    "kod": "B3PG",
+    "opis": "PASYWA | Zobowiązania z tytułu depozytów reasekuratorów"
+   },
+   {
+    "kod": "B3PHI11_1",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu ubezpieczeń bezpośrednich | Zobowiązania wobec ubezpieczających | Wobec jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3PHI11_2",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu ubezpieczeń bezpośrednich | Zobowiązania wobec ubezpieczających | Wobec pozostałych jednostek"
+   },
+   {
+    "kod": "B3PHI22_1",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu ubezpieczeń bezpośrednich | Zobowiązania wobec pośredników ubezpieczeniowych | Wobec jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3PHI22_2",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu ubezpieczeń bezpośrednich | Zobowiązania wobec pośredników ubezpieczeniowych | Wobec pozostałych jednostek"
+   },
+   {
+    "kod": "B3PHI33_1",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu ubezpieczeń bezpośrednich | Inne zobowiązania z tytułu ubezpieczeń | Wobec jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3PHI33_2",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu ubezpieczeń bezpośrednich | Inne zobowiązania z tytułu ubezpieczeń | Wobec pozostałych jednostek"
+   },
+   {
+    "kod": "B3PHII1",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu reasekuracji | Wobec jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3PHII2",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu reasekuracji | Wobec pozostałych jednostek"
+   },
+   {
+    "kod": "B3PHIII1",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu emisji własnych dłużnych papierów wartościowych oraz pobranych pożyczek | Zobowiązania zamienne na akcje zakładu ubezpieczeń"
+   },
+   {
+    "kod": "B3PHIII2",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania z tytułu emisji własnych dłużnych papierów wartościowych oraz pobranych pożyczek | Pozostałe"
+   },
+   {
+    "kod": "B3PHIV",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Zobowiązania wobec instytucji kredytowych"
+   },
+   {
+    "kod": "B3PHV1",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Inne zobowiązania | Zobowiązania wobec budżetu"
+   },
+   {
+    "kod": "B3PHV22_1",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Inne zobowiązania | Pozostałe zobowiązania | Wobec jednostek podporządkowanych"
+   },
+   {
+    "kod": "B3PHV22_2",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Inne zobowiązania | Pozostałe zobowiązania | Wobec pozostałych jednostek"
+   },
+   {
+    "kod": "B3PHVI",
+    "opis": "PASYWA | Pozostałe zobowiązania i fundusze specjalne | Fundusze specjalne"
+   },
+   {
+    "kod": "B3PI1",
+    "opis": "PASYWA | Rozliczenia międzyokresowe | Rozliczenia międzyokresowe kosztów"
+   },
+   {
+    "kod": "B3PI2",
+    "opis": "PASYWA | Rozliczenia międzyokresowe | Ujemna wartość firmy"
+   },
+   {
+    "kod": "B3PI3",
+    "opis": "PASYWA | Rozliczenia międzyokresowe | Przychody przyszłych okresów"
+   },
+   {
+    "kod": "R3OII1",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Przychody z lokat w nieruchomości"
+   },
+   {
+    "kod": "R3OII22_1",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Przychody z lokat w jednostkach podporządkowanych | Z udziałów i akcji"
+   },
+   {
+    "kod": "R3OII22_2",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Przychody z lokat w jednostkach podporządkowanych | Z pożyczek i dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "R3OII22_3",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Przychody z lokat w jednostkach podporządkowanych | Z pozostałych lokat"
+   },
+   {
+    "kod": "R3OII33_1",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Przychody z innych lokat finansowych | Z udziałów, akcji, innych papierów wartościowych o zmiennej kwocie dochodu oraz jednostek uczestnictwa i certyfikatów inwestycyjnych w funduszach inwestycyjnych"
+   },
+   {
+    "kod": "R3OII33_2",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Przychody z innych lokat finansowych | Z dłużnych papierów wartościowych oraz innych papierów wartościowych o stałej kwocie dochodu"
+   },
+   {
+    "kod": "R3OII33_3",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Przychody z innych lokat finansowych | Z lokat terminowych w instytucjach kredytowych"
+   },
+   {
+    "kod": "R3OII33_4",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Przychody z innych lokat finansowych | Z pozostałych lokat"
+   },
+   {
+    "kod": "R3OII_4",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Wynik dodatni z rewaloryzacji lokat | Przychody z rewaloryzacji lokat"
+   },
+   {
+    "kod": "R3OII_5",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat | Wynik dodatni z realizacji lokat | Przychody z realizacji lokat"
+   },
+   {
+    "kod": "R3OIII",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Niezrealizowane zyski z lokat"
+   },
+   {
+    "kod": "R3OIV_1",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat netto po uwzględnieniu kosztów, przeniesione z technicznego rachunku ubezpieczeń na życie | Przychody z łącznego inwestowania przypadające na część techniczną ubezpieczeń na życie (przeniesione z technicznego rachunku ubezpieczeń na życie)"
+   },
+   {
+    "kod": "R3OIV_2",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Przychody z lokat netto po uwzględnieniu kosztów, przeniesione z technicznego rachunku ubezpieczeń na życie | Koszty z łącznego inwestowania przypadające na część techniczną ubezpieczeń na życie (przeniesione z technicznego rachunku ubezpieczeń na życie)"
+   },
+   {
+    "kod": "R3OV1",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Koszty działalności lokacyjnej | Koszty utrzymania nieruchomości"
+   },
+   {
+    "kod": "R3OV2",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Koszty działalności lokacyjnej | Pozostałe koszty działalności lokacyjnej"
+   },
+   {
+    "kod": "R3OV3",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Koszty działalności lokacyjnej | Wynik ujemny z rewaloryzacji lokat | Koszt własny rewaloryzacji lokat"
+   },
+   {
+    "kod": "R3OV4",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Koszty działalności lokacyjnej | Wynik ujemny z realizacji lokat | Koszt własny realizacji lokat"
+   },
+   {
+    "kod": "R3OVI",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Niezrealizowane straty na lokatach"
+   },
+   {
+    "kod": "R3OVIII",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Pozostałe przychody operacyjne"
+   },
+   {
+    "kod": "R3OIX",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Pozostałe koszty operacyjne"
+   },
+   {
+    "kod": "R3OXI",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Zyski nadzwyczajne"
+   },
+   {
+    "kod": "R3OXII",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Straty nadzwyczajne"
+   },
+   {
+    "kod": "R3OXIV",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Podatek dochodowy"
+   },
+   {
+    "kod": "R3OXV",
+    "opis": "WYNIKOWE | Ogólny rachunek zysków i strat | Pozostałe obowiązkowe zmniejszenia zysku (zwiększenia straty)"
+   },
+   {
+    "kod": "R3MI1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Składki | Składki przypisane brutto"
+   },
+   {
+    "kod": "R3MI2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Składki | Udział reasekuratorów w składce przypisanej"
+   },
+   {
+    "kod": "R3MI3",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Składki | Zmiana stanu rezerw składek i rezerwy na ryzyko niewygasłe brutto"
+   },
+   {
+    "kod": "R3MI4",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Składki | Udział reasekuratorów w zmianie stanu rezerw składek"
+   },
+   {
+    "kod": "R3MII1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Przychody z lokat netto po uwzględnieniu kosztów, przeniesione z ogólnego rachunku zysków i strat | Przychody z łącznego inwestowania przypadające na część techniczną ubezpieczeń majątkowych i osobowych"
+   },
+   {
+    "kod": "R3MII2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Przychody z lokat netto po uwzględnieniu kosztów, przeniesione z ogólnego rachunku zysków i strat | Koszty z łącznego inwestowania przypadające na część techniczną ubezpieczeń majątkowych i osobowych"
+   },
+   {
+    "kod": "R3MIII",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Pozostałe przychody techniczne na udziale własnym"
+   },
+   {
+    "kod": "R3MIV11_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Odszkodowania i świadczenia | Odszkodowania i świadczenia wypłacone na udziale własnym | Odszkodowania i świadczenia wypłacone brutto"
+   },
+   {
+    "kod": "R3MIV11_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Odszkodowania i świadczenia | Odszkodowania i świadczenia wypłacone na udziale własnym | Udział reasekuratorów w odszkodowaniach i świadczeniach wypłaconych"
+   },
+   {
+    "kod": "R3MIV22_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Odszkodowania i świadczenia | Zmiana stanu rezerwy na niewypłacone odszkodowania i świadczenia na udziale własnym | Zmiana stanu rezerw na niewypłacone odszkodowania i świadczenia brutto"
+   },
+   {
+    "kod": "R3MIV22_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Odszkodowania i świadczenia | Zmiana stanu rezerwy na niewypłacone odszkodowania i świadczenia na udziale własnym | Udział reasekuratorów w zmianie stanu rezerw na niewypłacone odszkodowania i świadczenia"
+   },
+   {
+    "kod": "R3MV1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Zmiany stanu pozostałych rezerw techniczno-ubezpieczeniowych na udziale własnym | Zmiany stanu pozostałych rezerw techniczno-ubezpieczeniowych brutto"
+   },
+   {
+    "kod": "R3MV2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Zmiany stanu pozostałych rezerw techniczno-ubezpieczeniowych na udziale własnym | Udział reasekuratorów w zmianie stanu pozostałych rezerw techniczno-ubezpieczeniowych"
+   },
+   {
+    "kod": "R3MVI",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Premie i rabaty na udziale własnym łącznie ze zmianą stanu rezerw"
+   },
+   {
+    "kod": "R3MVII11_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Koszty działalności ubezpieczeniowej | Koszty akwizycji | Zmiana stanu aktywowanych kosztów akwizycji"
+   },
+   {
+    "kod": "R3MVII11_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Koszty działalności ubezpieczeniowej | Koszty akwizycji | Koszty akwizycji poniesione w okresie sprawozdawczym"
+   },
+   {
+    "kod": "R3MVII2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Koszty działalności ubezpieczeniowej | Koszty administracyjne"
+   },
+   {
+    "kod": "R3MVII3",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Koszty działalności ubezpieczeniowej | Prowizje reasekuracyjne i udział w zyskach reasekuratorów"
+   },
+   {
+    "kod": "R3MVIII",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Pozostałe koszty techniczne na udziale własnym"
+   },
+   {
+    "kod": "R3MIX",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń majątkowych i osobowych | Zmiany stanu rezerw na wyrównanie szkodowości (ryzyka)"
+   },
+   {
+    "kod": "R3ZI1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Składki | Składki przypisane brutto"
+   },
+   {
+    "kod": "R3ZI2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Składki | Udział reasekuratorów w składce przypisanej brutto"
+   },
+   {
+    "kod": "R3ZI3",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Składki | Zmiana stanu rezerw składek i na ryzyko niewygasłe brutto"
+   },
+   {
+    "kod": "R3ZI4",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Składki | Udział reasekuratorów w zmianie stanu rezerw składek"
+   },
+   {
+    "kod": "R3ZII1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Przychody z lokat w nieruchomości"
+   },
+   {
+    "kod": "R3ZII22_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Przychody z lokat w jednostkach podporządkowanych | Z udziałów lub akcji"
+   },
+   {
+    "kod": "R3ZII22_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Przychody z lokat w jednostkach podporządkowanych | Z pożyczek i dłużnych papierów wartościowych"
+   },
+   {
+    "kod": "R3ZII22_3",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Przychody z lokat w jednostkach podporządkowanych | Z pozostałych lokat"
+   },
+   {
+    "kod": "R3ZII33_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Przychody z innych lokat finansowych | Z udziałów, akcji, innych papierów wartościowych o zmiennej kwocie dochodu oraz jednostek uczestnictwa i certyfikatów inwestycyjnych w funduszach inwestycyjnych"
+   },
+   {
+    "kod": "R3ZII33_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Przychody z innych lokat finansowych | Z dłużnych papierów wartościowych oraz innych papierów wartościowych o stałej kwocie dochodu"
+   },
+   {
+    "kod": "R3ZII33_3",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Przychody z innych lokat finansowych | Z lokat terminowych w instytucjach kredytowych"
+   },
+   {
+    "kod": "R3ZII33_4",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Przychody z innych lokat finansowych | Z pozostałych lokat"
+   },
+   {
+    "kod": "R3ZII4",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Wynik dodatni z rewaloryzacji lokat | Przychody z rewaloryzacji lokat"
+   },
+   {
+    "kod": "R3ZII5",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat | Wynik dodatni z realizacji lokat | Przychody z realizacji lokat"
+   },
+   {
+    "kod": "R3ZIII",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Niezrealizowane zyski z lokat"
+   },
+   {
+    "kod": "R3ZIV",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Pozostałe przychody techniczne na udziale własnym"
+   },
+   {
+    "kod": "R3ZV",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Odszkodowania i świadczenia"
+   },
+   {
+    "kod": "R3ZV11_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Odszkodowania i świadczenia | Odszkodowania i świadczenia wypłacone na udziale własnym | Odszkodowania i świadczenia wypłacone brutto"
+   },
+   {
+    "kod": "R3ZV11_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Odszkodowania i świadczenia | Odszkodowania i świadczenia wypłacone na udziale własnym | Udział reasekuratorów w odszkodowaniach i świadczeniach wypłaconych"
+   },
+   {
+    "kod": "R3ZV22_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Odszkodowania i świadczenia | Zmiana stanu rezerw na niewypłacone odszkodowania i świadczenia na udziale własnym | Rezerwy brutto"
+   },
+   {
+    "kod": "R3ZV22_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Odszkodowania i świadczenia | Zmiana stanu rezerw na niewypłacone odszkodowania i świadczenia na udziale własnym | Udział reasekuratorów"
+   },
+   {
+    "kod": "R3ZVI11_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Zmiany stanu innych rezerw techniczno-ubezpieczeniowych na udziale własnym | Zmiana stanu rezerw w ubezpieczeniach na życie na udziale własnym | Rezerwy brutto"
+   },
+   {
+    "kod": "R3ZVI11_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Zmiany stanu innych rezerw techniczno-ubezpieczeniowych na udziale własnym | Zmiana stanu rezerw w ubezpieczeniach na życie na udziale własnym | Na udziale reasekuratorów"
+   },
+   {
+    "kod": "R3ZVI22_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Zmiany stanu innych rezerw techniczno-ubezpieczeniowych na udziale własnym | Zmiana stanu rezerw techniczno-ubezpieczeniowych na udziale własnym dla ubezpieczeń na życie, jeżeli ryzyko lokaty ponosi ubezpieczający | Rezerwy brutto"
+   },
+   {
+    "kod": "R3ZVI22_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Zmiany stanu innych rezerw techniczno-ubezpieczeniowych na udziale własnym | Zmiana stanu rezerw techniczno-ubezpieczeniowych na udziale własnym dla ubezpieczeń na życie, jeżeli ryzyko lokaty ponosi ubezpieczający | Na udziale reasekuratorów"
+   },
+   {
+    "kod": "R3ZVI33_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Zmiany stanu innych rezerw techniczno-ubezpieczeniowych na udziale własnym | Zmiana stanu pozostałych rezerw techniczno-ubezpieczeniowych przewidzianych w statucie na udziale własnym | Rezerw brutto"
+   },
+   {
+    "kod": "R3ZVI33_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Zmiany stanu innych rezerw techniczno-ubezpieczeniowych na udziale własnym | Zmiana stanu pozostałych rezerw techniczno-ubezpieczeniowych przewidzianych w statucie na udziale własnym | Na udziale reasekuratorów"
+   },
+   {
+    "kod": "R3ZVII",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Premie i rabaty łącznie ze zmianą stanu rezerw na udziale własnym"
+   },
+   {
+    "kod": "R3ZVIII11_1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Koszty działalności ubezpieczeniowej | Koszty akwizycji | Zmiana stanu aktywowanych kosztów akwizycji"
+   },
+   {
+    "kod": "R3ZVIII11_2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Koszty działalności ubezpieczeniowej | Koszty akwizycji | Koszty akwizycji poniesione w okresie sprawozdawczym"
+   },
+   {
+    "kod": "R3ZVIII2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Koszty działalności ubezpieczeniowej | Koszty administracyjne"
+   },
+   {
+    "kod": "R3ZVIII3",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Koszty działalności ubezpieczeniowej | Prowizje reasekuracyjne i udziały w zyskach"
+   },
+   {
+    "kod": "R3ZIX1",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Koszty działalności lokacyjnej | Koszty utrzymania nieruchomości"
+   },
+   {
+    "kod": "R3ZIX2",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Koszty działalności lokacyjnej | Pozostałe koszty działalności lokacyjnej"
+   },
+   {
+    "kod": "R3ZIX3",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Koszty działalności lokacyjnej | Wynik ujemny z rewaloryzacji lokat | Koszt własny z rewaloryzacji lokat"
+   },
+   {
+    "kod": "R3ZIX4",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Koszty działalności lokacyjnej | Wynik ujemny z realizacji lokat | Koszt własny z realizacji lokat"
+   },
+   {
+    "kod": "R3ZX",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Niezrealizowane straty na lokatach"
+   },
+   {
+    "kod": "R3ZXI",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Pozostałe koszty techniczne na udziale własnym"
+   },
+   {
+    "kod": "R3ZXII",
+    "opis": "WYNIKOWE | Techniczny rachunek ubezpieczeń na życie | Przychody z lokat netto po uwzględnieniu kosztów, przeniesione do ogólnego rachunku zysków i strat"
+   },
+   {
+    "kod": "INNE",
+    "opis": "Inne, niewskazane w słowniku"
+   }
+  ]
+ },
+ "typy": {
+  "TKodFormularza": {
+   "baza": "xsd:string",
+   "opis": "Symbol wzoru formularza",
+   "ograniczenia": [
+    [
+     "enumeration",
+     "JPK_KR_PD"
+    ]
+   ]
+  },
+  "TKwotowy": {
+   "baza": "xsd:decimal",
+   "opis": "Wartość numeryczna 18 znaków max, w tym 2 znaki po przecinku",
+   "ograniczenia": [
+    [
+     "totalDigits",
+     "18"
+    ],
+    [
+     "fractionDigits",
+     "2"
+    ]
+   ]
+  },
+  "TNaturalnyJPK": {
+   "baza": "etd:TNaturalny",
+   "opis": "Liczby naturalne większe od zera",
+   "ograniczenia": [
+    [
+     "minExclusive",
+     "0"
+    ]
+   ]
+  },
+  "TNumerKSeF": {
+   "baza": "xsd:token",
+   "opis": "Numer identyfikujący fakturę w Krajowym Systemie e-Faktur (KSeF)",
+   "ograniczenia": []
+  },
+  "TZnakowy512": {
+   "baza": "xsd:token",
+   "opis": "Typ znakowy ograniczony do 512 znaków",
+   "ograniczenia": [
+    [
+     "minLength",
+     "1"
+    ],
+    [
+     "maxLength",
+     "512"
+    ]
+   ]
+  },
+  "TZnakowyJPK": {
+   "baza": "xsd:token",
+   "opis": "Typ znakowy ograniczony do 256 znaków",
+   "ograniczenia": [
+    [
+     "minLength",
+     "1"
+    ],
+    [
+     "maxLength",
+     "256"
+    ]
+   ]
+  }
+ }
+}

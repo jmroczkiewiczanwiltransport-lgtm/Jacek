@@ -1,0 +1,917 @@
+{
+ "slowniki": {
+  "TCelZlozenia": [
+   {
+    "kod": "1",
+    "opis": "złożenie JPK po raz pierwszy"
+   },
+   {
+    "kod": "2",
+    "opis": "Złożenie korekty JPK"
+   }
+  ],
+  "TKodWaluty": [
+   {
+    "kod": "AED",
+    "opis": "DIRHAM ZEA"
+   },
+   {
+    "kod": "AFN",
+    "opis": "AFGANI"
+   },
+   {
+    "kod": "ALL",
+    "opis": "LEK"
+   },
+   {
+    "kod": "AMD",
+    "opis": "DRAM"
+   },
+   {
+    "kod": "ANG",
+    "opis": "GULDEN ANTYLI HOLENDERSKICH"
+   },
+   {
+    "kod": "AOA",
+    "opis": "KWANZA"
+   },
+   {
+    "kod": "ARS",
+    "opis": "PESO ARGENTYŃSKIE"
+   },
+   {
+    "kod": "AUD",
+    "opis": "DOLAR AUSTRALIJSKI"
+   },
+   {
+    "kod": "AWG",
+    "opis": "GULDEN ARUBAŃSKI"
+   },
+   {
+    "kod": "AZN",
+    "opis": "MANAT AZERBEJDŻAŃSKI"
+   },
+   {
+    "kod": "BAM",
+    "opis": "MARKA ZAMIENNA"
+   },
+   {
+    "kod": "BBD",
+    "opis": "DOLAR BARBADOSKI"
+   },
+   {
+    "kod": "BDT",
+    "opis": "TAKA"
+   },
+   {
+    "kod": "BGN",
+    "opis": "LEW"
+   },
+   {
+    "kod": "BHD",
+    "opis": "DINAR BAHRAJSKI"
+   },
+   {
+    "kod": "BIF",
+    "opis": "FRANK BURUNDYJSKI"
+   },
+   {
+    "kod": "BMD",
+    "opis": "DOLAR BERMUDZKI"
+   },
+   {
+    "kod": "BND",
+    "opis": "DOLAR BRUNEJSKI"
+   },
+   {
+    "kod": "BOB",
+    "opis": "BOLIWIANO"
+   },
+   {
+    "kod": "BOV",
+    "opis": "BOLIWIANO MVDOL"
+   },
+   {
+    "kod": "BRL",
+    "opis": "REAL"
+   },
+   {
+    "kod": "BSD",
+    "opis": "DOLAR BAHAMSKI"
+   },
+   {
+    "kod": "BTN",
+    "opis": "NGULTRUM"
+   },
+   {
+    "kod": "BWP",
+    "opis": "PULA"
+   },
+   {
+    "kod": "BYN",
+    "opis": "RUBEL BIAŁORUSKI"
+   },
+   {
+    "kod": "BZD",
+    "opis": "DOLAR BELIZEŃSKI"
+   },
+   {
+    "kod": "CAD",
+    "opis": "DOLAR KANADYJSKI"
+   },
+   {
+    "kod": "CDF",
+    "opis": "FRANK KONGIJSKI"
+   },
+   {
+    "kod": "CHE",
+    "opis": "FRANK SZWAJCARSKI VIR EURO"
+   },
+   {
+    "kod": "CHF",
+    "opis": "FRANK SZWAJCARSKI"
+   },
+   {
+    "kod": "CHW",
+    "opis": "FRANK SZWAJCARSKI VIR FRANK"
+   },
+   {
+    "kod": "CLF",
+    "opis": "JEDNOSTKA ROZLICZENIOWA CHILIJSKA"
+   },
+   {
+    "kod": "CLP",
+    "opis": "PESO CHILIJSKIE"
+   },
+   {
+    "kod": "CNY",
+    "opis": "YUAN RENMINBI"
+   },
+   {
+    "kod": "COP",
+    "opis": "PESO KOLUMBIJSKIE"
+   },
+   {
+    "kod": "COU",
+    "opis": "UNIDAD DE VALOR REAL KOLUMBILSKIE"
+   },
+   {
+    "kod": "CRC",
+    "opis": "COLON KOSTARYKAŃSKI"
+   },
+   {
+    "kod": "CUC",
+    "opis": "PESO WYMIENIALNE"
+   },
+   {
+    "kod": "CUP",
+    "opis": "PESO KUBAŃSKIE"
+   },
+   {
+    "kod": "CVE",
+    "opis": "ESCUDO REPUBLIKI ZIELONEGO PRZYLĄDKA"
+   },
+   {
+    "kod": "CZK",
+    "opis": "KORONA CZESKA"
+   },
+   {
+    "kod": "DJF",
+    "opis": "FRANK DŻIBUTI"
+   },
+   {
+    "kod": "DKK",
+    "opis": "KORONA DUŃSKA"
+   },
+   {
+    "kod": "DOP",
+    "opis": "PESO DOMINIKAŃSKIE"
+   },
+   {
+    "kod": "DZD",
+    "opis": "DINAR ALGIERSKI"
+   },
+   {
+    "kod": "EGP",
+    "opis": "FUNT EGIPSKI"
+   },
+   {
+    "kod": "ERN",
+    "opis": "NAKFA"
+   },
+   {
+    "kod": "ETB",
+    "opis": "BIRR"
+   },
+   {
+    "kod": "EUR",
+    "opis": "EURO"
+   },
+   {
+    "kod": "FJD",
+    "opis": "DOLAR FIDŻI"
+   },
+   {
+    "kod": "FKP",
+    "opis": "FUNT FALKLANDZKI"
+   },
+   {
+    "kod": "GBP",
+    "opis": "FUNT SZTERLING"
+   },
+   {
+    "kod": "GEL",
+    "opis": "LARI"
+   },
+   {
+    "kod": "GGP",
+    "opis": "FUNT GUERNSEY"
+   },
+   {
+    "kod": "GHS",
+    "opis": "GHANA CEDI"
+   },
+   {
+    "kod": "GIP",
+    "opis": "FUNT GIBRALTARSKI"
+   },
+   {
+    "kod": "GMD",
+    "opis": "DALASI"
+   },
+   {
+    "kod": "GNF",
+    "opis": "FRANK GWINEJSKI"
+   },
+   {
+    "kod": "GTQ",
+    "opis": "QUETZAL"
+   },
+   {
+    "kod": "GYD",
+    "opis": "DOLAR GUJAŃSKI"
+   },
+   {
+    "kod": "HKD",
+    "opis": "DOLAR HONGKONGU"
+   },
+   {
+    "kod": "HNL",
+    "opis": "LEMPIRA"
+   },
+   {
+    "kod": "HRK",
+    "opis": "KUNA"
+   },
+   {
+    "kod": "HTG",
+    "opis": "GOURDE"
+   },
+   {
+    "kod": "HUF",
+    "opis": "FORINT"
+   },
+   {
+    "kod": "IDR",
+    "opis": "RUPIA INDONEZYJSKA"
+   },
+   {
+    "kod": "ILS",
+    "opis": "SZEKEL"
+   },
+   {
+    "kod": "IMP",
+    "opis": "FUNT MANX"
+   },
+   {
+    "kod": "INR",
+    "opis": "RUPIA INDYJSKA"
+   },
+   {
+    "kod": "IQD",
+    "opis": "DINAR IRACKI"
+   },
+   {
+    "kod": "IRR",
+    "opis": "RIAL IRAŃSKI"
+   },
+   {
+    "kod": "ISK",
+    "opis": "KORONA ISLANDZKA"
+   },
+   {
+    "kod": "JEP",
+    "opis": "FUNT JERSEY"
+   },
+   {
+    "kod": "JMD",
+    "opis": "DOLAR JAMAJSKI"
+   },
+   {
+    "kod": "JOD",
+    "opis": "DINAR JORDAŃSKI"
+   },
+   {
+    "kod": "JPY",
+    "opis": "JEN"
+   },
+   {
+    "kod": "KES",
+    "opis": "SZYLING KENIJSKI"
+   },
+   {
+    "kod": "KGS",
+    "opis": "SOM"
+   },
+   {
+    "kod": "KHR",
+    "opis": "RIEL"
+   },
+   {
+    "kod": "KMF",
+    "opis": "FRANK KOMORÓW"
+   },
+   {
+    "kod": "KPW",
+    "opis": "WON PÓŁNOCNO­KOREAŃSKI"
+   },
+   {
+    "kod": "KRW",
+    "opis": "WON POŁUDNIOWO­KOREAŃSKI"
+   },
+   {
+    "kod": "KWD",
+    "opis": "DINAR KUWEJCKI"
+   },
+   {
+    "kod": "KYD",
+    "opis": "DOLAR KAJMAŃSKI"
+   },
+   {
+    "kod": "KZT",
+    "opis": "TENGE"
+   },
+   {
+    "kod": "LAK",
+    "opis": "KIP"
+   },
+   {
+    "kod": "LBP",
+    "opis": "FUNT LIBAŃSKI"
+   },
+   {
+    "kod": "LKR",
+    "opis": "RUPIA LANKIJSKA"
+   },
+   {
+    "kod": "LRD",
+    "opis": "DOLAR LIBERYJSKI"
+   },
+   {
+    "kod": "LSL",
+    "opis": "LOTI"
+   },
+   {
+    "kod": "LYD",
+    "opis": "DINAR LIBIJSKI"
+   },
+   {
+    "kod": "MAD",
+    "opis": "DIRHAM MAROKAŃSKI"
+   },
+   {
+    "kod": "MDL",
+    "opis": "LEJ MOŁDAWII"
+   },
+   {
+    "kod": "MGA",
+    "opis": "ARIARY"
+   },
+   {
+    "kod": "MKD",
+    "opis": "DENAR"
+   },
+   {
+    "kod": "MMK",
+    "opis": "KYAT"
+   },
+   {
+    "kod": "MNT",
+    "opis": "TUGRIK"
+   },
+   {
+    "kod": "MOP",
+    "opis": "PATACA"
+   },
+   {
+    "kod": "MRU",
+    "opis": "OUGUIYA"
+   },
+   {
+    "kod": "MUR",
+    "opis": "RUPIA MAURITIUSU"
+   },
+   {
+    "kod": "MVR",
+    "opis": "RUPIA MALEDIWSKA"
+   },
+   {
+    "kod": "MWK",
+    "opis": "KWACHA MALAWIJSKA"
+   },
+   {
+    "kod": "MXN",
+    "opis": "PESO MEKSYKAŃSKIE"
+   },
+   {
+    "kod": "MXV",
+    "opis": "UNIDAD DE INVERSION (UDI) MEKSYKAŃSKIE"
+   },
+   {
+    "kod": "MYR",
+    "opis": "RINGGIT"
+   },
+   {
+    "kod": "MZN",
+    "opis": "METICAL"
+   },
+   {
+    "kod": "NAD",
+    "opis": "DOLAR NAMIBIJSKI"
+   },
+   {
+    "kod": "NGN",
+    "opis": "NAIRA"
+   },
+   {
+    "kod": "NIO",
+    "opis": "CORDOBA ORO"
+   },
+   {
+    "kod": "NOK",
+    "opis": "KORONA NORWESKA"
+   },
+   {
+    "kod": "NPR",
+    "opis": "RUPIA NEPALSKA"
+   },
+   {
+    "kod": "NZD",
+    "opis": "DOLAR NOWOZELANDZKI"
+   },
+   {
+    "kod": "OMR",
+    "opis": "RIAL OMAŃSKI"
+   },
+   {
+    "kod": "PAB",
+    "opis": "BALBOA"
+   },
+   {
+    "kod": "PEN",
+    "opis": "SOL"
+   },
+   {
+    "kod": "PGK",
+    "opis": "KINA"
+   },
+   {
+    "kod": "PHP",
+    "opis": "PESO FILIPIŃSKIE"
+   },
+   {
+    "kod": "PKR",
+    "opis": "RUPIA PAKISTAŃSKA"
+   },
+   {
+    "kod": "PLN",
+    "opis": "ZŁOTY"
+   },
+   {
+    "kod": "PYG",
+    "opis": "GUARANI"
+   },
+   {
+    "kod": "QAR",
+    "opis": "RIAL KATARSKI"
+   },
+   {
+    "kod": "RON",
+    "opis": "LEJ RUMUŃSKI"
+   },
+   {
+    "kod": "RSD",
+    "opis": "DINAR SERBSKI"
+   },
+   {
+    "kod": "RUB",
+    "opis": "RUBEL ROSYJSKI"
+   },
+   {
+    "kod": "RWF",
+    "opis": "FRANK RWANDYJSKI"
+   },
+   {
+    "kod": "SAR",
+    "opis": "RIAL SAUDYJSKI"
+   },
+   {
+    "kod": "SBD",
+    "opis": "DOLAR WYSP SALOMONA"
+   },
+   {
+    "kod": "SCR",
+    "opis": "RUPIA SESZELSKA"
+   },
+   {
+    "kod": "SDG",
+    "opis": "FUNT SUDAŃSKI"
+   },
+   {
+    "kod": "SEK",
+    "opis": "KORONA SZWEDZKA"
+   },
+   {
+    "kod": "SGD",
+    "opis": "DOLAR SINGAPURSKI"
+   },
+   {
+    "kod": "SHP",
+    "opis": "FUNT ŚWIĘTEJ HELENY (ŚWIĘTA HELENA I WYSPA WNIEBOWSTĄPIENIA)"
+   },
+   {
+    "kod": "SLL",
+    "opis": "LEONE"
+   },
+   {
+    "kod": "SOS",
+    "opis": "SZYLING SOMALIJSKI"
+   },
+   {
+    "kod": "SRD",
+    "opis": "DOLAR SURINAMSKI"
+   },
+   {
+    "kod": "SSP",
+    "opis": "FUNT POŁUDNIOWOSUDAŃSKI"
+   },
+   {
+    "kod": "STN",
+    "opis": "DOBRA"
+   },
+   {
+    "kod": "SVC",
+    "opis": "COLON SALWADORSKI (SV1)"
+   },
+   {
+    "kod": "SYP",
+    "opis": "FUNT SYRYJSKI"
+   },
+   {
+    "kod": "SZL",
+    "opis": "LILANGENI"
+   },
+   {
+    "kod": "THB",
+    "opis": "BAT"
+   },
+   {
+    "kod": "TJS",
+    "opis": "SOMONI"
+   },
+   {
+    "kod": "TMT",
+    "opis": "MANAT TURKMEŃSKI"
+   },
+   {
+    "kod": "TND",
+    "opis": "DINAR TUNEZYJSKI"
+   },
+   {
+    "kod": "TOP",
+    "opis": "PAANGA"
+   },
+   {
+    "kod": "TRY",
+    "opis": "LIRA TURECKA"
+   },
+   {
+    "kod": "TTD",
+    "opis": "DOLAR TRYNIDADU I TOBAGO"
+   },
+   {
+    "kod": "TWD",
+    "opis": "NOWY DOLAR TAJWAŃSKI"
+   },
+   {
+    "kod": "TZS",
+    "opis": "SZYLING TANZAŃSKI"
+   },
+   {
+    "kod": "UAH",
+    "opis": "HRYWNA"
+   },
+   {
+    "kod": "UGX",
+    "opis": "SZYLING UGANDYJSKI"
+   },
+   {
+    "kod": "USD",
+    "opis": "DOLAR AMERYKAŃSKI"
+   },
+   {
+    "kod": "USN",
+    "opis": "DOLAR AMERYKAŃSKI (NEXT DAY)"
+   },
+   {
+    "kod": "UYI",
+    "opis": "PESO EN UNIDADES INDEXADAS URUGWAJSKIE"
+   },
+   {
+    "kod": "UYU",
+    "opis": "PESO URUGWAJSKIE"
+   },
+   {
+    "kod": "UYW",
+    "opis": "PESO EN UNIDADES INDEXADAS URUGWAJSKIE"
+   },
+   {
+    "kod": "UZS",
+    "opis": "SUM"
+   },
+   {
+    "kod": "VES",
+    "opis": "BOLIWAR SOBERANO"
+   },
+   {
+    "kod": "VND",
+    "opis": "DONG"
+   },
+   {
+    "kod": "VUV",
+    "opis": "VATU"
+   },
+   {
+    "kod": "WST",
+    "opis": "TALA"
+   },
+   {
+    "kod": "XAF",
+    "opis": "FRANK CFA (BEAC)"
+   },
+   {
+    "kod": "XAG",
+    "opis": "SREBRO"
+   },
+   {
+    "kod": "XAU",
+    "opis": "ZŁOTO"
+   },
+   {
+    "kod": "XBA",
+    "opis": "BOND MARKETS UNIT EUROPEAN COMPOSITE UNIT (EURCO)"
+   },
+   {
+    "kod": "XBB",
+    "opis": "BOND MARKETS UNIT EUROPEAN MONETARY UNIT (E.M.U.-6)"
+   },
+   {
+    "kod": "XBC",
+    "opis": "BOND MARKETS UNIT EUROPEAN UNIT OF ACCOUNT 9 (E.U.A.-9)"
+   },
+   {
+    "kod": "XBD",
+    "opis": "BOND MARKETS UNIT EUROPEAN UNIT OF ACCOUNT 17 (E.U.A.-17)"
+   },
+   {
+    "kod": "XCD",
+    "opis": "DOLAR WSCHODNIO­KARAIBSKI"
+   },
+   {
+    "kod": "XDR",
+    "opis": "SDR MIĘDZYNARODOWY FUNDUSZ WALUTOWY"
+   },
+   {
+    "kod": "XOF",
+    "opis": "FRANK CFA (BCEAO)"
+   },
+   {
+    "kod": "XPD",
+    "opis": "PALLAD"
+   },
+   {
+    "kod": "XPF",
+    "opis": "FRANK CFP"
+   },
+   {
+    "kod": "XPT",
+    "opis": "PLATYNA"
+   },
+   {
+    "kod": "XSU",
+    "opis": "SUCRE SISTEMA UNITARIO DE COMPENSACION REGIONAL DE PAGOS SUCRE"
+   },
+   {
+    "kod": "XUA",
+    "opis": "ADB UNIT OF ACCOUNT MEMBER COUNTRIES OF THE AFRICAN DEVELOPMENT BANK GROUP"
+   },
+   {
+    "kod": "XXX",
+    "opis": "BRAK WALUTY"
+   },
+   {
+    "kod": "YER",
+    "opis": "RIAL JEMEŃSKI"
+   },
+   {
+    "kod": "ZAR",
+    "opis": "RAND"
+   },
+   {
+    "kod": "ZMW",
+    "opis": "KWACHA ZAMBIJSKA"
+   },
+   {
+    "kod": "ZWL",
+    "opis": "DOLAR ZIMBABWE"
+   }
+  ],
+  "TMetodaAmoryzacji": [
+   {
+    "kod": "D",
+    "opis": "degresywna"
+   },
+   {
+    "kod": "L",
+    "opis": "liniowa"
+   },
+   {
+    "kod": "J",
+    "opis": "jednorazowa"
+   },
+   {
+    "kod": "I",
+    "opis": "inna"
+   },
+   {
+    "kod": "X",
+    "opis": "brak amortyzacji"
+   }
+  ],
+  "TNabycia": [
+   {
+    "kod": "S",
+    "opis": "umowa sprzedaży"
+   },
+   {
+    "kod": "D",
+    "opis": "darowizna"
+   },
+   {
+    "kod": "N",
+    "opis": "wkład niepieniężny"
+   },
+   {
+    "kod": "W",
+    "opis": "wytworzenie"
+   },
+   {
+    "kod": "F",
+    "opis": "faktura VAT"
+   },
+   {
+    "kod": "I",
+    "opis": "inne"
+   }
+  ],
+  "TOdpis": [
+   {
+    "kod": "M",
+    "opis": "miesięczny"
+   },
+   {
+    "kod": "K",
+    "opis": "kwartalny"
+   },
+   {
+    "kod": "R",
+    "opis": "roczny"
+   },
+   {
+    "kod": "J",
+    "opis": "jednorazowy"
+   },
+   {
+    "kod": "S",
+    "opis": "sezonowa"
+   },
+   {
+    "kod": "I",
+    "opis": "inna"
+   },
+   {
+    "kod": "X",
+    "opis": "brak odpisu"
+   }
+  ],
+  "TWykreslenie": [
+   {
+    "kod": "A",
+    "opis": "przekwalifikowanie do innej grupy aktywów"
+   },
+   {
+    "kod": "S",
+    "opis": "sprzedaż"
+   },
+   {
+    "kod": "X",
+    "opis": "stwierdzenie niedoboru"
+   },
+   {
+    "kod": "K",
+    "opis": "kradzież"
+   },
+   {
+    "kod": "D",
+    "opis": "darowizna"
+   },
+   {
+    "kod": "N",
+    "opis": "wkład niepieniężny"
+   },
+   {
+    "kod": "I",
+    "opis": "inne"
+   }
+  ]
+ },
+ "typy": {
+  "TKodFormularza": {
+   "baza": "xsd:string",
+   "opis": "Symbol wzoru formularza",
+   "ograniczenia": [
+    [
+     "enumeration",
+     "JPK_ST"
+    ]
+   ]
+  },
+  "TKwotowy": {
+   "baza": "xsd:decimal",
+   "opis": "Wartość numeryczna 18 znaków max, w tym 2 znaki po przecinku",
+   "ograniczenia": [
+    [
+     "totalDigits",
+     "18"
+    ],
+    [
+     "fractionDigits",
+     "2"
+    ]
+   ]
+  },
+  "TNaturalnyJPK": {
+   "baza": "etd:TNaturalny",
+   "opis": "Liczby naturalne większe od zera",
+   "ograniczenia": [
+    [
+     "minExclusive",
+     "0"
+    ]
+   ]
+  },
+  "TNumerKSeF": {
+   "baza": "xsd:token",
+   "opis": "Numer identyfikujący fakturę w Krajowym Systemie e-Faktur (KSeF)",
+   "ograniczenia": []
+  },
+  "TZnakowy512": {
+   "baza": "xsd:token",
+   "opis": "Typ znakowy ograniczony do 512 znaków",
+   "ograniczenia": [
+    [
+     "minLength",
+     "1"
+    ],
+    [
+     "maxLength",
+     "512"
+    ]
+   ]
+  },
+  "TZnakowyJPK": {
+   "baza": "xsd:token",
+   "opis": "Typ znakowy ograniczony do 256 znaków",
+   "ograniczenia": [
+    [
+     "minLength",
+     "1"
+    ],
+    [
+     "maxLength",
+     "256"
+    ]
+   ]
+  }
+ }
+}

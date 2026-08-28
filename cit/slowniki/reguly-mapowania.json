@@ -1,0 +1,720 @@
+{
+ "_opis": "Reguły wstępnego mapowania kont na znaczniki MF (S_12_1 z TMapKontaPOZ, S_12_3 z TMapKontaPD). Propozycja dla księgowej — nigdy rozstrzygnięcie. Kolejność ma znaczenie: pierwsza pasująca reguła wygrywa. 'pewnosc': wysoka = nazwa konta jednoznacznie wskazuje pozycję; srednia = wskazuje, ale możliwe warianty; niska = tylko zgadywanie po zespole.",
+ "profile_planu_kont": {
+  "pl_standard": {
+   "opis": "Wzorcowy polski plan kont (0 aktywa trwałe, 1 środki pieniężne, 2 rozrachunki, 3 materiały, 4 koszty rodzajowe, 5 koszty działalności, 6 produkty/RMK, 7 przychody, 8 kapitały)",
+   "zespoly": {
+    "0": "trwale",
+    "1": "pieniezne",
+    "2": "rozrachunki",
+    "3": "zapasy",
+    "4": "koszty",
+    "5": "koszty",
+    "6": "produkty",
+    "7": "przychody",
+    "8": "kapitaly"
+   }
+  },
+  "erp_zagraniczny_a": {
+   "opis": "Plan w układzie zachodnim (SAP/SKR): 1 kapitały i rezerwy, 2 aktywa trwałe i umorzenia, 3 zapasy, 4 rozrachunki, 5 środki pieniężne, 6 koszty, 7 przychody, 8 zamknięcie. Wykryty u pierwszego klienta pilotażowego.",
+   "zespoly": {
+    "1": "kapitaly",
+    "2": "trwale",
+    "3": "zapasy",
+    "4": "rozrachunki",
+    "5": "pieniezne",
+    "6": "koszty",
+    "7": "przychody",
+    "8": "kapitaly"
+   }
+  }
+ },
+ "reguly_pd": [
+  {
+   "nazwa_regex": "NKUP|NIEKOSZT|NIE\\s*PODL",
+   "kontekst": "koszty",
+   "znacznik": "PD4",
+   "pewnosc": "srednia",
+   "dlaczego": "nazwa konta oznacza koszt niestanowiący KUP; PD4 = różnica trwała, PD5 = różnica przejściowa (do rozstrzygnięcia przez księgową)"
+  },
+  {
+   "nazwa_regex": "NKUP|NIEPODLEG",
+   "kontekst": "przychody",
+   "znacznik": "PD1",
+   "pewnosc": "srednia",
+   "dlaczego": "nazwa konta oznacza przychód nieopodatkowany; PD1 = różnica trwała, PD2 = niepodlegający w roku bieżącym"
+  },
+  {
+   "nazwa_regex": "REZERW",
+   "kontekst": "koszty",
+   "znacznik": "PD5",
+   "pewnosc": "srednia",
+   "dlaczego": "koszty utworzenia rezerw są zwykle KUP dopiero po realizacji — różnica przejściowa"
+  },
+  {
+   "nazwa_regex": "BADAWCZ|B\\+R|ROZWOJ",
+   "kontekst": "koszty",
+   "znacznik": "PD7",
+   "pewnosc": "niska",
+   "dlaczego": "możliwa ulga B+R — tylko jeśli spółka ją stosuje"
+  }
+ ],
+ "reguly_s121": [
+  {
+   "nazwa_regex": "^UMORZ|^A-|UMORZENIE",
+   "grupa": "trwale",
+   "znacznik": "?",
+   "pewnosc": "srednia",
+   "dlaczego": "konto umorzeniowe — znacznik z końcówką _U tej samej pozycji co konto wartości brutto; wymaga wskazania pary przez księgową"
+  },
+  {
+   "nazwa_regex": "^ODPIS|ODPIS AKTUAL",
+   "grupa": "*",
+   "znacznik": "?",
+   "pewnosc": "srednia",
+   "dlaczego": "odpis aktualizujący — znacznik z końcówką _A tej samej pozycji co konto wartości; wymaga wskazania pary"
+  },
+  {
+   "nazwa_regex": "PRAC.*ROZW|ZAKO.CZ.*PRAC",
+   "znacznik": "BAAI1_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "koszty zakończonych prac rozwojowych"
+  },
+  {
+   "nazwa_regex": "WARTOSC FIRMY|WARTO..\\s*FIRMY",
+   "znacznik": "BAAI2_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "wartość firmy"
+  },
+  {
+   "nazwa_regex": "PATENT|LICENCJ|OPROGRAMOWANIE|MARKI|W\\.NIEM|NIEMAT",
+   "znacznik": "BAAI3_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "inne wartości niematerialne i prawne"
+  },
+  {
+   "nazwa_regex": "ZALICZKI.*(NIEMAT|WART\\.NIEMAT)",
+   "znacznik": "BAAI4_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "zaliczki na wartości niematerialne i prawne"
+  },
+  {
+   "nazwa_regex": "^GRUNT",
+   "znacznik": "BAAII1a_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "grunty"
+  },
+  {
+   "nazwa_regex": "BUDYNK|BUDOWL|OBIEKT.*IN.\\.|IN.\\.L.DOWEJ",
+   "znacznik": "BAAII1b_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "budynki, lokale i obiekty inżynierii lądowej i wodnej"
+  },
+  {
+   "nazwa_regex": "KOT.Y|MASZYN|URZ.DZEN|URZADZ|APARAT",
+   "grupa": "trwale",
+   "znacznik": "BAAII1c_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "urządzenia techniczne i maszyny"
+  },
+  {
+   "nazwa_regex": "TRANSPORT",
+   "grupa": "trwale",
+   "znacznik": "BAAII1d_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "środki transportu"
+  },
+  {
+   "nazwa_regex": "W BUDOWIE",
+   "znacznik": "BAAII2_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "środki trwałe w budowie"
+  },
+  {
+   "nazwa_regex": "ZALICZKI.*(SRODKI TRWALE|.RODKI TRWA)",
+   "znacznik": "BAAII3_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "zaliczki na środki trwałe w budowie"
+  },
+  {
+   "nazwa_regex": "INWEST.*OBCYM|DZIERZAWIO",
+   "grupa": "trwale",
+   "znacznik": "BAAII1e_W",
+   "pewnosc": "srednia",
+   "dlaczego": "inwestycje w obcych środkach trwałych zwykle jako inne środki trwałe"
+  },
+  {
+   "nazwa_regex": ".RODKI TRWALE|SRODKI TRWALE",
+   "grupa": "trwale",
+   "znacznik": "BAAII1e_W",
+   "pewnosc": "niska",
+   "dlaczego": "konto zbiorcze środków trwałych — księgowa musi wskazać właściwą pozycję a) – e)"
+  },
+  {
+   "nazwa_regex": "D.UGOT.*INWEST.*FINAN|DLUGOT.*INWEST",
+   "znacznik": "BAAIV3b_ULA_W",
+   "pewnosc": "niska",
+   "dlaczego": "długoterminowe aktywa finansowe — pozycja zależy od tego, czy w jednostkach powiązanych"
+  },
+  {
+   "nazwa_regex": "AKTYW.*ODROCZ|ODROCZ.*PODAT.*D",
+   "znacznik": "BAAV1_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "aktywa z tytułu odroczonego podatku dochodowego"
+  },
+  {
+   "nazwa_regex": "KAUCJE.*(DLUGOTERM|PLAC)|WPLACONE KAUCJE DLUGO",
+   "znacznik": "BAAV2_W",
+   "pewnosc": "srednia",
+   "dlaczego": "długoterminowe rozliczenia międzyokresowe / należności długoterminowe — do potwierdzenia"
+  },
+  {
+   "nazwa_regex": "D.UGOTERM.*MIEDZYOK|DLUGOTERM.*ROZLICZ",
+   "znacznik": "BAAV2_W",
+   "pewnosc": "wysoka",
+   "dlaczego": "długoterminowe rozliczenia międzyokresowe"
+  },
+  {
+   "nazwa_regex": "^MATERIALY|ZUZYCIE MATERIALOW",
+   "grupa": "zapasy",
+   "znacznik": "BABI1",
+   "pewnosc": "wysoka",
+   "dlaczego": "materiały"
+  },
+  {
+   "nazwa_regex": "MAGAZYN|TOWARY|INVENTORY|^GADZETY|W DRODZE",
+   "grupa": "zapasy",
+   "znacznik": "BABI4",
+   "pewnosc": "srednia",
+   "dlaczego": "towary — jeśli to produkty własne, właściwa jest pozycja produkty gotowe"
+  },
+  {
+   "nazwa_regex": "PRODUKT.*GOTOW|FG ",
+   "grupa": "zapasy",
+   "znacznik": "BABI3",
+   "pewnosc": "srednia",
+   "dlaczego": "produkty gotowe"
+  },
+  {
+   "nazwa_regex": "MATERIALY I TOWARY",
+   "grupa": "zapasy",
+   "znacznik": "BABI4",
+   "pewnosc": "niska",
+   "dlaczego": "konto zbiorcze — księgowa rozdziela na materiały / towary"
+  },
+  {
+   "nazwa_regex": "DOSTAWCAMI|DOSTAWCY|DOSTAWY NIEFAKTUR",
+   "znacznik": "BPBIII3a",
+   "pewnosc": "wysoka",
+   "dlaczego": "zobowiązania krótkoterminowe z tytułu dostaw i usług wobec pozostałych jednostek"
+  },
+  {
+   "nazwa_regex": "ODBIORCAMI|KLIENCI|FAKTURY DO WYSTAWIENIA",
+   "znacznik": "BABII3a_D12",
+   "pewnosc": "wysoka",
+   "dlaczego": "należności z tytułu dostaw i usług do 12 miesięcy od pozostałych jednostek"
+  },
+  {
+   "nazwa_regex": "WEWNATRZGRUPOW|CASH POOL|IC\\b|KUHN",
+   "grupa": "rozrachunki",
+   "znacznik": "BPBIII1a_D12",
+   "pewnosc": "niska",
+   "dlaczego": "rozrachunki wewnątrzgrupowe — jednostki powiązane; strona (należność/zobowiązanie) zależy od salda"
+  },
+  {
+   "nazwa_regex": "WYNAGRODZ|WYNAGORODZ",
+   "grupa": "rozrachunki",
+   "znacznik": "BPBIII3f",
+   "pewnosc": "srednia",
+   "dlaczego": "zobowiązania z tytułu wynagrodzeń"
+  },
+  {
+   "nazwa_regex": "ZUS|UBEZPIECZENIA SPOLECZNE|UBEZPIECZENIA ZDROW|FUNDUSZ PRACY|PPK|PRACOWNICZE PLANY|ZASILKI",
+   "grupa": "rozrachunki",
+   "znacznik": "BPBIII3b",
+   "pewnosc": "wysoka",
+   "dlaczego": "zobowiązania z tytułu ubezpieczeń społecznych i innych świadczeń"
+  },
+  {
+   "nazwa_regex": "PODATEK|PDOP|^VAT|VAT |PCC|PFRON|OPLATY CELNE|PUBLICZNO",
+   "grupa": "rozrachunki",
+   "znacznik": "BPBIII3b",
+   "pewnosc": "srednia",
+   "dlaczego": "rozrachunki publicznoprawne — po stronie należności właściwe jest BABII3b"
+  },
+  {
+   "nazwa_regex": "POZYCZKI|^ZALICZKI|ZALICZKI EUR",
+   "grupa": "rozrachunki",
+   "znacznik": "BABII3c_W",
+   "pewnosc": "niska",
+   "dlaczego": "inne należności krótkoterminowe — do potwierdzenia"
+  },
+  {
+   "nazwa_regex": "ROZLICZ.*MIEDZYOK.*PRZYCH|REZERWA NA BONUSY",
+   "grupa": "rozrachunki",
+   "znacznik": "BPBIV2_K",
+   "pewnosc": "srednia",
+   "dlaczego": "rozliczenia międzyokresowe przychodów (bierne) — krótkoterminowe"
+  },
+  {
+   "nazwa_regex": "MIEDZYOK.*ROZLICZ.*KOSZT",
+   "znacznik": "BABIV",
+   "pewnosc": "wysoka",
+   "dlaczego": "krótkoterminowe rozliczenia międzyokresowe (czynne)"
+  },
+  {
+   "nazwa_regex": "KAUCJE OTRZYMANE",
+   "znacznik": "BPBIII3i",
+   "pewnosc": "niska",
+   "dlaczego": "inne zobowiązania krótkoterminowe"
+  },
+  {
+   "nazwa_regex": "UDZIALOW-KAPITAL|UDZIAL-DYWIDEND",
+   "znacznik": "BPBIII3i",
+   "pewnosc": "niska",
+   "dlaczego": "rozrachunki z właścicielami — pozycja zależy od charakteru salda"
+  },
+  {
+   "nazwa_regex": "NIEDOB|SZKOD|NADWY",
+   "znacznik": "BABII3c_W",
+   "pewnosc": "niska",
+   "dlaczego": "rozliczenie niedoborów i szkód — do wskazania przez księgową"
+  },
+  {
+   "nazwa_regex": "SUBSIDY|DOTACJ",
+   "grupa": "rozrachunki",
+   "znacznik": "BABII3c_W",
+   "pewnosc": "niska",
+   "dlaczego": "należna dotacja — inne należności krótkoterminowe"
+  },
+  {
+   "nazwa_regex": "ROZNICE KURSOWE|R.NICE KURSOWE",
+   "grupa": "rozrachunki",
+   "znacznik": "?",
+   "pewnosc": "niska",
+   "dlaczego": "konto techniczne różnic kursowych w rozrachunkach — przypisanie zależy od polityki jednostki"
+  },
+  {
+   "nazwa_regex": "DO ROZLICZENIA|KWOTY DO ROZLICZ|INNE ROZRACHUNKI|POZOSTALE ROZRACHUNKI|POZO.TALE ROZRACHUNKI",
+   "grupa": "rozrachunki",
+   "znacznik": "?",
+   "pewnosc": "niska",
+   "dlaczego": "konto zbiorcze rozrachunków — bez salda nie da się wskazać strony bilansu"
+  },
+  {
+   "nazwa_regex": "ROZRACHUNKI I ROSZCZENIA",
+   "znacznik": "?",
+   "pewnosc": "niska",
+   "dlaczego": "konto syntetyczne — sprawdzić, czy w ogóle ma zapisy na ostatnim poziomie analitycznym"
+  },
+  {
+   "nazwa_regex": "^KASA|KA.A|PUNKT",
+   "grupa": "pieniezne",
+   "znacznik": "BABIII1c1_SPKR",
+   "pewnosc": "wysoka",
+   "dlaczego": "środki pieniężne w kasie"
+  },
+  {
+   "nazwa_regex": "WALUTOWY|RACHUNEK VAT|RACHUNEK BANK|^BANK",
+   "grupa": "pieniezne",
+   "znacznik": "BABIII1c1_SPKR",
+   "pewnosc": "wysoka",
+   "dlaczego": "środki pieniężne na rachunkach bankowych"
+  },
+  {
+   "nazwa_regex": "W DRODZ",
+   "grupa": "pieniezne",
+   "znacznik": "BABIII1c1_SPKR",
+   "pewnosc": "wysoka",
+   "dlaczego": "środki pieniężne w drodze"
+  },
+  {
+   "nazwa_regex": "OBLIGACJ|LOKATA|INWEST.*KROTKOTERM",
+   "znacznik": "BABIII1b1_ULA_W",
+   "pewnosc": "niska",
+   "dlaczego": "krótkoterminowe aktywa finansowe w pozostałych jednostkach — rodzaj instrumentu do potwierdzenia"
+  },
+  {
+   "nazwa_regex": "INTERNAL ENTRIES",
+   "znacznik": "?",
+   "pewnosc": "niska",
+   "dlaczego": "konto techniczne systemu — sprawdzić, czy na koniec roku ma saldo; jeśli zeruje się, nie wchodzi do bilansu"
+  },
+  {
+   "nazwa_regex": "KAPITAL PODSTAWOWY",
+   "znacznik": "BPAI",
+   "pewnosc": "wysoka",
+   "dlaczego": "kapitał podstawowy"
+  },
+  {
+   "nazwa_regex": "KAPITAL ZAPASOWY",
+   "znacznik": "BPAII_INN",
+   "pewnosc": "srednia",
+   "dlaczego": "kapitał zapasowy — z nadwyżki emisyjnej (BPAIIWS) albo z innych źródeł"
+  },
+  {
+   "nazwa_regex": "AKTUAL.*WYC|AKTUALIZACJI WYCENY",
+   "znacznik": "BPAIII_INN",
+   "pewnosc": "wysoka",
+   "dlaczego": "kapitał z aktualizacji wyceny"
+  },
+  {
+   "nazwa_regex": "ROZLICZ.*WYNIKU",
+   "znacznik": "BPAV",
+   "pewnosc": "wysoka",
+   "dlaczego": "zysk (strata) z lat ubiegłych"
+  },
+  {
+   "nazwa_regex": "WYNIK FINANSOWY|ZAMKNIECIE ROKU",
+   "znacznik": "BPAVI",
+   "pewnosc": "wysoka",
+   "dlaczego": "zysk (strata) netto"
+  },
+  {
+   "nazwa_regex": "REZERWA NA R..NICE PDOP|REZERWA.*ODROCZ",
+   "znacznik": "BPBI1",
+   "pewnosc": "wysoka",
+   "dlaczego": "rezerwa z tytułu odroczonego podatku dochodowego"
+  },
+  {
+   "nazwa_regex": "REZERWA NA GWARANCJ|REZERWA NA KOSZTY|^REZERWY",
+   "znacznik": "BPBI3_K",
+   "pewnosc": "srednia",
+   "dlaczego": "pozostałe rezerwy — krótkoterminowe (jeśli powyżej 12 mies.: BPBI3_D)"
+  },
+  {
+   "nazwa_regex": "KREDYTY.*DLUGOTER",
+   "znacznik": "BPBII3a",
+   "pewnosc": "wysoka",
+   "dlaczego": "zobowiązania długoterminowe: kredyty i pożyczki"
+  },
+  {
+   "nazwa_regex": "AMORT",
+   "grupa": "koszty",
+   "znacznik": "RPBI",
+   "pewnosc": "wysoka",
+   "dlaczego": "amortyzacja"
+  },
+  {
+   "nazwa_regex": "ZUZYCIE MATERIA|ENERGIA|WODA|^GAZ|AKCESORIA ZAKUPY|MATERIALY-WYP",
+   "grupa": "koszty",
+   "znacznik": "RPBII",
+   "pewnosc": "wysoka",
+   "dlaczego": "zużycie materiałów i energii"
+  },
+  {
+   "nazwa_regex": "USLUG|TRANSP|REKLAMA|TLUMACZ|PODROZE|POCZTOW|TELEKOMUNIK|BANKOW|REMONT|SLUSARSK|SZKOLEN|MEDYCZN|RENT LAND|DZIERZAW|UTRZYMANIE BIURA|INFORMATYCZ|LEASING|OPLATY$",
+   "grupa": "koszty",
+   "znacznik": "RPBIII",
+   "pewnosc": "wysoka",
+   "dlaczego": "usługi obce"
+  },
+  {
+   "nazwa_regex": "AKCYZ",
+   "grupa": "koszty",
+   "znacznik": "RPBIV_AKC",
+   "pewnosc": "wysoka",
+   "dlaczego": "podatek akcyzowy"
+  },
+  {
+   "nazwa_regex": "PODATKI I OPLATY|PODATEK OD|PODATKI INNE|VAT NIE|PFRON|P F R O N",
+   "grupa": "koszty",
+   "znacznik": "RPBIV_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "podatki i opłaty (pozostałe)"
+  },
+  {
+   "nazwa_regex": "WYNAGRODZ|UMOWA O PRACE|UMOWY ZLECENIA|UMOWA ZLECENIE",
+   "grupa": "koszty",
+   "znacznik": "RPBV",
+   "pewnosc": "wysoka",
+   "dlaczego": "wynagrodzenia"
+  },
+  {
+   "nazwa_regex": "UBEZPIECZENIA SPOLECZNE",
+   "grupa": "koszty",
+   "znacznik": "RPBVI_E",
+   "pewnosc": "srednia",
+   "dlaczego": "ubezpieczenia społeczne — wydzielić część emerytalną, resztę do RPBVI"
+  },
+  {
+   "nazwa_regex": "SWIADCZENIA NA RZECZ PRA|ODZIEZ OCHRONNA|INNE SWIADCZ|PRACOWNICY|BHP",
+   "grupa": "koszty",
+   "znacznik": "RPBVI",
+   "pewnosc": "wysoka",
+   "dlaczego": "ubezpieczenia społeczne i inne świadczenia na rzecz pracowników"
+  },
+  {
+   "nazwa_regex": "UBEZP MAJATKOW|LIABILITY INSURANCE|DAROWIZN|POZOSTALE KOSZTY-INNE|POZOSTALE KOSZTY\\(",
+   "grupa": "koszty",
+   "znacznik": "RPBVII",
+   "pewnosc": "wysoka",
+   "dlaczego": "pozostałe koszty rodzajowe"
+  },
+  {
+   "nazwa_regex": "WART\\.SPRZED|WARTOSC SPRZEDANYCH|COGS",
+   "grupa": "koszty",
+   "znacznik": "RPBVIII_RKBII_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "wartość sprzedanych towarów i materiałów (dla pozostałych jednostek)"
+  },
+  {
+   "nazwa_regex": "KOSZT WLASNY SPRZED",
+   "znacznik": "RKBI_POZ",
+   "pewnosc": "srednia",
+   "dlaczego": "koszt wytworzenia sprzedanych produktów — tylko w wariancie kalkulacyjnym"
+  },
+  {
+   "nazwa_regex": "ODPIS.*NALEZNOSCI|KOSZTY-ODPIS",
+   "grupa": "koszty",
+   "znacznik": "RPEII_RKHII",
+   "pewnosc": "wysoka",
+   "dlaczego": "pozostałe koszty operacyjne: aktualizacja wartości aktywów niefinansowych"
+  },
+  {
+   "nazwa_regex": "WARTOSC NETTO SPREED|WARTOSC NETTO SPRZED|WART.*NETTO SPRZED",
+   "grupa": "koszty",
+   "znacznik": "RPEI_RKHI_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "koszty zbycia niefinansowych aktywów trwałych"
+  },
+  {
+   "nazwa_regex": "UJEMNE R..NICE KURSOWE",
+   "grupa": "koszty",
+   "znacznik": "RPHIV_RKKIV_RK",
+   "pewnosc": "wysoka",
+   "dlaczego": "koszty finansowe: ujemne różnice kursowe"
+  },
+  {
+   "nazwa_regex": "ODSETKI ZAPLACONE|INTEREST EXPENSES",
+   "grupa": "koszty",
+   "znacznik": "RPHI_RKKI_POZ",
+   "pewnosc": "srednia",
+   "dlaczego": "koszty finansowe: odsetki — jeśli wobec jednostek powiązanych, to RPHI_RKKI_POW"
+  },
+  {
+   "nazwa_regex": "KOSZTY FINANSOWE|POZOSTALE KOSZTY FINANSO|KO.ZTY FINAN",
+   "grupa": "koszty",
+   "znacznik": "RPHIV_RKKIV_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "koszty finansowe: inne"
+  },
+  {
+   "nazwa_regex": "STRATY NADZWYCZAJNE",
+   "znacznik": "RPEIII_RKHIII_P",
+   "pewnosc": "srednia",
+   "dlaczego": "od 2016 r. straty nadzwyczajne wykazuje się w pozostałych kosztach operacyjnych"
+  },
+  {
+   "nazwa_regex": "TRANSFER PRICE ADJUST",
+   "grupa": "koszty",
+   "znacznik": "RPEIII_RKHIII_P",
+   "pewnosc": "niska",
+   "dlaczego": "korekta cen transferowych — ujęcie zależy od charakteru korekty (może być też przychód)"
+  },
+  {
+   "nazwa_regex": "POZO.TALE KO.ZTY OPERACY|INNE POZOST.KOSZTY OPERA|POZOST.KOSZTY OPER",
+   "grupa": "koszty",
+   "znacznik": "RPEIII_RKHIII_P",
+   "pewnosc": "wysoka",
+   "dlaczego": "pozostałe koszty operacyjne: inne"
+  },
+  {
+   "nazwa_regex": "KOSZTY UTW.REZERW|KOSZTY REZ",
+   "grupa": "koszty",
+   "znacznik": "RPEIII_RKHIII_P",
+   "pewnosc": "srednia",
+   "dlaczego": "koszty utworzenia rezerw — pozycja zależy od tytułu rezerwy"
+  },
+  {
+   "nazwa_regex": "PODATEK DOCHODOWY|AKTYWOWANY.*PDOP",
+   "grupa": "koszty",
+   "znacznik": "RPJ_RKM_B",
+   "pewnosc": "srednia",
+   "dlaczego": "podatek dochodowy bieżący; część odroczona to RPJ_RKM_O"
+  },
+  {
+   "nazwa_regex": "OBOWIAZKOWE OBCIAZENIA",
+   "znacznik": "RPK_RKN",
+   "pewnosc": "wysoka",
+   "dlaczego": "pozostałe obowiązkowe zmniejszenia zysku"
+  },
+  {
+   "nazwa_regex": "KOSZTY WEDLUG RODZAJU|KOSZTY WEDUG RODZAJU",
+   "znacznik": "?",
+   "pewnosc": "niska",
+   "dlaczego": "konto syntetyczne kosztów — sprawdzić, czy ma własne zapisy"
+  },
+  {
+   "nazwa_regex": "SPRZEDA. MASZYN|SPRZEDA. CZ..CI|SPRZEDAZ STARYCH CZESCI|SPRZEDA. OPAKOWA|SPRZEDAZ DLA PRACOWNIK",
+   "grupa": "przychody",
+   "znacznik": "RPAIV_RKAII_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "przychody netto ze sprzedaży towarów i materiałów od pozostałych jednostek"
+  },
+  {
+   "nazwa_regex": "SPRZEDA. USLUG|.PRZEDAZ U.LUG|PRZYCH.TRANSP",
+   "grupa": "przychody",
+   "znacznik": "RPAI_RKAI_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "przychody netto ze sprzedaży produktów (usług) od pozostałych jednostek"
+  },
+  {
+   "nazwa_regex": "DZIERZAWA NIERUCHOMOSCI|ZE SPRZEDAZY RZECZ.SKLAD",
+   "grupa": "przychody",
+   "znacznik": "RPDI_RKGI_POZ",
+   "pewnosc": "srednia",
+   "dlaczego": "przychody ze zbycia niefinansowych aktywów trwałych / z najmu — do rozdzielenia"
+  },
+  {
+   "nazwa_regex": "DODATNIE R..NICE KURSOWE",
+   "grupa": "przychody",
+   "znacznik": "RPGV_RKJV_RK",
+   "pewnosc": "wysoka",
+   "dlaczego": "przychody finansowe: dodatnie różnice kursowe"
+  },
+  {
+   "nazwa_regex": "ODSETKI OTRZYMANE",
+   "grupa": "przychody",
+   "znacznik": "RPGII_RKJII_POZ",
+   "pewnosc": "srednia",
+   "dlaczego": "przychody finansowe: odsetki — od jednostek powiązanych to RPGII_RKJII_POW"
+  },
+  {
+   "nazwa_regex": "PRZYCHODY FINAN|POZOSTALE PRZYCHODY FINA",
+   "grupa": "przychody",
+   "znacznik": "RPGV_RKJV_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "przychody finansowe: inne"
+  },
+  {
+   "nazwa_regex": "ZYSKI NADZWYCZAJNE",
+   "znacznik": "RPDIV_RKGIV_P",
+   "pewnosc": "srednia",
+   "dlaczego": "od 2016 r. zyski nadzwyczajne wykazuje się w pozostałych przychodach operacyjnych"
+  },
+  {
+   "nazwa_regex": "ROZW.*REZERW|ROZW.*GWAR|SPLATY NAL|WSPARCIE SPRZEDAZY|USLUGI\\s+FINANSOWE|REZERWA NA BONUSY|POZO.TALE PRZYCHODY OPER|INNE POZOST.PRZYCH.OPERA|INNE POZ.PRZYC.OPER",
+   "grupa": "przychody",
+   "znacznik": "RPDIV_RKGIV_P",
+   "pewnosc": "srednia",
+   "dlaczego": "pozostałe przychody operacyjne: inne"
+  },
+  {
+   "nazwa_regex": "ZMIANA STANU PRODUKT",
+   "znacznik": "RPAII",
+   "pewnosc": "wysoka",
+   "dlaczego": "zmiana stanu produktów"
+  },
+  {
+   "nazwa_regex": "INV VAR|ODCHYLENIA",
+   "grupa": "zapasy",
+   "znacznik": "BABI3_O",
+   "pewnosc": "srednia",
+   "dlaczego": "odchylenia od cen ewidencyjnych — dla produktów gotowych; dla materiałów BABI1_O, dla towarów BABI4_O"
+  },
+  {
+   "nazwa_regex": "PALIWO|MAT\\.DO NAPRAW|MATERIALY BIUROWE|WYPOSAZENIE BIURA|MATERIALY DO KOMPUT|WORK CLOTHING|ODZIEZ",
+   "grupa": "koszty",
+   "znacznik": "RPBII",
+   "pewnosc": "wysoka",
+   "dlaczego": "zużycie materiałów i energii"
+  },
+  {
+   "nazwa_regex": "OCHRONA|PRZEGLADY|NAPRAWY|UTRZYMANIE IT|AUDYT|MEETING|OPLATY NOTARIAL|BUCHER|NAJEM|CZYNSZ|SERWIS",
+   "grupa": "koszty",
+   "znacznik": "RPBIII",
+   "pewnosc": "wysoka",
+   "dlaczego": "usługi obce"
+  },
+  {
+   "nazwa_regex": "OPLATY SADOWE|OPLATY SKARBOWE|OPLATY ADMIN",
+   "grupa": "koszty",
+   "znacznik": "RPBIV_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "podatki i opłaty (pozostałe)"
+  },
+  {
+   "nazwa_regex": "ODPIS NA ZAPASY|ODPIS.*ZAPAS|DLUGI NIEPEWNE",
+   "grupa": "koszty",
+   "znacznik": "RPEII_RKHII",
+   "pewnosc": "wysoka",
+   "dlaczego": "pozostałe koszty operacyjne: aktualizacja wartości aktywów niefinansowych"
+  },
+  {
+   "nazwa_regex": "WART\\.SPRZE|WARTOSC SPRZE",
+   "grupa": "koszty",
+   "znacznik": "RPBVIII_RKBII_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "wartość sprzedanych towarów i materiałów (dla pozostałych jednostek)"
+  },
+  {
+   "nazwa_regex": "^SALES |SALES FG|SALES PARTS|SPRZEDA.CZ|SPRZEDAZ POZOSTALA",
+   "grupa": "przychody",
+   "znacznik": "RPAIV_RKAII_POZ",
+   "pewnosc": "wysoka",
+   "dlaczego": "przychody netto ze sprzedaży towarów i materiałów od pozostałych jednostek"
+  },
+  {
+   "nazwa_regex": "KOREKTY-BONUSY|KOREKTY BONUS|RABAT|BONUS",
+   "grupa": "przychody",
+   "znacznik": "RPAIV_RKAII_POZ",
+   "pewnosc": "srednia",
+   "dlaczego": "korekty sprzedaży zmniejszają tę samą pozycję przychodów (wartości ujemne)"
+  },
+  {
+   "nazwa_regex": "FAKTURY WEWNETRZNE VAT",
+   "grupa": "rozrachunki",
+   "znacznik": "BPBIII3b",
+   "pewnosc": "srednia",
+   "dlaczego": "rozrachunki publicznoprawne z tytułu VAT (po stronie należności: BABII3b)"
+  },
+  {
+   "nazwa_regex": "KAUCJE-SAMOCHOD|KAUCJE WPLACONE|WPLACONE KAUCJE",
+   "znacznik": "BABII3c_W",
+   "pewnosc": "niska",
+   "dlaczego": "kaucje wpłacone — inne należności; jeśli powyżej 12 mies., pozycja długoterminowa"
+  },
+  {
+   "nazwa_regex": "MIEDZYOK.*ROZL.*KOSZT",
+   "znacznik": "BABIV",
+   "pewnosc": "wysoka",
+   "dlaczego": "krótkoterminowe rozliczenia międzyokresowe (czynne)"
+  },
+  {
+   "nazwa_regex": "INV VAR",
+   "grupa": "koszty",
+   "znacznik": "RPBVIII_RKBII_POZ",
+   "pewnosc": "srednia",
+   "dlaczego": "odchylenie wartości zapasów odniesione w koszty sprzedanych towarów — do potwierdzenia z polityką rachunkowości"
+  },
+  {
+   "nazwa_regex": "WYKS.*ODPIS|DECR.*DOUBTFUL|ROZW.*ODPIS",
+   "grupa": "przychody",
+   "znacznik": "RPDIII_RKGIII",
+   "pewnosc": "wysoka",
+   "dlaczego": "pozostałe przychody operacyjne: aktualizacja wartości aktywów niefinansowych (rozwiązanie odpisu)"
+  },
+  {
+   "nazwa_regex": "ODPIS NA ZAPASY",
+   "grupa": "przychody",
+   "znacznik": "RPDIII_RKGIII",
+   "pewnosc": "niska",
+   "dlaczego": "UWAGA: nazwa mówi o koszcie, a konto leży w zespole przychodów — sprawdzić, czy to konto korygujące odpis"
+  },
+  {
+   "nazwa_regex": "TRANSFER PRICE ADJUST",
+   "grupa": "przychody",
+   "znacznik": "RPDIV_RKGIV_P",
+   "pewnosc": "niska",
+   "dlaczego": "korekta cen transferowych po stronie przychodów — ujęcie zależy od charakteru korekty"
+  },
+  {
+   "nazwa_regex": "DODATNIE R..NICE",
+   "grupa": "przychody",
+   "znacznik": "RPGV_RKJV_RK",
+   "pewnosc": "wysoka",
+   "dlaczego": "przychody finansowe: dodatnie różnice kursowe"
+  }
+ ]
+}

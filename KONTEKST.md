@@ -158,7 +158,7 @@ Stara notatka: cena była **do ustalenia.** Na stronie stoi „wycena po obejrze
 z ceną podaną z góry" — to jest uczciwe, ale kwoty nadal nie ma i trzeba ją wymyślić
 przed pierwszą rozmową.
 
-## Produkt nr 2 w kolejce: JPK_CIT Kontrola (pomysł z 23.08.2026 — NIE zaczynać przed pierwszym płacącym klientem KSeF)
+## Produkt nr 2: generator JPK_CIT (JPK_KR_PD) — w budowie od 28.08.2026
 
 Nowy obowiązek JPK_CIT (struktura JPK_KR_PD): najwięksi podatnicy wysłali księgi za 2025
 do 31.07.2026 (termin przedłużony rozporządzeniem z 16.02.2026 do końca 7. miesiąca po
@@ -166,13 +166,26 @@ roku podatkowym); **druga fala — księgi za 2026, raportowane w 2027 — to pr
 wszyscy podatnicy CIT będący VAT-owcami**, czyli klienci biur rachunkowych. Trzecia fala
 rok później.
 
-Koncepcja narzędzia (ta sama architektura: przeglądarka, zero serwera): wczytanie XML
-JPK_KR_PD przed wysyłką i kontrola — obroty vs salda, BO = BZ poprzedniego roku,
-ciągłość numeracji dziennika, kompletność znaczników podatkowych przy kontach
-(największy ból: mapowanie planu kont na słownik MF), uzgodnienie z ZOiS z Excela.
+**Koncepcja zmieniona po odpowiedzi Alicji: to GENERATOR, nie kontroler.** Z eksportu
+dziennika zapisów za rok + planu kont narzędzie ma złożyć JPK_KR_PD: pogrupować konta
+do wyniku i policzyć podatek. Etap 2: środki trwałe (JPK_ST_KR). Architektura bez zmian
+(przeglądarka, zero serwera). Cały plan produktu: `cit/PLAN.md`, struktura pliku:
+`cit/STRUKTURA-KR_PD.md`.
 
-Pierwszy krok (bez kodu): zapytać Alicję, czy obsługuje spółki CIT i co w JPK_CIT boli.
-Budowa najwcześniej zimą 2026/27 — biura zaczną szukać narzędzi pod koniec 2026.
+**Stan na 28.08.2026:** dokumentacja MF i plan kont (508 kont) dostarczone. Struktura
+rozpisana, słowniki znaczników wyciągnięte (`cit/slowniki/`), silnik wstępnego mapowania
+kont na znaczniki działa — 97% kont z propozycją na prawdziwym planie kont.
+**Blokuje jedno: eksport dziennika zapisów za 2025.** Bez niego nie ma wyniku.
+
+Trzy ustalenia, o których nie zapominać:
+- w JPK_KR_PD **nie ma pola na wynik ani na kwotę podatku** — plik to księgi + osiem
+  korekt (K_1–K_8). Kwotę podatku liczymy jako pomoc do CIT-8, nie jako element raportu;
+- `wersjaSchemy` = **`1-1`** (pierwsze wydanie broszury podaje 1-0 — plik byłby odrzucony);
+- znacznik konta jest **obowiązkowy** w ZOiS7 (jednostki pozostałe, słownik 244 pozycji),
+  ale **opcjonalny** w ZOiS8 (MSSF) — u każdego klienta trzeba zapytać, który wariant.
+
+**Dane klientów nigdy nie wchodzą do repo.** Plan kont, dzienniki, ZOiS-y i wyniki
+mapowania zostają poza gitem — w repo są tylko reguły, słowniki MF i skrypty.
 
 ## Zasady, których się trzymamy
 
