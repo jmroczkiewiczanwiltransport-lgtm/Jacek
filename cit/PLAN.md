@@ -261,7 +261,7 @@ Wdrożone w regułach tego samego dnia:
 To jest mechanizm wielokrotnego użytku: każdy kolejny klient podaje własne
 tokeny grupy i dostaje ten sam podział bez pisania reguł od nowa.
 
-### Czego nadal brakuje, żeby policzyć wynik
+### Czego brakowało, żeby policzyć wynik (stan przed 29.08.2026)
 
 1. **Eksport dziennika zapisów za 2025** — bez tego nie ma ZOiS, nie ma sum
    kontrolnych, nie ma wyniku. To jest jedyna rzecz naprawdę blokująca.
@@ -275,6 +275,104 @@ tokeny grupy i dostaje ten sam podział bez pisania reguł od nowa.
    600000, 601010, 409100, 409800, 460000, 467490, 476000 i trzy odpisy) —
    pytanie do każdego to samo: czy konto ma własne zapisy na ostatnim poziomie
    analitycznym. Jedyne pytanie z listy bez odpowiedzi.
+
+## Test na prawdziwych księgach — 29.08.2026
+
+Alicja dosłała komplet za 2025: **dziennik zapisów (290 436 wierszy)**,
+zestawienie sald i obrotów (xlsx + wydruk PDF z systemu) oraz dwa arkusze
+robocze — koszty niestanowiące KUP i przychody niepodlegające opodatkowaniu,
+z gotowym wyliczeniem dochodu i podatku. Czyli wzorzec, na który mieliśmy
+wyjść co do grosza.
+
+### Co to za system
+
+Eksport z francuskiego ERP (nagłówki `NRCRONO`, `CPTGE`, `LICOFD`, `MTLIG`,
+dzienniki `ACH`/`VTE`/`RGT`/`AUX`/`SLD`/`OUV`). **Nazwy kont w dzienniku są po
+angielsku, a w planie kont po polsku** — parametr języka eksportu ma warianty
+FR/DE/US/ES i polskiego wśród nich nie ma. Wniosek dla generatora: nazwa konta
+do pola `S_2` musi iść z planu kont, nie z dziennika, a reguły mapowania muszą
+patrzeć na obie wersje nazwy.
+
+Jakość danych wzorowa: suma wszystkich kwot **0,00 co do grosza**, zero
+zapisów poza rokiem, bilans otwarcia zbilansowany. Kwota jest w jednej
+kolumnie ze znakiem (dodatnia = Wn, ujemna = Ma) — do `Z_4` i `Z_7` trzeba ją
+rozdzielić.
+
+### Uzgodnienie z ich zestawieniem sald i obrotów
+
+Konto po koncie zgadza się wszystko poza **10 kontami, i na każdym z nich
+różnica jest identyczna po stronie Wn i Ma** — czyli to zapisy, które się
+znoszą (rozliczenia, storna), a ich raport je zwija. Największy taki przypadek
+to przeksięgowanie wyniku 891000 → 120000 na **4 313 115,24**, które okazało
+się dokładnym sprawdzianem: wynik brutto 5 696 635,24 minus zaksięgowany
+podatek 1 383 520,00 daje dokładnie tę kwotę. Księgi się spinają.
+
+### Wynik i podatek policzone z dziennika
+
+| | ich wyliczenie | z dziennika | różnica |
+|---|---|---|---|
+| wynik brutto | 5 696 635,24 | **5 696 635,24** | **0,00** |
+| korekty podatkowe | 2 148 114,00 | 2 098 275,10 | −49 838,90 |
+| dochód | 7 844 749,24 | 7 794 910,34 | −49 838,90 |
+| podatek 19% | 1 490 502,36 | 1 481 032,96 | −9 469,40 |
+
+**Wynik księgowy trafiony co do grosza.** Dochód różni się o 0,64%, i cały ten
+rozjazd to **cztery nazwane pozycje**, nie błąd rachunku:
+
+1. `623150` prezenty i darowizny (−125 006,97) — wybierają pojedyncze pozycje
+   z konta reklamowego. Narzędzie nie ma jak tego zgadnąć z nazwy konta.
+2. `661500` odsetki cash pool (+75 047,69) — wyłączają część konta
+   (limit kosztów finansowania dłużnego), my liczyliśmy całe.
+3. `658010` pozostałe koszty NKUP (+13 578,07) — też część konta.
+4. `758010` przychody NKUP (−13 457,70) — **nazwa konta mówi NKUP, a w ich
+   zestawieniu tej pozycji nie ma.** Pytanie do księgowej, nie nasz błąd.
+
+### Ile da się policzyć automatycznie
+
+Z 24 pozycji korekt podatkowych **21 wychodzi co do grosza z samego salda
+konta** — czyli ze znacznika przy koncie, bez żadnej pracy ręcznej. Po stronie
+przychodów **wszystkie 8 pozycji to całe konta**, suma zgadza się dokładnie:
+−7 751 201,34.
+
+Zostają **3 konta, na których NKUP to tylko część zapisów**. To definiuje
+brakującą funkcję narzędzia: przy koncie ze znacznikiem podatkowym księgowa
+musi móc albo przyjąć całe saldo, albo **oznaczyć pojedyncze wiersze dziennika**
+— i to oznaczenie ma się zapamiętać na kolejny rok. Bez tego nie ma dokładnego
+podatku, a z tym mamy 100%.
+
+### Poprawki reguł wymuszone przez prawdziwe księgi
+
+- Znak korekty: konto wyłączone z podatku koryguje dochód o **swoje saldo ze
+  znakiem**, bez przypadków szczególnych. Pierwsza wersja brała wartość
+  bezwzględną i myliła się o 1,1 mln — na kontach rezerw, gdzie utworzenie
+  i rozwiązanie idą w przeciwne strony, oraz na odwróceniu amortyzacji
+  niekosztowej z lat ubiegłych (saldo Ma na koncie kosztowym).
+- `VAT niepodlegający odliczeniu` to zwykle **KUP** — reguła nie może łapać
+  samego „nie podlega", musi wymagać wprost NKUP. Konto 635200 było łapane
+  błędem, a księgowa go nie wyłącza.
+- Reguły znaczników podatkowych rozpoznają teraz nazwy **angielskie**
+  (`NOT DED`, `NON DEDUCT`, `INV RESERVE`, `DOUBTFUL`, `PROVISION`, `REVERSAL`),
+  bo tak nazywa konta zagraniczny ERP.
+- Rezerwy, odpisy i wyceny bilansowe dostają `PD5` (różnica przejściowa),
+  a nie `PD4` — odwracają się w latach następnych.
+
+### Znalezione przy okazji
+
+- **5 kont jest w dzienniku, a nie ma ich w planie kont** (`623300`, `707112`,
+  `707222`, `707412`, `707542` — sprzedaż eksportowa i wynajem powierzchni
+  targowej). Do pliku JPK muszą trafić razem ze znacznikami, więc plan kont
+  trzeba uzupełnić. Sumy niewielkie, ale plik bez nich byłby niekompletny.
+- Przychody i koszty w ich arkuszu roboczym są o **845 169,48** wyższe niż
+  obroty kont — dokładnie tyle po obu stronach. Na wynik i podatek to nie
+  wpływa (wynik brutto zgadza się co do grosza), ale warto wiedzieć, skąd.
+
+### Narzędzie
+
+`cit/narzedzia/uzgodnienie-wyniku.py` — z dziennika i znaczników liczy wynik
+księgowy, pozycje `K_1`–`K_8` węzła RPD, dochód i podatek (19% i 9%),
+porównuje ze wzorcem księgowej i wypisuje konta spoza planu kont.
+To jest jądro generatora; brakuje mu jeszcze złożenia XML i oznaczania
+pojedynczych wierszy.
 
 ## Cennik (szkic — do decyzji przy premierze)
 

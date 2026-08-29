@@ -31,32 +31,46 @@
  },
  "reguly_pd": [
   {
-   "nazwa_regex": "NKUP|NIEKOSZT|NIE\\s*PODL",
-   "kontekst": "koszty",
-   "znacznik": "PD4",
-   "pewnosc": "srednia",
-   "dlaczego": "nazwa konta oznacza koszt niestanowiący KUP; PD4 = różnica trwała, PD5 = różnica przejściowa (do rozstrzygnięcia przez księgową)"
-  },
-  {
-   "nazwa_regex": "NKUP|NIEPODLEG",
-   "kontekst": "przychody",
-   "znacznik": "PD1",
-   "pewnosc": "srednia",
-   "dlaczego": "nazwa konta oznacza przychód nieopodatkowany; PD1 = różnica trwała, PD2 = niepodlegający w roku bieżącym"
-  },
-  {
-   "nazwa_regex": "REZERW",
+   "nazwa_regex": "REZERW|PROVISION|WARRANTY RESERVE|ODPIS NA ZAPAS|INV RESERVE|DOUBTFUL|ODPIS AKTUAL|WYCEN.*BILANSOW|FX LOSS NOT DED",
    "kontekst": "koszty",
    "znacznik": "PD5",
    "pewnosc": "srednia",
-   "dlaczego": "koszty utworzenia rezerw są zwykle KUP dopiero po realizacji — różnica przejściowa"
+   "dlaczego": "rezerwa, odpis albo wycena bilansowa — koszt nieuznany w roku bieżącym, odwracalny w latach następnych (różnica przejściowa)"
   },
   {
-   "nazwa_regex": "BADAWCZ|B\\+R|ROZWOJ",
+   "nazwa_regex": "NKUP|NIEKOSZT|NOT\\s*DED|NON\\s*DEDUCT|NOT\\s*TAX\\s*DED|PFRON|DAROWIZN|PREZENT",
+   "kontekst": "koszty",
+   "znacznik": "PD4",
+   "pewnosc": "srednia",
+   "dlaczego": "koszt niestanowiący KUP — różnica trwała; jeśli w kolejnych latach stanie się kosztem podatkowym, właściwy jest PD5"
+  },
+  {
+   "nazwa_regex": "ODSETKI.*CASH POOL|INTEREST.*CASH POOL|CIENKA KAPITAL|THIN CAP",
+   "kontekst": "koszty",
+   "znacznik": "PD5",
+   "pewnosc": "niska",
+   "dlaczego": "odsetki od finansowania wewnątrzgrupowego — limit kosztów finansowania dłużnego; zwykle tylko CZĘŚĆ konta jest NKUP, więc wymaga wskazania kwoty"
+  },
+  {
+   "nazwa_regex": "BADAWCZ|B\\+R|PRACE ROZWOJ",
    "kontekst": "koszty",
    "znacznik": "PD7",
    "pewnosc": "niska",
    "dlaczego": "możliwa ulga B+R — tylko jeśli spółka ją stosuje"
+  },
+  {
+   "nazwa_regex": "WYKS|ROZWI.ZANIE|REVERS|DECR.*RESERVE|DECR.*DEPRECIAT|ROZW\\.|REZERWA NA BONUS|PROV.*REBATE|PROV.*BONUS",
+   "kontekst": "przychody",
+   "znacznik": "PD2",
+   "pewnosc": "srednia",
+   "dlaczego": "rozwiązanie rezerwy albo odpisu, którego utworzenie nie było KUP — przychód niepodlegający opodatkowaniu w roku bieżącym"
+  },
+  {
+   "nazwa_regex": "NKUP|NIEPODLEG|NOT\\s*TAX|NIE\\s*STANOWI",
+   "kontekst": "przychody",
+   "znacznik": "PD1",
+   "pewnosc": "srednia",
+   "dlaczego": "przychód nieopodatkowany — różnica trwała; jeśli tylko przesunięty w czasie, właściwy jest PD2"
   }
  ],
  "reguly_s121": [
