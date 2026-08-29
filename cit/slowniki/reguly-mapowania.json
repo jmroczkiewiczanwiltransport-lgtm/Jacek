@@ -527,11 +527,18 @@
    "dlaczego": "koszty utworzenia rezerw — pozycja zależy od tytułu rezerwy"
   },
   {
-   "nazwa_regex": "PODATEK DOCHODOWY|AKTYWOWANY.*PDOP",
+   "nazwa_regex": "ODROCZ|AKTYWOWANY",
+   "grupa": "koszty",
+   "znacznik": "RPJ_RKM_O",
+   "pewnosc": "srednia",
+   "dlaczego": "podatek dochodowy odroczony (aktywowany PDOP / odroczenie)"
+  },
+  {
+   "nazwa_regex": "PODATEK DOCHODOWY|^PDOP",
    "grupa": "koszty",
    "znacznik": "RPJ_RKM_B",
-   "pewnosc": "srednia",
-   "dlaczego": "podatek dochodowy bieżący; część odroczona to RPJ_RKM_O"
+   "pewnosc": "wysoka",
+   "dlaczego": "podatek dochodowy bieżący"
   },
   {
    "nazwa_regex": "OBOWIAZKOWE OBCIAZENIA",
@@ -716,5 +723,33 @@
    "pewnosc": "wysoka",
    "dlaczego": "przychody finansowe: dodatnie różnice kursowe"
   }
- ]
+ ],
+ "powiazane": {
+  "_opis": "Konta transakcji z jednostkami powiązanymi. Znaczniki MF rozdzielają część pozycji na wariant dla jednostek powiązanych i dla pozostałych — po rozpoznaniu konta powiązanego podmieniamy znacznik na wariant powiązany. Tokeny podaje klient; poniższe wskazała główna księgowa 28.08.2026.",
+  "tokeny": [
+   "KUHN",
+   "KHU",
+   "CASH POOL",
+   "WEWNATRZGRUP"
+  ],
+  "tokeny_slowo": [
+   "IC"
+  ],
+  "grupy_bez_podzialu": [
+   "zapasy"
+  ],
+  "_grupy_bez_podzialu_opis": "Pozycje zapasów nie mają w bilansie podziału na powiązane i pozostałe — konta magazynowe z kodem segmentu powiązanego zostają bez zmiany.",
+  "zamiana": {
+   "BABII3a_D12": "BABII1a_D12",
+   "BABII3a_P12": "BABII1a_P12",
+   "BABII3a_D12_A": "BABII1a_D12_A",
+   "BABII3a_P12_A": "BABII1a_P12_A",
+   "BABII3c_W": "BABII1b",
+   "BABII3c_A": "BABII1b_A",
+   "BPBIII3a": "BPBIII1a_D12",
+   "BPBIII3i": "BPBIII1b",
+   "BPBII3a": "BPBII1"
+  },
+  "_zamiana_opis": "Pozycje bilansu, gdzie wariant powiązany ma inny kod, a nie samą końcówkę. W rachunku wyników wystarczy zamiana końcówki _POZ na _POW."
+ }
 }

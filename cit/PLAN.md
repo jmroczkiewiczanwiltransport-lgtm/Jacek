@@ -231,6 +231,36 @@ i stają się mapowaniem tej firmy — w kolejnych latach wczytywanym gotowym.
 To jest jednocześnie pierwsza rzecz do pokazania na spotkaniu: „wasze 508 kont,
 97% przypisane, zostaje 13 do rozmowy".
 
+### Odpowiedzi Alicji (28.08.2026) — i co z nich wynika
+
+| Pytanie | Odpowiedź | Skutek |
+|---|---|---|
+| ZOiS7 czy ZOiS8 | **ZOiS7** | znacznik obowiązkowy przy każdym koncie, słownik 244 pozycji — pełne mapowanie 508 kont jest robotą do wykonania, nie opcją |
+| kwota podatku | „wychodzi z kont, pracujemy także na odroczonym" | narzędzie liczy podatek **bieżący i odroczony**; rozdzielone znaczniki `RPJ_RKM_B` i `RPJ_RKM_O` |
+| naprawa nazw kont | „do poprawy opisy kont" | naprawiamy kodowanie, z podglądem przed zapisem |
+| konto 397140 | „do zmiany, podał poprawnie" | błąd potwierdzony po ich stronie, poprawią u siebie |
+| jednostki powiązane | „powiązane Kuhn, cash pool" | tokeny `KUHN`, `KHU`, `CASH POOL`, `IC`, `WEWNATRZGRUP` wpisane do reguł |
+| konta techniczne | bez odpowiedzi | 13 kont nadal otwarte — do rozmowy |
+| pliki `.xsd` | właściciel: „muszę ściągnąć, mam tylko pdf" | do dobrania; podatki.gov.pl jest niedostępne z naszego środowiska (proxy 403) |
+
+Wdrożone w regułach tego samego dnia:
+
+- **Podatek bieżący vs odroczony.** Konto „Podatek dochodowy" → `RPJ_RKM_B`,
+  „AKTYWOWANY PDOP" → `RPJ_RKM_O`. Aktywo i rezerwa z tytułu odroczonego
+  podatku trafiają na `BAAV1_W` i `BPBI1`.
+- **Przełącznik jednostek powiązanych.** Nowa sekcja `powiazane` w regułach:
+  lista tokenów od klienta + tablica zamian. Po rozpoznaniu konta powiązanego
+  znacznik przechodzi na wariant powiązany — w rachunku wyników przez zamianę
+  końcówki `_POZ` → `_POW`, w bilansie przez tablicę (pozycje powiązane mają
+  tam inne kody, nie samą końcówkę). Pozycje bez wariantu powiązanego (koszty
+  rodzajowe, zapasy) zostają nietknięte — to nie pomyłka, MF ich nie dzieli.
+  Na planie kont Alicji przełączyło **10 kont**: sprzedaż i wartość sprzedanych
+  towarów w segmencie KHU (Kuhn), korekty bonusowe, odsetki cash poolingu,
+  zobowiązania wobec Kuhn.
+
+To jest mechanizm wielokrotnego użytku: każdy kolejny klient podaje własne
+tokeny grupy i dostaje ten sam podział bez pisania reguł od nowa.
+
 ### Czego nadal brakuje, żeby policzyć wynik
 
 1. **Eksport dziennika zapisów za 2025** — bez tego nie ma ZOiS, nie ma sum
@@ -241,8 +271,10 @@ To jest jednocześnie pierwsza rzecz do pokazania na spotkaniu: „wasze 508 kon
 4. **Pliki `.xsd`** (nie PDF) — do automatycznej walidacji gotowego pliku.
    PDF wystarcza do generowania, ale walidacja schemą jest tańsza niż debugowanie
    odrzuconego pliku. Do dobrania z BIP MF.
-5. Odpowiedzi na pytania z listy dla Alicji (ZOiS7 czy ZOiS8, naprawa nazw kont,
-   podział na jednostki powiązane, konta techniczne).
+5. Decyzja co do **13 kont technicznych i zbiorczych** (580000, 580001, 400000,
+   600000, 601010, 409100, 409800, 460000, 467490, 476000 i trzy odpisy) —
+   pytanie do każdego to samo: czy konto ma własne zapisy na ostatnim poziomie
+   analitycznym. Jedyne pytanie z listy bez odpowiedzi.
 
 ## Cennik (szkic — do decyzji przy premierze)
 

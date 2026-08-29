@@ -211,6 +211,38 @@ def sparuj_korekty(wynik, opisy):
                             "dostępną — sprawdzić obowiązkowo"))
 
 
+def oznacz_powiazane(wynik, reguly, opisy):
+    """Przełącza znacznik na wariant dla jednostek powiązanych.
+
+    Znaczniki MF rozdzielają część pozycji (należności, zobowiązania, sprzedaż,
+    wartość sprzedanych towarów, odsetki) na jednostki powiązane i pozostałe.
+    Rozpoznajemy je po tokenach z planu kont, które wskazuje klient — nazwa
+    spółki z grupy, oznaczenie cash poolingu, skrót segmentu.
+    """
+    kfg = reguly.get("powiazane")
+    if not kfg:
+        return
+    wzor = re.compile("|".join(
+        [re.escape(t) for t in kfg.get("tokeny", [])]
+        + [r"\b%s\b" % re.escape(t) for t in kfg.get("tokeny_slowo", [])]), re.I)
+    zamiana = kfg.get("zamiana", {})
+    bez_podzialu = set(kfg.get("grupy_bez_podzialu", []))
+    for w in wynik:
+        if w["grupa"] in bez_podzialu or not wzor.search(w["nazwa"]):
+            continue
+        stary = w["s121"]
+        nowy = zamiana.get(stary)
+        if not nowy and stary.endswith("_POZ"):
+            nowy = stary[:-4] + "_POW"
+        if not nowy or nowy not in opisy:
+            # pozycja bez wariantu powiązanego (np. koszty rodzajowe, zapasy)
+            continue
+        w["s121"] = nowy
+        w["opis_s121"] = opisy[nowy]
+        w["dlaczego"] = ("jednostka powiązana (rozpoznana po nazwie konta) — wariant „%s” "
+                         "zamiast „%s”; %s" % (nowy, stary, w["dlaczego"]))
+
+
 def bazowy_znacznik(kod):
     return re.sub(r"_(W|A|U|O)$", "", kod)
 
@@ -247,6 +279,7 @@ def main():
         })
 
     sparuj_korekty(wynik, opisy)
+    oznacz_powiazane(wynik, reguly, opisy)
     zapisz(wyjscie, wynik, nazwa_profilu, profil)
     statystyka(wynik, profil)
 
@@ -322,6 +355,10 @@ def statystyka(wynik, profil):
     print("\nKont z konkretnym znacznikiem: %d (%.0f%%)" % (znak, 100.0 * znak / n))
     print("Kont wymagających decyzji („?” albo brak reguły): %d" % (n - znak))
     print("Kont ze znacznikiem podatkowym PD: %d" % sum(1 for w in wynik if w["s123"]))
+    pow_ = [w for w in wynik if "jednostka powiązana" in w["dlaczego"]]
+    print("Kont przełączonych na wariant jednostek powiązanych: %d" % len(pow_))
+    for w in pow_:
+        print("   %-8s %-32s -> %s" % (w["konto"], w["nazwa"][:32], w["s121"]))
     braki = [w for w in wynik if w["pewnosc"] == "brak"]
     if braki:
         print("\nKonta bez żadnej reguły (do uzupełnienia reguł albo ręcznie):")
