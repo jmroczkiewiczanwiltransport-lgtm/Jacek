@@ -72,9 +72,15 @@ przed wysyłką. Jeśli nie masz pod ręką, dobiorę je sam.
 
 ---
 
-## Mail nr 1 — po policzeniu roku 2025 (wysłany 29.08.2026)
+## Mail — po policzeniu roku 2025 (29.08.2026)
 
-Załącznik: `PROPOZYCJA-MAPOWANIA.xlsx` (513 kont).
+Załączniki: `PROPOZYCJA-MAPOWANIA.xlsx` (513 kont) i `UZGODNIENIE-PODATKU-2025.xlsx`.
+
+Wersja obowiązująca. Wcześniejsza wiadomość została wycofana (właściciel poprosił
+księgową o jej zignorowanie), więc ten mail **musi bronić się sam** — stąd zdanie
+porządkujące na wstępie i akapit tłumaczący, czym są załączniki i że dwie kolumny
+arkusza są dla księgowej.
+
 Uwaga: ten mail może trafić dalej niż do księgowej — do dyrektora finansowego
 albo do centrali — dlatego nie ma w nim ceny ani niczego sprzedażowego.
 Rozmowa o pieniądzach idzie osobnym wątkiem, po potwierdzeniu liczb.
@@ -84,7 +90,9 @@ Rozmowa o pieniądzach idzie osobnym wątkiem, po potwierdzeniu liczb.
 ```
 Pani Alicjo,
 
-przeliczyłem cały 2025 rok z przesłanych ksiąg i mam pierwszy konkretny wynik.
+ta wiadomość zastępuje poprzednią — proszę pracować na niej, jest kompletna.
+
+Przeliczyłem cały 2025 rok z przesłanych ksiąg i mam pierwszy konkretny wynik.
 
 Wynik brutto: 5 696 635,24 zł — dokładnie tyle, co w Państwa wyliczeniu.
 Różnica zero.
@@ -115,6 +123,20 @@ dokładnie -7 751 201,34. Trzy konta wymagają wskazania pojedynczych zapisów
 — i to właśnie dopisuję do narzędzia, tak żeby raz wskazane pozycje
 zapamiętywały się na kolejny rok.
 
+W załączeniu dwie rzeczy.
+
+Pierwsza to mapowanie Państwa planu kont na znaczniki Ministerstwa Finansów
+— 513 kont, czyli 508 z planu i pięć, które są w księgach, a w planie ich nie
+ma. Przy każdym koncie jest proponowany znacznik, jego opis wprost ze słownika
+MF, ocena pewności i zdanie „dlaczego tak". Kolorem żółtym i pomarańczowym
+oznaczyłem pozycje wymagające sprawdzenia. Dwie ostatnie kolumny są dla Pani
+— to, co Pani tam wpisze, ma pierwszeństwo przed moją propozycją i zostaje
+zapamiętane jako mapowanie Państwa spółki, więc w kolejnym roku wczytuje się
+gotowe, bez klikania od nowa. Konkretny znacznik dostało 499 kont z 513.
+
+Druga to uzgodnienie wyniku i podatku — te same liczby co wyżej, ale pozycja
+po pozycji, żeby dało się je sprawdzić bez zaufania mi na słowo.
+
 O co proszę teraz — jeden eksport.
 
 Plik, który Pani przysłała, to księga główna (grand livre). Do zestawienia
@@ -141,7 +163,7 @@ Do nagłówka pliku potrzebuję: NIP, pełną nazwę, REGON, adres, kod urzędu
 skarbowego, informację czy rok podatkowy pokrywa się z obrotowym oraz czy
 spółka stosuje CIT estoński albo MSSF.
 
-W księgach jest pięć kont, których nie ma w planie kont: 623300, 707112,
+Pięć kont, których nie ma w planie kont, to: 623300, 707112,
 707222, 707412 i 707542 — wynajem powierzchni targowej i sprzedaż
 eksportowa. Kwoty niewielkie, ale do pliku muszą trafić razem ze
 znacznikami, więc plan kont wymaga uzupełnienia.
@@ -155,9 +177,9 @@ nadrzędne. Jest wymagane przy każdym koncie, a Państwa plan jest płaski.
 Na razie przyjmuję konto syntetyczne z tego samego zespołu, ale to wymaga
 Pani potwierdzenia.
 
-W załączeniu zaktualizowane mapowanie — już 513 kont, bo doszło tych pięć
-z ksiąg, a reguły rozpoznają teraz i polską, i angielską nazwę konta, bo
-eksport z Państwa systemu opisuje konta po angielsku.
+Jeszcze jedna uwaga techniczna: eksport z Państwa systemu opisuje konta po
+angielsku, a plan kont jest po polsku, więc do pliku JPK nazwy biorę z planu
+kont, a reguły rozpoznają obie wersje.
 
 Pozdrawiam serdecznie,
 Jacek Mroczkiewicz
