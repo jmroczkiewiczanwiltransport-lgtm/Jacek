@@ -374,6 +374,61 @@ porównuje ze wzorcem księgowej i wypisuje konta spoza planu kont.
 To jest jądro generatora; brakuje mu jeszcze złożenia XML i oznaczania
 pojedynczych wierszy.
 
+## Generator XML i blokada na węźle Dziennik (29.08.2026, wieczór)
+
+`cit/narzedzia/generator-xml.py` składa plik: `Naglowek`, `Podmiot1`,
+`Kontrahent`, `ZOiS7` i `RPD`. Na księgach 2025 daje **286 kont w ZOiS
+i 2 472 kontrahentów**, a złożony węzeł ZOiS sam się kontroluje:
+obroty Wn = Ma (3 634 211 940,19) i salda Wn = Ma (463 755 844,49),
+co do grosza. Wyliczone `K_1`–`K_8` dają dokładnie tę samą korektę
+(2 098 275,10), co niezależne uzgodnienie wyniku — dwa narzędzia liczą to
+samo dwiema drogami.
+
+### Czego z tego eksportu NIE da się złożyć
+
+Plik, który dostaliśmy, to **księga główna (grand livre), nie dziennik**.
+Ma konto, datę, kwotę, opis i kod kontrahenta — i to wystarcza na ZOiS i RPD.
+Ale węzeł `Dziennik` **jest w schemie obowiązkowy** (`maxOccurs="unbounded"`
+bez `minOccurs="0"` — opcjonalny jest tylko `Kontrahent`), a wymaga pól,
+których w tym eksporcie nie ma:
+
+| Pole | Czego brakuje |
+|---|---|
+| `D_1` | numeru zapisu, który spina obie strony księgowania — sprawdzone: klucz `(dziennik, NUECR)` **nie bilansuje się do zera w 59 932 z 64 496 przypadków**, więc nie jest identyfikatorem zapisu |
+| `D_4` | numeru dowodu — jest tylko opis, w którym numer czasem występuje, a czasem nie |
+| `D_5` | rodzaju dowodu księgowego |
+| `D_7`, `D_8` | daty sporządzenia dowodu i daty ujęcia w księgach — eksport ma **jedną** datę |
+| `D_9` | osoby odpowiedzialnej za treść zapisu |
+
+Wniosek: potrzebny **drugi eksport — dziennik (livre journal)**, nie księga
+główna. To standardowy raport w tym systemie. Bez niego nie ma poprawnego
+pliku, a mając go, mamy komplet: reszta jest policzona i sprawdzona.
+
+### Kolejność prac
+
+1. **Poprosić o eksport dziennika** za 2025 z numerem zapisu, numerem
+   i rodzajem dowodu, trzema datami i osobą odpowiedzialną. To jedyna
+   blokada techniczna.
+2. **Dane podmiotu** do nagłówka: NIP, pełna nazwa, REGON, adres, kod urzędu
+   skarbowego, czy rok podatkowy = obrotowy, czy stosują CIT estoński albo MSSF.
+3. **Oznaczanie pojedynczych wierszy** — dla trzech kont, na których NKUP to
+   część zapisów (623150, 661500, 658010). Bez tego dochód jest o 0,64% obok.
+4. **Cztery konta bez znacznika** (397120, 409100, 409800, 580001) i **pięć
+   kont z dziennika do dopisania w planie** (623300, 707112, 707222, 707412,
+   707542) — pytania do księgowej, nie robota programistyczna.
+5. **Walidacja schemą** — po zdobyciu plików `.xsd` (właściciel ściąga;
+   podatki.gov.pl jest niedostępne z naszego środowiska).
+6. **Przeniesienie do przeglądarki** — dopiero gdy plik przejdzie walidację.
+   Reguły i słowniki są już w plikach JSON, więc port to przepisanie logiki,
+   nie wymyślanie jej od nowa.
+
+### Pole, które wymaga decyzji księgowej
+
+`S_3` (konto nadrzędne) jest wymagane, a ich plan kont jest płaski — same
+konta sześciocyfrowe. Generator przyjmuje konto syntetyczne z tego samego
+zespołu, a gdy konto samo nim jest, jego trzycyfrowy symbol. To jedyne pole
+ZOiS, którego nie da się wyprowadzić z danych bez rozstrzygnięcia.
+
 ## Cennik (szkic — do decyzji przy premierze)
 
 Kotwica jak w KSeF: abonament za biuro / licencja jednorazowa. Księgi są

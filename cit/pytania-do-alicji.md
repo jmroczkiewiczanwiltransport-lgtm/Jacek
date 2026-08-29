@@ -72,6 +72,37 @@ przed wysyłką. Jeśli nie masz pod ręką, dobiorę je sam.
 
 ---
 
+## Prośba nr 2 — eksport dziennika (po analizie ksiąg 2025)
+
+Do wysłania od razu; to jedyna rzecz, która blokuje gotowy plik.
+
+```
+Alicja, policzyłem wszystko z Waszych ksiąg i wynik brutto wychodzi
+5 696 635,24 — czyli dokładnie tyle, co u Ciebie, co do grosza. Dochód
+wychodzi 7 794 910,34 przy Twoich 7 844 749,24 i całą różnicę umiem wskazać
+palcem: to cztery pozycje, o które muszę dopytać (osobna lista).
+
+Potrzebuję jeszcze jednego eksportu. To, co przysłałaś, to księga główna
+(grand livre) — świetnie się nadaje do zestawienia obrotów i sald i do
+wyliczenia podatku, ale struktura JPK wymaga osobnego węzła „Dziennik",
+a w nim pól, których w księdze głównej nie ma:
+
+- numer zapisu spinający obie strony księgowania (sprawdziłem: numer, który
+  jest w pliku, nie bilansuje się do zera przy 60 tys. zapisów, więc to nie
+  ten identyfikator),
+- numer dowodu i rodzaj dowodu,
+- trzy daty: operacji gospodarczej, sporządzenia dowodu i ujęcia w księgach
+  (w pliku jest jedna data),
+- osoba odpowiedzialna za treść zapisu.
+
+Czyli potrzebny jest raport „dziennik" (livre journal) za 2025, nie księga
+główna. W Waszym systemie to standardowy wydruk — najlepiej w xlsx albo csv.
+
+I druga rzecz, drobniejsza — dane do nagłówka pliku: NIP, pełna nazwa,
+REGON, adres, kod urzędu skarbowego, czy rok podatkowy pokrywa się
+z obrotowym oraz czy spółka stosuje CIT estoński albo MSSF.
+```
+
 ## Wersja na WhatsApp (skrócona, do wklejenia)
 
 Trzy wiadomości. Można wysłać 1 i 2 od razu, a pytania po jej odpowiedzi —

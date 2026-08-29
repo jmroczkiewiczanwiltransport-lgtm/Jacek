@@ -8,7 +8,11 @@ Wejście:  plan kont .xlsx (kolumna 1 = numer konta, kolumna 2 = nazwa)
 Wyjście:  .xlsx z propozycją do sprawdzenia przez księgową + statystyka na stdout
 
 Uruchomienie:
-  python3 propozycja-mapowania.py PLAN_KONT.xlsx PROPOZYCJA.xlsx [profil]
+  python3 propozycja-mapowania.py PLAN_KONT.xlsx PROPOZYCJA.xlsx [profil] [dziennik.csv]
+
+Podanie dziennika jest zalecane: dorzuca konta, które są w księgach, a nie ma
+ich w planie kont, i daje regułom drugą wersję nazwy konta (eksporty
+z zagranicznych ERP bywają w innym języku niż plan kont).
 
 profil: erp_zagraniczny_a (domyślny) albo pl_standard — decyduje, jaki zespół
 kont odpowiada jakiej grupie bilansowej. Zły profil = złe podpowiedzi, dlatego
@@ -70,7 +74,24 @@ def wczytaj_plan(sciezka):
         kod = str(w[0]).strip()
         if i == 1 and not re.match(r"^[0-9]", kod):
             continue  # wiersz nagłówka
-        konta.append({"wiersz": i, "konto": kod, "nazwa": napraw_nazwe(w[1] if len(w) > 1 else "")})
+        konta.append({"wiersz": i, "konto": kod,
+                      "nazwa": napraw_nazwe(w[1] if len(w) > 1 else ""), "nazwa2": ""})
+    return konta
+
+
+def dolacz_dziennik(konta, sciezka):
+    """Uzupełnia listę kont o te, które są w księgach, a nie ma ich w planie,
+    i dokłada nazwę z dziennika jako drugie źródło dla reguł."""
+    import csv
+    z_dziennika = {}
+    for r in csv.DictReader(open(sciezka, encoding="utf-8")):
+        z_dziennika.setdefault(r["CPTGE"], r["LICOFD"] or "")
+    znane = {k["konto"] for k in konta}
+    for k in konta:
+        k["nazwa2"] = z_dziennika.get(k["konto"], "")
+    for kod in sorted(set(z_dziennika) - znane):
+        konta.append({"wiersz": 0, "konto": kod, "nazwa": z_dziennika[kod],
+                      "nazwa2": "", "spoza_planu": True})
     return konta
 
 
@@ -78,12 +99,13 @@ def grupa_konta(kod, profil):
     return profil["zespoly"].get(kod[:1], "")
 
 
-def dopasuj(reguly, nazwa, grupa):
+def dopasuj(reguly, nazwy, grupa):
+    """Pierwsza reguła pasująca do którejkolwiek wersji nazwy konta."""
     for r in reguly:
         wymagana = r.get("grupa")
         if wymagana and wymagana != "*" and wymagana != grupa:
             continue
-        if re.search(r["nazwa_regex"], nazwa, re.I):
+        if any(n and re.search(r["nazwa_regex"], n, re.I) for n in nazwy):
             return r
     return None
 
@@ -253,11 +275,14 @@ def main():
     _, reguly, opisy = wczytaj_slowniki()
     profil = reguly["profile_planu_kont"][nazwa_profilu]
     konta = wczytaj_plan(wejscie)
+    if len(sys.argv) > 4:
+        konta = dolacz_dziennik(konta, sys.argv[4])
 
     wynik = []
     for k in konta:
         grupa = grupa_konta(k["konto"], profil)
-        tr = dopasuj(reguly["reguly_s121"], k["nazwa"], grupa)
+        nazwy = [k["nazwa"], k.get("nazwa2", "")]
+        tr = dopasuj(reguly["reguly_s121"], nazwy, grupa)
         znacznik = tr["znacznik"] if tr else "?"
         pewnosc = tr["pewnosc"] if tr else "brak"
         dlaczego = tr["dlaczego"] if tr else "żadna reguła nie pasuje — konto do ręcznego przypisania"
@@ -267,7 +292,7 @@ def main():
         for r in reguly["reguly_pd"]:
             if r.get("kontekst") and r["kontekst"] != kon:
                 continue
-            if re.search(r["nazwa_regex"], k["nazwa"], re.I):
+            if any(n and re.search(r["nazwa_regex"], n, re.I) for n in nazwy):
                 pd, pd_dlaczego = r["znacznik"], r["dlaczego"]
                 break
 
@@ -359,6 +384,11 @@ def statystyka(wynik, profil):
     print("Kont przełączonych na wariant jednostek powiązanych: %d" % len(pow_))
     for w in pow_:
         print("   %-8s %-32s -> %s" % (w["konto"], w["nazwa"][:32], w["s121"]))
+    spoza = [w for w in wynik if "nie ma w planie kont" in w["dlaczego"]]
+    if spoza:
+        print("\nKonta z dziennika spoza planu kont (%d) — do dopisania w planie:" % len(spoza))
+        for w in spoza:
+            print("   %-8s %-34s -> %s" % (w["konto"], w["nazwa"][:34], w["s121"]))
     braki = [w for w in wynik if w["pewnosc"] == "brak"]
     if braki:
         print("\nKonta bez żadnej reguły (do uzupełnienia reguł albo ręcznie):")

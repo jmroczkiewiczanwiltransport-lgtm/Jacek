@@ -642,7 +642,7 @@
    "dlaczego": "zużycie materiałów i energii"
   },
   {
-   "nazwa_regex": "OCHRONA|PRZEGLADY|NAPRAWY|UTRZYMANIE IT|AUDYT|MEETING|OPLATY NOTARIAL|BUCHER|NAJEM|CZYNSZ|SERWIS",
+   "nazwa_regex": "OCHRONA|PRZEGLADY|NAPRAWY|UTRZYMANIE IT|AUDYT|MEETING|OPLATY NOTARIAL|BUCHER|NAJEM|CZYNSZ|SERWIS|SPACE RENTAL|TARG|WYNAJEM|RENTAL",
    "grupa": "koszty",
    "znacznik": "RPBIII",
    "pewnosc": "wysoka",
