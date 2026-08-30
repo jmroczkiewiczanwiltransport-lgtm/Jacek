@@ -125,6 +125,64 @@ def strona(argumenty):
     print(f'   python3 pompa-acond.py dopasuj {argumenty.host} --panel panel-acond.json')
 
 
+SZUKANE_DOMYSLNE = ('hdo', 'sg ', 'sg-', 'sgready', 'sg ready', 'blokad', 'wejscie', 'wejsc',
+                    'styk', 'sygnal', 'zewnetrzn', 'g12', 'taryf', 'nadrzedn', 'modbus',
+                    'harmonogram', 'program', 'czas')
+
+
+def strony(argumenty):
+    """Przegląda ekrany sterownika i pokazuje, co na nich jest.
+
+    Panel ACOND THERM serwuje kolejne ekrany jako PAGE<numer>.XML. Przejrzenie ich
+    wszystkich to najprostszy sposób, żeby dowiedzieć się, jakie funkcje sterownik
+    w ogóle ma — bez dokumentacji i bez serwisu."""
+    baza = argumenty.host.rstrip('/')
+    baza = re.sub(r'/PAGE\d+\.XML$', '', baza, flags=re.I)
+    szukane = ([bez_ogonkow(x) for x in argumenty.szukaj.split(',')]
+               if argumenty.szukaj else list(SZUKANE_DOMYSLNE))
+
+    print(f'Przeglądam {baza}/PAGE{argumenty.od}.XML … PAGE{argumenty.do_strony}.XML\n')
+    znalezione, trafienia = [], []
+    for numer in range(argumenty.od, argumenty.do_strony + 1):
+        adres = f'{baza}/PAGE{numer}.XML'
+        try:
+            zmienne = pobierz_strone(adres, argumenty.uzytkownik, argumenty.haslo, limit=6)
+        except OSError:
+            continue
+        if not zmienne:
+            continue
+        napisy = [w.strip() for n, w in zmienne.items()
+                  if rodzaj_zmiennej(n) == 'STRING' and w.strip()]
+        znalezione.append((numer, len(zmienne), napisy))
+        pasujace = [n for n in napisy if any(sz in bez_ogonkow(n) for sz in szukane)]
+        etykieta = f'PAGE{numer}'
+        print(f'   {etykieta:<10} zmiennych: {len(zmienne):<4} napisów: {len(napisy)}'
+              + ('   ← ' + ' | '.join(pasujace[:3]) if pasujace else ''))
+        if pasujace:
+            trafienia.append((numer, pasujace))
+
+    if not znalezione:
+        return print('\nNie odpowiedziała żadna strona. Sprawdź adres i to, czy jesteś zalogowany.')
+
+    print(f'\nOdpowiedziało stron: {len(znalezione)}')
+    if trafienia:
+        print('\nSTRONY Z INTERESUJĄCYMI NAPISAMI')
+        for numer, pasujace in trafienia:
+            print(f'\n   PAGE{numer}.XML')
+            for napis in pasujace:
+                print(f'      {napis}')
+    else:
+        print('\nŻaden napis nie pasował do szukanych słów. Wypisz wszystko:')
+        print(f'   python3 pompa-acond.py strony {baza} --szukaj-wszystko')
+
+    if argumenty.szukaj_wszystko:
+        print('\nWSZYSTKIE NAPISY ZE WSZYSTKICH STRON')
+        for numer, ile, napisy in znalezione:
+            print(f'\n   ── PAGE{numer}.XML ──')
+            for napis in napisy:
+                print(f'      {napis}')
+
+
 def dopasuj_strone(argumenty, panel):
     zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
     liczbowe = {n: liczba(w) for n, w in zmienne.items() if liczba(w) is not None}
@@ -739,7 +797,7 @@ def yaml_ha(argumenty):
 def main():
     parser = argparse.ArgumentParser(description='Pompa ciepła ACOND przez Modbus TCP.')
     parser.add_argument('polecenie',
-                        choices=['sprawdz', 'strona', 'skanuj', 'dopasuj', 'czytaj',
+                        choices=['sprawdz', 'strona', 'strony', 'skanuj', 'dopasuj', 'czytaj',
                                  'obserwuj', 'zapisuj', 'podsumuj', 'yaml'])
     parser.add_argument('host', nargs='?', help='adres pompy (192.168.88.9) albo adres strony '
                                                'sterownika (http://192.168.88.9/PAGE115.XML); '
@@ -754,6 +812,11 @@ def main():
     parser.add_argument('--opisy', help='plik z opisami rejestrów (do polecenia yaml)')
     parser.add_argument('--panel', help='plik z odczytami z panelu WWW (do polecenia dopasuj)')
     parser.add_argument('--plik', help='plik CSV z zapisem (do poleceń zapisuj i podsumuj)')
+    parser.add_argument('--do-strony', dest='do_strony', type=int, default=200,
+                        help='ostatni numer strony przy przeglądaniu (polecenie strony)')
+    parser.add_argument('--szukaj', help='czego szukać w napisach, po przecinku')
+    parser.add_argument('--szukaj-wszystko', action='store_true',
+                        help='wypisz wszystkie napisy ze wszystkich stron')
     parser.add_argument('--uzytkownik', help='login do panelu sterownika, jeśli wymaga')
     parser.add_argument('--haslo', help='hasło do panelu sterownika')
     argumenty = parser.parse_args()
@@ -765,11 +828,16 @@ def main():
     if not argumenty.host:
         raise SystemExit(f'Polecenie „{argumenty.polecenie}" potrzebuje adresu, np.\n'
                          '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
-    if argumenty.polecenie == 'strona' and not przez_strone:
+    if argumenty.polecenie == 'strony' and argumenty.od == 0:
+        argumenty.od = 100
+    if argumenty.polecenie in ('strona', 'strony') and not przez_strone:
         raise SystemExit('Polecenie „strona" potrzebuje adresu strony, np.\n'
                          '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
+    if argumenty.polecenie == 'strony' and argumenty.od == 0:
+        argumenty.od = 100
 
-    przez_www = {'strona': strona, 'dopasuj': lambda a: dopasuj_strone(a, wczytaj_panel(a)),
+    przez_www = {'strona': strona, 'strony': strony,
+                 'dopasuj': lambda a: dopasuj_strone(a, wczytaj_panel(a)),
                  'obserwuj': obserwuj_strone, 'zapisuj': zapisuj, 'yaml': yaml_strony}
     przez_modbus = {'sprawdz': sprawdz, 'skanuj': skanuj, 'dopasuj': dopasuj, 'czytaj': czytaj,
                     'obserwuj': obserwuj, 'yaml': yaml_ha}
