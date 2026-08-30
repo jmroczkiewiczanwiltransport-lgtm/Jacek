@@ -292,6 +292,13 @@ sieci i dodajesz do ekranu głównego. Pokazuje jednym rzutem oka: temperaturę 
 dworze, ciepłą wodę, moc grzewczą, produkcję z paneli i bilans z siecią, obieg grzewczy,
 wykres ostatniej doby z `dane-pompy.csv` oraz najbliższe zadania z `przypomnienia.json`.
 
+Na Windowsie nie trzeba tego wpisywać z ręki — wystarczy kliknąć dwa razy
+`_URUCHOM-PANEL.bat`. Skrót sam znajdzie Pythona, przygotuje `opisy-panelu.json`
+i przy pierwszym uruchomieniu otworzy port 8125 w zaporze (Windows zapyta o zgodę
+administratora — bez tego telefon nie wejdzie, połączenie jest odrzucane po cichu).
+Gdyby sterownik chciał ciasteczka sesji, wklej samą wartość — np. `SoftPLC=11480121` —
+do pliku `ciasteczko.txt` obok skrótu; reszta dzieje się sama.
+
 Panel przy okazji **sam prowadzi historię**: co 5 minut dopisuje odczyt do
 `dane-pompy.csv`, z którego rysuje potem wykres. Nie trzeba więc trzymać osobnego
 `zapisuj` w drugim oknie — wystarczy, że panel chodzi. Odstęp zmienia

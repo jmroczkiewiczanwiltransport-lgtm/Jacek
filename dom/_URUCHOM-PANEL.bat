@@ -6,6 +6,7 @@ cd /d "%~dp0"
 rem  Adres panelu pompy. Gdyby sterownik dostal inny adres z routera,
 rem  popraw go w tej jednej linii.
 set POMPA=http://192.168.88.9/PAGE115.XML
+set PORT=8125
 
 echo.
 echo   ============================================
@@ -28,17 +29,36 @@ if not exist opisy-panelu.json (
   )
 )
 
+rem  Bez otwartego portu telefon nie wejdzie — zapora odrzuca połączenie po cichu.
+rem  Regułę zakładamy raz; Windows poprosi wtedy o zgodę administratora.
+netsh advfirewall firewall show rule name="Panel pompy" >nul 2>&1
+if errorlevel 1 (
+  echo   Otwieram port %PORT% w zaporze. Windows zapyta o zgodę — kliknij TAK.
+  powershell -NoProfile -Command "Start-Process netsh -Verb RunAs -Wait -ArgumentList 'advfirewall','firewall','add','rule','name=Panel pompy','dir=in','action=allow','protocol=TCP','localport=%PORT%','profile=private'" >nul 2>&1
+  echo.
+)
+
+rem  Sterownik czasem chce ciasteczka sesji. Jeśli je masz, wklej samą wartość
+rem  (np.  SoftPLC=11480121 ) do pliku ciasteczko.txt obok tego skrótu.
+set CIASTECZKO=
+if exist ciasteczko.txt set /p CIASTECZKO=<ciasteczko.txt
+
 echo   Uruchamiam. To okno zostaw otwarte — panel działa, dopóki ono żyje.
 echo   Zatrzymanie: Ctrl+C
 echo.
-echo   Przy pierwszym uruchomieniu Windows zapyta o dostęp do sieci.
-echo   Kliknij ZEZWÓL i zaznacz "Sieci prywatne", inaczej telefon nie wejdzie.
-echo.
 
-%PYTHON% pompa-acond.py panel %POMPA%
+if defined CIASTECZKO (
+  %PYTHON% pompa-acond.py panel %POMPA% --ciasteczko "%CIASTECZKO%"
+) else (
+  %PYTHON% pompa-acond.py panel %POMPA%
+)
 
 echo.
 echo   Panel zatrzymany.
+echo.
+echo   Gdyby telefon nie wchodził na panel, sprawdź w PowerShellu:
+echo       Get-NetConnectionProfile
+echo   przy WiFi ma być  NetworkCategory : Private  (nie Public).
 pause
 exit /b
 
