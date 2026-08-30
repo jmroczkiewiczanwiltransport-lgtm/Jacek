@@ -34,9 +34,11 @@ import socket
 import struct
 import sys
 import time
+import unicodedata
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
 KATALOG = os.path.dirname(os.path.abspath(__file__))
 
@@ -166,6 +168,11 @@ def czytaj_zmienne(surowe):
     return dict(re.findall(r'<INPUT\s+NAME="([^"]+)"\s+VALUE="([^"]*)"', tekst))
 
 
+def bez_ogonkow(tekst):
+    rozlozone = unicodedata.normalize('NFD', str(tekst or ''))
+    return ''.join(z for z in rozlozone if unicodedata.category(z) != 'Mn').lower().strip()
+
+
 def liczba(tekst):
     try:
         return float(str(tekst).replace(',', '.'))
@@ -275,6 +282,133 @@ def obserwuj_strone(argumenty):
         print('\nKoniec.')
 
 
+def wczytaj_opisy_panelu():
+    plik = os.path.join(KATALOG, 'opisy-panelu.json')
+    if not os.path.exists(plik):
+        return {}
+    with open(plik, encoding='utf-8') as f:
+        return json.load(f).get('zmienne', {})
+
+
+def zapisuj(argumenty):
+    """Zapisuje odczyty do pliku CSV — materiał do optymalizacji sezonu.
+
+    Dane zbierane przed sezonem grzewczym są warte tyle, co te zbierane w jego
+    trakcie: bez nich każda zmiana nastaw jest zgadywaniem."""
+    plik = argumenty.plik or os.path.join(KATALOG, 'dane-pompy.csv')
+    opisy = wczytaj_opisy_panelu()
+    nazwa_kolumny = lambda zmienna: opisy.get(zmienna, [zmienna])[0]
+
+    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+    kolumny = sorted((n for n, w in zmienne.items() if liczba(w) is not None),
+                     key=lambda n: (nazwa_kolumny(n) == n, nazwa_kolumny(n)))
+
+    istnieje = os.path.exists(plik)
+    if istnieje:
+        with open(plik, encoding='utf-8') as f:
+            naglowek = f.readline().rstrip('\n').split(';')[1:]
+        wg_nazwy = {nazwa_kolumny(n): n for n in kolumny}
+        kolumny = [wg_nazwy.get(nazwa) for nazwa in naglowek]
+        print(f'Dopisuję do {plik} ({len(naglowek)} kolumn z poprzedniego zapisu).')
+    else:
+        with open(plik, 'w', encoding='utf-8') as f:
+            f.write(';'.join(['czas'] + [nazwa_kolumny(n) for n in kolumny]) + '\n')
+        print(f'Zakładam {plik} — kolumn: {len(kolumny)}.')
+
+    print(f'Zapisuję co {argumenty.co:.0f} s. Ctrl+C kończy. '
+          f'Zostaw to uruchomione — im dłużej, tym więcej wiadomo.')
+    zapisanych, bledow = 0, 0
+    try:
+        while True:
+            try:
+                zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+                wiersz = [datetime.now().strftime('%Y-%m-%d %H:%M:%S')]
+                wiersz += ['' if z is None else str(zmienne.get(z, '')).strip() for z in kolumny]
+                with open(plik, 'a', encoding='utf-8') as f:
+                    f.write(';'.join(wiersz) + '\n')
+                zapisanych += 1
+                if zapisanych % 12 == 1:
+                    print(f'{datetime.now():%H:%M:%S}  zapisanych odczytów: {zapisanych}'
+                          + (f', nieudanych: {bledow}' if bledow else ''))
+            except OSError as powod:
+                bledow += 1
+                print(f'{datetime.now():%H:%M:%S}  nie udało się odczytać ({powod}) — próbuję dalej')
+            time.sleep(argumenty.co)
+    except KeyboardInterrupt:
+        print(f'\nKoniec. Zapisanych odczytów: {zapisanych}, nieudanych: {bledow}.')
+        print(f'Podsumowanie:  python3 pompa-acond.py podsumuj --plik {os.path.basename(plik)}')
+
+
+def podsumuj(argumenty):
+    """Dzień po dniu: ile prądu, przy jakiej pogodzie."""
+    plik = argumenty.plik or os.path.join(KATALOG, 'dane-pompy.csv')
+    if not os.path.exists(plik):
+        raise SystemExit(f'Brak {plik} — najpierw uruchom „zapisuj".')
+    with open(plik, encoding='utf-8') as f:
+        naglowek = f.readline().rstrip('\n').split(';')
+        wiersze = [w.rstrip('\n').split(';') for w in f if w.strip()]
+    if not wiersze:
+        raise SystemExit('Plik jest pusty — zapis jeszcze nic nie zebrał.')
+
+    def kolumna(fragment):
+        # przy kilku pasujących bierzemy najkrótszą nazwę: „Temperatura zewnętrzna"
+        # a nie „Temperatura zewnętrzna średnia"
+        trafienia = [(len(nazwa), i) for i, nazwa in enumerate(naglowek)
+                     if fragment in bez_ogonkow(nazwa)]
+        return min(trafienia)[1] if trafienia else None
+
+    i_energia = kolumna('licznik energ')
+    i_zewn = kolumna('zewnetrzna') 
+    i_cwu = kolumna('cwu temper')
+    i_moc = kolumna('wydajnosc')
+
+    dni = {}
+    for wiersz in wiersze:
+        dzien = wiersz[0][:10]
+        dni.setdefault(dzien, []).append(wiersz)
+
+    print(f'{"DZIEŃ":<12}{"PRĄD":>10}{"ŚR. NA DWORZE":>16}{"NAJZIMNIEJ":>12}'
+          f'{"ŚR. CWU":>10}{"ODCZYTÓW":>10}')
+    poprzednia_energia = None
+    for dzien, grupa in sorted(dni.items()):
+        def wartosci(indeks):
+            if indeks is None:
+                return []
+            return [liczba(w[indeks]) for w in grupa if indeks < len(w) and liczba(w[indeks]) is not None]
+
+        energia = wartosci(i_energia)
+        zuzycie = (max(energia) - min(energia)) if len(energia) > 1 else None
+        zewn, cwu = wartosci(i_zewn), wartosci(i_cwu)
+        print(f'{dzien:<12}'
+              f'{(f"{zuzycie:.0f} kWh" if zuzycie is not None else "—"):>10}'
+              f'{(f"{sum(zewn)/len(zewn):.1f} °C" if zewn else "—"):>16}'
+              f'{(f"{min(zewn):.1f} °C" if zewn else "—"):>12}'
+              f'{(f"{sum(cwu)/len(cwu):.1f} °C" if cwu else "—"):>10}'
+              f'{len(grupa):>10}')
+
+    wszystkie_zewn = [liczba(w[i_zewn]) for w in wiersze
+                      if i_zewn is not None and i_zewn < len(w) and liczba(w[i_zewn]) is not None]
+    wszystkie_energia = [liczba(w[i_energia]) for w in wiersze
+                         if i_energia is not None and i_energia < len(w) and liczba(w[i_energia]) is not None]
+    if len(wszystkie_energia) > 1 and wszystkie_zewn:
+        razem = max(wszystkie_energia) - min(wszystkie_energia)
+        srednia = sum(wszystkie_zewn) / len(wszystkie_zewn)
+        # stopniodni: ile stopni brakowało do 20 °C, zsumowane po dniach —
+        # dzieli zużycie przez surowość pogody, więc dni da się porównywać
+        stopniodni = 0.0
+        for dzien, grupa in dni.items():
+            temperatury = [liczba(w[i_zewn]) for w in grupa
+                           if i_zewn < len(w) and liczba(w[i_zewn]) is not None]
+            if temperatury:
+                stopniodni += max(0.0, 20 - sum(temperatury) / len(temperatury))
+        print(f'\nRazem: {razem:.0f} kWh przy średniej {srednia:.1f} °C na dworze.')
+        if stopniodni > 0.5:
+            print(f'Na stopniodzień: {razem / stopniodni:.1f} kWh — tej liczby pilnuj '
+                  f'przy zmianie nastaw, bo nie zależy od pogody.')
+        else:
+            print('Za ciepło na liczenie zużycia na stopniodzień — wróć do tego w sezonie.')
+
+
 def yaml_strony(argumenty):
     plik_opisow = argumenty.opisy or os.path.join(KATALOG, 'opisy-panelu.json')
     if not os.path.exists(plik_opisow):
@@ -327,9 +461,7 @@ def yaml_strony(argumenty):
 
 
 def identyfikator_ha(nazwa):
-    czysta = ''.join(z for z in __import__('unicodedata').normalize('NFD', nazwa.lower())
-                     if __import__('unicodedata').category(z) != 'Mn').replace('ł', 'l')
-    return re.sub(r'_+', '_', re.sub(r'[^a-z0-9]+', '_', czysta)).strip('_')
+    return re.sub(r'_+', '_', re.sub(r'[^a-z0-9]+', '_', bez_ogonkow(nazwa).replace('ł', 'l'))).strip('_')
 
 
 # ─────────────────────────────── polecenia ───────────────────────────────
@@ -645,9 +777,11 @@ def yaml_ha(argumenty):
 def main():
     parser = argparse.ArgumentParser(description='Pompa ciepła ACOND przez Modbus TCP.')
     parser.add_argument('polecenie',
-                        choices=['sprawdz', 'strona', 'skanuj', 'dopasuj', 'czytaj', 'obserwuj', 'yaml'])
-    parser.add_argument('host', help='adres pompy (192.168.88.9) albo adres strony sterownika '
-                                     '(http://192.168.88.9/PAGE115.XML)')
+                        choices=['sprawdz', 'strona', 'skanuj', 'dopasuj', 'czytaj',
+                                 'obserwuj', 'zapisuj', 'podsumuj', 'yaml'])
+    parser.add_argument('host', nargs='?', help='adres pompy (192.168.88.9) albo adres strony '
+                                               'sterownika (http://192.168.88.9/PAGE115.XML); '
+                                               'polecenie „podsumuj" go nie potrzebuje')
     parser.add_argument('--port', type=int, default=502)
     parser.add_argument('--jednostka', type=int, default=1, help='adres Modbus (slave id)')
     parser.add_argument('--od', type=int, default=0, help='pierwszy rejestr')
@@ -657,18 +791,24 @@ def main():
     parser.add_argument('--pokaz-zera', action='store_true')
     parser.add_argument('--opisy', help='plik z opisami rejestrów (do polecenia yaml)')
     parser.add_argument('--panel', help='plik z odczytami z panelu WWW (do polecenia dopasuj)')
+    parser.add_argument('--plik', help='plik CSV z zapisem (do poleceń zapisuj i podsumuj)')
     parser.add_argument('--uzytkownik', help='login do panelu sterownika, jeśli wymaga')
     parser.add_argument('--haslo', help='hasło do panelu sterownika')
     argumenty = parser.parse_args()
 
     # Adres z „http" znaczy: czytamy stronę sterownika, a nie rejestry Modbusa.
     przez_strone = str(argumenty.host).lower().startswith('http')
+    if argumenty.polecenie == 'podsumuj':
+        return podsumuj(argumenty)
+    if not argumenty.host:
+        raise SystemExit(f'Polecenie „{argumenty.polecenie}" potrzebuje adresu, np.\n'
+                         '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
     if argumenty.polecenie == 'strona' and not przez_strone:
         raise SystemExit('Polecenie „strona" potrzebuje adresu strony, np.\n'
                          '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
 
     przez_www = {'strona': strona, 'dopasuj': lambda a: dopasuj_strone(a, wczytaj_panel(a)),
-                 'obserwuj': obserwuj_strone, 'yaml': yaml_strony}
+                 'obserwuj': obserwuj_strone, 'zapisuj': zapisuj, 'yaml': yaml_strony}
     przez_modbus = {'sprawdz': sprawdz, 'skanuj': skanuj, 'dopasuj': dopasuj, 'czytaj': czytaj,
                     'obserwuj': obserwuj, 'yaml': yaml_ha}
 

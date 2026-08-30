@@ -195,6 +195,57 @@ python3 pompa-acond.py yaml 192.168.88.9
 > odkomentuj ją świadomie i po rozmowie z serwisem, a nie „żeby zobaczyć, czy działa”.
 > Do samego podglądu temperatur i zużycia na jednym pulpicie sterowanie nie jest potrzebne.
 
+### 3b. Optymalizacja sezonu grzewczego
+
+Zanim cokolwiek przestawisz w pompie, potrzebujesz punktu odniesienia. Bez niego nie
+odróżnisz „zmiana pomogła" od „zrobiło się cieplej". Zapis uruchom **przed** sezonem —
+dane z września są tak samo potrzebne jak te ze stycznia.
+
+```bash
+cd dom
+python3 pompa-acond.py zapisuj http://192.168.88.9/PAGE115.XML --co 300
+```
+
+Co pięć minut dopisuje wiersz do `dane-pompy.csv`. Zostaw uruchomione; przerwy nie
+psują pliku, po ponownym starcie dopisuje dalej. Podsumowanie:
+
+```bash
+python3 pompa-acond.py podsumuj
+```
+
+```
+DZIEŃ             PRĄD   ŚR. NA DWORZE  NAJZIMNIEJ   ŚR. CWU  ODCZYTÓW
+2026-11-01      40 kWh          5.0 °C      5.0 °C   45.0 °C        24
+2026-11-02      60 kWh          0.0 °C      0.0 °C   45.0 °C        24
+
+Razem: 120 kWh przy średniej 5.7 °C na dworze.
+Na stopniodzień: 2.8 kWh
+```
+
+**Kilowatogodziny na stopniodzień** to jedyna liczba, którą warto porównywać między
+tygodniami. Samo zużycie nic nie mówi, bo zimą rośnie niezależnie od nastaw; podzielone
+przez to, ile stopni brakowało do 20 °C, przestaje zależeć od pogody. Spadła po zmianie
+nastawy — zmiana pomogła. Nie drgnęła — nie pomogła.
+
+**Na co patrzeć w danych:**
+
+| Objaw | Co zwykle znaczy |
+|---|---|
+| motogodziny **biwalencji** rosną | grzałka elektryczna dogrzewa — pracuje ze sprawnością 100 %, czyli trzy razy gorzej niż sprężarka. Najdroższa rzecz w całej instalacji |
+| wysoka temperatura wody zasilającej | im niższa, tym lepsza sprawność — każdy stopień w dół to ok. 2–2,5 % mniej prądu |
+| CWU grzane nocą | w net-billingu lepiej w południe, z własnego prądu, niż nocą z sieci |
+| krótkie, częste załączenia sprężarki | taktowanie — zużywa prąd i skraca życie sprężarki |
+
+**Fotowoltaika w net-billingu zmienia rachunek.** Oddana kilowatogodzina jest warta
+mniej więcej jedną trzecią kupionej. Każda kilowatogodzina zużyta na miejscu zamiast
+oddana do sieci jest więc warta około trzy razy tyle co ta sama oddana. Wniosek dla
+pompy: **przesuwać grzanie CWU i doładowanie bufora na godziny największej produkcji**,
+czyli w okolice południa. Największy zysk daje to jesienią i wiosną, gdy słońce jeszcze
+albo już świeci, a ogrzewanie już albo jeszcze działa.
+
+To przesunięcie robi się automatyzacją w Home Assistancie — dlatego warto go postawić
+przed pełnią sezonu. Ale zapis danych możesz uruchomić już dziś, samym skryptem.
+
 ### 4. Sceny, automatyzacje i pulpit
 
 ```bash

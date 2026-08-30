@@ -10,5 +10,6 @@ dom/prywatne/
 dom/opisy-pompy.json
 dom/opisy-panelu.json
 dom/panel-acond.json
+dom/dane-pompy.csv
 dom/__pycache__/
 node_modules/
