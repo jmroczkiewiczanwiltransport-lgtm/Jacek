@@ -38,11 +38,28 @@ node hue.mjs panel
 Otwiera się pod `http://localhost:8123`. To zalecany sposób: zapytania idą przez Node,
 więc nie ma problemu ani z certyfikatem mostka, ani z zasadami CORS przeglądarki.
 
-Panel można też otworzyć dwuklikiem prosto z dysku (`panel.html`). Wtedy przeglądarka
-łączy się z mostkiem sama i najpierw trzeba raz odwiedzić `https://<adres-mostka>`
-w osobnej karcie i zaakceptować jego certyfikat — mostek ma certyfikat samopodpisany,
-inaczej przeglądarka po cichu zerwie połączenie. Jeśli panel z dysku nie chce się
-połączyć, użyj wersji przez `node hue.mjs panel`; działa zawsze.
+Panel widzi domyślnie **tylko ten komputer**. Żeby wejść na niego z telefonu:
+
+```bash
+node hue.mjs panel --w-sieci
+```
+
+Wypisze wtedy adres do wpisania w telefonie. To nie jest ustawienie domyślne, bo
+panel Hue **steruje** światłami i trzyma klucz do mostka — w odróżnieniu od panelu
+pompy, który tylko czyta. Wystawienie go w sieci domowej ma być świadomą decyzją.
+Na Windowsie trzeba jeszcze raz otworzyć port w zaporze:
+
+```powershell
+New-NetFirewallRule -DisplayName "Panel Hue" -Direction Inbound -Protocol TCP `
+  -LocalPort 8123 -Action Allow -Profile Private
+```
+
+Panel można też otworzyć dwuklikiem prosto z dysku (`panel.html`), ale w praktyce
+zwykle się nie uda: strona otwarta jako plik nie ma prawa odpytywać urządzenia
+w sieci i przeglądarka blokuje to niezależnie od certyfikatu mostka. Zaakceptowanie
+certyfikatu pod `https://<adres-mostka>` bywa konieczne, ale nie wystarcza. Wersja
+przez `node hue.mjs panel` działa zawsze — Node rozmawia z mostkiem sam i omija
+oba ograniczenia.
 
 Cztery zakładki:
 
@@ -74,7 +91,7 @@ node hue.mjs kolor <cel> <#rrggbb>
 node hue.mjs scena <cel> <nazwa sceny>
 
 node hue.mjs automat [plik.json]      uruchamia automatykę
-node hue.mjs panel [port]             panel w przeglądarce
+node hue.mjs panel [port] [--w-sieci] panel w przeglądarce (--w-sieci wpuszcza telefon)
 ```
 
 **Cel** to `wszystko`, `pokoj:Salon`, `strefa:Parter`, `lampa:Biurko` albo sama nazwa

@@ -586,7 +586,17 @@ function strumienZdarzen(k, naZdarzenie, naInfo = () => {}) {
 // przeglądarki. Ten serwer podaje panel po http://localhost i przekazuje
 // zapytania do mostka po stronie Node — wtedy działa zawsze.
 
-function serwerPanelu(port = 8123) {
+// Adres, pod którym zobaczy nas telefon — bierzemy pierwszy zwykły adres IPv4.
+function adresWSieci() {
+  for (const karty of Object.values(os.networkInterfaces())) {
+    for (const k of karty || []) {
+      if (k.family === 'IPv4' && !k.internal) return k.address;
+    }
+  }
+  return 'ten-komputer';
+}
+
+function serwerPanelu(port, wSieci = false) {
   const konfig = () => wczytajKonfig();
   const serwer = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
@@ -645,8 +655,17 @@ function serwerPanelu(port = 8123) {
       odpowiedz(500, { blad: e.message });
     }
   });
-  serwer.listen(port, '127.0.0.1', () => {
+  // Domyślnie tylko ten komputer. Panel nie tylko czyta, ale i steruje
+  // światłami, a klucz do mostka trzyma u siebie — wystawienie go w sieci
+  // ma być świadomą decyzją, nie domyślnym zachowaniem.
+  const nasluch = wSieci ? '0.0.0.0' : '127.0.0.1';
+  serwer.listen(port, nasluch, () => {
     console.log(`Panel: http://localhost:${port}`);
+    if (wSieci) {
+      const adres = adresWSieci();
+      console.log(`Z telefonu w tej samej sieci: http://${adres}:${port}`);
+      console.log('(panel steruje światłami — widzi go każdy w sieci domowej)');
+    }
     console.log('Zatrzymanie: Ctrl+C');
   });
 }
@@ -751,7 +770,8 @@ Sterowanie mostkiem Philips Hue.
   node hue.mjs scena <cel> <nazwa sceny>
 
   node hue.mjs automat [plik.json]        uruchamia automatykę (harmonogramy, czujniki)
-  node hue.mjs panel [port]               panel w przeglądarce (domyślnie 8123)
+  node hue.mjs panel [port] [--w-sieci]  panel w przeglądarce (domyślnie 8123,
+                                         tylko ten komputer; --w-sieci wpuszcza telefon)
 
 Cel: "wszystko", "pokoj:Salon", "strefa:Parter", "lampa:Biurko" albo sama nazwa.
 Wszystkie akcje przyjmują na końcu czas przejścia w sekundach: --przejscie 5
@@ -774,7 +794,11 @@ async function main() {
       return;
     }
     case 'polacz': return polacz(arg[0]);
-    case 'panel': return serwerPanelu(Number(arg[0]) || 8123);
+    case 'panel': {
+      const wSieci = arg.includes('--w-sieci');
+      const port = Number(arg.find((a) => /^\d+$/.test(a))) || 8123;
+      return serwerPanelu(port, wSieci);
+    }
     case 'automat': return automat(arg[0]);
   }
 
