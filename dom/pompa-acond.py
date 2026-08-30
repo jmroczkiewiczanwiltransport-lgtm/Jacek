@@ -433,7 +433,6 @@ def panel(argumenty):
     # Panel jest jedyną rzeczą, która chodzi cały czas, więc to on prowadzi
     # zapis historii — inaczej wykres 24 h byłby pusty aż do końca świata.
     odstep_zapisu = max(0, argumenty.co_historia) * 60
-    ostatni_zapis = [0.0]
 
     class Obsluga(BaseHTTPRequestHandler):
         def log_message(self, *_):
@@ -467,12 +466,6 @@ def panel(argumenty):
                 if not opisy:
                     odpowiedz['blad'] = ('Brak opisy-panelu.json — panel nie wie, która zmienna '
                                          'jest którą. Skopiuj opisy-panelu.przyklad.json.')
-                elif odstep_zapisu and time.monotonic() - ostatni_zapis[0] >= odstep_zapisu:
-                    ostatni_zapis[0] = time.monotonic()
-                    try:
-                        _dopisz_odczyt(plik_danych, zmienne, opisy)
-                    except OSError as powod:
-                        odpowiedz['blad'] = f'Nie zapisałem historii: {powod}'
             except OSError as powod:
                 odpowiedz['blad'] = f'Pompa nie odpowiada: {powod}'
 
@@ -491,6 +484,37 @@ def panel(argumenty):
             odpowiedz['historia'] = _historia_z_pliku(plik_danych)
             odpowiedz['zadania'] = _najblizsze_zadania()
             self._odpowiedz(200, odpowiedz)
+
+    def zbieraj():
+        """Dopisuje odczyt co ustalony czas, niezależnie od tego, czy ktoś patrzy.
+
+        Historia liczona przy okazji odwiedzin strony byłaby dziurawa dokładnie
+        wtedy, gdy najbardziej potrzebna: w nocy, w pracy, przez cały tydzień
+        bez zaglądania. Dlatego zbieramy własnym zegarem."""
+        milczy_od = None
+        while True:
+            try:
+                zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik,
+                                         argumenty.haslo, limit=8,
+                                         ciasteczko=argumenty.ciasteczko)
+                if opisy:
+                    _dopisz_odczyt(plik_danych, zmienne, opisy)
+                if milczy_od:
+                    print(f'{datetime.now():%H:%M:%S}  pompa znów odpowiada '
+                          f'(cisza od {milczy_od:%H:%M})', flush=True)
+                    milczy_od = None
+            except OSError as powod:
+                # Poza domem pompa jest nieosiągalna i to nie jest awaria, tylko
+                # stan. Mówimy o nim raz, na wejściu i na wyjściu — inaczej dzień
+                # w pracy to trzysta identycznych linijek w logu.
+                if milczy_od is None:
+                    milczy_od = datetime.now()
+                    print(f'{milczy_od:%H:%M:%S}  brak odczytu ({powod}) '
+                          f'— milczę, aż wróci', flush=True)
+            time.sleep(odstep_zapisu)
+
+    if odstep_zapisu:
+        threading.Thread(target=zbieraj, daemon=True).start()
 
     nasluch = '127.0.0.1' if argumenty.tylko_lokalnie else '0.0.0.0'
     serwer = ThreadingHTTPServer((nasluch, argumenty.port_panelu), Obsluga)

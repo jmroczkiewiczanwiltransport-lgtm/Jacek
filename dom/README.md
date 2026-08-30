@@ -346,10 +346,16 @@ Droga awaryjna, gdyby logowanie kiedyś przestało działać: `--ciasteczko
 Ciasteczko wygasa, więc trzeba je wtedy przepisywać z F12 — dlatego to
 ostateczność, nie sposób pracy.
 
-Panel przy okazji **sam prowadzi historię**: co 5 minut dopisuje odczyt do
-`dane-pompy.csv`, z którego rysuje potem wykres. Nie trzeba więc trzymać osobnego
-`zapisuj` w drugim oknie — wystarczy, że panel chodzi. Odstęp zmienia
-`--co-historia <minuty>`, a `--co-historia 0` wyłącza zapis.
+Panel przy okazji **sam prowadzi historię**: własnym wątkiem, co 5 minut,
+dopisuje odczyt do `dane-pompy.csv`, z którego rysuje potem wykres. Zbiera
+**niezależnie od tego, czy ktoś ma otwartą stronę** — inaczej historia byłaby
+dziurawa dokładnie wtedy, gdy najbardziej potrzebna: w nocy i przez dni bez
+zaglądania. Nie trzeba więc trzymać osobnego `zapisuj` w drugim oknie. Odstęp
+zmienia `--co-historia <minuty>`, a `--co-historia 0` wyłącza zapis.
+
+Gdy pompa jest nieosiągalna — bo komputer wyjechał z domu — panel działa dalej
+i czeka. Do logu trafia jedna linijka na wejściu w ciszę i jedna przy powrocie,
+nie po jednej na każdą nieudaną próbę.
 
 Falownik jest opcjonalny — bez `--falownik` panel pokazuje samą pompę. Gdy jest
 podłączony, dochodzą kafle **„Z paneli"** i **„Z sieci / Do sieci"**, a nagłówek
