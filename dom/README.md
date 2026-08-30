@@ -276,6 +276,13 @@ prądu, więc warto wiedzieć, gdzie się stoi, zanim zacznie się cokolwiek prz
 
 ### Panel pompy na telefon
 
+**Najprościej, na Windowsie:** dwuklik w `panel-pompy.bat`. Plik sam znajdzie Pythona,
+przygotuje `opisy-panelu.json` i wystartuje panel, a w oknie wypisze adres do wpisania
+w telefonie. Przy pierwszym uruchomieniu Windows zapyta o dostęp do sieci — trzeba
+kliknąć „Zezwól" i zaznaczyć sieci prywatne, inaczej telefon się nie połączy.
+
+**Ręcznie, albo na Linuksie:**
+
 ```bash
 python3 pompa-acond.py panel http://192.168.88.9/PAGE115.XML --falownik 192.168.88.20
 ```
