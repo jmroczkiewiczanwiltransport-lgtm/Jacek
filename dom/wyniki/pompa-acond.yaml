@@ -1,0 +1,69 @@
+# Pompa ciepła ACOND przez Modbus TCP — do configuration.yaml
+# Wygenerowane z opisy-pompy.przyklad.json. Same odczyty: nic nie ustawia w pompie.
+
+modbus:
+  - name: acond
+    type: tcp
+    host: 192.168.88.9
+    port: 502
+    delay: 5
+    timeout: 5
+    sensors:
+      - name: "Temperatura zewnętrzna"
+        address: 10
+        slave: 1
+        input_type: holding
+        data_type: int16
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Temperatura wody w zbiorniku"
+        address: 11
+        slave: 1
+        input_type: holding
+        data_type: int16
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Temperatura zadana"
+        address: 12
+        slave: 1
+        input_type: holding
+        data_type: int16
+        scan_interval: 30
+        scale: 0.1
+        precision: 1
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+# ─────────────────────────────────────────────────────────────────
+# STEROWANIE — odkomentuj dopiero po przeczytaniu README (rozdział
+# „Pompa ciepła ACOND"). Zapis do rejestru przełącza pompę w tryb
+# sterowania z zewnątrz: jej własna regulacja zostaje wyłączona,
+# a gdy Home Assistant zamilknie, pompa wraca do trybu auto.
+#
+#    Sprawdź, czy „address" to na pewno ta temperatura, którą pompa ma
+#    doprowadzić do nastawy — dobrałem najbliższą w numeracji rejestrów.
+#
+#    climates:
+#      - name: "Pompa ciepła"
+#        address: 11                  # Temperatura wody w zbiorniku
+#        target_temp_register: 12     # Temperatura zadana
+#        slave: 1
+#        input_type: holding
+#        data_type: int16
+#        scale: 0.1
+#        precision: 1
+#        temperature_unit: C
+#        min_temp: 20
+#        max_temp: 60
+#        temp_step: 0.5

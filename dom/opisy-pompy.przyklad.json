@@ -1,0 +1,23 @@
+{
+  "_jak_uzywac": "rejestr: [nazwa, jednostka, dzielnik, zapisywalny]. Jednostki: °C, %, W, kWh, '' dla stanu. Dzielnik 10 = wartość/10.",
+  "sensory": {
+    "10": [
+      "Temperatura zewnętrzna",
+      "°C",
+      10,
+      false
+    ],
+    "11": [
+      "Temperatura wody w zbiorniku",
+      "°C",
+      10,
+      false
+    ],
+    "12": [
+      "Temperatura zadana",
+      "°C",
+      10,
+      true
+    ]
+  }
+}

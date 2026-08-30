@@ -7,5 +7,6 @@ tuya/tinytuya.json
 tuya/snapshot.json
 tuya/__pycache__/
 dom/prywatne/
+dom/opisy-pompy.json
 dom/__pycache__/
 node_modules/

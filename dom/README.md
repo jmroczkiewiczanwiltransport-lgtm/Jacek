@@ -70,19 +70,71 @@ Integracja Tuya z chmury (ta wbudowana w Home Assistanta) też zadziała i jest 
 ale wszystko idzie wtedy przez serwery Tuya: wolniej i pada razem z internetem.
 Lokalnie jest lepiej — chmurę możesz zostawić w narzędziu `tuya/` jako zapas.
 
-### 3. Pompa ciepła
+### 3. Pompa ciepła ACOND
 
-Zależy od modelu — to jedyny element, którego nie da się przygotować w ciemno.
-Panel pod adresem IP to dobry znak: prawie zawsze znaczy, że moduł ma lokalne API.
-Trzy typowe drogi:
+Sterownik ACOND wystawia **Modbus TCP na porcie 502**, po tym samym kablu, którym pompa
+jest wpięta do sieci — nic dokładać nie trzeba. Home Assistant ma wbudowaną obsługę
+Modbusa, więc nie potrzeba żadnego dodatku.
 
-- **gotowa integracja** — sporo pomp ma swoją w Home Assistancie albo w HACS
-  (m.in. ecoNET300, Daikin, Panasonic, Midea, Viessmann, Modbus),
-- **Modbus TCP** — jeśli moduł go wystawia, Home Assistant czyta i ustawia rejestry
-  wprost, bez pośredników,
-- **REST** — gdy panel WWW ma własne API; wtedy piszemy sensory i przełączniki ręcznie.
+Trzy rzeczy do załatwienia, zanim cokolwiek zadziała:
 
-Żeby wybrać, potrzebna jest marka i model pompy oraz to, co pokazuje jej panel.
+**Właściwy adres.** Sterownik ma dwa porty Ethernet:
+
+| Port | Adres | Do czego |
+|---|---|---|
+| ETH1 | 192.168.134.176 (stały) | sieć serwisowa pompy — **nie ten** |
+| ETH2 | 192.168.88.9 (z DHCP) | sieć domowa — **ten** |
+
+Adres z ETH2 przydzielany jest dynamicznie, więc po restarcie routera może się zmienić
+i integracja przestanie działać. Zarezerwuj go na routerze dla adresu MAC
+`F8-DC-7A-7D-24-89` (u Ciebie router trzyma sieć 192.168.88.x, to typowe dla MikroTika:
+IP → DHCP Server → Leases → „Make Static”).
+
+**Odblokowanie Modbusa.** Komunikację Modbus musi włączyć w pompie **serwis ACOND-a** —
+z poziomu ekranu sterownika się tego nie zrobi. Przy okazji poproś o dokumentację
+protokołu z tablicą rejestrów: `AC-Z010` dla oprogramowania w wersji `160.36`
+(dokumentacja.acond.cz, publiczny plik `AC-Z010-EN.pdf`).
+
+**Rozpoznanie rejestrów.** Tablicy nie trzeba mieć, żeby zacząć — skrypt `pompa-acond.py`
+odczyta rejestry wprost z pompy:
+
+```bash
+cd dom
+python3 pompa-acond.py skanuj 192.168.88.9
+```
+
+Pokaże wszystkie niezerowe rejestry z podpowiedzią, czym mogą być („482 → 48,2 °C?”).
+Porównaj je z tym, co pokazuje ekran sterownika — temperatura zewnętrzna i temperatura
+wody zwykle rzucają się w oczy od razu. Nastawy najprościej znaleźć tak:
+
+```bash
+python3 pompa-acond.py obserwuj 192.168.88.9 --od 0 --ile 100
+```
+
+Skrypt wypisuje każdą zmianę na bieżąco; pokręć nastawą na sterowniku i zobacz, który
+rejestr drgnął. Rozpoznane rejestry wpisz do `opisy-pompy.json` (wzór:
+`opisy-pompy.przyklad.json`) i wygeneruj konfigurację:
+
+```bash
+python3 pompa-acond.py yaml 192.168.88.9
+```
+
+Powstanie `wyniki/pompa-acond.yaml` — wklej do `configuration.yaml`, sprawdź konfigurację
+i przeładuj. Odczyty pojawią się jako encje i wejdą na pulpit razem ze światłami.
+
+> **Zacznij od samych odczytów — i najlepiej na tym zostań.**
+>
+> Odczyt niczego w pompie nie zmienia. Zapis owszem, i to bardziej, niż wygląda:
+> sterowanie przez Modbus jest w ACOND-zie pomyślane jako oddanie regulacji systemowi
+> nadrzędnemu. Pompa wygasza wtedy własny czujnik temperatury i oczekuje, że bieżącą
+> temperaturę poda jej Home Assistant. Jeśli komunikacja ucichnie na dłużej niż
+> `MaxCommDataRefresh`, pompa wraca do trybu auto.
+>
+> W praktyce znaczy to tyle, że włączając sterowanie, bierzesz na siebie regulację
+> ogrzewania. Błąd w automatyzacji to nie zgaszona lampka, tylko zimny dom albo
+> przegrzany zbiornik. Dlatego wygenerowana sekcja sterowania jest **zakomentowana** —
+> odkomentuj ją świadomie i po rozmowie z serwisem, a nie „żeby zobaczyć, czy działa”.
+> Do samego podglądu temperatur i zużycia na jednym pulpicie sterowanie nie jest potrzebne.
 
 ### 4. Sceny, automatyzacje i pulpit
 
