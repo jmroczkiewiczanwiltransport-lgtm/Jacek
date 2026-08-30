@@ -38,6 +38,7 @@ import gzip
 import http.cookiejar
 import zlib
 import urllib.error
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
@@ -69,11 +70,47 @@ def _otwieracz():
 
 
 def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
-    # Panel wysyła ten nagłówek przy każdym odpytaniu — robimy tak samo,
-    # żeby sterownik traktował nas jak własną stronę.
-    zadanie = urllib.request.Request(url, headers={'User-Agent': 'pompa-acond',
-                                                   'x-tecomat': 'data',
-                                                   'Accept-Encoding': 'identity'})
+    """Pobiera stronę sterownika i zwraca {nazwa zmiennej: wartość}.
+
+    Sterownik zachowuje się różnie zależnie od tego, za kogo nas ma. Wejście
+    „jak przeglądarka" oddaje komplet danych bez logowania. Nagłówek
+    „x-tecomat: data" oznacza odpytanie z już otwartego panelu i wtedy
+    sterownik chce sesji — więc używamy go dopiero jako drugiej próby,
+    po odwiedzeniu strony głównej, która sesję zakłada."""
+    czesci = urllib.parse.urlsplit(url)
+    baza = urllib.parse.urlunsplit((czesci.scheme, czesci.netloc, '/', '', ''))
+
+    try:
+        return czytaj_zmienne(_pobierz(url, limit, ciasteczko, uzytkownik, haslo))
+    except _Logowanie:
+        pass
+
+    # Sterownik chce sesji: odwiedzamy stronę główną po ciasteczko i próbujemy jak panel.
+    try:
+        _pobierz(baza, limit, ciasteczko, uzytkownik, haslo)
+    except (_Logowanie, OSError):
+        pass
+    try:
+        return czytaj_zmienne(_pobierz(url, limit, ciasteczko, uzytkownik, haslo, jak_panel=True))
+    except _Logowanie:
+        raise OSError(
+            'sterownik żąda zalogowania.\n'
+            '   W przeglądarce ta sama strona otwiera się bez hasła, więc najpewniej\n'
+            '   wystarczy podać ciasteczko sesji: otwórz panel w przeglądarce, F12 →\n'
+            '   Network → dowolne żądanie → Request Headers → Cookie, i uruchom\n'
+            '   skrypt z --ciasteczko "SoftPLC=…"')
+
+
+class _Logowanie(Exception):
+    """Sterownik odesłał stronę logowania zamiast danych."""
+
+
+def _pobierz(url, limit, ciasteczko, uzytkownik, haslo, jak_panel=False):
+    naglowki = {'User-Agent': 'Mozilla/5.0 (pompa-acond)', 'Accept-Encoding': 'identity',
+                'Accept': 'text/xml,application/xml,text/html,*/*'}
+    if jak_panel:
+        naglowki['x-tecomat'] = 'data'
+    zadanie = urllib.request.Request(url, headers=naglowki)
     if ciasteczko:
         zadanie.add_header('Cookie', ciasteczko)
     if uzytkownik:
@@ -84,13 +121,13 @@ def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
             surowe = _rozpakuj(odpowiedz.read(), odpowiedz.headers.get('Content-Encoding', ''))
     except urllib.error.HTTPError as powod:
         if powod.code in (401, 403):
-            raise OSError(f'strona wymaga logowania ({powod.code}) — podaj --ciasteczko '
-                          '„SoftPLC=…" (znajdziesz je w przeglądarce: F12 → Network → '
-                          'dowolne żądanie → Request Headers → Cookie)')
+            raise _Logowanie()
         raise OSError(f'strona odpowiedziała {powod.code}')
     except urllib.error.URLError as powod:
         raise OSError(f'nie mogę pobrać strony: {powod.reason}')
-    return czytaj_zmienne(surowe)
+    if b'LOGIN' in surowe[:400].upper():
+        raise _Logowanie()
+    return surowe
 
 
 def _rozpakuj(surowe, kodowanie):
