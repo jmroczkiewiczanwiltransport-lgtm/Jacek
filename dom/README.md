@@ -260,6 +260,52 @@ pogodzie. Krzywa jest nastawą w sterowniku, ale z zewnątrz widać jej skutek i
 się liczy. Przy ogrzewaniu podłogowym każdy stopień wody w dół to około 2–2,5 % mniej
 prądu, więc warto wiedzieć, gdzie się stoi, zanim zacznie się cokolwiek przestawiać.
 
+### Liczniki raz w miesiącu — minimum, które warto robić
+
+Jeśli nie chcesz prowadzić ciągłego zapisu, jest wersja minimalna: raz w miesiącu
+spisać liczniki i zobaczyć, o ile urosły. To pięć sekund, a wyłapuje najdroższy
+scenariusz — grzałki elektryczne pracujące godzinami.
+
+```bash
+python3 pompa-acond.py liczniki http://192.168.88.9/
+```
+
+Polecenie czyta ekran główny i informacyjny (`PAGE115` i `PAGE121`; inne przez
+`--strony`), dopisuje odczyt do `liczniki.csv` i od razu pokazuje przyrost od
+poprzedniego razu:
+
+```
+PRZYROSTY
+   co                                      było      jest    przyrost
+   Licznik energii elektrycznej            4506      5734       +1228
+   Motogodziny sprężarki                   6039      6612        +573
+   Biwalencja 1 (grzałka)                   119       166         +47
+   Biwalencja 2 (grzałka)                    43        51          +8
+```
+
+Nazwy biorą się z `opisy-panelu.json`, więc po jednym `dopasuj` liczniki opisują się
+same. Bez tego pliku widać surowe nazwy zmiennych — działa tak samo, tylko mniej
+czytelnie.
+
+**Co z tego czytać:** rosnące motogodziny biwalencji to grzałki elektryczne. Grzałka
+robi kilowatogodzinę ciepła z kilowatogodziny prądu, pompa z jednej trzeciej. Kilkadziesiąt
+godzin grzałki w miesiącu to już realna pozycja na rachunku i sygnał, że albo krzywa
+jest za wysoka, albo pompa nie wyrabia w mrozy.
+
+**Żeby robiło się samo:**
+
+*Windows* — Harmonogram zadań → nowe zadanie, wyzwalacz miesięczny (albo tygodniowy),
+program `python`, argumenty `C:\sciezka\dom\pompa-acond.py liczniki http://192.168.88.9/`.
+
+*Linux* — `crontab -e` i wiersz uruchamiający to samo pierwszego dnia miesiąca:
+
+```
+0 8 1 * * cd /sciezka/dom && /usr/bin/python3 pompa-acond.py liczniki http://192.168.88.9/ >> liczniki.log 2>&1
+```
+
+Odczyty można robić częściej, nic to nie psuje — przyrost liczony jest zawsze względem
+poprzedniego wpisu, a `--tylko-podsumuj` pokazuje zmianę bez dopisywania nowego.
+
 **Kilowatogodziny na stopniodzień** to jedyna liczba, którą warto porównywać między
 tygodniami. Samo zużycie nic nie mówi, bo zimą rośnie niezależnie od nastaw; podzielone
 przez to, ile stopni brakowało do 20 °C, przestaje zależeć od pogody. Spadła po zmianie

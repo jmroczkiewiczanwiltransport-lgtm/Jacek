@@ -183,6 +183,100 @@ def strony(argumenty):
                 print(f'      {napis}')
 
 
+def liczniki(argumenty):
+    """Spisuje liczniki pompy i pokazuje, o ile urosły od ostatniego razu.
+
+    Liczniki (energia elektryczna, motogodziny sprężarki, wentylatora, grzałek)
+    same z siebie nic nie mówią — liczy się przyrost. Zwłaszcza przyrost
+    motogodzin grzałek: to najdroższe ciepło w instalacji."""
+    baza = re.sub(r'/PAGE\d+\.XML$', '', argumenty.host.rstrip('/'), flags=re.I)
+    numery = [int(x) for x in (argumenty.strony or '115,121').split(',')]
+    opisy = wczytaj_opisy_panelu()
+
+    zmienne = {}
+    for numer in numery:
+        try:
+            strona_zmienne = pobierz_strone(f'{baza}/PAGE{numer}.XML',
+                                            argumenty.uzytkownik, argumenty.haslo, limit=8)
+        except OSError as powod:
+            print(f'   PAGE{numer}: {powod}')
+            continue
+        for nazwa, wartosc in strona_zmienne.items():
+            if liczba(wartosc) is not None:
+                zmienne[f'{numer}:{nazwa}'] = wartosc
+    if not zmienne:
+        raise SystemExit('Nie odczytałem żadnej liczby. Sprawdź adres i zalogowanie.')
+
+    plik = argumenty.plik or os.path.join(KATALOG, 'liczniki.csv')
+    poprzedni = None
+    if os.path.exists(plik):
+        with open(plik, encoding='utf-8') as f:
+            naglowek = f.readline().rstrip('\n').split(';')
+            wiersze = [w.rstrip('\n').split(';') for w in f if w.strip()]
+        kolumny = naglowek[1:]
+        if wiersze:
+            poprzedni = (wiersze[-1][0], dict(zip(kolumny, wiersze[-1][1:])))
+    else:
+        kolumny = sorted(zmienne)
+        with open(plik, 'w', encoding='utf-8') as f:
+            f.write(';'.join(['czas'] + kolumny) + '\n')
+        print(f'Zakładam {plik} — pierwszy odczyt, nie ma jeszcze z czym porównywać.\n')
+
+    teraz = datetime.now()
+    if not argumenty.tylko_podsumuj:
+        with open(plik, 'a', encoding='utf-8') as f:
+            f.write(';'.join([teraz.strftime('%Y-%m-%d %H:%M:%S')]
+                             + [str(zmienne.get(k, '')).strip() for k in kolumny]) + '\n')
+
+    nazwa_ludzka = lambda klucz: opisy.get(klucz.split(':', 1)[1], [klucz])[0]
+
+    print(f'Odczyt z {teraz:%d.%m.%Y %H:%M}  —  liczb: {len(zmienne)}')
+    if not poprzedni:
+        print('\nUruchom to samo za miesiąc, a pokażę, co i o ile urosło.')
+        print('Najciekawsze będą motogodziny grzałek — jeśli podskoczą, to tam idą pieniądze.')
+        return
+
+    czas_poprzedni, wartosci_poprzednie = poprzedni
+    try:
+        odstep = (teraz - datetime.strptime(czas_poprzedni[:19], '%Y-%m-%d %H:%M:%S')).days
+    except ValueError:
+        odstep = 0
+
+    print(f'Poprzedni odczyt: {czas_poprzedni[:16]}'
+          + (f'  ({odstep} dni temu)' if odstep else ''))
+
+    zmiany = []
+    for klucz in kolumny:
+        teraz_wartosc = liczba(zmienne.get(klucz))
+        wtedy = liczba(wartosci_poprzednie.get(klucz))
+        if teraz_wartosc is None or wtedy is None:
+            continue
+        roznica = teraz_wartosc - wtedy
+        if abs(roznica) > 0.001:
+            zmiany.append((klucz, wtedy, teraz_wartosc, roznica))
+
+    # licznik to taki, który rośnie i nigdy nie maleje — reszta to bieżące odczyty
+    rosnace = [z for z in zmiany if z[3] > 0 and z[1] > 0]
+    if not rosnace:
+        print('\nŻaden licznik nie drgnął.')
+        return
+
+    print(f'\nPRZYROSTY')
+    print(f'   {"co":<34}{"było":>10}{"jest":>10}{"przyrost":>12}')
+    for klucz, wtedy, teraz_wartosc, roznica in sorted(rosnace, key=lambda z: -z[3]):
+        print(f'   {nazwa_ludzka(klucz)[:33]:<34}{wtedy:>10.0f}{teraz_wartosc:>10.0f}{roznica:>+12.0f}')
+
+    if 25 <= odstep <= 35:
+        print(f'\n   Przez {odstep} dni — czyli mniej więcej tyle na miesiąc.')
+    elif odstep:
+        print(f'\n   Przez {odstep} dni. W przeliczeniu na miesiąc: '
+              + ', '.join(f'{nazwa_ludzka(k)[:22]} {r * 30 / odstep:+.0f}'
+                          for k, _, _, r in sorted(rosnace, key=lambda z: -z[3])[:3]) + '.')
+    print('\n   Na co patrzeć: motogodziny biwalencji (grzałek elektrycznych). Grzałka')
+    print('   robi kilowatogodzinę ciepła z kilowatogodziny prądu, a pompa z jednej')
+    print('   trzeciej — jeśli rosną, to najdroższa pozycja na rachunku.')
+
+
 def dopasuj_strone(argumenty, panel):
     zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
     liczbowe = {n: liczba(w) for n, w in zmienne.items() if liczba(w) is not None}
@@ -862,8 +956,8 @@ def yaml_ha(argumenty):
 def main():
     parser = argparse.ArgumentParser(description='Pompa ciepła ACOND przez Modbus TCP.')
     parser.add_argument('polecenie',
-                        choices=['sprawdz', 'strona', 'strony', 'skanuj', 'dopasuj', 'czytaj',
-                                 'obserwuj', 'zapisuj', 'podsumuj', 'yaml'])
+                        choices=['sprawdz', 'strona', 'strony', 'liczniki', 'skanuj',
+                                 'dopasuj', 'czytaj', 'obserwuj', 'zapisuj', 'podsumuj', 'yaml'])
     parser.add_argument('host', nargs='?', help='adres pompy (192.168.88.9) albo adres strony '
                                                'sterownika (http://192.168.88.9/PAGE115.XML); '
                                                'polecenie „podsumuj" go nie potrzebuje')
@@ -880,6 +974,9 @@ def main():
     parser.add_argument('--do-strony', dest='do_strony', type=int, default=200,
                         help='ostatni numer strony przy przeglądaniu (polecenie strony)')
     parser.add_argument('--szukaj', help='czego szukać w napisach, po przecinku')
+    parser.add_argument('--strony', help='numery ekranów do odczytu liczników, np. 115,121')
+    parser.add_argument('--tylko-podsumuj', action='store_true',
+                        help='pokaż przyrosty, ale nie dopisuj nowego odczytu')
     parser.add_argument('--szukaj-wszystko', action='store_true',
                         help='wypisz wszystkie napisy ze wszystkich stron')
     parser.add_argument('--uzytkownik', help='login do panelu sterownika, jeśli wymaga')
@@ -895,13 +992,13 @@ def main():
                          '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
     if argumenty.polecenie == 'strony' and argumenty.od == 0:
         argumenty.od = 100
-    if argumenty.polecenie in ('strona', 'strony') and not przez_strone:
+    if argumenty.polecenie in ('strona', 'strony', 'liczniki') and not przez_strone:
         raise SystemExit('Polecenie „strona" potrzebuje adresu strony, np.\n'
                          '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
     if argumenty.polecenie == 'strony' and argumenty.od == 0:
         argumenty.od = 100
 
-    przez_www = {'strona': strona, 'strony': strony,
+    przez_www = {'strona': strona, 'strony': strony, 'liczniki': liczniki,
                  'dopasuj': lambda a: dopasuj_strone(a, wczytaj_panel(a)),
                  'obserwuj': obserwuj_strone, 'zapisuj': zapisuj, 'yaml': yaml_strony}
     przez_modbus = {'sprawdz': sprawdz, 'skanuj': skanuj, 'dopasuj': dopasuj, 'czytaj': czytaj,
