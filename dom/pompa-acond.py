@@ -358,6 +358,7 @@ def podsumuj(argumenty):
               f'{(f"{sum(cwu)/len(cwu):.1f} °C" if cwu else "—"):>10}'
               f'{len(grupa):>10}')
 
+    sprawnosc(wiersze, kolumna)
     krzywa_grzewcza(wiersze, naglowek, kolumna)
 
     wszystkie_zewn = [liczba(w[i_zewn]) for w in wiersze
@@ -381,6 +382,70 @@ def podsumuj(argumenty):
                   f'przy zmianie nastaw, bo nie zależy od pogody.')
         else:
             print('Za ciepło na liczenie zużycia na stopniodzień — wróć do tego w sezonie.')
+
+
+def sprawnosc(wiersze, kolumna):
+    """Liczy rzeczywisty COP: ile ciepła pompa dała na każdą kilowatogodzinę prądu.
+
+    Panel podaje bieżącą moc grzewczą w kW, a licznik — pobraną energię elektryczną.
+    Scałkowanie mocy po czasie daje ciepło; iloraz jest sezonową sprawnością.
+    To jedyna liczba, która mówi, czy pompa pracuje dobrze, czy się męczy."""
+    i_moc = kolumna('wydajnosc')
+    i_energia = kolumna('licznik energ')
+    i_zewn = kolumna('zewnetrzna')
+    if i_moc is None or i_energia is None:
+        return
+
+    dni = {}
+    for wiersz in wiersze:
+        if max(i_moc, i_energia) >= len(wiersz):
+            continue
+        try:
+            czas = datetime.strptime(wiersz[0][:19], '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            continue
+        moc, energia = liczba(wiersz[i_moc]), liczba(wiersz[i_energia])
+        zewn = liczba(wiersz[i_zewn]) if i_zewn is not None and i_zewn < len(wiersz) else None
+        if moc is None or energia is None:
+            continue
+        dni.setdefault(czas.strftime('%Y-%m-%d'), []).append((czas, moc, energia, zewn))
+
+    linie = []
+    cieplo_razem = prad_razem = 0.0
+    for dzien, odczyty in sorted(dni.items()):
+        odczyty.sort()
+        if len(odczyty) < 4:
+            continue
+        # ciepło = moc scałkowana po czasie; przerwy dłuższe niż 15 minut pomijamy,
+        # bo nie wiadomo, co się w nich działo
+        cieplo = 0.0
+        for (czas_a, moc_a, _, _), (czas_b, _, _, _) in zip(odczyty, odczyty[1:]):
+            odstep = (czas_b - czas_a).total_seconds() / 3600
+            if 0 < odstep <= 0.25:
+                cieplo += moc_a * odstep
+        prad = odczyty[-1][2] - odczyty[0][2]
+        if prad <= 0.5 or cieplo <= 0.5:
+            continue
+        temperatury = [t for *_, t in odczyty if t is not None]
+        cieplo_razem += cieplo
+        prad_razem += prad
+        linie.append((dzien, cieplo, prad, cieplo / prad,
+                      sum(temperatury) / len(temperatury) if temperatury else None))
+
+    if not linie:
+        return
+
+    print(f'\nSPRAWNOŚĆ  (ile ciepła na kilowatogodzinę prądu)')
+    print(f'   {"dzień":<12}{"ciepło":>10}{"prąd":>10}{"COP":>8}{"na dworze":>12}')
+    for dzien, cieplo, prad, cop, zewn in linie:
+        print(f'   {dzien:<12}{cieplo:>7.0f} kWh{prad:>7.0f} kWh{cop:>8.2f}'
+              f'{(f"{zewn:.1f} °C" if zewn is not None else "—"):>12}')
+    if prad_razem > 0:
+        print(f'\n   Średnio: {cieplo_razem / prad_razem:.2f} — czyli z każdej kilowatogodziny')
+        print(f'   prądu robi się {cieplo_razem / prad_razem:.2f} kWh ciepła.')
+        print('   Tabliczka podaje 4,87 przy +7 °C i wodzie 35 °C; zimą przy mrozie')
+        print('   i cieplejszej wodzie wychodzi mniej i tak ma być. Pilnuj trendu,')
+        print('   nie samej liczby — spadek przy tej samej pogodzie to sygnał.')
 
 
 def krzywa_grzewcza(wiersze, naglowek, kolumna):

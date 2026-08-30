@@ -72,6 +72,14 @@ Lokalnie jest lepiej — chmurę możesz zostawić w narzędziu `tuya/` jako zap
 
 ### 3. Pompa ciepła ACOND
 
+**Sprzęt:** jednostka zewnętrzna **iZZiFAST R290 PRO 7** (rok 2022), 230 V jednofazowo,
+prąd maksymalny 13 A, moc grzewcza 1,5–8,6 kW (inwerterowa, modulowana), czynnik R290,
+**COP 4,87 przy A7/W35**. Producent: iZZiFAST Sp. z o.o. Sp.k., Ruda Śląska.
+Sterownik w szafie jest sterownikiem ACOND THERM (sw 160.36, fw 5.5).
+
+Znamionowy COP mierzony jest przy wodzie 35 °C — czyli dokładnie w warunkach, jakie
+daje ogrzewanie podłogowe. Im wyżej krzywa grzewcza, tym dalej od tej liczby.
+
 Zestaw to szafa hydrauliczna **iZZiFAST** z pompą **ACOND** — kompletna kotłownia
 w jednej obudowie (bufor, pompa obiegowa, armatura), a sterownik wpuszczony w jej front
 to sterownik ACOND-a. To on jest punktem, do którego się podłączamy; szafa sama w sobie
@@ -240,6 +248,12 @@ DZIEŃ             PRĄD   ŚR. NA DWORZE  NAJZIMNIEJ   ŚR. CWU  ODCZYTÓW
 Razem: 120 kWh przy średniej 5.7 °C na dworze.
 Na stopniodzień: 2.8 kWh
 ```
+
+Podsumowanie liczy też **rzeczywisty COP**. Panel podaje bieżącą moc grzewczą w kW,
+a licznik — pobraną energię elektryczną; scałkowanie mocy po czasie daje ciepło, a iloraz
+sprawność. To jedyna liczba mówiąca wprost, czy pompa pracuje dobrze, czy się męczy.
+Zimą przy mrozie i cieplejszej wodzie wychodzi mniej niż tabliczkowe 4,87 i tak ma być —
+pilnuj trendu przy porównywalnej pogodzie, a nie samej wartości.
 
 Podsumowanie odtwarza też **krzywą grzewczą** — jaką wodę pompa robi przy jakiej
 pogodzie. Krzywa jest nastawą w sterowniku, ale z zewnątrz widać jej skutek i to on
