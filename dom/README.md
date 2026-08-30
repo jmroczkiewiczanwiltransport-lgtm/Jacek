@@ -304,7 +304,19 @@ Panel przy okazji **sam prowadzi historię**: co 5 minut dopisuje odczyt do
 `zapisuj` w drugim oknie — wystarczy, że panel chodzi. Odstęp zmienia
 `--co-historia <minuty>`, a `--co-historia 0` wyłącza zapis.
 
-Falownik jest opcjonalny — bez `--falownik` panel pokazuje samą pompę. Strona jest
+Falownik jest opcjonalny — bez `--falownik` panel pokazuje samą pompę. Gdy jest
+podłączony, dochodzą kafle **„Z paneli"** i **„Z sieci / Do sieci"**, a nagłówek
+mówi wprost, czy pompa grzeje ze słońca: *„Grzeje 4,2 kW — słońce daje 5,1 kW"*.
+Adresu falownika nie trzeba szukać po routerze:
+
+```bash
+python3 falownik-huawei.py 192.168.88.0/24
+```
+
+przeczesze sieć i wypisze gotową komendę. Port Modbusu falownika zmienia
+`--port-falownika` (domyślnie 502) — to co innego niż `--port`, który dotyczy
+Modbusu pompy. W skrócie `_URUCHOM-PANEL.bat` wystarczy wpisać adres w linijce
+`set FALOWNIK=`. Strona jest
 **wyłącznie do odczytu**: niczego w pompie nie ustawia. Domyślnie widać ją w całej sieci
 domowej; `--tylko-lokalnie` ogranicza dostęp do samego komputera.
 

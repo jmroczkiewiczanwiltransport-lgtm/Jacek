@@ -415,7 +415,9 @@ def panel(argumenty):
             if adres_falownika:
                 try:
                     from falownik import odczytaj as odczytaj_falownik   # noqa: PLC0415
-                    wynik = odczytaj_falownik(adres_falownika, 502, argumenty.jednostka)
+                    wynik = odczytaj_falownik(adres_falownika,
+                                             argumenty.port_falownika,
+                                             argumenty.jednostka)
                     odpowiedz['falownik'] = {n: w for n, (w, _) in wynik.items() if w is not None}
                     odpowiedz['zrodlo'] += f' · falownik {adres_falownika}'
                 except Exception as powod:                               # noqa: BLE001
@@ -1241,6 +1243,9 @@ def main():
     parser.add_argument('--strony', help='numery ekranów do odczytu liczników, np. 115,121')
     parser.add_argument('--falownik', help='adres falownika, żeby panel pokazywał też produkcję')
     parser.add_argument('--port-panelu', dest='port_panelu', type=int, default=8125)
+    # Osobno od --port, bo tamten dotyczy Modbusu pompy — falownik to inne urządzenie.
+    parser.add_argument('--port-falownika', dest='port_falownika', type=int, default=502,
+                        help='port Modbus falownika (domyślnie 502)')
     parser.add_argument('--co-historia', dest='co_historia', type=float, default=5,
                         help='co ile minut panel dopisuje odczyt do historii (0 wyłącza)')
     parser.add_argument('--tylko-lokalnie', action='store_true',

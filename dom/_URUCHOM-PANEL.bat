@@ -8,6 +8,11 @@ rem  popraw go w tej jednej linii.
 set POMPA=http://192.168.88.9/PAGE115.XML
 set PORT=8125
 
+rem  Adres falownika w sieci domowej. Zostaw pusty, dopóki nie włączysz w nim
+rem  Modbus TCP — panel pokaże wtedy samą pompę, bez produkcji z paneli.
+rem  Adres znajdziesz poleceniem:  python falownik-huawei.py 192.168.88.0/24
+set FALOWNIK=
+
 echo.
 echo   ============================================
 echo     Panel pompy ciepła
@@ -56,11 +61,12 @@ echo   Uruchamiam. To okno zostaw otwarte — panel działa, dopóki ono żyje.
 echo   Zatrzymanie: Ctrl+C
 echo.
 
-if defined CIASTECZKO (
-  %PYTHON% pompa-acond.py panel %POMPA% --ciasteczko "%CIASTECZKO%"
-) else (
-  %PYTHON% pompa-acond.py panel %POMPA%
-)
+rem  Składamy dodatki osobno — inaczej wariantów byłoby cztery.
+set DODATKI=
+if defined CIASTECZKO set DODATKI=%DODATKI% --ciasteczko "%CIASTECZKO%"
+if defined FALOWNIK set DODATKI=%DODATKI% --falownik %FALOWNIK%
+
+%PYTHON% pompa-acond.py panel %POMPA%%DODATKI%
 
 echo.
 echo   Panel zatrzymany.

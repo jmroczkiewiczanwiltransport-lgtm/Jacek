@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Odczyt falownika Huawei SUN2000 przez Modbus TCP — lokalnie, bez chmury.
 
+    python3 falownik-huawei.py 192.168.88.0/24     # znajdź falownik w sieci
     python3 falownik-huawei.py 192.168.88.20
     python3 falownik-huawei.py 192.168.88.20 --zapisuj --co 300
 
@@ -14,7 +15,9 @@ Home Assistant, ten skrypt przestanie dostawać odpowiedzi i odwrotnie.
 
 import argparse
 import os
+import socket
 import sys
+import threading
 import time
 from datetime import datetime
 
@@ -70,15 +73,76 @@ def zapisuj(argumenty):
         print(f'\nKoniec. Odczytów: {zapisanych}, nieudanych: {bledow}.')
 
 
+def znajdz(siec, port, jednostka):
+    """Przeczesuje sieć w poszukiwaniu falownika.
+
+    Adres falownika bywa trudniejszy do znalezienia niż samo włączenie
+    Modbusa — router nazywa go byle jak, a aplikacja go nie pokazuje.
+    Otwarty port 502 to za mało, żeby uznać sprawę za zamkniętą, więc każdy
+    trafiony adres jeszcze odpytujemy o moc: dopiero sensowna odpowiedź
+    przesądza, że to falownik."""
+    poczatek = siec.split('/')[0].rsplit('.', 1)[0]
+    print(f'Szukam falownika w sieci {poczatek}.1–254 (port {port})…')
+
+    otwarte, zamek = [], threading.Lock()
+
+    def puknij(numer):
+        adres = f'{poczatek}.{numer}'
+        with socket.socket() as gniazdo:
+            gniazdo.settimeout(0.6)
+            if gniazdo.connect_ex((adres, port)) == 0:
+                with zamek:
+                    otwarte.append(adres)
+
+    watki = [threading.Thread(target=puknij, args=(n,)) for n in range(1, 255)]
+    for w in watki:
+        w.start()
+    for w in watki:
+        w.join()
+
+    if not otwarte:
+        print(f'\nNic nie odpowiada na porcie {port}.')
+        print('Najczęstsza przyczyna: Modbus TCP jest jeszcze wyłączony w falowniku.')
+        print('FusionSolar → Uruchomienie urządzenia → Ustawienia → Konfiguracja')
+        print('komunikacji → Modbus TCP → „Włącz (bez ograniczeń)".')
+        return 1
+
+    print(f'Port {port} otwarty na: {", ".join(sorted(otwarte))}')
+    for adres in sorted(otwarte):
+        for kandydat in dict.fromkeys([jednostka, 1, 0]):
+            try:
+                wynik = odczytaj(adres, port, kandydat)
+            except OSError:
+                continue
+            moc = wynik.get('Moc oddawana (AC)', (None, ''))[0]
+            if moc is None:
+                continue
+            print(f'\nZnalazłem falownik: {adres} (jednostka {kandydat}), '
+                  f'teraz oddaje {moc:.0f} W')
+            print('\nDodaj go do panelu:')
+            dodatek = f' --jednostka {kandydat}' if kandydat != 1 else ''
+            print(f'   python3 pompa-acond.py panel <adres-pompy>'
+                  f' --falownik {adres}{dodatek}')
+            return 0
+
+    print(f'\nCoś nasłuchuje na porcie {port}, ale nie odpowiada jak SUN2000.')
+    print('Możliwe, że Modbus jest zajęty — falownik obsługuje jednego klienta naraz.')
+    return 1
+
+
 def main():
     parser = argparse.ArgumentParser(description='Odczyt falownika Huawei SUN2000.')
-    parser.add_argument('host', help='adres falownika w sieci domowej')
+    parser.add_argument('host', help='adres falownika w sieci domowej, '
+                        'albo sama sieć (np. 192.168.88.0/24) — wtedy go szukam')
     parser.add_argument('--port', type=int, default=502)
     parser.add_argument('--jednostka', type=int, default=1, help='adres Modbus, zwykle 1 albo 0')
     parser.add_argument('--zapisuj', action='store_true', help='zapisuj odczyty do CSV')
     parser.add_argument('--co', type=float, default=300, help='co ile sekund przy zapisie')
     parser.add_argument('--plik', help='plik CSV z zapisem')
     argumenty = parser.parse_args()
+
+    if '/' in argumenty.host:
+        sys.exit(znajdz(argumenty.host, argumenty.port, argumenty.jednostka))
 
     try:
         if argumenty.zapisuj:
