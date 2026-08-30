@@ -292,6 +292,11 @@ sieci i dodajesz do ekranu głównego. Pokazuje jednym rzutem oka: temperaturę 
 dworze, ciepłą wodę, moc grzewczą, produkcję z paneli i bilans z siecią, obieg grzewczy,
 wykres ostatniej doby z `dane-pompy.csv` oraz najbliższe zadania z `przypomnienia.json`.
 
+Panel przy okazji **sam prowadzi historię**: co 5 minut dopisuje odczyt do
+`dane-pompy.csv`, z którego rysuje potem wykres. Nie trzeba więc trzymać osobnego
+`zapisuj` w drugim oknie — wystarczy, że panel chodzi. Odstęp zmienia
+`--co-historia <minuty>`, a `--co-historia 0` wyłącza zapis.
+
 Falownik jest opcjonalny — bez `--falownik` panel pokazuje samą pompę. Strona jest
 **wyłącznie do odczytu**: niczego w pompie nie ustawia. Domyślnie widać ją w całej sieci
 domowej; `--tylko-lokalnie` ogranicza dostęp do samego komputera.

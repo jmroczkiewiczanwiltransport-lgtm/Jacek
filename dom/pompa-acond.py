@@ -35,6 +35,8 @@ import sys
 import time
 import unicodedata
 import gzip
+import threading
+import time
 import http.cookiejar
 import zlib
 import urllib.error
@@ -283,6 +285,34 @@ def strony(argumenty):
                 print(f'      {napis}')
 
 
+_ZAMEK_HISTORII = threading.Lock()
+
+
+def _kolumny_historii(plik, zmienne, opisy):
+    """Kolejność kolumn CSV. Gdy plik już jest, trzyma się jego nagłówka."""
+    nazwa = lambda z: opisy.get(z, [z])[0]
+    liczbowe = sorted((n for n, w in zmienne.items() if liczba(w) is not None),
+                      key=lambda n: (nazwa(n) == n, nazwa(n)))
+    if os.path.exists(plik):
+        with open(plik, encoding='utf-8') as f:
+            naglowek = f.readline().rstrip('\n').split(';')[1:]
+        wg_nazwy = {nazwa(n): n for n in liczbowe}
+        return [wg_nazwy.get(n) for n in naglowek], False
+    return liczbowe, True
+
+
+def _dopisz_odczyt(plik, zmienne, opisy):
+    """Dokłada jeden wiersz do CSV — z niego bierze się wykres na panelu."""
+    with _ZAMEK_HISTORII:
+        kolumny, nowy = _kolumny_historii(plik, zmienne, opisy)
+        wiersz = [datetime.now().strftime('%Y-%m-%d %H:%M:%S')]
+        wiersz += ['' if z is None else str(zmienne.get(z, '')).strip() for z in kolumny]
+        with open(plik, 'a', encoding='utf-8') as f:
+            if nowy:
+                f.write(';'.join(['czas'] + [opisy.get(n, [n])[0] for n in kolumny]) + '\n')
+            f.write(';'.join(wiersz) + '\n')
+
+
 def _historia_z_pliku(plik, godzin=24):
     """Ostatnia doba z zapisu — do wykresu na panelu."""
     if not os.path.exists(plik):
@@ -336,6 +366,10 @@ def panel(argumenty):
     opisy = wczytaj_opisy_panelu()
     plik_danych = argumenty.plik or os.path.join(KATALOG, 'dane-pompy.csv')
     adres_falownika = argumenty.falownik
+    # Panel jest jedyną rzeczą, która chodzi cały czas, więc to on prowadzi
+    # zapis historii — inaczej wykres 24 h byłby pusty aż do końca świata.
+    odstep_zapisu = max(0, argumenty.co_historia) * 60
+    ostatni_zapis = [0.0]
 
     class Obsluga(BaseHTTPRequestHandler):
         def log_message(self, *_):
@@ -369,6 +403,12 @@ def panel(argumenty):
                 if not opisy:
                     odpowiedz['blad'] = ('Brak opisy-panelu.json — panel nie wie, która zmienna '
                                          'jest którą. Skopiuj opisy-panelu.przyklad.json.')
+                elif odstep_zapisu and time.monotonic() - ostatni_zapis[0] >= odstep_zapisu:
+                    ostatni_zapis[0] = time.monotonic()
+                    try:
+                        _dopisz_odczyt(plik_danych, zmienne, opisy)
+                    except OSError as powod:
+                        odpowiedz['blad'] = f'Nie zapisałem historii: {powod}'
             except OSError as powod:
                 odpowiedz['blad'] = f'Pompa nie odpowiada: {powod}'
 
@@ -593,20 +633,13 @@ def zapisuj(argumenty):
 
     zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo,
                              ciasteczko=argumenty.ciasteczko)
-    kolumny = sorted((n for n, w in zmienne.items() if liczba(w) is not None),
-                     key=lambda n: (nazwa_kolumny(n) == n, nazwa_kolumny(n)))
-
-    istnieje = os.path.exists(plik)
-    if istnieje:
-        with open(plik, encoding='utf-8') as f:
-            naglowek = f.readline().rstrip('\n').split(';')[1:]
-        wg_nazwy = {nazwa_kolumny(n): n for n in kolumny}
-        kolumny = [wg_nazwy.get(nazwa) for nazwa in naglowek]
-        print(f'Dopisuję do {plik} ({len(naglowek)} kolumn z poprzedniego zapisu).')
-    else:
+    kolumny, nowy = _kolumny_historii(plik, zmienne, opisy)
+    if nowy:
         with open(plik, 'w', encoding='utf-8') as f:
             f.write(';'.join(['czas'] + [nazwa_kolumny(n) for n in kolumny]) + '\n')
         print(f'Zakładam {plik} — kolumn: {len(kolumny)}.')
+    else:
+        print(f'Dopisuję do {plik} ({len(kolumny)} kolumn z poprzedniego zapisu).')
 
     print(f'Zapisuję co {argumenty.co:.0f} s. Ctrl+C kończy. '
           f'Zostaw to uruchomione — im dłużej, tym więcej wiadomo.')
@@ -1208,6 +1241,8 @@ def main():
     parser.add_argument('--strony', help='numery ekranów do odczytu liczników, np. 115,121')
     parser.add_argument('--falownik', help='adres falownika, żeby panel pokazywał też produkcję')
     parser.add_argument('--port-panelu', dest='port_panelu', type=int, default=8125)
+    parser.add_argument('--co-historia', dest='co_historia', type=float, default=5,
+                        help='co ile minut panel dopisuje odczyt do historii (0 wyłącza)')
     parser.add_argument('--tylko-lokalnie', action='store_true',
                         help='panel dostępny tylko z tego komputera, nie z telefonu')
     parser.add_argument('--tylko-podsumuj', action='store_true',
