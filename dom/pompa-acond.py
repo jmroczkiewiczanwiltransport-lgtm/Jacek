@@ -34,6 +34,7 @@ import socket
 import sys
 import time
 import unicodedata
+import http.cookiejar
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -51,6 +52,19 @@ from modbus import (CZYTAJ_HOLDING, CZYTAJ_INPUT, ZAPISZ_JEDEN, BLEDY, Modbus,  
 # skrótami, ale stałymi: dopóki nie zmieni się program sterownika, ten sam
 # skrót zawsze oznacza tę samą wielkość.
 
+# Sterownik nadaje ciasteczko sesji (SoftPLC) sam z siebie, bez logowania.
+# Trzymamy je między zapytaniami, tak jak robi to przeglądarka.
+_OTWIERACZ = None
+
+
+def _otwieracz():
+    global _OTWIERACZ
+    if _OTWIERACZ is None:
+        _OTWIERACZ = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    return _OTWIERACZ
+
+
 def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
     # Panel wysyła ten nagłówek przy każdym odpytaniu — robimy tak samo,
     # żeby sterownik traktował nas jak własną stronę.
@@ -62,7 +76,7 @@ def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
         poswiadczenie = base64.b64encode(f'{uzytkownik}:{haslo or ""}'.encode()).decode()
         zadanie.add_header('Authorization', 'Basic ' + poswiadczenie)
     try:
-        with urllib.request.urlopen(zadanie, timeout=limit) as odpowiedz:
+        with _otwieracz().open(zadanie, timeout=limit) as odpowiedz:
             surowe = odpowiedz.read()
     except urllib.error.HTTPError as powod:
         if powod.code in (401, 403):
