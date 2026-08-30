@@ -31,10 +31,19 @@ if not exist opisy-panelu.json (
 
 rem  Bez otwartego portu telefon nie wejdzie — zapora odrzuca połączenie po cichu.
 rem  Regułę zakładamy raz; Windows poprosi wtedy o zgodę administratora.
-netsh advfirewall firewall show rule name="Panel pompy" >nul 2>&1
+rem  Nazwa reguły bez spacji — inaczej gubi się w przekazywaniu argumentów.
+netsh advfirewall firewall show rule name=PanelPompy >nul 2>&1
 if errorlevel 1 (
   echo   Otwieram port %PORT% w zaporze. Windows zapyta o zgodę — kliknij TAK.
-  powershell -NoProfile -Command "Start-Process netsh -Verb RunAs -Wait -ArgumentList 'advfirewall','firewall','add','rule','name=Panel pompy','dir=in','action=allow','protocol=TCP','localport=%PORT%','profile=private'" >nul 2>&1
+  powershell -NoProfile -Command "Start-Process netsh -Verb RunAs -Wait -ArgumentList 'advfirewall','firewall','add','rule','name=PanelPompy','dir=in','action=allow','protocol=TCP','localport=%PORT%','profile=private'" >nul 2>&1
+  netsh advfirewall firewall show rule name=PanelPompy >nul 2>&1
+  if errorlevel 1 (
+    echo   Nie udało się otworzyć portu. Panel zadziała na tym komputerze,
+    echo   ale telefon nie wejdzie. Napraw to raz, w PowerShellu jako administrator:
+    echo       netsh advfirewall firewall add rule name=PanelPompy dir=in action=allow protocol=TCP localport=%PORT% profile=private
+  ) else (
+    echo   Port %PORT% otwarty.
+  )
   echo.
 )
 
