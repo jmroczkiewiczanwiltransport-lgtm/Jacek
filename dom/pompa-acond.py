@@ -1284,7 +1284,12 @@ def main():
     except OSError as powod:
         print(f'\nNie udało się: {powod}')
         print('\nCo sprawdzić:')
-        print('  • czy Modbus jest odblokowany w pompie — robi to serwis ACOND-a,')
+        # Podpowiedzi muszą pasować do drogi, którą szliśmy — rada o Modbusie
+        # przy czytaniu strony WWW tylko myli.
+        if not przez_strone:
+            print('  • czy Modbus jest odblokowany w pompie — robi to serwis ACOND-a,')
+        else:
+            print('  • czy ten sam adres otwiera się w przeglądarce na tym komputerze,')
         print('  • czy to właściwy adres (ten z sieci domowej, nie serwisowej),')
         print('  • czy komputer jest w tej samej sieci co pompa.')
         sys.exit(1)
