@@ -1,0 +1,73 @@
+{
+  "polozenie": {
+    "szerokosc": 52.41,
+    "dlugosc": 16.93
+  },
+
+  "harmonogramy": [
+    {
+      "nazwa": "Pobudka",
+      "o": "06:20",
+      "dni": ["pn", "wt", "sr", "cz", "pt"],
+      "cel": "pokoj:Sypialnia",
+      "akcja": { "wlacz": true, "jasnosc": 1, "temperatura": 2200, "przejscie": 1 }
+    },
+    {
+      "nazwa": "Rozjasnianie do pelna",
+      "o": "06:21",
+      "dni": ["pn", "wt", "sr", "cz", "pt"],
+      "cel": "pokoj:Sypialnia",
+      "akcja": { "jasnosc": 80, "temperatura": 4000, "przejscie": 900 }
+    },
+    {
+      "nazwa": "Wieczor",
+      "o": "zachod-00:20",
+      "cel": "pokoj:Salon",
+      "akcja": { "wlacz": true, "jasnosc": 65, "temperatura": 2700, "przejscie": 120 }
+    },
+    {
+      "nazwa": "Cisza nocna",
+      "o": "23:30",
+      "cel": "wszystko",
+      "akcja": { "wlacz": false, "przejscie": 60 }
+    }
+  ],
+
+  "czujniki": [
+    {
+      "czujnik": "Czujnik korytarz",
+      "cel": "pokoj:Korytarz",
+      "akcja": { "wlacz": true, "jasnosc": 70, "temperatura": 3500 },
+      "gasPo": 120,
+      "przejscieGaszenia": 8,
+      "wNocy": { "jasnosc": 8, "temperatura": 2200, "od": "22:30", "do": "06:00" }
+    }
+  ],
+
+  "przyciski": [
+    {
+      "przycisk": "Przycisk sypialnia",
+      "guzik": 1,
+      "zdarzenie": "short_release",
+      "cel": "pokoj:Sypialnia",
+      "akcja": { "przelacz": true }
+    },
+    {
+      "przycisk": "Przycisk sypialnia",
+      "guzik": 4,
+      "zdarzenie": "long_press",
+      "cel": "wszystko",
+      "akcja": { "wlacz": false, "przejscie": 30 }
+    }
+  ],
+
+  "obecnosc": {
+    "wlaczona": false,
+    "cel": "pokoj:Salon",
+    "od": "zachod",
+    "do": "23:00",
+    "minPrzerwa": 15,
+    "maxPrzerwa": 45,
+    "jasnosc": 60
+  }
+}

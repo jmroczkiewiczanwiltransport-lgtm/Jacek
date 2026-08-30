@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mostek Hue — sterowanie</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='7' r='4.5' fill='%23e8a33d'/%3E%3Crect x='6' y='11' width='4' height='3' rx='1' fill='%23888'/%3E%3C/svg%3E">
+<style>
+  :root {
+    color-scheme: light dark;
+    --tlo: #f4f2ee;      --karta: #fffefb;   --kreska: #e0dcd3;
+    --tekst: #22201c;    --tekst-slaby: #6d675d;
+    --akcent: #b3701a;   --akcent-tlo: #fdf3e3;
+    --zle: #a8321f;      --dobre: #2f6d3f;
+    --cien: 0 1px 2px rgba(30,25,15,.06), 0 8px 24px -12px rgba(30,25,15,.18);
+    --promien: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --tlo: #16151a;    --karta: #201f26;   --kreska: #34323c;
+      --tekst: #ece9e4;  --tekst-slaby: #9b968e;
+      --akcent: #e8a33d; --akcent-tlo: #2c2519;
+      --zle: #e8836f;    --dobre: #7fc08f;
+      --cien: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--tlo); color: var(--tekst);
+    font: 15px/1.5 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  }
+  header {
+    position: sticky; top: 0; z-index: 10; background: var(--karta);
+    border-bottom: 1px solid var(--kreska); padding: 10px 16px;
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  header h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+  #stan-mostka { font-size: 13px; color: var(--tekst-slaby); }
+  #stan-mostka b { color: var(--tekst); font-weight: 600; }
+  nav { margin-left: auto; display: flex; gap: 4px; }
+  nav button {
+    font: inherit; font-size: 13px; padding: 6px 12px; border: 1px solid transparent;
+    background: none; color: var(--tekst-slaby); border-radius: 8px; cursor: pointer;
+  }
+  nav button:hover { background: var(--tlo); }
+  nav button[aria-current="true"] { background: var(--akcent-tlo); color: var(--akcent); font-weight: 600; }
+  @media (max-width: 560px) {
+    nav { margin-left: 0; width: 100%; overflow-x: auto; padding-bottom: 2px; }
+    nav button { flex: none; }
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 64px; }
+  section[hidden] { display: none; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--tekst-slaby);
+       font-weight: 600; margin: 28px 0 10px; }
+  h2:first-child { margin-top: 0; }
+  .karta { background: var(--karta); border: 1px solid var(--kreska); border-radius: var(--promien);
+           box-shadow: var(--cien); padding: 14px 16px; margin-bottom: 12px; }
+  .naglowek-karty { display: flex; align-items: center; gap: 12px; }
+  .naglowek-karty .nazwa { font-weight: 600; flex: 1; min-width: 0; }
+  .naglowek-karty .opis { font-size: 12px; color: var(--tekst-slaby); font-weight: 400; }
+  .przelacznik { position: relative; width: 46px; height: 26px; flex: none; border: 0; padding: 0;
+                 border-radius: 999px; background: var(--kreska); cursor: pointer; transition: background .15s; }
+  .przelacznik::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+                        border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3);
+                        transition: transform .15s; }
+  .przelacznik[aria-pressed="true"] { background: var(--akcent); }
+  .przelacznik[aria-pressed="true"]::after { transform: translateX(20px); }
+  input[type=range] { width: 100%; accent-color: var(--akcent); }
+  .suwak { display: grid; grid-template-columns: 68px 1fr 44px; gap: 10px; align-items: center;
+           margin-top: 10px; font-size: 12px; color: var(--tekst-slaby); }
+  .suwak output { text-align: right; font-variant-numeric: tabular-nums; }
+  .sceny { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .sceny button, .maly {
+    font: inherit; font-size: 12px; padding: 5px 11px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--kreska); background: var(--tlo); color: var(--tekst);
+  }
+  .sceny button:hover, .maly:hover { border-color: var(--akcent); color: var(--akcent); }
+  .lampy { margin-top: 12px; border-top: 1px solid var(--kreska); padding-top: 4px; }
+  .lampa { display: grid; grid-template-columns: 1fr 120px 46px; gap: 12px; align-items: center;
+           padding: 8px 0; font-size: 14px; }
+  .lampa .stan { font-size: 12px; color: var(--tekst-slaby); }
+  .niedostepna { color: var(--zle); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+       color: var(--tekst-slaby); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--kreska); }
+  td { padding: 7px 8px; border-bottom: 1px solid var(--kreska); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  .przewijalne { overflow-x: auto; }
+  .problem { color: var(--zle); }
+  .ok { color: var(--dobre); }
+  .pastylka { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
+              background: var(--tlo); border: 1px solid var(--kreska); color: var(--tekst-slaby); }
+  .komunikat { padding: 12px 14px; border-radius: var(--promien); margin-bottom: 14px; font-size: 14px;
+               border: 1px solid var(--kreska); background: var(--akcent-tlo); }
+  .komunikat.blad { border-color: var(--zle); color: var(--zle); background: var(--karta); }
+  .komunikat code { background: var(--tlo); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  label.pole { display: block; font-size: 12px; color: var(--tekst-slaby); margin-bottom: 10px; }
+  input[type=text], input[type=number], select, textarea {
+    font: inherit; font-size: 14px; width: 100%; margin-top: 3px; padding: 7px 9px;
+    border: 1px solid var(--kreska); border-radius: 8px; background: var(--tlo); color: var(--tekst);
+  }
+  .rzad { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .dni { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+  .dni label { font-size: 12px; padding: 4px 9px; border: 1px solid var(--kreska); border-radius: 999px; cursor: pointer; }
+  .dni input { display: none; }
+  .dni input:checked + span { color: var(--akcent); font-weight: 600; }
+  .dni label:has(input:checked) { border-color: var(--akcent); background: var(--akcent-tlo); }
+  .glowny {
+    font: inherit; font-weight: 600; font-size: 14px; padding: 9px 18px; border-radius: 9px;
+    border: 0; background: var(--akcent); color: #fff; cursor: pointer;
+  }
+  .glowny:disabled { opacity: .5; cursor: default; }
+  .pasek { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+  .usun { border: 0; background: none; color: var(--tekst-slaby); cursor: pointer; font-size: 18px;
+          line-height: 1; padding: 0 4px; }
+  .usun:hover { color: var(--zle); }
+  .pusto { color: var(--tekst-slaby); font-size: 14px; padding: 8px 0; }
+  fieldset { border: 1px solid var(--kreska); border-radius: var(--promien); padding: 12px 14px; margin: 0 0 12px; }
+  legend { font-size: 12px; color: var(--tekst-slaby); padding: 0 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Mostek Hue</h1>
+  <span id="stan-mostka">łączę…</span>
+  <nav id="zakladki" hidden>
+    <button data-widok="sterowanie" aria-current="true">Sterowanie</button>
+    <button data-widok="czujniki">Czujniki</button>
+    <button data-widok="automatyka">Automatyka</button>
+    <button data-widok="diagnostyka">Diagnostyka</button>
+  </nav>
+</header>
+
+<main>
+  <div id="komunikat"></div>
+
+  <section id="parowanie" hidden>
+    <div class="karta">
+      <h2 style="margin-top:0">Połączenie z mostkiem</h2>
+      <label class="pole">Adres mostka w sieci lokalnej
+        <input type="text" id="ip-mostka" placeholder="192.168.1.50" autocomplete="off">
+      </label>
+      <div class="pasek">
+        <button class="glowny" id="paruj">Paruj — naciśnij najpierw przycisk na mostku</button>
+        <button class="maly" id="szukaj">Znajdź mostek</button>
+      </div>
+      <p style="font-size:13px;color:var(--tekst-slaby)">
+        Adres znajdziesz w aplikacji Hue (Ustawienia → Mostek) albo na liście urządzeń routera.
+        Klucz dostępu zapisuje się tylko na tym komputerze.
+      </p>
+    </div>
+  </section>
+
+  <section id="widok-sterowanie" hidden></section>
+  <section id="widok-czujniki" hidden></section>
+  <section id="widok-automatyka" hidden></section>
+  <section id="widok-diagnostyka" hidden></section>
+</main>
+
+<script>
+'use strict';
+
+// ───────────────────────── dostęp do mostka ─────────────────────────
+// Panel działa w dwóch trybach:
+//   • pośrednik — otwarty przez „node hue.mjs panel"; zapytania idą przez Node,
+//     który zna klucz i radzi sobie z certyfikatem mostka. Zawsze działa.
+//   • bezpośredni — plik otwarty z dysku; przeglądarka sama łączy się z mostkiem.
+//     Wymaga wcześniejszego zaakceptowania certyfikatu mostka w osobnej karcie.
+
+const Most = {
+  tryb: null, most: null, klucz: null,
+
+  async start() {
+    try {
+      const odp = await fetch('most-info', { cache: 'no-store' });
+      if (odp.ok) {
+        const info = await odp.json();
+        this.tryb = 'posrednik';
+        this.most = info.most;
+        return info.sparowany;
+      }
+    } catch { /* plik z dysku — lecimy bezpośrednio */ }
+    this.tryb = 'bezposredni';
+    this.most = localStorage.getItem('hue.most');
+    this.klucz = localStorage.getItem('hue.klucz');
+    return !!(this.most && this.klucz);
+  },
+
+  adres(sciezka) {
+    return this.tryb === 'posrednik' ? 'most/' + sciezka : `https://${this.most}/clip/v2/${sciezka}`;
+  },
+
+  async zapytaj(metoda, sciezka, cialo) {
+    const opcje = { method: metoda, headers: {} };
+    if (this.tryb === 'bezposredni') opcje.headers['hue-application-key'] = this.klucz;
+    if (cialo !== undefined) { opcje.headers['Content-Type'] = 'application/json'; opcje.body = JSON.stringify(cialo); }
+    let odp;
+    try {
+      odp = await fetch(this.adres(sciezka), opcje);
+    } catch (e) {
+      throw new Error(this.tryb === 'bezposredni'
+        ? 'Przeglądarka nie połączyła się z mostkiem. Otwórz w nowej karcie ' +
+          `https://${this.most} i zaakceptuj certyfikat, albo uruchom panel przez „node hue.mjs panel".`
+        : 'Brak łączności z mostkiem: ' + e.message);
+    }
+    const tekst = await odp.text();
+    let dane; try { dane = JSON.parse(tekst); } catch { throw new Error(`Mostek odpowiedział ${odp.status}.`); }
+    if (dane.errors?.length) throw new Error(dane.errors.map((e) => e.description).join('; '));
+    if (!odp.ok) throw new Error(dane.blad || `Mostek odpowiedział ${odp.status}.`);
+    return dane.data ?? dane;
+  },
+
+  pobierz(zasob) { return this.zapytaj('GET', 'resource/' + zasob); },
+  ustaw(zasob, id, cialo) { return this.zapytaj('PUT', `resource/${zasob}/${id}`, cialo); },
+
+  async paruj(ip) {
+    if (this.tryb === 'posrednik') {
+      const odp = await fetch('most-parowanie', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ip }),
+      });
+      const wynik = await odp.json();
+      if (!wynik.sparowany) throw new Error(wynik.blad || 'Nie udało się sparować.');
+      this.most = ip;
+      return;
+    }
+    const odp = await fetch(`https://${ip}/api`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ devicetype: 'hue-panel#przegladarka' }),
+    }).catch(() => { throw new Error(
+      `Przeglądarka nie połączyła się z ${ip}. Otwórz https://${ip} w nowej karcie, zaakceptuj ` +
+      'certyfikat mostka i wróć tutaj — albo uruchom panel poleceniem „node hue.mjs panel".'); });
+    const wynik = (await odp.json())[0] || {};
+    if (!wynik.success) throw new Error(wynik.error?.description || 'Naciśnij przycisk na mostku i spróbuj ponownie.');
+    this.most = ip; this.klucz = wynik.success.username;
+    localStorage.setItem('hue.most', ip);
+    localStorage.setItem('hue.klucz', this.klucz);
+  },
+};
+
+// ───────────────────────────── pomocnicze ─────────────────────────────
+
+const $ = (wybor) => document.querySelector(wybor);
+const nazwa = (x) => x?.metadata?.name || '—';
+const el = (tag, wlasciwosci = {}, dzieci = []) => {
+  const w = Object.assign(document.createElement(tag), wlasciwosci);
+  for (const d of [].concat(dzieci)) w.append(d);
+  return w;
+};
+const kelwinNaMired = (k) => Math.round(1e6 / k);
+const miredNaKelwin = (m) => Math.round(1e6 / m / 50) * 50;
+
+function pokazBlad(tresc) {
+  $('#komunikat').innerHTML = '';
+  if (!tresc) return;
+  $('#komunikat').append(el('div', { className: 'komunikat blad', textContent: tresc }));
+}
+function pokazInfo(tresc) {
+  $('#komunikat').innerHTML = '';
+  if (tresc) $('#komunikat').append(el('div', { className: 'komunikat', textContent: tresc }));
+}
+
+// Mostek nie lubi lawiny poleceń — suwaki wysyłamy najwyżej co 250 ms.
+function dlawik(fn, ms = 250) {
+  let czeka = null, ostatnie = 0;
+  return (...arg) => {
+    const teraz = Date.now();
+    clearTimeout(czeka);
+    if (teraz - ostatnie > ms) { ostatnie = teraz; fn(...arg); }
+    else czeka = setTimeout(() => { ostatnie = Date.now(); fn(...arg); }, ms - (teraz - ostatnie));
+  };
+}
+
+// ───────────────────────── stan zasobów mostka ─────────────────────────
+
+const ZASOBY = ['light', 'room', 'zone', 'scene', 'grouped_light', 'device',
+  'motion', 'button', 'device_power', 'zigbee_connectivity', 'temperature', 'light_level'];
+let S = null;
+
+async function wczytajStan() {
+  const wyniki = await Promise.all(ZASOBY.map((z) => Most.pobierz(z)));
+  S = Object.fromEntries(ZASOBY.map((z, i) => [z, wyniki[i]]));
+  S.wgId = Object.fromEntries([...S.light, ...S.device, ...S.grouped_light].map((x) => [x.id, x]));
+  S.domGrupa = S.grouped_light.find((g) => g.owner?.rtype === 'bridge_home') || null;
+  S.wlascicielUslugi = {};
+  for (const u of S.device) for (const usluga of u.services || []) S.wlascicielUslugi[usluga.rid] = u;
+  return S;
+}
+
+const swiatlaGrupy = (grupa) => (grupa.children || [])
+  .flatMap((dziecko) => {
+    const urz = S.wgId[dziecko.rid];
+    if (dziecko.rtype === 'light') return S.wgId[dziecko.rid] ? [S.wgId[dziecko.rid]] : [];
+    return (urz?.services || []).filter((u) => u.rtype === 'light').map((u) => S.wgId[u.rid]).filter(Boolean);
+  });
+
+// ─────────────────────────── widok: sterowanie ───────────────────────────
+
+function rysujSterowanie() {
+  const widok = $('#widok-sterowanie');
+  widok.innerHTML = '';
+
+  if (S.domGrupa) {
+    widok.append(el('h2', { textContent: 'Cały dom' }));
+    widok.append(kartaGrupy({ id: 'dom', metadata: { name: 'Wszystkie światła' }, children: [] },
+      S.domGrupa, `${S.light.filter((l) => l.on?.on).length} z ${S.light.length} świeci`, false));
+  }
+
+  for (const [etykieta, kolekcja] of [['Pokoje', S.room], ['Strefy', S.zone]]) {
+    if (!kolekcja.length) continue;
+    widok.append(el('h2', { textContent: etykieta }));
+    for (const g of kolekcja) {
+      const grupa = S.wgId[g.services?.find((u) => u.rtype === 'grouped_light')?.rid];
+      if (!grupa) continue;
+      const lampy = swiatlaGrupy(g);
+      const swieci = lampy.filter((l) => l.on?.on).length;
+      widok.append(kartaGrupy(g, grupa, `${lampy.length} ${odmiana(lampy.length, 'lampa', 'lampy', 'lamp')}` +
+        (swieci ? `, świeci ${swieci}` : ''), true));
+    }
+  }
+}
+
+const odmiana = (n, poj, kilka, wiele) => {
+  if (n === 1) return poj;
+  const d = n % 10, s = n % 100;
+  return (d >= 2 && d <= 4 && !(s >= 12 && s <= 14)) ? kilka : wiele;
+};
+
+function kartaGrupy(grupaLogiczna, grupa, opis, zLampami) {
+  const karta = el('div', { className: 'karta' });
+  const przelacznik = el('button', {
+    className: 'przelacznik', title: 'Włącz / wyłącz',
+    onclick: () => zmien('grouped_light', grupa.id, { on: { on: !grupa.on?.on } },
+      () => { grupa.on = { on: !grupa.on?.on }; przelacznik.setAttribute('aria-pressed', String(!!grupa.on.on)); }),
+  });
+  przelacznik.setAttribute('aria-pressed', String(!!grupa.on?.on));
+
+  karta.append(el('div', { className: 'naglowek-karty' }, [
+    el('div', { className: 'nazwa' }, [nazwa(grupaLogiczna), el('div', { className: 'opis', textContent: opis })]),
+    przelacznik,
+  ]));
+
+  karta.append(suwak('Jasność', 1, 100, Math.round(grupa.dimming?.brightness ?? 60), '%',
+    dlawik((v) => zmien('grouped_light', grupa.id, { on: { on: true }, dimming: { brightness: v } }))));
+
+  const lampyGrupy = zLampami ? swiatlaGrupy(grupaLogiczna) : S.light;
+  if (lampyGrupy.some((l) => l.color_temperature)) {
+    const biezaca = lampyGrupy.find((l) => l.color_temperature?.mirek)?.color_temperature.mirek ?? 300;
+    karta.append(suwak('Barwa', 2200, 6500, miredNaKelwin(biezaca), 'K',
+      dlawik((v) => zmien('grouped_light', grupa.id,
+        { on: { on: true }, color_temperature: { mirek: kelwinNaMired(v) } })), 50));
+  }
+
+  const sceny = S.scene.filter((sc) => sc.group?.rid === grupaLogiczna.id);
+  if (sceny.length) {
+    karta.append(el('div', { className: 'sceny' }, sceny.map((sc) => el('button', {
+      textContent: nazwa(sc),
+      onclick: () => zmien('scene', sc.id, { recall: { action: 'active' } }),
+    }))));
+  }
+
+  if (zLampami && lampyGrupy.length) {
+    const lista = el('div', { className: 'lampy' });
+    for (const lampa of lampyGrupy) lista.append(wierszLampy(lampa));
+    karta.append(lista);
+  }
+  return karta;
+}
+
+function wierszLampy(lampa) {
+  const przelacznik = el('button', {
+    className: 'przelacznik', style: 'transform:scale(.8)',
+    onclick: () => zmien('light', lampa.id, { on: { on: !lampa.on?.on } }, () => {
+      lampa.on = { on: !lampa.on?.on };
+      przelacznik.setAttribute('aria-pressed', String(!!lampa.on.on));
+    }),
+  });
+  przelacznik.setAttribute('aria-pressed', String(!!lampa.on?.on));
+
+  const suwakJasnosci = el('input', {
+    type: 'range', min: 1, max: 100, value: Math.round(lampa.dimming?.brightness ?? 100),
+    oninput: dlawik((e) => zmien('light', lampa.id,
+      { on: { on: true }, dimming: { brightness: +e.target.value } })),
+  });
+  if (!lampa.dimming) suwakJasnosci.disabled = true;
+
+  const dostepna = S.zigbee_connectivity.find(
+    (z) => z.owner?.rid === S.wlascicielUslugi[lampa.id]?.id)?.status !== 'connectivity_issue';
+
+  return el('div', { className: 'lampa' }, [
+    el('div', {}, [nazwa(lampa), el('div', {
+      className: 'stan' + (dostepna ? '' : ' niedostepna'),
+      textContent: dostepna ? (lampa.on?.on ? 'świeci' : 'wyłączona') : 'brak łączności',
+    })]),
+    suwakJasnosci, przelacznik,
+  ]);
+}
+
+function suwak(etykieta, min, max, wartosc, jednostka, przyZmianie, krok = 1) {
+  const wyjscie = el('output', { textContent: wartosc + jednostka });
+  const wejscie = el('input', {
+    type: 'range', min, max, step: krok, value: wartosc,
+    oninput: (e) => { wyjscie.textContent = e.target.value + jednostka; przyZmianie(+e.target.value); },
+  });
+  return el('div', { className: 'suwak' }, [el('span', { textContent: etykieta }), wejscie, wyjscie]);
+}
+
+async function zmien(zasob, id, cialo, poUdanej) {
+  try {
+    await Most.ustaw(zasob, id, cialo);
+    pokazBlad(null);
+    poUdanej?.();
+  } catch (e) { pokazBlad(e.message); }
+}
+
+// ─────────────────────────── widok: czujniki ───────────────────────────
+
+let odswiezanieCzujnikow = null;
+
+function rysujCzujniki() {
+  const widok = $('#widok-czujniki');
+  widok.innerHTML = '';
+  const bateria = Object.fromEntries(S.device_power.map((z) => [z.owner?.rid, z.power_state]));
+
+  const czujniki = [...new Set(S.motion.map((m) => m.owner?.rid))];
+  widok.append(el('h2', { textContent: 'Czujniki ruchu' }));
+  if (!czujniki.length) widok.append(el('p', { className: 'pusto', textContent: 'Mostek nie widzi czujników ruchu.' }));
+  for (const idUrz of czujniki) {
+    const urz = S.wgId[idUrz];
+    const m = S.motion.find((x) => x.owner?.rid === idUrz);
+    const ruch = m?.motion?.motion ?? m?.motion?.motion_report?.motion;
+    const temp = S.temperature.find((x) => x.owner?.rid === idUrz)?.temperature?.temperature;
+    const lux = S.light_level.find((x) => x.owner?.rid === idUrz)?.light?.light_level;
+    const bat = bateria[idUrz]?.battery_level;
+    const karta = el('div', { className: 'karta' }, [
+      el('div', { className: 'naglowek-karty' }, [
+        el('div', { className: 'nazwa' }, [nazwa(urz), el('div', {
+          className: 'opis',
+          textContent: [
+            m?.enabled === false ? 'czujnik wyłączony' : null,
+            temp !== undefined ? `${temp.toFixed(1)} °C` : null,
+            lux !== undefined ? `${Math.round(10 ** ((lux - 1) / 10000))} lx` : null,
+            bat !== undefined && bat !== null ? `bateria ${bat}%` : null,
+          ].filter(Boolean).join('  ·  ') || 'brak dodatkowych danych',
+        })]),
+        el('span', { className: 'pastylka', textContent: ruch ? 'RUCH' : 'spokój',
+          style: ruch ? 'color:var(--akcent);border-color:var(--akcent)' : '' }),
+      ]),
+    ]);
+    widok.append(karta);
+  }
+
+  const przyciski = [...new Set(S.button.map((p) => p.owner?.rid))];
+  widok.append(el('h2', { textContent: 'Przyciski i piloty' }));
+  if (!przyciski.length) widok.append(el('p', { className: 'pusto', textContent: 'Brak przycisków Hue.' }));
+  for (const idUrz of przyciski) {
+    const urz = S.wgId[idUrz];
+    const guziki = S.button.filter((p) => p.owner?.rid === idUrz)
+      .sort((a, b) => (a.metadata?.control_id || 0) - (b.metadata?.control_id || 0));
+    const bat = bateria[idUrz]?.battery_level;
+    widok.append(el('div', { className: 'karta' }, [
+      el('div', { className: 'naglowek-karty' }, [
+        el('div', { className: 'nazwa' }, [nazwa(urz), el('div', {
+          className: 'opis',
+          textContent: `${guziki.length} ${odmiana(guziki.length, 'przycisk', 'przyciski', 'przycisków')}` +
+            (bat !== undefined && bat !== null ? `  ·  bateria ${bat}%` : ''),
+        })]),
+      ]),
+      el('div', { className: 'sceny' }, guziki.map((g) => el('span', {
+        className: 'pastylka',
+        textContent: `${g.metadata?.control_id}: ${g.button?.button_report?.event || g.button?.last_event || '—'}`,
+      }))),
+    ]));
+  }
+  widok.append(el('p', {
+    className: 'pusto',
+    textContent: 'Widok odświeża się co 5 sekund — pomachaj przed czujnikiem albo naciśnij przycisk, ' +
+      'żeby sprawdzić, czy mostek to widzi.',
+  }));
+}
+
+// ────────────────────────── widok: diagnostyka ──────────────────────────
+
+function zbierzDiagnostyke() {
+  const wg = (lista) => Object.fromEntries(lista.map((x) => [x.owner?.rid, x]));
+  const zasilanie = wg(S.device_power), zigbee = wg(S.zigbee_connectivity);
+  const urzadzenia = S.device.map((u) => {
+    const usluga = u.services?.find((x) => x.rtype === 'light');
+    const lampa = usluga && S.wgId[usluga.rid];
+    return {
+      nazwa: nazwa(u),
+      model: u.product_data?.product_name || u.product_data?.model_id || '—',
+      oprogramowanie: u.product_data?.software_version || '—',
+      rodzaj: (u.services || []).map((x) => x.rtype)
+        .filter((t) => ['light', 'motion', 'button', 'temperature', 'light_level'].includes(t))
+        .join(', ') || 'mostek / inne',
+      lacznosc: zigbee[u.id]?.status || '—',
+      jasnosc: lampa?.dimming?.brightness ?? null,
+      wlaczone: lampa ? !!lampa.on?.on : null,
+      bateria: zasilanie[u.id]?.power_state?.battery_level ?? null,
+      stanBaterii: zasilanie[u.id]?.power_state?.battery_state ?? null,
+    };
+  });
+  const problemy = [];
+  for (const u of urzadzenia) {
+    if (u.lacznosc === 'connectivity_issue') problemy.push(`${u.nazwa}: mostek nie ma łączności — sprawdź zasilanie i zasięg`);
+    if (u.bateria !== null && u.bateria <= 20) problemy.push(`${u.nazwa}: bateria ${u.bateria}%`);
+    if (u.stanBaterii === 'critical') problemy.push(`${u.nazwa}: bateria na wyczerpaniu`);
+  }
+  for (const sc of S.scene) {
+    if (![...S.room, ...S.zone].some((g) => g.id === sc.group?.rid)) {
+      problemy.push(`scena „${nazwa(sc)}”: nie należy do żadnego pokoju ani strefy`);
+    }
+  }
+  return { czas: new Date().toISOString(), urzadzenia, problemy };
+}
+
+function rysujDiagnostyke() {
+  const widok = $('#widok-diagnostyka');
+  widok.innerHTML = '';
+  const d = zbierzDiagnostyke();
+
+  widok.append(el('h2', { textContent: 'Podsumowanie' }));
+  const liczby = [
+    ['Urządzenia', S.device.length], ['Światła', S.light.length],
+    ['Świeci teraz', S.light.filter((l) => l.on?.on).length],
+    ['Pokoje', S.room.length], ['Strefy', S.zone.length], ['Sceny', S.scene.length],
+    ['Czujniki ruchu', new Set(S.motion.map((m) => m.owner?.rid)).size],
+    ['Przyciski', new Set(S.button.map((p) => p.owner?.rid)).size],
+  ];
+  widok.append(el('div', { className: 'karta' }, [el('div', { className: 'sceny' },
+    liczby.map(([etykieta, ile]) => el('span', { className: 'pastylka', textContent: `${etykieta}: ${ile}` })))]));
+
+  widok.append(el('h2', { textContent: 'Do sprawdzenia' }));
+  widok.append(el('div', { className: 'karta' }, d.problemy.length
+    ? d.problemy.map((p) => el('div', { className: 'problem', textContent: '• ' + p }))
+    : [el('div', { className: 'ok', textContent: 'Wszystkie urządzenia odpowiadają, baterie powyżej 20%.' })]));
+
+  widok.append(el('h2', { textContent: 'Urządzenia' }));
+  const tabela = el('table', {}, [el('thead', {}, [el('tr', {}, ['Urządzenie', 'Rodzaj', 'Model', 'Oprogramowanie', 'Łączność', 'Bateria']
+    .map((t) => el('th', { textContent: t })))])]);
+  const cialo = el('tbody');
+  for (const u of d.urzadzenia) {
+    const lacznosc = { connected: 'ok', connectivity_issue: 'BRAK ŁĄCZNOŚCI' }[u.lacznosc] || u.lacznosc;
+    cialo.append(el('tr', {}, [
+      el('td', { textContent: u.nazwa }), el('td', { textContent: u.rodzaj }),
+      el('td', { textContent: u.model }), el('td', { textContent: u.oprogramowanie }),
+      el('td', { className: u.lacznosc === 'connectivity_issue' ? 'problem' : '', textContent: lacznosc }),
+      el('td', { className: u.bateria !== null && u.bateria <= 20 ? 'problem' : '',
+        textContent: u.bateria !== null ? u.bateria + '%' : '' }),
+    ]));
+  }
+  tabela.append(cialo);
+  widok.append(el('div', { className: 'karta przewijalne' }, [tabela]));
+
+  widok.append(el('div', { className: 'pasek' }, [
+    el('button', { className: 'maly', textContent: 'Odśwież', onclick: () => odswiez() }),
+    el('button', {
+      className: 'maly', textContent: 'Zapisz raport JSON',
+      onclick: () => {
+        const plik = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
+        const a = el('a', { href: URL.createObjectURL(plik), download: `hue-diagnostyka-${d.czas.slice(0, 10)}.json` });
+        document.body.append(a); a.click(); a.remove();
+      },
+    }),
+  ]));
+}
+
+// ────────────────────────── widok: automatyka ──────────────────────────
+
+const DNI_TYGODNIA = [['pn', 'pon'], ['wt', 'wt'], ['sr', 'śr'], ['cz', 'czw'], ['pt', 'pt'], ['sb', 'sob'], ['nd', 'nd']];
+let automatyka = null;
+
+async function wczytajAutomatyke() {
+  if (Most.tryb === 'posrednik') {
+    try { return await (await fetch('automatyka', { cache: 'no-store' })).json(); } catch {}
+  }
+  try { return JSON.parse(localStorage.getItem('hue.automatyka')); } catch {}
+  return null;
+}
+
+function pustaAutomatyka() {
+  return { polozenie: { szerokosc: 52.41, dlugosc: 16.93 }, harmonogramy: [], czujniki: [], przyciski: [],
+    obecnosc: { wlaczona: false, cel: '', od: 'zachod', do: '23:00', minPrzerwa: 15, maxPrzerwa: 45, jasnosc: 60 } };
+}
+
+function celeDoWyboru() {
+  return ['wszystko', ...S.room.map((p) => 'pokoj:' + nazwa(p)), ...S.zone.map((z) => 'strefa:' + nazwa(z)),
+    ...S.light.map((l) => 'lampa:' + nazwa(l))];
+}
+
+async function rysujAutomatyke() {
+  const widok = $('#widok-automatyka');
+  widok.innerHTML = '';
+  automatyka ||= (await wczytajAutomatyke()) || pustaAutomatyka();
+  for (const klucz of ['harmonogramy', 'czujniki', 'przyciski']) automatyka[klucz] ||= [];
+  automatyka.polozenie ||= { szerokosc: 52.41, dlugosc: 16.93 };
+  automatyka.obecnosc ||= pustaAutomatyka().obecnosc;
+
+  widok.append(el('div', { className: 'komunikat', textContent:
+    Most.tryb === 'posrednik'
+      ? 'Reguły zapisują się do pliku hue/automatyka.json. Wykonuje je polecenie „node hue.mjs automat” — ' +
+        'panel sam z siebie nic nie pilnuje, bo działa tylko wtedy, gdy jest otwarty.'
+      : 'Panel otwarty z dysku zapisuje reguły w przeglądarce. Żeby działały, pobierz plik i uruchom ' +
+        '„node hue.mjs automat automatyka.json”.' }));
+
+  // położenie — potrzebne do godzin względem wschodu i zachodu słońca
+  const polozenie = el('fieldset', {}, [el('legend', { textContent: 'Położenie (dla wschodu i zachodu słońca)' })]);
+  polozenie.append(el('div', { className: 'rzad' }, [
+    poleLiczbowe('Szerokość geogr.', automatyka.polozenie.szerokosc, (v) => { automatyka.polozenie.szerokosc = v; }, 0.01),
+    poleLiczbowe('Długość geogr.', automatyka.polozenie.dlugosc, (v) => { automatyka.polozenie.dlugosc = v; }, 0.01),
+  ]));
+  widok.append(polozenie);
+
+  widok.append(el('h2', { textContent: 'Reguły czasowe' }));
+  const listaCzasowych = el('div');
+  automatyka.harmonogramy.forEach((h, i) => listaCzasowych.append(kartaHarmonogramu(h, i)));
+  widok.append(listaCzasowych);
+  widok.append(el('button', {
+    className: 'maly', textContent: '+ dodaj regułę czasową',
+    onclick: () => { automatyka.harmonogramy.push({ nazwa: 'Nowa reguła', o: '07:00', dni: [], cel: 'wszystko',
+      akcja: { wlacz: true, jasnosc: 60 } }); rysujAutomatyke(); },
+  }));
+
+  widok.append(el('h2', { textContent: 'Czujniki ruchu' }));
+  const listaCzujnikow = el('div');
+  automatyka.czujniki.forEach((c, i) => listaCzujnikow.append(kartaCzujnika(c, i)));
+  widok.append(listaCzujnikow);
+  widok.append(el('button', {
+    className: 'maly', textContent: '+ dodaj regułę na ruch',
+    onclick: () => {
+      const pierwszy = S.motion[0] && nazwa(S.wgId[S.motion[0].owner?.rid]);
+      automatyka.czujniki.push({ czujnik: pierwszy || '', cel: 'wszystko',
+        akcja: { wlacz: true, jasnosc: 70 }, gasPo: 120 });
+      rysujAutomatyke();
+    },
+  }));
+
+  widok.append(el('h2', { textContent: 'Przyciski' }));
+  const listaPrzyciskow = el('div');
+  automatyka.przyciski.forEach((p, i) => listaPrzyciskow.append(kartaPrzycisku(p, i)));
+  widok.append(listaPrzyciskow);
+  widok.append(el('button', {
+    className: 'maly', textContent: '+ dodaj regułę na przycisk',
+    onclick: () => {
+      const pierwszy = S.button[0] && nazwa(S.wgId[S.button[0].owner?.rid]);
+      automatyka.przyciski.push({ przycisk: pierwszy || '', guzik: 1, zdarzenie: 'short_release',
+        cel: 'wszystko', akcja: { przelacz: true } });
+      rysujAutomatyke();
+    },
+  }));
+
+  widok.append(el('h2', { textContent: 'Symulacja obecności' }));
+  const o = automatyka.obecnosc;
+  widok.append(el('div', { className: 'karta' }, [
+    el('label', { className: 'pole' }, [
+      el('input', { type: 'checkbox', checked: !!o.wlaczona, onchange: (e) => { o.wlaczona = e.target.checked; } }),
+      ' włączona — losowo zapala i gasi światło, gdy nikogo nie ma w domu',
+    ]),
+    el('div', { className: 'rzad' }, [
+      poleWyboru('Co ma świecić', celeDoWyboru(), o.cel, (v) => { o.cel = v; }),
+      poleTekstowe('Od', o.od, (v) => { o.od = v; }, 'zachod'),
+      poleTekstowe('Do', o.do, (v) => { o.do = v; }, '23:00'),
+      poleLiczbowe('Zmiana co min. (min)', o.minPrzerwa, (v) => { o.minPrzerwa = v; }),
+      poleLiczbowe('Zmiana co maks. (min)', o.maxPrzerwa, (v) => { o.maxPrzerwa = v; }),
+    ]),
+  ]));
+
+  const przycisk = el('button', { className: 'glowny', textContent: 'Zapisz reguły' });
+  przycisk.onclick = async () => {
+    przycisk.disabled = true;
+    try {
+      if (Most.tryb === 'posrednik') {
+        const odp = await fetch('automatyka', { method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(automatyka, null, 2) });
+        if (!odp.ok) throw new Error((await odp.json()).blad || 'Nie udało się zapisać.');
+        pokazInfo('Zapisano hue/automatyka.json. Działająca automatyka przeładuje plik w ciągu 2 sekund.');
+      } else {
+        localStorage.setItem('hue.automatyka', JSON.stringify(automatyka));
+        pokazInfo('Zapisano w przeglądarce. Pobierz plik, żeby automatyka mogła go czytać.');
+      }
+    } catch (e) { pokazBlad(e.message); }
+    przycisk.disabled = false;
+  };
+  widok.append(el('div', { className: 'pasek' }, [przycisk, el('button', {
+    className: 'maly', textContent: 'Pobierz automatyka.json',
+    onclick: () => {
+      const plik = new Blob([JSON.stringify(automatyka, null, 2)], { type: 'application/json' });
+      const a = el('a', { href: URL.createObjectURL(plik), download: 'automatyka.json' });
+      document.body.append(a); a.click(); a.remove();
+    },
+  })]));
+}
+
+function kartaReguly(tytul, indeks, kolekcja, dzieci) {
+  return el('div', { className: 'karta' }, [
+    el('div', { className: 'naglowek-karty' }, [
+      el('div', { className: 'nazwa', textContent: tytul }),
+      el('button', { className: 'usun', textContent: '×', title: 'Usuń regułę',
+        onclick: () => { automatyka[kolekcja].splice(indeks, 1); rysujAutomatyke(); } }),
+    ]),
+    ...dzieci,
+  ]);
+}
+
+function kartaHarmonogramu(h, i) {
+  const dni = el('div', { className: 'dni' }, DNI_TYGODNIA.map(([kod, etykieta]) => {
+    const pole = el('input', { type: 'checkbox', checked: (h.dni || []).includes(kod) });
+    pole.onchange = () => {
+      h.dni = DNI_TYGODNIA.map(([k]) => k).filter((k) => k === kod ? pole.checked : (h.dni || []).includes(k));
+    };
+    return el('label', {}, [pole, el('span', { textContent: etykieta })]);
+  }));
+  return kartaReguly(h.nazwa || 'Reguła czasowa', i, 'harmonogramy', [
+    el('div', { className: 'rzad' }, [
+      poleTekstowe('Nazwa', h.nazwa, (v) => { h.nazwa = v; }),
+      poleTekstowe('O godzinie', h.o, (v) => { h.o = v; }, '07:00 albo zachod-00:30'),
+      poleWyboru('Co', celeDoWyboru(), h.cel, (v) => { h.cel = v; }),
+    ]),
+    el('label', { className: 'pole' }, ['W dni (nic nie zaznaczone = codziennie)', dni]),
+    poleAkcji(h),
+  ]);
+}
+
+function kartaCzujnika(c, i) {
+  const czujniki = [...new Set(S.motion.map((m) => nazwa(S.wgId[m.owner?.rid])))];
+  return kartaReguly('Ruch: ' + (c.czujnik || '—'), i, 'czujniki', [
+    el('div', { className: 'rzad' }, [
+      poleWyboru('Czujnik', czujniki.length ? czujniki : [c.czujnik || ''], c.czujnik, (v) => { c.czujnik = v; }),
+      poleWyboru('Co zapalić', celeDoWyboru(), c.cel, (v) => { c.cel = v; }),
+      poleLiczbowe('Zgaś po (sekundy)', c.gasPo, (v) => { c.gasPo = v; }),
+      poleTekstowe('Działa od', c.od, (v) => { c.od = v || undefined; }, 'całą dobę'),
+      poleTekstowe('Działa do', c.do, (v) => { c.do = v || undefined; }, 'całą dobę'),
+    ]),
+    poleAkcji(c),
+    el('label', { className: 'pole' }, [
+      el('input', { type: 'checkbox', checked: !!c.wNocy,
+        onchange: (e) => { c.wNocy = e.target.checked ? { jasnosc: 10, od: '22:00', do: '06:00' } : undefined;
+          rysujAutomatyke(); } }),
+      ' w nocy przygaszaj',
+    ]),
+    ...(c.wNocy ? [el('div', { className: 'rzad' }, [
+      poleLiczbowe('Jasność nocą (%)', c.wNocy.jasnosc, (v) => { c.wNocy.jasnosc = v; }),
+      poleTekstowe('Noc od', c.wNocy.od, (v) => { c.wNocy.od = v; }, '22:00'),
+      poleTekstowe('Noc do', c.wNocy.do, (v) => { c.wNocy.do = v; }, '06:00'),
+    ])] : []),
+  ]);
+}
+
+function kartaPrzycisku(p, i) {
+  const przyciski = [...new Set(S.button.map((b) => nazwa(S.wgId[b.owner?.rid])))];
+  const zdarzenia = ['short_release', 'long_press', 'long_release', 'initial_press', 'repeat'];
+  return kartaReguly('Przycisk: ' + (p.przycisk || '—'), i, 'przyciski', [
+    el('div', { className: 'rzad' }, [
+      poleWyboru('Urządzenie', przyciski.length ? przyciski : [p.przycisk || ''], p.przycisk, (v) => { p.przycisk = v; }),
+      poleLiczbowe('Numer guzika', p.guzik, (v) => { p.guzik = v; }),
+      poleWyboru('Zdarzenie', zdarzenia, p.zdarzenie, (v) => { p.zdarzenie = v; }),
+      poleWyboru('Co', celeDoWyboru(), p.cel, (v) => { p.cel = v; }),
+    ]),
+    poleAkcji(p),
+  ]);
+}
+
+// Wspólny edytor akcji: przełącz / włącz / wyłącz / scena, z jasnością i barwą.
+function poleAkcji(regula) {
+  regula.akcja ||= {};
+  const a = regula.akcja;
+  const rodzaj = a.scena ? 'scena' : a.przelacz ? 'przelacz' : a.wlacz === false ? 'wylacz' : 'wlacz';
+  const rodzaje = { wlacz: 'włącz', wylacz: 'wyłącz', przelacz: 'przełącz', scena: 'uruchom scenę' };
+  const wybor = el('select', {}, Object.entries(rodzaje).map(([k, etykieta]) =>
+    el('option', { value: k, textContent: etykieta, selected: k === rodzaj })));
+  wybor.onchange = () => {
+    delete a.wlacz; delete a.przelacz; delete a.scena;
+    if (wybor.value === 'scena' || wybor.value === 'wylacz') delete a.temperatura;
+    if (wybor.value === 'wylacz') delete a.jasnosc;
+    if (wybor.value === 'wlacz') a.wlacz = true;
+    if (wybor.value === 'wylacz') a.wlacz = false;
+    if (wybor.value === 'przelacz') a.przelacz = true;
+    if (wybor.value === 'scena') a.scena = S.scene[0] ? nazwa(S.scene[0]) : '';
+    rysujAutomatyke();
+  };
+  const pola = [el('label', { className: 'pole' }, ['Akcja', wybor])];
+  if (rodzaj === 'scena') {
+    pola.push(poleWyboru('Scena', [...new Set(S.scene.map(nazwa))], a.scena, (v) => { a.scena = v; }));
+  }
+  if (rodzaj !== 'wylacz') {
+    pola.push(poleLiczbowe('Jasność (%)', a.jasnosc, (v) => { a.jasnosc = v; }));
+    if (rodzaj !== 'scena') pola.push(poleLiczbowe('Barwa (K)', a.temperatura, (v) => { a.temperatura = v; }));
+  }
+  pola.push(poleLiczbowe('Przejście (s)', a.przejscie, (v) => { a.przejscie = v; }));
+  return el('div', { className: 'rzad' }, pola);
+}
+
+const poleTekstowe = (etykieta, wartosc, przyZmianie, podpowiedz = '') => el('label', { className: 'pole' },
+  [etykieta, el('input', { type: 'text', value: wartosc ?? '', placeholder: podpowiedz,
+    onchange: (e) => przyZmianie(e.target.value.trim()) })]);
+
+const poleLiczbowe = (etykieta, wartosc, przyZmianie, krok = 1) => el('label', { className: 'pole' },
+  [etykieta, el('input', { type: 'number', value: wartosc ?? '', step: krok,
+    onchange: (e) => przyZmianie(e.target.value === '' ? undefined : +e.target.value) })]);
+
+const poleWyboru = (etykieta, opcje, wartosc, przyZmianie) => el('label', { className: 'pole' },
+  [etykieta, el('select', { onchange: (e) => przyZmianie(e.target.value) },
+    (opcje.includes(wartosc) || !wartosc ? opcje : [wartosc, ...opcje])
+      .map((o) => el('option', { value: o, textContent: o, selected: o === wartosc })))]);
+
+// ─────────────────────────── obsługa widoków ───────────────────────────
+
+const WIDOKI = {
+  sterowanie: rysujSterowanie,
+  czujniki: rysujCzujniki,
+  automatyka: rysujAutomatyke,
+  diagnostyka: rysujDiagnostyke,
+};
+let biezacyWidok = 'sterowanie';
+
+function pokazWidok(nazwaWidoku) {
+  biezacyWidok = nazwaWidoku;
+  for (const b of document.querySelectorAll('#zakladki button')) {
+    b.setAttribute('aria-current', String(b.dataset.widok === nazwaWidoku));
+  }
+  for (const klucz of Object.keys(WIDOKI)) $('#widok-' + klucz).hidden = klucz !== nazwaWidoku;
+  clearInterval(odswiezanieCzujnikow);
+  if (nazwaWidoku === 'czujniki') {
+    odswiezanieCzujnikow = setInterval(() => odswiez(true), 5000);
+  }
+  WIDOKI[nazwaWidoku]();
+}
+
+async function odswiez(cicho = false) {
+  try {
+    await wczytajStan();
+    if (!cicho) pokazBlad(null);
+    if (biezacyWidok !== 'automatyka') WIDOKI[biezacyWidok]();
+    $('#stan-mostka').innerHTML = `<b>${Most.most || 'połączony'}</b> · ` +
+      `${S.light.length} ${odmiana(S.light.length, 'światło', 'światła', 'świateł')} · ` +
+      `${S.device.length} ${odmiana(S.device.length, 'urządzenie', 'urządzenia', 'urządzeń')} · ` +
+      `${Most.tryb === 'posrednik' ? 'przez hue.mjs' : 'bezpośrednio'}`;
+  } catch (e) {
+    if (!cicho) pokazBlad(e.message);
+  }
+}
+
+document.querySelectorAll('#zakladki button').forEach((b) => {
+  b.onclick = () => pokazWidok(b.dataset.widok);
+});
+
+$('#paruj').onclick = async () => {
+  const ip = $('#ip-mostka').value.trim();
+  if (!ip) return pokazBlad('Podaj adres mostka.');
+  pokazInfo('Paruję — naciśnij okrągły przycisk na mostku…');
+  try {
+    await Most.paruj(ip);
+    pokazBlad(null);
+    await uruchom();
+  } catch (e) { pokazBlad(e.message); }
+};
+
+$('#szukaj').onclick = async () => {
+  pokazInfo('Szukam mostka w sieci…');
+  try {
+    const zrodlo = Most.tryb === 'posrednik' ? 'most-szukaj' : 'https://discovery.meethue.com';
+    const odp = await (await fetch(zrodlo)).json();
+    const mostki = odp.mostki || odp;
+    if (!mostki.length) throw new Error('Nie znalazłem mostka — wpisz adres ręcznie.');
+    $('#ip-mostka').value = mostki[0].ip || mostki[0].internalipaddress;
+    pokazInfo(`Znalazłem mostek ${$('#ip-mostka').value}. Naciśnij przycisk na mostku i kliknij „Paruj”.`);
+  } catch (e) {
+    pokazBlad('Nie udało się wyszukać: ' + e.message + '. Wpisz adres ręcznie.');
+  }
+};
+
+async function uruchom() {
+  const sparowany = await Most.start();
+  if (Most.most) $('#ip-mostka').value = Most.most;
+  $('#parowanie').hidden = sparowany;
+  $('#zakladki').hidden = !sparowany;
+  if (!sparowany) {
+    $('#stan-mostka').textContent = Most.tryb === 'posrednik'
+      ? 'mostek niesparowany' : 'panel z dysku — podaj adres mostka';
+    for (const klucz of Object.keys(WIDOKI)) $('#widok-' + klucz).hidden = true;
+    return;
+  }
+  await odswiez();
+  pokazWidok(biezacyWidok);
+}
+
+uruchom();
+</script>
+</body>
+</html>
