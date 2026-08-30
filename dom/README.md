@@ -134,6 +134,20 @@ pytanie tylko, na których zaciskach. I **programu czasowego**: jeśli pompa ma 
 harmonogram temperatury, przesunięcie grzania na godziny słoneczne da się zrobić
 w niej samej, bez żadnej integracji.
 
+**Ekrany sterownika — co gdzie jest.** Rozpoznane w tej instalacji (sw 160.36):
+
+| Adres | Co zawiera |
+|---|---|
+| `PAGE115.XML` | ekran główny: temperatury, wydajność, licznik energii, tryb |
+| `PAGE116.XML` | harmonogram temperatury pokojowej — okna czasowe i temperatura na każdy dzień |
+| `PAGE118.XML` | harmonogram grzania CWU — okna czasowe na każdy dzień |
+| `PAGE121.XML` | informacje: wersje, adresy obu interfejsów, motogodziny |
+| harmonogram temperatury wody grzewczej | osobny ekran, odnośnik z `PAGE116` |
+
+Każdy harmonogram ma własny przełącznik „DOZWOLONY" u góry — **bez jego włączenia okna
+czasowe nic nie robią**. Sterownik przyjmuje zmiany bez logowania, więc harmonogramy
+ustawia się wprost w przeglądarce.
+
 **Najkrótsza droga: strona sterownika.** Panel ACOND THERM serwuje swoje ekrany jako
 XML, w którym wartości siedzą wprost — każda jako `<INPUT NAME="__T…_REAL_.1f" VALUE="41.3" />`.
 Home Assistant potrafi taką stronę pobrać i wyciągnąć z niej liczby, więc **do samych
