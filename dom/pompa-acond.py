@@ -8,6 +8,7 @@ wprost z pompy i pomagają rozpoznać, co jest czym.
 
     python3 pompa-acond.py sprawdz 192.168.88.9
     python3 pompa-acond.py skanuj 192.168.88.9
+    python3 pompa-acond.py dopasuj 192.168.88.9 --panel panel-acond.json
     python3 pompa-acond.py obserwuj 192.168.88.9 --od 0 --ile 60
     python3 pompa-acond.py czytaj 192.168.88.9 --od 10 --ile 4
     python3 pompa-acond.py yaml 192.168.88.9 --opisy opisy-pompy.json
@@ -159,6 +160,84 @@ def sprawdz(argumenty):
             print(f'   jednostka {jednostka}: {powod}')
     print('\nPort jest otwarty, ale nic sensownego nie odpowiada. Spytaj serwisu ACOND-a,')
     print('czy Modbus jest odblokowany i pod jakim adresem jednostki (slave id) nasłuchuje.')
+
+
+def dopasuj(argumenty):
+    """Szuka rejestrów o wartościach odczytanych z panelu WWW pompy.
+
+    Panel pokazuje „CWU 43,5 °C" — w rejestrze siedzi wtedy zwykle 435. Mając
+    kilka takich par, tablicę rejestrów można złożyć bez dokumentacji."""
+    sciezka = argumenty.panel or os.path.join(KATALOG, 'panel-acond.json')
+    if not os.path.exists(sciezka):
+        wzor = os.path.join(KATALOG, 'panel-acond.przyklad.json')
+        raise SystemExit(f'Brak {sciezka}. Skopiuj wzór i wpisz swoje odczyty:\n'
+                         f'   cp {os.path.basename(wzor)} {os.path.basename(sciezka)}')
+    with open(sciezka, encoding='utf-8') as f:
+        panel = {k: w for k, w in json.load(f).items() if not k.startswith('_')}
+    if not panel:
+        raise SystemExit(f'{sciezka} nie zawiera żadnych odczytów.')
+
+    print(f'Czytam rejestry {argumenty.od}–{argumenty.od + argumenty.ile - 1} z {argumenty.host} …')
+    surowe = {}
+    for poczatek in range(argumenty.od, argumenty.od + argumenty.ile, 100):
+        ile = min(100, argumenty.od + argumenty.ile - poczatek)
+        try:
+            with Modbus(argumenty.host, argumenty.port, argumenty.jednostka) as m:
+                for i, slowo in enumerate(m.czytaj(poczatek, ile)):
+                    surowe[poczatek + i] = slowo
+        except OSError as powod:
+            print(f'   {poczatek}–{poczatek + ile - 1}: {powod}')
+    if not surowe:
+        raise SystemExit('Nie udało się odczytać żadnego rejestru.')
+    print(f'   odczytano {len(surowe)} rejestrów\n')
+
+    rozpoznane, niepewne, przepadle = {}, [], []
+    for nazwa, wartosc in panel.items():
+        kandydaci = []
+        for dzielnik in (10, 1, 100):
+            szukane = round(float(wartosc) * dzielnik)
+            for nr, slowo in surowe.items():
+                if ze_znakiem(slowo) == szukane:
+                    kandydaci.append((nr, dzielnik))
+            if kandydaci:
+                break                       # dziesiąte części to najczęstszy zapis
+        if not kandydaci:
+            przepadle.append((nazwa, wartosc))
+        elif len(kandydaci) == 1:
+            nr, dzielnik = kandydaci[0]
+            rozpoznane[nr] = (nazwa, dzielnik)
+            print(f'   {nazwa:<32} → rejestr {nr:<5} (÷{dzielnik})')
+        else:
+            niepewne.append((nazwa, wartosc, kandydaci))
+
+    for nazwa, wartosc, kandydaci in niepewne:
+        lista = ', '.join(f'{nr} (÷{d})' for nr, d in kandydaci[:8])
+        print(f'   {nazwa:<32} → kilka pasujących: {lista}')
+    for nazwa, wartosc in przepadle:
+        print(f'   {nazwa:<32} → nie znalazłem wartości {wartosc}')
+
+    if niepewne:
+        print('\nKilka rejestrów ma tę samą wartość — to normalne. Rozstrzygnij je')
+        print('poleceniem „obserwuj": zmień tę nastawę na panelu i zobacz, który drgnie.')
+    if przepadle:
+        print('\nCzego nie znalazłem, tego szukaj w innym zakresie (--od / --ile)')
+        print('albo sprawdź, czy odczyt z panelu nie zdążył się zmienić.')
+
+    if rozpoznane:
+        plik = os.path.join(KATALOG, 'opisy-pompy.json')
+        istniejace = {}
+        if os.path.exists(plik):
+            with open(plik, encoding='utf-8') as f:
+                istniejace = json.load(f).get('sensory', {})
+        for nr, (nazwa, dzielnik) in sorted(rozpoznane.items()):
+            zapisywalny = 'wymagana' in nazwa.lower() or 'nastawa' in nazwa.lower() or 'zadanie' in nazwa.lower()
+            istniejace[str(nr)] = [nazwa, '°C', dzielnik, zapisywalny]
+        with open(plik, 'w', encoding='utf-8') as f:
+            json.dump({'_jak_uzywac': WZOR_OPISOW['_jak_uzywac'], 'sensory': istniejace},
+                      f, ensure_ascii=False, indent=2)
+        print(f'\nZapisałem {plik} — {len(rozpoznane)} rejestrów.')
+        print('Sprawdź jednostki i to, które są nastawami, potem:')
+        print(f'   python3 pompa-acond.py yaml {argumenty.host}')
 
 
 def skanuj(argumenty):
@@ -328,7 +407,8 @@ def yaml_ha(argumenty):
 
 def main():
     parser = argparse.ArgumentParser(description='Pompa ciepła ACOND przez Modbus TCP.')
-    parser.add_argument('polecenie', choices=['sprawdz', 'skanuj', 'czytaj', 'obserwuj', 'yaml'])
+    parser.add_argument('polecenie',
+                        choices=['sprawdz', 'skanuj', 'dopasuj', 'czytaj', 'obserwuj', 'yaml'])
     parser.add_argument('host', help='adres pompy w sieci domowej, np. 192.168.88.9')
     parser.add_argument('--port', type=int, default=502)
     parser.add_argument('--jednostka', type=int, default=1, help='adres Modbus (slave id)')
@@ -338,10 +418,11 @@ def main():
     parser.add_argument('--input', action='store_true', help='rejestry input zamiast holding')
     parser.add_argument('--pokaz-zera', action='store_true')
     parser.add_argument('--opisy', help='plik z opisami rejestrów (do polecenia yaml)')
+    parser.add_argument('--panel', help='plik z odczytami z panelu WWW (do polecenia dopasuj)')
     argumenty = parser.parse_args()
 
     try:
-        {'sprawdz': sprawdz, 'skanuj': skanuj, 'czytaj': czytaj,
+        {'sprawdz': sprawdz, 'skanuj': skanuj, 'dopasuj': dopasuj, 'czytaj': czytaj,
          'obserwuj': obserwuj, 'yaml': yaml_ha}[argumenty.polecenie](argumenty)
     except OSError as powod:
         print(f'\nNie udało się: {powod}')

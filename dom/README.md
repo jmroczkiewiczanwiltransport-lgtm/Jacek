@@ -88,10 +88,12 @@ Trzy rzeczy do załatwienia, zanim cokolwiek zadziała:
 | Port | Adres | Do czego |
 |---|---|---|
 | ETH1 | 192.168.134.176 (stały) | sieć serwisowa pompy — **nie ten** |
-| ETH2 | 192.168.88.9 (z DHCP) | sieć domowa — **ten** |
+| ETH2 | 192.168.88.x (z DHCP) | sieć domowa — **ten** |
 
-Adres z ETH2 przydzielany jest dynamicznie, więc po restarcie routera może się zmienić
-i integracja przestanie działać. Zarezerwuj go na routerze dla adresu MAC
+Adres z ETH2 przydzielany jest dynamicznie i **już się zmieniał**: ekran sterownika
+pokazywał `192.168.88.9`, a panel WWW otwierał się później pod `192.168.88.4`.
+Aktualny sprawdzisz w przeglądarce albo na sterowniku (Info ETH2). Dopóki adres skacze,
+integracja będzie co jakiś czas padać. Zarezerwuj go na routerze dla adresu MAC
 `F8-DC-7A-7D-24-89` (u Ciebie router trzyma sieć 192.168.88.x, to typowe dla MikroTika:
 IP → DHCP Server → Leases → „Make Static”).
 
@@ -105,18 +107,35 @@ protokołu z tablicą rejestrów: `AC-Z010` dla oprogramowania w wersji `160.36`
 
 ```bash
 cd dom
-python3 pompa-acond.py sprawdz 192.168.88.9
+python3 pompa-acond.py sprawdz 192.168.88.4
 ```
 
 Skrypt sprawdzi port Modbusa i panel WWW, a jeśli Modbus odpowiada — od razu powie,
 pod jakim adresem jednostki. Gdy panel WWW odpowiada, a Modbus nie, znaczy że adres
 i sieć są dobre i brakuje wyłącznie odblokowania po stronie pompy.
 
-**Rozpoznanie rejestrów.** Tablicy nie trzeba mieć, żeby zacząć — skrypt `pompa-acond.py`
-odczyta rejestry wprost z pompy:
+**Rozpoznanie rejestrów — najkrótszą drogą.** Panel WWW pompy pokazuje temperatury
+z nazwami; w rejestrach Modbusa siedzą te same liczby, tyle że w dziesiątych stopnia
+(43,5 °C → 435). Wystarczy więc przepisać odczyty z panelu i dać skryptowi je znaleźć:
 
 ```bash
-python3 pompa-acond.py skanuj 192.168.88.9
+cp panel-acond.przyklad.json panel-acond.json
+# otwórz panel pompy w przeglądarce i przepisz do pliku to, co widzisz TERAZ
+python3 pompa-acond.py dopasuj 192.168.88.4 --panel panel-acond.json --ile 500
+```
+
+Skrypt odczyta rejestry, dopasuje je do podanych wartości i zapisze `opisy-pompy.json`.
+Odczyty przepisuj za jednym razem i od razu uruchamiaj dopasowanie — temperatury się
+zmieniają, a nieaktualna liczba nie dopasuje się do niczego.
+
+Gdy kilka rejestrów ma tę samą wartość (np. temperatura wymagana i zadanie), skrypt to
+zgłosi. Rozstrzygniesz je obserwacją: zmień tę jedną nastawę na panelu i zobacz, który
+rejestr drgnął.
+
+**Rozpoznanie na piechotę.** Gdyby dopasowanie zawiodło, zostaje przegląd wszystkiego:
+
+```bash
+python3 pompa-acond.py skanuj 192.168.88.4
 ```
 
 Pokaże wszystkie niezerowe rejestry z podpowiedzią, czym mogą być („482 → 48,2 °C?”).
@@ -126,7 +145,7 @@ dolny pokazuje ciśnienie obiegu grzewczego (powinno stać w zielonym polu, ok. 
 więc rejestr z wartością rzędu 10–20 to prawdopodobnie właśnie ono, w dziesiątych bara. Nastawy najprościej znaleźć tak:
 
 ```bash
-python3 pompa-acond.py obserwuj 192.168.88.9 --od 0 --ile 100
+python3 pompa-acond.py obserwuj 192.168.88.4 --od 0 --ile 500
 ```
 
 Skrypt wypisuje każdą zmianę na bieżąco; pokręć nastawą na sterowniku i zobacz, który
@@ -134,7 +153,7 @@ rejestr drgnął. Rozpoznane rejestry wpisz do `opisy-pompy.json` (wzór:
 `opisy-pompy.przyklad.json`) i wygeneruj konfigurację:
 
 ```bash
-python3 pompa-acond.py yaml 192.168.88.9
+python3 pompa-acond.py yaml 192.168.88.4
 ```
 
 Powstanie `wyniki/pompa-acond.yaml` — wklej do `configuration.yaml`, sprawdź konfigurację
@@ -147,6 +166,10 @@ i przeładuj. Odczyty pojawią się jako encje i wejdą na pulpit razem ze świa
 > nadrzędnemu. Pompa wygasza wtedy własny czujnik temperatury i oczekuje, że bieżącą
 > temperaturę poda jej Home Assistant. Jeśli komunikacja ucichnie na dłużej niż
 > `MaxCommDataRefresh`, pompa wraca do trybu auto.
+>
+> Na panelu pompy jest pole **STEROWANIE** z przełącznikiem (`< ACONDTHERM >`). To ono
+> decyduje, kto rządzi regulacją — nie ruszaj go „na próbę”. Do samego odczytu przez
+> Modbus przestawiać go nie trzeba.
 >
 > W praktyce znaczy to tyle, że włączając sterowanie, bierzesz na siebie regulację
 > ogrzewania. Błąd w automatyzacji to nie zgaszona lampka, tylko zimny dom albo
