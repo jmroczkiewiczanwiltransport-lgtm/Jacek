@@ -35,6 +35,14 @@ def bez_ogonkow(tekst):
     return ''.join(z for z in rozlozone if unicodedata.category(z) != 'Mn').lower().strip()
 
 
+def odpakuj(komorka):
+    """eBOK zapisuje komórki jako formułę Excela: ="2026-01-01 00:59" — zdejmujemy to."""
+    tekst = str(komorka if komorka is not None else '').strip()
+    if tekst.startswith('='):
+        tekst = tekst.lstrip('=').strip()
+    return tekst.strip('"').strip()
+
+
 def liczba(wartosc):
     if isinstance(wartosc, (int, float)):
         return float(wartosc)
@@ -90,13 +98,23 @@ def znajdz_naglowek(wiersze):
     for numer, wiersz in enumerate(wiersze[:30]):
         podpisy = [bez_ogonkow(k) for k in wiersz]
         kolumny = {}
-        for rola, tropy in TROPY.items():
-            for i, podpis in enumerate(podpisy):
-                if not podpis or i in kolumny.values():
-                    continue
-                if any(trop in podpis for trop in tropy):
-                    kolumny[rola] = i
-                    break
+        # Kolejność ma znaczenie: kolumny z energią rozpoznajemy najpierw, bo ich
+        # nagłówki bywają długie i przypadkiem zawierają słowa z innych ról
+        # („po bilansowaniu godzinowym" ma w sobie „godz").
+        energia = TROPY['pobrana'] + TROPY['oddana']
+        for rola in ('pobrana', 'oddana', 'data', 'godzina'):
+            pasujace = [i for i, podpis in enumerate(podpisy)
+                        if podpis and any(trop in podpis for trop in TROPY[rola])]
+            pasujace = [i for i in pasujace if i not in kolumny.values()]
+            if rola in ('data', 'godzina'):
+                pasujace = [i for i in pasujace
+                            if not any(trop in podpisy[i] for trop in energia)]
+            if not pasujace:
+                continue
+            # Eksport z eBOK ma dwa komplety: przed i po bilansowaniu godzinowym.
+            # Rozliczany jest ten po bilansowaniu — i tylko on ma sens do analizy.
+            po_bilansowaniu = [i for i in pasujace if 'po bilansowaniu' in podpisy[i]]
+            kolumny[rola] = (po_bilansowaniu or pasujace)[0]
         if 'pobrana' in kolumny and 'oddana' in kolumny and ('data' in kolumny or 'godzina' in kolumny):
             return numer, kolumny
     raise SystemExit(
@@ -110,20 +128,26 @@ def czas_z_wiersza(wiersz, kolumny, przesuniecie=0):
     Przesunięcie odpowiada konwencji numerowania godzin: jedni operatorzy liczą
     je od 0 do 23, inni od 1 do 24, gdzie „1" znaczy godzinę od północy."""
     surowa_data = wiersz[kolumny['data']] if 'data' in kolumny and kolumny['data'] < len(wiersz) else ''
-    surowa_godz = wiersz[kolumny['godzina']] if 'godzina' in kolumny and kolumny['godzina'] < len(wiersz) else ''
+    surowa_godz = (odpakuj(wiersz[kolumny['godzina']])
+                   if 'godzina' in kolumny and kolumny['godzina'] < len(wiersz) else '')
 
     if isinstance(surowa_data, datetime):
         podstawa = surowa_data
     else:
-        tekst = str(surowa_data or '').strip()
+        tekst = odpakuj(surowa_data)
         podstawa = None
-        for wzor in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%d.%m.%Y %H:%M',
-                     '%Y-%m-%d', '%d.%m.%Y', '%d-%m-%Y'):
+        for wzor in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%d.%m.%Y %H:%M:%S',
+                     '%d.%m.%Y %H:%M', '%Y-%m-%d', '%d.%m.%Y', '%d-%m-%Y'):
             try:
-                podstawa = datetime.strptime(tekst[:len(datetime.now().strftime(wzor)) + 2].strip(), wzor)
+                podstawa = datetime.strptime(tekst, wzor)
                 break
             except ValueError:
                 continue
+        if podstawa is None:
+            trafienie = re.search(r'(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})', tekst)
+            if trafienie:
+                r, m, d, g, mi = (int(x) for x in trafienie.groups())
+                podstawa = datetime(r, m, d, min(23, g), mi)
         if podstawa is None:
             return None
 
@@ -274,11 +298,21 @@ def main():
                         help='zł/kWh z dystrybucją — weź z faktury')
     parser.add_argument('--cena-sprzedazy', type=float, default=CENA_SPRZEDAZY,
                         help='zł/kWh w rozliczeniu prosumenta')
+    parser.add_argument('--od', help='analizuj od tej daty (RRRR-MM-DD)')
+    parser.add_argument('--do', dest='do_dnia', help='analizuj do tej daty włącznie (RRRR-MM-DD)')
     argumenty = parser.parse_args()
 
     if not os.path.exists(argumenty.plik):
         raise SystemExit(f'Nie ma pliku {argumenty.plik}')
     odczyty, kolumny, pominiete, przesuniecie = wczytaj(argumenty.plik)
+    if argumenty.od:
+        granica = datetime.strptime(argumenty.od, '%Y-%m-%d')
+        odczyty = [o for o in odczyty if o[0] >= granica]
+    if argumenty.do_dnia:
+        granica = datetime.strptime(argumenty.do_dnia, '%Y-%m-%d').replace(hour=23, minute=59)
+        odczyty = [o for o in odczyty if o[0] <= granica]
+    if not odczyty:
+        raise SystemExit('W podanym okresie nie ma danych.')
     if pominiete:
         print(f'(pominąłem {pominiete} wierszy bez danych)')
     if przesuniecie:
