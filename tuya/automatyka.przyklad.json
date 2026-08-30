@@ -1,0 +1,65 @@
+{
+  "polozenie": {
+    "szerokosc": 52.41,
+    "dlugosc": 16.93
+  },
+
+  "sceny": {
+    "Wieczor": [
+      { "cel": "grupa:elewacja", "akcja": { "wlacz": true, "jasnosc": 60, "barwa": 10 } },
+      { "cel": "grupa:ogrod", "akcja": { "wlacz": true, "jasnosc": 45, "barwa": 0 } }
+    ],
+    "Noc": [
+      { "cel": "grupa:elewacja", "akcja": { "wlacz": true, "jasnosc": 15, "barwa": 0 } },
+      { "cel": "grupa:ogrod", "akcja": { "wlacz": false } }
+    ],
+    "Wszystko gasnie": [
+      { "cel": "wszystko", "akcja": { "wlacz": false, "przejscie": 20 } }
+    ],
+    "Jasno na maxa": [
+      { "cel": "wszystko", "akcja": { "wlacz": true, "jasnosc": 100 } }
+    ]
+  },
+
+  "harmonogramy": [
+    {
+      "nazwa": "Zapal o zmierzchu",
+      "o": "zachod-00:15",
+      "akcja": { "scena": "Wieczor" }
+    },
+    {
+      "nazwa": "Przygas na noc",
+      "o": "22:30",
+      "akcja": { "scena": "Noc" }
+    },
+    {
+      "nazwa": "Zgas nad ranem",
+      "o": "01:00",
+      "cel": "wszystko",
+      "akcja": { "wlacz": false, "przejscie": 30 }
+    },
+    {
+      "nazwa": "Doswietl przed swiatem",
+      "o": "wschod-01:00",
+      "dni": ["pn", "wt", "sr", "cz", "pt"],
+      "cel": "grupa:elewacja",
+      "akcja": { "wlacz": true, "jasnosc": 40, "barwa": 10 }
+    },
+    {
+      "nazwa": "Zgas o wschodzie",
+      "o": "wschod+00:15",
+      "cel": "wszystko",
+      "akcja": { "wlacz": false, "przejscie": 60 }
+    }
+  ],
+
+  "obecnosc": {
+    "wlaczona": false,
+    "cel": "grupa:elewacja",
+    "od": "zachod",
+    "do": "23:00",
+    "minPrzerwa": 20,
+    "maxPrzerwa": 60,
+    "jasnosc": 55
+  }
+}

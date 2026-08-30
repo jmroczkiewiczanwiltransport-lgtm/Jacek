@@ -1,0 +1,62 @@
+{
+  "chmura": {
+    "region": "eu",
+    "klucz_api": "",
+    "sekret_api": "",
+    "id_urzadzenia": ""
+  },
+  "urzadzenia": [
+    {
+      "nazwa": "Ledy front",
+      "id": "bfxxxxxxxxxxxxxxxxxx",
+      "klucz": "xxxxxxxxxxxxxxxx",
+      "ip": "192.168.1.31",
+      "wersja": 3.3,
+      "rodzaj": "swiatlo-cct",
+      "grupy": [
+        "elewacja"
+      ]
+    },
+    {
+      "nazwa": "Ledy prawa strona",
+      "id": "bfxxxxxxxxxxxxxxxxxx",
+      "klucz": "xxxxxxxxxxxxxxxx",
+      "ip": "192.168.1.32",
+      "wersja": 3.3,
+      "rodzaj": "swiatlo-cct",
+      "grupy": [
+        "elewacja"
+      ]
+    },
+    {
+      "nazwa": "Ledy lewa strona",
+      "id": "bfxxxxxxxxxxxxxxxxxx",
+      "klucz": "xxxxxxxxxxxxxxxx",
+      "ip": "192.168.1.33",
+      "wersja": 3.3,
+      "rodzaj": "swiatlo-cct",
+      "grupy": [
+        "elewacja"
+      ]
+    },
+    {
+      "nazwa": "Ledy ogród",
+      "id": "bfxxxxxxxxxxxxxxxxxx",
+      "klucz": "xxxxxxxxxxxxxxxx",
+      "ip": "192.168.1.34",
+      "wersja": 3.3,
+      "rodzaj": "swiatlo-cct",
+      "grupy": [
+        "ogrod"
+      ]
+    },
+    {
+      "nazwa": "Garaż",
+      "id": "bfxxxxxxxxxxxxxxxxxx",
+      "klucz": "xxxxxxxxxxxxxxxx",
+      "ip": "192.168.1.35",
+      "wersja": 3.3,
+      "rodzaj": "przelacznik"
+    }
+  ]
+}

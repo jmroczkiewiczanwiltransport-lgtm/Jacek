@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Światła — sterowanie</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='7' r='4.5' fill='%23e8a33d'/%3E%3Crect x='6' y='11' width='4' height='3' rx='1' fill='%23888'/%3E%3C/svg%3E">
+<style>
+  :root {
+    color-scheme: light dark;
+    --tlo: #f4f2ee;      --karta: #fffefb;   --kreska: #e0dcd3;
+    --tekst: #22201c;    --tekst-slaby: #6d675d;
+    --akcent: #b3701a;   --akcent-tlo: #fdf3e3;
+    --zle: #a8321f;      --dobre: #2f6d3f;
+    --cien: 0 1px 2px rgba(30,25,15,.06), 0 8px 24px -12px rgba(30,25,15,.18);
+    --promien: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --tlo: #16151a;    --karta: #201f26;   --kreska: #34323c;
+      --tekst: #ece9e4;  --tekst-slaby: #9b968e;
+      --akcent: #e8a33d; --akcent-tlo: #2c2519;
+      --zle: #e8836f;    --dobre: #7fc08f;
+      --cien: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--tlo); color: var(--tekst);
+         font: 15px/1.5 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif; }
+  header { position: sticky; top: 0; z-index: 10; background: var(--karta);
+           border-bottom: 1px solid var(--kreska); padding: 10px 16px;
+           display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  header h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+  #stan { font-size: 13px; color: var(--tekst-slaby); }
+  nav { margin-left: auto; display: flex; gap: 4px; }
+  nav button { font: inherit; font-size: 13px; padding: 6px 12px; border: 1px solid transparent;
+               background: none; color: var(--tekst-slaby); border-radius: 8px; cursor: pointer; }
+  nav button:hover { background: var(--tlo); }
+  nav button[aria-current="true"] { background: var(--akcent-tlo); color: var(--akcent); font-weight: 600; }
+  @media (max-width: 560px) {
+    nav { margin-left: 0; width: 100%; overflow-x: auto; padding-bottom: 2px; }
+    nav button { flex: none; }
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 64px; }
+  section[hidden] { display: none; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--tekst-slaby);
+       font-weight: 600; margin: 28px 0 10px; }
+  h2:first-child { margin-top: 0; }
+  .karta { background: var(--karta); border: 1px solid var(--kreska); border-radius: var(--promien);
+           box-shadow: var(--cien); padding: 14px 16px; margin-bottom: 12px; }
+  .naglowek-karty { display: flex; align-items: center; gap: 12px; }
+  .naglowek-karty .nazwa { font-weight: 600; flex: 1; min-width: 0; }
+  .naglowek-karty .opis { font-size: 12px; color: var(--tekst-slaby); font-weight: 400; }
+  .przelacznik { position: relative; width: 46px; height: 26px; flex: none; border: 0; padding: 0;
+                 border-radius: 999px; background: var(--kreska); cursor: pointer; transition: background .15s; }
+  .przelacznik::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+                        border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3);
+                        transition: transform .15s; }
+  .przelacznik[aria-pressed="true"] { background: var(--akcent); }
+  .przelacznik[aria-pressed="true"]::after { transform: translateX(20px); }
+  .przelacznik:disabled { opacity: .4; cursor: not-allowed; }
+  input[type=range] { width: 100%; accent-color: var(--akcent); }
+  .suwak { display: grid; grid-template-columns: 68px 1fr 44px; gap: 10px; align-items: center;
+           margin-top: 10px; font-size: 12px; color: var(--tekst-slaby); }
+  .suwak output { text-align: right; font-variant-numeric: tabular-nums; }
+  .sceny { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .sceny button, .maly { font: inherit; font-size: 12px; padding: 5px 11px; border-radius: 999px;
+    cursor: pointer; border: 1px solid var(--kreska); background: var(--tlo); color: var(--tekst); }
+  .sceny button:hover, .maly:hover { border-color: var(--akcent); color: var(--akcent); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+       color: var(--tekst-slaby); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--kreska); }
+  td { padding: 7px 8px; border-bottom: 1px solid var(--kreska); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  .przewijalne { overflow-x: auto; }
+  .problem { color: var(--zle); }
+  .ok { color: var(--dobre); }
+  .pastylka { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
+              background: var(--tlo); border: 1px solid var(--kreska); color: var(--tekst-slaby); }
+  .komunikat { padding: 12px 14px; border-radius: var(--promien); margin-bottom: 14px; font-size: 14px;
+               border: 1px solid var(--kreska); background: var(--akcent-tlo); }
+  .komunikat.blad { border-color: var(--zle); color: var(--zle); background: var(--karta); }
+  label.pole { display: block; font-size: 12px; color: var(--tekst-slaby); margin-bottom: 10px; }
+  input[type=text], input[type=number], select { font: inherit; font-size: 14px; width: 100%;
+    margin-top: 3px; padding: 7px 9px; border: 1px solid var(--kreska); border-radius: 8px;
+    background: var(--tlo); color: var(--tekst); }
+  .rzad { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .dni { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+  .dni label { font-size: 12px; padding: 4px 9px; border: 1px solid var(--kreska); border-radius: 999px; cursor: pointer; }
+  .dni input { display: none; }
+  .dni label:has(input:checked) { border-color: var(--akcent); background: var(--akcent-tlo); color: var(--akcent); font-weight: 600; }
+  .glowny { font: inherit; font-weight: 600; font-size: 14px; padding: 9px 18px; border-radius: 9px;
+            border: 0; background: var(--akcent); color: #fff; cursor: pointer; }
+  .glowny:disabled { opacity: .5; cursor: default; }
+  .pasek { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+  .usun { border: 0; background: none; color: var(--tekst-slaby); cursor: pointer; font-size: 18px;
+          line-height: 1; padding: 0 4px; }
+  .usun:hover { color: var(--zle); }
+  .pusto { color: var(--tekst-slaby); font-size: 14px; padding: 8px 0; }
+  fieldset { border: 1px solid var(--kreska); border-radius: var(--promien); padding: 12px 14px; margin: 0 0 12px; }
+  legend { font-size: 12px; color: var(--tekst-slaby); padding: 0 6px; }
+  .krok { border-left: 2px solid var(--kreska); padding-left: 12px; margin: 10px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Światła</h1>
+  <span id="stan">wczytuję…</span>
+  <nav id="zakladki">
+    <button data-widok="sterowanie" aria-current="true">Sterowanie</button>
+    <button data-widok="automatyka">Automatyka</button>
+    <button data-widok="diagnostyka">Diagnostyka</button>
+  </nav>
+</header>
+
+<main>
+  <div id="komunikat"></div>
+  <section id="widok-sterowanie"></section>
+  <section id="widok-automatyka" hidden></section>
+  <section id="widok-diagnostyka" hidden></section>
+</main>
+
+<script>
+'use strict';
+
+const $ = (w) => document.querySelector(w);
+const el = (tag, wlasciwosci = {}, dzieci = []) => {
+  const w = Object.assign(document.createElement(tag), wlasciwosci);
+  for (const d of [].concat(dzieci)) w.append(d);
+  return w;
+};
+
+let STAN = { urzadzenia: [], grupy: [], chmura: false };
+let automatyka = null;
+let biezacyWidok = 'sterowanie';
+
+function pokazBlad(tresc) {
+  $('#komunikat').innerHTML = '';
+  if (tresc) $('#komunikat').append(el('div', { className: 'komunikat blad', textContent: tresc }));
+}
+function pokazInfo(tresc) {
+  $('#komunikat').innerHTML = '';
+  if (tresc) $('#komunikat').append(el('div', { className: 'komunikat', textContent: tresc }));
+}
+
+async function zapytaj(sciezka, opcje = {}) {
+  const odp = await fetch(sciezka, {
+    ...opcje,
+    headers: opcje.body ? { 'Content-Type': 'application/json' } : {},
+  });
+  const dane = await odp.json();
+  if (!odp.ok) throw new Error(dane.blad || `Serwer odpowiedział ${odp.status}`);
+  return dane;
+}
+
+// Suwaki wysyłamy najwyżej co 400 ms — sterowniki Tuya nie lubią lawiny poleceń.
+function dlawik(fn, ms = 400) {
+  let czeka = null, ostatnie = 0;
+  return (...arg) => {
+    const teraz = Date.now();
+    clearTimeout(czeka);
+    if (teraz - ostatnie > ms) { ostatnie = teraz; fn(...arg); }
+    else czeka = setTimeout(() => { ostatnie = Date.now(); fn(...arg); }, ms - (teraz - ostatnie));
+  };
+}
+
+async function ustaw(cel, akcja, poZmianie) {
+  try {
+    const wynik = await zapytaj('api/ustaw', { method: 'POST', body: JSON.stringify({ cel, akcja }) });
+    STAN.urzadzenia = wynik.urzadzenia;
+    pokazBlad(null);
+    poZmianie?.();
+  } catch (e) { pokazBlad(e.message); }
+}
+
+// ─────────────────────────── widok: sterowanie ───────────────────────────
+
+const urzadzeniaGrupy = (grupa) => STAN.urzadzenia.filter((u) => (u.grupy || []).includes(grupa));
+
+function rysujSterowanie() {
+  const widok = $('#widok-sterowanie');
+  widok.innerHTML = '';
+
+  const sceny = Object.keys((automatyka && automatyka.sceny) || {});
+  if (sceny.length) {
+    widok.append(el('h2', { textContent: 'Sceny' }));
+    widok.append(el('div', { className: 'karta' }, [el('div', { className: 'sceny', style: 'margin-top:0' },
+      sceny.map((nazwa) => el('button', {
+        textContent: nazwa,
+        onclick: () => ustaw('wszystko', { scena: nazwa }, () => rysuj()),
+      })))]));
+  }
+
+  widok.append(el('h2', { textContent: 'Wszystko naraz' }));
+  const swieci = STAN.urzadzenia.filter((u) => u.wlaczone).length;
+  widok.append(kartaZbiorcza('Wszystkie urządzenia', `${swieci} z ${STAN.urzadzenia.length} włączonych`,
+    'wszystko', STAN.urzadzenia));
+
+  for (const grupa of STAN.grupy) {
+    const urzadzenia = urzadzeniaGrupy(grupa);
+    if (!urzadzenia.length) continue;
+    widok.append(el('h2', { textContent: 'Grupa: ' + grupa }));
+    widok.append(kartaZbiorcza(grupa, `${urzadzenia.length} ${odmiana(urzadzenia.length,
+      'urządzenie', 'urządzenia', 'urządzeń')}, włączonych ${urzadzenia.filter((u) => u.wlaczone).length}`,
+      'grupa:' + grupa, urzadzenia));
+  }
+
+  const luzem = STAN.urzadzenia.filter((u) => !(u.grupy || []).length);
+  widok.append(el('h2', { textContent: STAN.grupy.length ? 'Poza grupami' : 'Urządzenia' }));
+  if (!luzem.length) widok.append(el('p', { className: 'pusto', textContent: 'Wszystko jest w grupach.' }));
+  for (const u of luzem) widok.append(kartaUrzadzenia(u));
+
+  if (STAN.grupy.length) {
+    widok.append(el('h2', { textContent: 'Pojedynczo' }));
+    for (const u of STAN.urzadzenia.filter((x) => (x.grupy || []).length)) widok.append(kartaUrzadzenia(u));
+  }
+}
+
+const odmiana = (n, poj, kilka, wiele) => {
+  if (n === 1) return poj;
+  const d = n % 10, s = n % 100;
+  return (d >= 2 && d <= 4 && !(s >= 12 && s <= 14)) ? kilka : wiele;
+};
+
+function kartaZbiorcza(nazwa, opis, cel, urzadzenia) {
+  const wlaczone = urzadzenia.some((u) => u.wlaczone);
+  const karta = el('div', { className: 'karta' });
+  karta.append(el('div', { className: 'naglowek-karty' }, [
+    el('div', { className: 'nazwa' }, [nazwa, el('div', { className: 'opis', textContent: opis })]),
+    przelacznik(wlaczone, () => ustaw(cel, { wlacz: !wlaczone }, rysuj)),
+  ]));
+  const zywe = urzadzenia.filter((u) => u.zrodlo);
+  if (zywe.some((u) => (u.reguluje || []).includes('jasnosc'))) {
+    const zJasnoscia = zywe.filter((u) => u.jasnosc !== null && u.jasnosc !== undefined);
+    const srednia = zJasnoscia.length
+      ? Math.round(zJasnoscia.reduce((s, u) => s + u.jasnosc, 0) / zJasnoscia.length) : 50;
+    karta.append(suwak('Jasność', srednia, '%', dlawik((v) => ustaw(cel, { jasnosc: v }))));
+  }
+  if (zywe.some((u) => (u.reguluje || []).includes('barwa'))) {
+    const barwy = zywe.filter((u) => u.barwa !== null && u.barwa !== undefined);
+    const srednia = barwy.length ? Math.round(barwy.reduce((s, u) => s + u.barwa, 0) / barwy.length) : 50;
+    karta.append(suwak('Barwa', srednia, '%', dlawik((v) => ustaw(cel, { barwa: v }))));
+  }
+  return karta;
+}
+
+function kartaUrzadzenia(u) {
+  const karta = el('div', { className: 'karta' });
+  const dostepne = !!u.zrodlo;
+  const opis = [
+    dostepne ? (u.zrodlo === 'chmura' ? 'przez chmurę' : 'lokalnie') : 'BRAK ŁĄCZNOŚCI',
+    u.ip || 'bez adresu',
+    (u.grupy || []).join(', '),
+  ].filter(Boolean).join('  ·  ');
+
+  karta.append(el('div', { className: 'naglowek-karty' }, [
+    el('div', { className: 'nazwa' }, [u.nazwa, el('div', {
+      className: 'opis' + (dostepne ? '' : ' problem'), textContent: opis })]),
+    przelacznik(u.wlaczone, () => ustaw(u.nazwa, { przelacz: true }, rysuj), !dostepne),
+  ]));
+
+  // urządzenie bez łączności nie ma czego pokazywać — suwaki byłyby zmyśleniem
+  if (dostepne && (u.reguluje || []).includes('jasnosc')) {
+    karta.append(suwak('Jasność', u.jasnosc ?? 50, '%', dlawik((v) => ustaw(u.nazwa, { jasnosc: v }))));
+  }
+  if (dostepne && (u.reguluje || []).includes('barwa')) {
+    karta.append(suwak('Barwa', u.barwa ?? 50, '%', dlawik((v) => ustaw(u.nazwa, { barwa: v }))));
+  }
+  return karta;
+}
+
+function przelacznik(wlaczone, przyKliknieciu, zablokowany = false) {
+  const b = el('button', { className: 'przelacznik', title: 'Włącz / wyłącz',
+    disabled: zablokowany, onclick: przyKliknieciu });
+  b.setAttribute('aria-pressed', String(!!wlaczone));
+  return b;
+}
+
+function suwak(etykieta, wartosc, jednostka, przyZmianie) {
+  const wyjscie = el('output', { textContent: wartosc + jednostka });
+  const wejscie = el('input', { type: 'range', min: 0, max: 100, value: wartosc,
+    oninput: (e) => { wyjscie.textContent = e.target.value + jednostka; przyZmianie(+e.target.value); } });
+  return el('div', { className: 'suwak' }, [el('span', { textContent: etykieta }), wejscie, wyjscie]);
+}
+
+// ────────────────────────── widok: diagnostyka ──────────────────────────
+
+function rysujDiagnostyke() {
+  const widok = $('#widok-diagnostyka');
+  widok.innerHTML = '';
+
+  const problemy = [];
+  for (const u of STAN.urzadzenia) {
+    if (!u.zrodlo) problemy.push(`${u.nazwa}: nie odpowiada — ${u.blad || 'brak adresu IP'}`);
+    else if (u.zrodlo === 'chmura') problemy.push(
+      `${u.nazwa}: odpowiada tylko przez chmurę — sprawdź adres IP (python3 tuya.py skanuj)`);
+  }
+
+  widok.append(el('h2', { textContent: 'Do sprawdzenia' }));
+  widok.append(el('div', { className: 'karta' }, problemy.length
+    ? problemy.map((p) => el('div', { className: 'problem', textContent: '• ' + p }))
+    : [el('div', { className: 'ok', textContent: 'Wszystkie urządzenia odpowiadają lokalnie.' })]));
+
+  widok.append(el('h2', { textContent: 'Urządzenia' }));
+  const tabela = el('table', {}, [el('thead', {}, [el('tr', {},
+    ['Urządzenie', 'Adres', 'Protokół', 'Łączność', 'Rodzaj', 'Grupy']
+      .map((t) => el('th', { textContent: t })))])]);
+  const cialo = el('tbody');
+  for (const u of STAN.urzadzenia) {
+    cialo.append(el('tr', {}, [
+      el('td', { textContent: u.nazwa }),
+      el('td', { textContent: u.ip || '—' }),
+      el('td', { textContent: u.wersja }),
+      el('td', { className: u.zrodlo ? '' : 'problem', textContent: u.zrodlo || 'BRAK' }),
+      el('td', { textContent: u.rodzaj }),
+      el('td', { textContent: (u.grupy || []).join(', ') }),
+    ]));
+  }
+  tabela.append(cialo);
+  widok.append(el('div', { className: 'karta przewijalne' }, [tabela]));
+
+  widok.append(el('h2', { textContent: 'Surowe parametry (DP)' }));
+  for (const u of STAN.urzadzenia) {
+    widok.append(el('div', { className: 'karta' }, [
+      el('div', { className: 'nazwa' }, [u.nazwa]),
+      el('div', { className: 'sceny' }, Object.entries(u.dps || {}).map(([dp, w]) =>
+        el('span', { className: 'pastylka', textContent: `${dp} = ${w}` }))),
+    ]));
+  }
+
+  widok.append(el('div', { className: 'pasek' }, [
+    el('button', { className: 'maly', textContent: 'Odczytaj wszystko na nowo', onclick: async () => {
+      pokazInfo('Odpytuję urządzenia…');
+      try { STAN.urzadzenia = (await zapytaj('api/odswiez', { method: 'POST' })).urzadzenia;
+        pokazBlad(null); rysuj(); } catch (e) { pokazBlad(e.message); }
+    } }),
+  ]));
+}
+
+// ────────────────────────── widok: automatyka ──────────────────────────
+
+const DNI_TYGODNIA = [['pn', 'pon'], ['wt', 'wt'], ['sr', 'śr'], ['cz', 'czw'], ['pt', 'pt'], ['sb', 'sob'], ['nd', 'nd']];
+
+const celeDoWyboru = () => ['wszystko', ...STAN.grupy.map((g) => 'grupa:' + g),
+  ...STAN.urzadzenia.map((u) => u.nazwa)];
+
+function rysujAutomatyke() {
+  const widok = $('#widok-automatyka');
+  widok.innerHTML = '';
+  automatyka ||= {};
+  automatyka.polozenie ||= { szerokosc: 52.41, dlugosc: 16.93 };
+  automatyka.harmonogramy ||= [];
+  automatyka.sceny ||= {};
+  automatyka.obecnosc ||= { wlaczona: false, cel: 'wszystko', od: 'zachod', do: '23:00',
+    minPrzerwa: 15, maxPrzerwa: 45, jasnosc: 60 };
+
+  widok.append(el('div', { className: 'komunikat', textContent:
+    'Reguły zapisują się do pliku automatyka.json i wykonuje je polecenie „python3 tuya.py automat”. ' +
+    'Sam panel niczego nie pilnuje — działa tylko wtedy, gdy jest otwarty.' }));
+
+  const polozenie = el('fieldset', {}, [el('legend', { textContent: 'Położenie (dla wschodu i zachodu słońca)' })]);
+  polozenie.append(el('div', { className: 'rzad' }, [
+    poleLiczbowe('Szerokość geogr.', automatyka.polozenie.szerokosc,
+      (v) => { automatyka.polozenie.szerokosc = v; }, 0.01),
+    poleLiczbowe('Długość geogr.', automatyka.polozenie.dlugosc,
+      (v) => { automatyka.polozenie.dlugosc = v; }, 0.01),
+  ]));
+  widok.append(polozenie);
+
+  widok.append(el('h2', { textContent: 'Sceny' }));
+  for (const nazwa of Object.keys(automatyka.sceny)) widok.append(kartaSceny(nazwa));
+  widok.append(el('button', { className: 'maly', textContent: '+ dodaj scenę', onclick: () => {
+    let nazwa = 'Nowa scena', i = 2;
+    while (automatyka.sceny[nazwa]) nazwa = `Nowa scena ${i++}`;
+    automatyka.sceny[nazwa] = [{ cel: 'wszystko', akcja: { wlacz: true, jasnosc: 60 } }];
+    rysujAutomatyke();
+  } }));
+
+  widok.append(el('h2', { textContent: 'Reguły czasowe' }));
+  automatyka.harmonogramy.forEach((h, i) => widok.append(kartaHarmonogramu(h, i)));
+  widok.append(el('button', { className: 'maly', textContent: '+ dodaj regułę czasową', onclick: () => {
+    automatyka.harmonogramy.push({ nazwa: 'Nowa reguła', o: 'zachod', dni: [],
+      cel: 'wszystko', akcja: { wlacz: true, jasnosc: 60 } });
+    rysujAutomatyke();
+  } }));
+
+  widok.append(el('h2', { textContent: 'Symulacja obecności' }));
+  const o = automatyka.obecnosc;
+  widok.append(el('div', { className: 'karta' }, [
+    el('label', { className: 'pole' }, [
+      el('input', { type: 'checkbox', checked: !!o.wlaczona, onchange: (e) => { o.wlaczona = e.target.checked; } }),
+      ' włączona — losowo zapala i gasi światło, gdy nikogo nie ma w domu',
+    ]),
+    el('div', { className: 'rzad' }, [
+      poleWyboru('Co ma świecić', celeDoWyboru(), o.cel, (v) => { o.cel = v; }),
+      poleTekstowe('Od', o.od, (v) => { o.od = v; }, 'zachod'),
+      poleTekstowe('Do', o.do, (v) => { o.do = v; }, '23:00'),
+      poleLiczbowe('Zmiana co min. (min)', o.minPrzerwa, (v) => { o.minPrzerwa = v; }),
+      poleLiczbowe('Zmiana co maks. (min)', o.maxPrzerwa, (v) => { o.maxPrzerwa = v; }),
+      poleLiczbowe('Jasność (%)', o.jasnosc, (v) => { o.jasnosc = v; }),
+    ]),
+  ]));
+
+  const zapisz = el('button', { className: 'glowny', textContent: 'Zapisz reguły' });
+  zapisz.onclick = async () => {
+    zapisz.disabled = true;
+    try {
+      await zapytaj('api/automatyka', { method: 'PUT', body: JSON.stringify(automatyka) });
+      pokazInfo('Zapisano automatyka.json. Działająca automatyka przeładuje plik w ciągu 15 sekund.');
+    } catch (e) { pokazBlad(e.message); }
+    zapisz.disabled = false;
+  };
+  widok.append(el('div', { className: 'pasek' }, [zapisz]));
+}
+
+function kartaSceny(nazwa) {
+  const kroki = automatyka.sceny[nazwa];
+  const karta = el('div', { className: 'karta' });
+  karta.append(el('div', { className: 'naglowek-karty' }, [
+    el('div', { className: 'nazwa' }, [el('input', {
+      type: 'text', value: nazwa, style: 'font-weight:600',
+      onchange: (e) => {
+        const nowa = e.target.value.trim();
+        if (!nowa || automatyka.sceny[nowa]) return rysujAutomatyke();
+        delete Object.assign(automatyka.sceny, { [nowa]: kroki })[nazwa];
+        rysujAutomatyke();
+      },
+    })]),
+    el('button', { className: 'usun', textContent: '×', title: 'Usuń scenę',
+      onclick: () => { delete automatyka.sceny[nazwa]; rysujAutomatyke(); } }),
+  ]));
+  kroki.forEach((krok, i) => {
+    karta.append(el('div', { className: 'krok' }, [
+      el('div', { className: 'rzad' }, [
+        poleWyboru('Co', celeDoWyboru(), krok.cel, (v) => { krok.cel = v; }),
+      ]),
+      poleAkcji(krok, () => rysujAutomatyke()),
+      el('button', { className: 'maly', textContent: 'usuń krok',
+        onclick: () => { kroki.splice(i, 1); rysujAutomatyke(); } }),
+    ]));
+  });
+  karta.append(el('div', { className: 'pasek' }, [
+    el('button', { className: 'maly', textContent: '+ krok',
+      onclick: () => { kroki.push({ cel: 'wszystko', akcja: { wlacz: true, jasnosc: 60 } }); rysujAutomatyke(); } }),
+    el('button', { className: 'maly', textContent: 'uruchom teraz',
+      onclick: () => ustaw('wszystko', { scena: nazwa }, () => pokazInfo(`Uruchomiono scenę „${nazwa}".`)) }),
+  ]));
+  return karta;
+}
+
+function kartaHarmonogramu(h, i) {
+  const dni = el('div', { className: 'dni' }, DNI_TYGODNIA.map(([kod, etykieta]) => {
+    const pole = el('input', { type: 'checkbox', checked: (h.dni || []).includes(kod) });
+    pole.onchange = () => {
+      h.dni = DNI_TYGODNIA.map(([k]) => k).filter((k) => k === kod ? pole.checked : (h.dni || []).includes(k));
+    };
+    return el('label', {}, [pole, el('span', { textContent: etykieta })]);
+  }));
+  return el('div', { className: 'karta' }, [
+    el('div', { className: 'naglowek-karty' }, [
+      el('div', { className: 'nazwa', textContent: h.nazwa || 'Reguła czasowa' }),
+      el('button', { className: 'usun', textContent: '×', title: 'Usuń regułę',
+        onclick: () => { automatyka.harmonogramy.splice(i, 1); rysujAutomatyke(); } }),
+    ]),
+    el('div', { className: 'rzad' }, [
+      poleTekstowe('Nazwa', h.nazwa, (v) => { h.nazwa = v; }),
+      poleTekstowe('O godzinie', h.o, (v) => { h.o = v; }, '07:00 albo zachod-00:20'),
+      poleWyboru('Co', celeDoWyboru(), h.cel, (v) => { h.cel = v; }),
+    ]),
+    el('label', { className: 'pole' }, ['W dni (nic nie zaznaczone = codziennie)', dni]),
+    poleAkcji(h, () => rysujAutomatyke()),
+  ]);
+}
+
+function poleAkcji(regula, przerysuj) {
+  regula.akcja ||= {};
+  const a = regula.akcja;
+  const sceny = Object.keys(automatyka.sceny || {});
+  const rodzaj = a.scena ? 'scena' : a.przelacz ? 'przelacz' : a.wlacz === false ? 'wylacz' : 'wlacz';
+  const rodzaje = { wlacz: 'włącz', wylacz: 'wyłącz', przelacz: 'przełącz',
+    ...(sceny.length ? { scena: 'uruchom scenę' } : {}) };
+  const wybor = el('select', {}, Object.entries(rodzaje).map(([k, etykieta]) =>
+    el('option', { value: k, textContent: etykieta, selected: k === rodzaj })));
+  wybor.onchange = () => {
+    delete a.wlacz; delete a.przelacz; delete a.scena;
+    if (wybor.value === 'wlacz') a.wlacz = true;
+    if (wybor.value === 'wylacz') { a.wlacz = false; delete a.jasnosc; delete a.barwa; }
+    if (wybor.value === 'przelacz') a.przelacz = true;
+    if (wybor.value === 'scena') { a.scena = sceny[0] || ''; delete a.jasnosc; delete a.barwa; }
+    przerysuj();
+  };
+  const pola = [el('label', { className: 'pole' }, ['Akcja', wybor])];
+  if (rodzaj === 'scena') pola.push(poleWyboru('Scena', sceny, a.scena, (v) => { a.scena = v; }));
+  if (rodzaj !== 'wylacz' && rodzaj !== 'scena') {
+    pola.push(poleLiczbowe('Jasność (%)', a.jasnosc, (v) => { a.jasnosc = v; }));
+    pola.push(poleLiczbowe('Barwa (%)', a.barwa, (v) => { a.barwa = v; }));
+  }
+  if (rodzaj !== 'scena') pola.push(poleLiczbowe('Przejście (s)', a.przejscie, (v) => { a.przejscie = v; }));
+  return el('div', { className: 'rzad' }, pola);
+}
+
+const poleTekstowe = (etykieta, wartosc, przyZmianie, podpowiedz = '') => el('label', { className: 'pole' },
+  [etykieta, el('input', { type: 'text', value: wartosc ?? '', placeholder: podpowiedz,
+    onchange: (e) => przyZmianie(e.target.value.trim()) })]);
+
+const poleLiczbowe = (etykieta, wartosc, przyZmianie, krok = 1) => el('label', { className: 'pole' },
+  [etykieta, el('input', { type: 'number', value: wartosc ?? '', step: krok,
+    onchange: (e) => przyZmianie(e.target.value === '' ? undefined : +e.target.value) })]);
+
+const poleWyboru = (etykieta, opcje, wartosc, przyZmianie) => el('label', { className: 'pole' },
+  [etykieta, el('select', { onchange: (e) => przyZmianie(e.target.value) },
+    (opcje.includes(wartosc) || !wartosc ? opcje : [wartosc, ...opcje])
+      .map((o) => el('option', { value: o, textContent: o, selected: o === wartosc })))]);
+
+// ─────────────────────────── obsługa widoków ───────────────────────────
+
+const WIDOKI = { sterowanie: rysujSterowanie, automatyka: rysujAutomatyke, diagnostyka: rysujDiagnostyke };
+
+function rysuj() {
+  WIDOKI[biezacyWidok]();
+  const dostepne = STAN.urzadzenia.filter((u) => u.zrodlo).length;
+  $('#stan').textContent = `${STAN.urzadzenia.length} ${odmiana(STAN.urzadzenia.length,
+    'urządzenie', 'urządzenia', 'urządzeń')} · odpowiada ${dostepne}` +
+    (STAN.chmura ? ' · chmura w zapasie' : ' · tylko lokalnie');
+}
+
+function pokazWidok(nazwa) {
+  biezacyWidok = nazwa;
+  for (const b of document.querySelectorAll('#zakladki button')) {
+    b.setAttribute('aria-current', String(b.dataset.widok === nazwa));
+  }
+  for (const klucz of Object.keys(WIDOKI)) $('#widok-' + klucz).hidden = klucz !== nazwa;
+  WIDOKI[nazwa]();
+}
+
+document.querySelectorAll('#zakladki button').forEach((b) => {
+  b.onclick = () => pokazWidok(b.dataset.widok);
+});
+
+async function uruchom() {
+  try {
+    [STAN, automatyka] = await Promise.all([zapytaj('api/stan'), zapytaj('api/automatyka')]);
+    rysuj();
+    setInterval(async () => {
+      if (biezacyWidok === 'automatyka') return;          // nie kasujemy niezapisanych zmian
+      try { const swieze = await zapytaj('api/stan'); STAN = swieze; rysuj(); } catch {}
+    }, 10000);
+  } catch (e) {
+    pokazBlad('Nie mam kontaktu z serwerem panelu: ' + e.message +
+      '. Uruchom go poleceniem „python3 tuya.py panel".');
+  }
+}
+
+uruchom();
+</script>
+</body>
+</html>
