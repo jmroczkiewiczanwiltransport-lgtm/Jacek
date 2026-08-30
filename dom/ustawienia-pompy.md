@@ -14,8 +14,8 @@ Wszystkie trzy harmonogramy były **skonfigurowane, ale wyłączone**.
 
 | Harmonogram | Ustawienie | Stan po zmianie |
 |---|---|---|
-| Grzanie CWU (`PAGE118`) | 12:00–14:00 (czw/pt/sob do 15:00, niedz. 10:30–13:00) | **włączony** |
-| Temperatura wody grzewczej | 12:00–14:00 wszystkie dni, 45,0 °C | **włączony** |
+| Grzanie CWU (`PAGE118`) | **10:00–16:00 wszystkie dni** | **włączony** |
+| Temperatura wody grzewczej (`PAGE117`) | **10:00–16:00 wszystkie dni, 45,0 °C** | **włączony** |
 | Temperatura pokojowa (`PAGE116`) | okna wieczorne 16:00–18:00, 19–20 °C | wyłączony — celowo |
 
 Harmonogram temperatury pokojowej zostaje wyłączony świadomie: przy ogrzewaniu
@@ -23,8 +23,21 @@ podłogowym głębokie obniżenia nocne szkodzą, bo jastrych stygnie godzinami,
 pompa odrabia to dużą mocą przy gorszej sprawności. Jedna stała nastawa przez dobę
 jest dla podłogówki lepsza.
 
+Godziny ujednolicone na **10:00–16:00 we wszystkich dniach obu harmonogramów**. Zastane
+ustawienia miały trzy różne warianty w tygodniu i start o 12:00, co przesypiało szczyt
+produkcji — z danych godzinowych za lipiec 2026 najwięcej energii szło do sieci
+o 10:00, 11:00 i 12:00.
+
+Szersze okno nic nie kosztuje: okno nie mówi, jak długo pompa grzeje, tylko kiedy wolno
+jej zacząć. Pompa dogrzewa do nastawy i staje. Przy taryfie G11 grzanie o 15:30 kosztuje
+tyle samo co o 21:00, więc szerokie okno wyłącznie zmniejsza ryzyko zimnej wody przy
+włączonej blokadzie.
+
 Poprawione przy okazji: sobotnie okno 07:31–08:30 w harmonogramie wody grzewczej
 (przypadkowy wpis) wyzerowane do 00:00–00:00.
+
+Kłódka przy ikonie kranu na ekranie CWU pokazuje stan blokady na żywo: zamknięta poza
+oknem, otwarta w oknie. Przydaje się do sprawdzenia, czy zmiana weszła.
 
 ### Stan wyjściowy liczników
 
