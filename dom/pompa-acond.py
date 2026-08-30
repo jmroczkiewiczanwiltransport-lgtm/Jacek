@@ -85,11 +85,18 @@ def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
     except _Logowanie:
         pass
 
-    # Sterownik chce sesji: odwiedzamy stronę główną po ciasteczko i próbujemy jak panel.
+    # Sterownik chce sesji. Rozdaje ją sam (nagłówek Set-Cookie), więc najpierw
+    # pukamy na stronę główną po ciasteczko — słoik zapamięta je za nas.
     try:
         _pobierz(baza, limit, ciasteczko, uzytkownik, haslo)
     except (_Logowanie, OSError):
         pass
+    # Mając już sesję powtarzamy zwykłe zapytanie: tak właśnie robi przeglądarka.
+    try:
+        return czytaj_zmienne(_pobierz(url, limit, ciasteczko, uzytkownik, haslo))
+    except _Logowanie:
+        pass
+    # Dopiero na końcu wariant „z otwartego panelu".
     try:
         return czytaj_zmienne(_pobierz(url, limit, ciasteczko, uzytkownik, haslo, jak_panel=True))
     except _Logowanie:
@@ -106,8 +113,17 @@ class _Logowanie(Exception):
 
 
 def _pobierz(url, limit, ciasteczko, uzytkownik, haslo, jak_panel=False):
-    naglowki = {'User-Agent': 'Mozilla/5.0 (pompa-acond)', 'Accept-Encoding': 'identity',
-                'Accept': 'text/xml,application/xml,text/html,*/*'}
+    naglowki = {
+        # Sterownik odpowiada inaczej, gdy nie ma nas za przeglądarkę, więc
+        # przedstawiamy się dokładnie tak jak Chrome na panelu.
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                      '(KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Accept-Encoding': 'gzip, deflate',
+        'Upgrade-Insecure-Requests': '1',
+        'Connection': 'keep-alive',
+    }
     if jak_panel:
         naglowki['x-tecomat'] = 'data'
     zadanie = urllib.request.Request(url, headers=naglowki)
