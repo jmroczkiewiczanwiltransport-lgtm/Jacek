@@ -300,6 +300,8 @@ def podsumuj(argumenty):
               f'{(f"{sum(cwu)/len(cwu):.1f} °C" if cwu else "—"):>10}'
               f'{len(grupa):>10}')
 
+    krzywa_grzewcza(wiersze, naglowek, kolumna)
+
     wszystkie_zewn = [liczba(w[i_zewn]) for w in wiersze
                       if i_zewn is not None and i_zewn < len(w) and liczba(w[i_zewn]) is not None]
     wszystkie_energia = [liczba(w[i_energia]) for w in wiersze
@@ -321,6 +323,52 @@ def podsumuj(argumenty):
                   f'przy zmianie nastaw, bo nie zależy od pogody.')
         else:
             print('Za ciepło na liczenie zużycia na stopniodzień — wróć do tego w sezonie.')
+
+
+def krzywa_grzewcza(wiersze, naglowek, kolumna):
+    """Odtwarza krzywą grzewczą z danych: jaką wodę pompa robi przy jakiej pogodzie.
+
+    Krzywa jest nastawą, ale z zewnątrz widać tylko jej skutek — i to on się liczy.
+    Przy ogrzewaniu podłogowym każdy stopień w dół to około 2–2,5 % mniej prądu,
+    więc warto wiedzieć, gdzie się stoi."""
+    i_zewn = kolumna('zewnetrzna')
+    i_woda = kolumna('wyjscie wody') or kolumna('wstep wody')
+    if i_zewn is None or i_woda is None:
+        return
+
+    kubelki = {}
+    for wiersz in wiersze:
+        if max(i_zewn, i_woda) >= len(wiersz):
+            continue
+        zewn, woda = liczba(wiersz[i_zewn]), liczba(wiersz[i_woda])
+        if zewn is None or woda is None or woda < 15:
+            continue                      # poniżej 15 °C pompa nie grzeje, tylko stoi
+        kubelek = int(zewn // 2) * 2      # przedziały co 2 °C
+        kubelki.setdefault(kubelek, []).append(woda)
+
+    sensowne = {k: w for k, w in kubelki.items() if len(w) >= 5}
+    if len(sensowne) < 2:
+        return
+
+    print(f'\nKRZYWA GRZEWCZA  (co pompa robi z wodą przy danej pogodzie)')
+    print(f'   {"na dworze":<14}{"woda":>10}{"odczytów":>12}')
+    for kubelek in sorted(sensowne):
+        wody = sensowne[kubelek]
+        print(f'   {kubelek:>3} … {kubelek + 2:<8}{sum(wody) / len(wody):>7.1f} °C{len(wody):>12}')
+
+    najzimniej, najcieplej = min(sensowne), max(sensowne)
+    if najcieplej > najzimniej:
+        zimna = sum(sensowne[najzimniej]) / len(sensowne[najzimniej])
+        ciepla = sum(sensowne[najcieplej]) / len(sensowne[najcieplej])
+        nachylenie = (zimna - ciepla) / (najcieplej - najzimniej)
+        print(f'\n   Nachylenie: {nachylenie:.2f} °C wody na każdy stopień mrozu.')
+        if zimna > 40:
+            print(f'   Przy podłogówce woda {zimna:.0f} °C to sporo — jest czego szukać.')
+            print('   Obniżaj krzywą po jednym stopniu i patrz na kWh na stopniodzień')
+            print('   oraz na to, czy w domu nie robi się chłodno.')
+        elif zimna < 33:
+            print('   Jak na podłogówkę to już niskie temperatury — dalsze obniżanie')
+            print('   niewiele da, szukaj oszczędności gdzie indziej.')
 
 
 def yaml_strony(argumenty):

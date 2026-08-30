@@ -222,6 +222,11 @@ Razem: 120 kWh przy średniej 5.7 °C na dworze.
 Na stopniodzień: 2.8 kWh
 ```
 
+Podsumowanie odtwarza też **krzywą grzewczą** — jaką wodę pompa robi przy jakiej
+pogodzie. Krzywa jest nastawą w sterowniku, ale z zewnątrz widać jej skutek i to on
+się liczy. Przy ogrzewaniu podłogowym każdy stopień wody w dół to około 2–2,5 % mniej
+prądu, więc warto wiedzieć, gdzie się stoi, zanim zacznie się cokolwiek przestawiać.
+
 **Kilowatogodziny na stopniodzień** to jedyna liczba, którą warto porównywać między
 tygodniami. Samo zużycie nic nie mówi, bo zimą rośnie niezależnie od nastaw; podzielone
 przez to, ile stopni brakowało do 20 °C, przestaje zależeć od pogody. Spadła po zmianie
@@ -235,6 +240,12 @@ nastawy — zmiana pomogła. Nie drgnęła — nie pomogła.
 | wysoka temperatura wody zasilającej | im niższa, tym lepsza sprawność — każdy stopień w dół to ok. 2–2,5 % mniej prądu |
 | CWU grzane nocą | w net-billingu lepiej w południe, z własnego prądu, niż nocą z sieci |
 | krótkie, częste załączenia sprężarki | taktowanie — zużywa prąd i skraca życie sprężarki |
+| grzejnik elektryczny w łazience | grzeje ze sprawnością 100 %, czyli trzy–cztery razy drożej niż pompa. Warto zmierzyć, ile naprawdę zjada |
+
+**Podłogówka to darmowy magazyn ciepła.** Jastrych trzyma ciepło godzinami, więc da się
+grzać w południe z własnego prądu i „jechać z rozpędu" wieczorem — bez kupowania
+magazynu energii. To najprostszy sposób, żeby nadwyżkę z paneli zamienić w ciepło
+zamiast oddawać ją do sieci za jedną trzecią ceny.
 
 **Fotowoltaika w net-billingu zmienia rachunek.** Oddana kilowatogodzina jest warta
 mniej więcej jedną trzecią kupionej. Każda kilowatogodzina zużyta na miejscu zamiast
