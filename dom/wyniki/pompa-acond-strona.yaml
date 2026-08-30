@@ -8,7 +8,6 @@ rest:
     timeout: 15
     headers:
       X-Tecomat: data
-      Cookie: "SoftPLC=10900268"
     sensor:
       - name: "Pompa Aktualna wydajność PC"
         unique_id: acond_aktualna_wydajnosc_pc
