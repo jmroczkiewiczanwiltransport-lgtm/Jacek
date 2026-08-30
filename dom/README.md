@@ -280,6 +280,34 @@ na południe. Latem to liczba teoretyczna, bo nie ma czym tej energii zużyć �
 ale jesienią i wiosną, gdy słońce jeszcze pracuje, a ogrzewanie już chodzi,
 jest to najprostsze dostępne oszczędzanie.
 
+### 3d. Fotowoltaika — Huawei SUN2000
+
+Falownik **SUN2000-10KTL-M1** czyta się lokalnie po Modbus TCP, bez chmury i bez konta
+FusionSolar. To ten sam protokół co w pompie, więc obsługuje go ten sam klient
+(`modbus.py`, wspólny dla obu).
+
+Najpierw trzeba go włączyć w falowniku: aplikacja **FusionSolar → Uruchomienie
+urządzenia** (telefon łączy się z własną siecią WiFi falownika) **→ Ustawienia →
+Konfiguracja komunikacji → Modbus TCP → „Włącz (bez ograniczeń)"**. Potem:
+
+```bash
+cd dom
+python3 falownik-huawei.py 192.168.88.20
+python3 falownik-huawei.py 192.168.88.20 --zapisuj --co 300
+```
+
+Odczytuje moc z paneli, moc oddawaną, sprawność, temperaturę, uzysk dzienny i łączny
+oraz moc na liczniku (dodatnia to pobór, ujemna to oddawanie). Po pierwszym odczycie
+porównaj wartości z aplikacją FusionSolar — mapa rejestrów bywa różna między modelami.
+
+> **SUN2000 obsługuje jednego klienta Modbus naraz.** Gdy podłączy się Home Assistant,
+> ten skrypt przestanie dostawać odpowiedzi, i odwrotnie. Do stałej pracy używaj
+> integracji `huawei_solar` z HACS; skrypt jest do rozpoznania i do zapisu danych,
+> zanim Home Assistant stanie.
+
+**Domyślne hasło do sieci WiFi falownika** (`Changeme` na naklejce) warto zmienić —
+ta sieć daje dostęp do ustawień instalatorskich.
+
 ### 4. Sceny, automatyzacje i pulpit
 
 ```bash
