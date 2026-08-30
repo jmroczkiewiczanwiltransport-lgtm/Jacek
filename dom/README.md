@@ -353,6 +353,12 @@ dziurawa dokładnie wtedy, gdy najbardziej potrzebna: w nocy i przez dni bez
 zaglądania. Nie trzeba więc trzymać osobnego `zapisuj` w drugim oknie. Odstęp
 zmienia `--co-historia <minuty>`, a `--co-historia 0` wyłącza zapis.
 
+Z zapisanego licznika energii panel liczy **zużycie dobowe** — sam licznik
+(4506 kWh) nic nie mówi, bo narasta od uruchomienia pompy. Punktem odniesienia
+jest ostatni odczyt sprzed północy, a nie pierwszy odczyt dnia: ten mógłby
+wypaść dopiero po kilku godzinach i zjadłby część zużycia. Pierwszego dnia,
+zanim jest z czym porównywać, kafel mówi wprost, od której godziny liczy.
+
 Gdy pompa jest nieosiągalna — bo komputer wyjechał z domu — panel działa dalej
 i czeka. Do logu trafia jedna linijka na wejściu w ciszę i jedna przy powrocie,
 nie po jednej na każdą nieudaną próbę.

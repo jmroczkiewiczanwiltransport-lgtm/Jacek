@@ -159,6 +159,16 @@ async function odswiez() {
       ? `średnia ${w('Temperatura zewnętrzna średnia').toFixed(1)} °C` : null, 'zimno'));
   kafle.append(kafel('Ciepła woda', w('Temperatura CWU')?.toFixed(1), '°C', 'zbiornik CWU'));
   kafle.append(kafel('Moc grzewcza', moc?.toFixed(2), 'kW', grzeje ? 'pracuje' : 'postój'));
+
+  // Sam licznik jest bez wyrazu — liczy od uruchomienia pompy. Pokazujemy przyrost.
+  const z = dane.zuzycie || {};
+  if (z.dzis !== undefined) {
+    kafle.append(kafel('Zużycie dziś', z.dzis.toFixed(1), 'kWh',
+      z.wczoraj !== undefined ? `wczoraj ${z.wczoraj.toFixed(1)} kWh` : 'od północy'));
+  } else if (z.od_poczatku_zapisu !== undefined) {
+    kafle.append(kafel('Zużycie', z.od_poczatku_zapisu.toFixed(1), 'kWh',
+      `od ${z.zapis_od} — pełna doba dopiero jutro`));
+  }
   if (produkcja !== null) {
     kafle.append(kafel('Z paneli', produkcja.toFixed(1), 'kW',
       f['Uzysk dzisiaj'] !== undefined ? `dziś ${f['Uzysk dzisiaj'].toFixed(1)} kWh` : null, 'slonce'));

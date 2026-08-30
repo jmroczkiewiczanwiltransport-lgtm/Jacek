@@ -403,6 +403,56 @@ def _historia_z_pliku(plik, godzin=24):
     return wynik[::max(1, len(wynik) // 200)] if wynik else []
 
 
+def _zuzycie_z_licznika(plik):
+    """Ile prądu pompa zjadła dziś i wczoraj — z przyrostu licznika.
+
+    Sam licznik (4506 kWh) nic nie mówi, bo liczy od uruchomienia pompy.
+    Znaczenie ma dopiero różnica: stan teraz minus stan o północy. Dlatego
+    bierzemy ostatni odczyt sprzed każdej północy jako punkt odniesienia —
+    a nie pierwszy odczyt danego dnia, który mógłby wypaść dopiero po
+    kilku godzinach i zjeść część zużycia."""
+    if not os.path.exists(plik):
+        return {}
+    with open(plik, encoding='utf-8') as f:
+        naglowek = f.readline().rstrip('\n').split(';')
+        wiersze = [w.rstrip('\n').split(';') for w in f if w.strip()]
+    kolumna = next((i for i, n in enumerate(naglowek) if 'licznik' in bez_ogonkow(n)), None)
+    if kolumna is None:
+        return {}
+
+    odczyty = []
+    for wiersz in wiersze:
+        if kolumna >= len(wiersz):
+            continue
+        wartosc = liczba(wiersz[kolumna])
+        try:
+            czas = datetime.strptime(wiersz[0][:19], '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            continue
+        if wartosc is not None:
+            odczyty.append((czas, wartosc))
+    if not odczyty:
+        return {}
+
+    polnoc = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    ostatni_przed = lambda chwila: next(
+        (w for c, w in reversed(odczyty) if c < chwila), None)
+
+    wynik = {}
+    stan_o_polnocy = ostatni_przed(polnoc)
+    if stan_o_polnocy is not None:
+        wynik['dzis'] = round(odczyty[-1][1] - stan_o_polnocy, 1)
+        wczorajsza_polnoc = ostatni_przed(polnoc - timedelta(days=1))
+        if wczorajsza_polnoc is not None:
+            wynik['wczoraj'] = round(stan_o_polnocy - wczorajsza_polnoc, 1)
+    else:
+        # Pierwszy dzień zbierania: nie ma stanu sprzed północy, więc mówimy
+        # tylko tyle, ile naprawdę wiemy — przyrost od początku zapisu.
+        wynik['od_poczatku_zapisu'] = round(odczyty[-1][1] - odczyty[0][1], 1)
+        wynik['zapis_od'] = odczyty[0][0].strftime('%H:%M')
+    return wynik
+
+
 def _najblizsze_zadania(ile=3):
     plik = os.path.join(KATALOG, 'przypomnienia.json')
     if not os.path.exists(plik):
@@ -482,6 +532,7 @@ def panel(argumenty):
                     odpowiedz.setdefault('blad', f'Falownik nie odpowiada: {powod}')
 
             odpowiedz['historia'] = _historia_z_pliku(plik_danych)
+            odpowiedz['zuzycie'] = _zuzycie_z_licznika(plik_danych)
             odpowiedz['zadania'] = _najblizsze_zadania()
             self._odpowiedz(200, odpowiedz)
 
