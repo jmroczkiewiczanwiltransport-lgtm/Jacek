@@ -1,0 +1,46 @@
+{
+  "_sterownik": "ACOND THERM, sw 160.36 — rozpoznane z dwóch odczytów PAGE115.XML (12:50 i 13:39)",
+  "_uwaga": "Skróty w nazwach są stałe, dopóki nie zmieni się program sterownika.",
+  "zmienne": {
+    "__T46AA2571_REAL_.1f": [
+      "Temperatura pokojowa",
+      "°C"
+    ],
+    "__T9E13248E_REAL_.1f": [
+      "Wyjście wody z PC",
+      "°C"
+    ],
+    "__T50A32455_REAL_.1f": [
+      "Wstęp wody do PC",
+      "°C"
+    ],
+    "__T881A25AA_REAL_.1f": [
+      "Temperatura CWU",
+      "°C"
+    ],
+    "__T033A2538_REAL_.1f": [
+      "Temperatura zewnętrzna",
+      "°C"
+    ],
+    "__TDE3BFC02_REAL_.1f": [
+      "Temperatura zewnętrzna średnia",
+      "°C"
+    ],
+    "__TD50B2FF2_REAL_.2f": [
+      "Aktualna wydajność PC",
+      "kW"
+    ],
+    "__TA725D6FD_REAL_.0f": [
+      "Licznik energii elektrycznej",
+      "kWh"
+    ],
+    "__TB48CC351_REAL_.1f": [
+      "Koniec sezonu grzewczego",
+      "°C"
+    ],
+    "__T05D9E707_REAL_.1f": [
+      "Nastawa pokojowa",
+      "°C"
+    ]
+  }
+}

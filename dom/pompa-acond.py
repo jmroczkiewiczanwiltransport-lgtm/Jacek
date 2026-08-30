@@ -51,8 +51,13 @@ from modbus import (CZYTAJ_HOLDING, CZYTAJ_INPUT, ZAPISZ_JEDEN, BLEDY, Modbus,  
 # skrótami, ale stałymi: dopóki nie zmieni się program sterownika, ten sam
 # skrót zawsze oznacza tę samą wielkość.
 
-def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15):
-    zadanie = urllib.request.Request(url, headers={'User-Agent': 'pompa-acond'})
+def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
+    # Panel wysyła ten nagłówek przy każdym odpytaniu — robimy tak samo,
+    # żeby sterownik traktował nas jak własną stronę.
+    zadanie = urllib.request.Request(url, headers={'User-Agent': 'pompa-acond',
+                                                   'x-tecomat': 'data'})
+    if ciasteczko:
+        zadanie.add_header('Cookie', ciasteczko)
     if uzytkownik:
         poswiadczenie = base64.b64encode(f'{uzytkownik}:{haslo or ""}'.encode()).decode()
         zadanie.add_header('Authorization', 'Basic ' + poswiadczenie)
@@ -61,7 +66,9 @@ def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15):
             surowe = odpowiedz.read()
     except urllib.error.HTTPError as powod:
         if powod.code in (401, 403):
-            raise OSError(f'strona wymaga logowania ({powod.code}) — podaj --uzytkownik i --haslo')
+            raise OSError(f'strona wymaga logowania ({powod.code}) — podaj --ciasteczko '
+                          '„SoftPLC=…" (znajdziesz je w przeglądarce: F12 → Network → '
+                          'dowolne żądanie → Request Headers → Cookie)')
         raise OSError(f'strona odpowiedziała {powod.code}')
     except urllib.error.URLError as powod:
         raise OSError(f'nie mogę pobrać strony: {powod.reason}')
@@ -101,7 +108,8 @@ def rodzaj_zmiennej(nazwa):
 
 
 def strona(argumenty):
-    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo,
+                             ciasteczko=argumenty.ciasteczko)
     print(f'Zmiennych na stronie: {len(zmienne)}\n')
 
     liczbowe = {n: w for n, w in zmienne.items() if rodzaj_zmiennej(n) in ('REAL', 'INT', 'UINT', 'USINT', 'DINT')}
@@ -146,7 +154,8 @@ def strony(argumenty):
     for numer in range(argumenty.od, argumenty.do_strony + 1):
         adres = f'{baza}/PAGE{numer}.XML'
         try:
-            zmienne = pobierz_strone(adres, argumenty.uzytkownik, argumenty.haslo, limit=6)
+            zmienne = pobierz_strone(adres, argumenty.uzytkownik, argumenty.haslo, limit=6,
+                                             ciasteczko=argumenty.ciasteczko)
         except OSError:
             continue
         if not zmienne:
@@ -196,8 +205,9 @@ def liczniki(argumenty):
     zmienne = {}
     for numer in numery:
         try:
-            strona_zmienne = pobierz_strone(f'{baza}/PAGE{numer}.XML',
-                                            argumenty.uzytkownik, argumenty.haslo, limit=8)
+            strona_zmienne = pobierz_strone(f'{baza}/PAGE{numer}.XML', argumenty.uzytkownik,
+                                            argumenty.haslo, limit=8,
+                                            ciasteczko=argumenty.ciasteczko)
         except OSError as powod:
             print(f'   PAGE{numer}: {powod}')
             continue
@@ -278,7 +288,8 @@ def liczniki(argumenty):
 
 
 def dopasuj_strone(argumenty, panel):
-    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo,
+                             ciasteczko=argumenty.ciasteczko)
     liczbowe = {n: liczba(w) for n, w in zmienne.items() if liczba(w) is not None}
     print(f'Pobrałem {len(zmienne)} zmiennych, w tym {len(liczbowe)} liczbowych.\n')
 
@@ -334,7 +345,8 @@ def obserwuj_strone(argumenty):
     poprzednie = None
     try:
         while True:
-            zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+            zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo,
+                             ciasteczko=argumenty.ciasteczko)
             if poprzednie is None:
                 print(f'{time.strftime("%H:%M:%S")}  pierwszy odczyt: {len(zmienne)} zmiennych')
             else:
@@ -365,7 +377,8 @@ def zapisuj(argumenty):
     opisy = wczytaj_opisy_panelu()
     nazwa_kolumny = lambda zmienna: opisy.get(zmienna, [zmienna])[0]
 
-    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo,
+                             ciasteczko=argumenty.ciasteczko)
     kolumny = sorted((n for n, w in zmienne.items() if liczba(w) is not None),
                      key=lambda n: (nazwa_kolumny(n) == n, nazwa_kolumny(n)))
 
@@ -387,7 +400,8 @@ def zapisuj(argumenty):
     try:
         while True:
             try:
-                zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+                zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo,
+                             ciasteczko=argumenty.ciasteczko)
                 wiersz = [datetime.now().strftime('%Y-%m-%d %H:%M:%S')]
                 wiersz += ['' if z is None else str(zmienne.get(z, '')).strip() for z in kolumny]
                 with open(plik, 'a', encoding='utf-8') as f:
@@ -607,6 +621,9 @@ def yaml_strony(argumenty):
         '    scan_interval: 60',
         '    timeout: 15',
     ]
+    linie += ['    headers:', '      X-Tecomat: data']
+    if argumenty.ciasteczko:
+        linie.append(f'      Cookie: "{argumenty.ciasteczko}"')
     if argumenty.uzytkownik:
         linie += [f'    username: {argumenty.uzytkownik}',
                   '    password: !secret acond_haslo',
@@ -981,6 +998,7 @@ def main():
                         help='wypisz wszystkie napisy ze wszystkich stron')
     parser.add_argument('--uzytkownik', help='login do panelu sterownika, jeśli wymaga')
     parser.add_argument('--haslo', help='hasło do panelu sterownika')
+    parser.add_argument('--ciasteczko', help='ciasteczko sesji panelu, np. "SoftPLC=10900268"')
     argumenty = parser.parse_args()
 
     # Adres z „http" znaczy: czytamy stronę sterownika, a nie rejestry Modbusa.

@@ -6,21 +6,16 @@ rest:
   - resource: http://192.168.88.9/PAGE115.XML
     scan_interval: 60
     timeout: 15
+    headers:
+      X-Tecomat: data
+      Cookie: "SoftPLC=10900268"
     sensor:
-      - name: "Pompa Aktualna wydajnosc PC"
+      - name: "Pompa Aktualna wydajność PC"
         unique_id: acond_aktualna_wydajnosc_pc
         value_template: >-
           {{ value | regex_findall_index('__TD50B2FF2_REAL_\.2f" VALUE="([^"]*)"') | float }}
         unit_of_measurement: "kW"
         device_class: power
-        state_class: measurement
-
-      - name: "Pompa CWU temperatura"
-        unique_id: acond_cwu_temperatura
-        value_template: >-
-          {{ value | regex_findall_index('__T881A25AA_REAL_\.1f" VALUE="([^"]*)"') | float }}
-        unit_of_measurement: "°C"
-        device_class: temperature
         state_class: measurement
 
       - name: "Pompa Koniec sezonu grzewczego"
@@ -39,6 +34,22 @@ rest:
         device_class: energy
         state_class: total_increasing
 
+      - name: "Pompa Nastawa pokojowa"
+        unique_id: acond_nastawa_pokojowa
+        value_template: >-
+          {{ value | regex_findall_index('__T05D9E707_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Pompa Temperatura CWU"
+        unique_id: acond_temperatura_cwu
+        value_template: >-
+          {{ value | regex_findall_index('__T881A25AA_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
       - name: "Pompa Temperatura pokojowa"
         unique_id: acond_temperatura_pokojowa
         value_template: >-
@@ -47,7 +58,7 @@ rest:
         device_class: temperature
         state_class: measurement
 
-      - name: "Pompa Temperatura zewnetrzna"
+      - name: "Pompa Temperatura zewnętrzna"
         unique_id: acond_temperatura_zewnetrzna
         value_template: >-
           {{ value | regex_findall_index('__T033A2538_REAL_\.1f" VALUE="([^"]*)"') | float }}
@@ -55,7 +66,7 @@ rest:
         device_class: temperature
         state_class: measurement
 
-      - name: "Pompa Temperatura zewnetrzna srednia"
+      - name: "Pompa Temperatura zewnętrzna średnia"
         unique_id: acond_temperatura_zewnetrzna_srednia
         value_template: >-
           {{ value | regex_findall_index('__TDE3BFC02_REAL_\.1f" VALUE="([^"]*)"') | float }}
@@ -63,10 +74,18 @@ rest:
         device_class: temperature
         state_class: measurement
 
-      - name: "Pompa Wstep wody do PC"
+      - name: "Pompa Wstęp wody do PC"
         unique_id: acond_wstep_wody_do_pc
         value_template: >-
           {{ value | regex_findall_index('__T50A32455_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Pompa Wyjście wody z PC"
+        unique_id: acond_wyjscie_wody_z_pc
+        value_template: >-
+          {{ value | regex_findall_index('__T9E13248E_REAL_\.1f" VALUE="([^"]*)"') | float }}
         unit_of_measurement: "°C"
         device_class: temperature
         state_class: measurement
