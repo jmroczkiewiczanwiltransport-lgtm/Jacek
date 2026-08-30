@@ -107,6 +107,25 @@ z poziomu ekranu sterownika się tego nie zrobi. Przy okazji poproś o dokumenta
 protokołu z tablicą rejestrów: `AC-Z010` dla oprogramowania w wersji `160.36`
 (dokumentacja.acond.cz, publiczny plik `AC-Z010-EN.pdf`).
 
+**Co ten sterownik w ogóle umie.** Panel serwuje kolejne ekrany jako `PAGE<numer>.XML`.
+Przejrzenie ich wszystkich to najprostszy sposób, żeby poznać funkcje sterownika bez
+dokumentacji i bez serwisu:
+
+```bash
+python3 pompa-acond.py strony http://192.168.88.9/ --od 100 --do-strony 200
+```
+
+Skrypt pobiera każdą stronę, wypisuje te, które odpowiedziały, i podświetla napisy
+zawierające słowa istotne dla sterowania z zewnątrz: `HDO`, `SG`, `blokada`, `wejście`,
+`styk`, `sygnał`, `G12`, `taryfa`, `harmonogram`. Własne słowa podasz przez `--szukaj`,
+a `--szukaj-wszystko` wypisze wszystkie napisy ze wszystkich ekranów.
+
+Szuka się tu dwóch rzeczy. **Wejścia zewnętrznego** (u czeskich pomp zwykle „HDO"):
+ekran informacyjny ma trzy przełączniki „G12 wyłącza…", więc takie wejście istnieje —
+pytanie tylko, na których zaciskach. I **programu czasowego**: jeśli pompa ma własny
+harmonogram temperatury, przesunięcie grzania na godziny słoneczne da się zrobić
+w niej samej, bez żadnej integracji.
+
 **Najkrótsza droga: strona sterownika.** Panel ACOND THERM serwuje swoje ekrany jako
 XML, w którym wartości siedzą wprost — każda jako `<INPUT NAME="__T…_REAL_.1f" VALUE="41.3" />`.
 Home Assistant potrafi taką stronę pobrać i wyciągnąć z niej liczby, więc **do samych
