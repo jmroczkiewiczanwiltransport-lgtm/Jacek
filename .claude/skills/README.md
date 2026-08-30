@@ -4,6 +4,21 @@ Skille w tym katalogu są wczytywane w **każdej** sesji Claude Code pracującej
 repozytorium — niezależnie od tego, jakie wtyczki są włączone na koncie i z jakiej
 powierzchni korzystasz (przeglądarka, aplikacja, terminal).
 
+## dom
+
+Instalacja domowa: pompa ciepła ACOND THERM, fotowoltaika na net-billingu, rozliczenia
+z Eneą, oświetlenie Hue i Tuya. Wczytuje się przy pracy w `dom/`, `hue/` i `tuya/`
+albo gdy rozmowa dotyczy ogrzewania i rachunków za prąd.
+
+To pamięć między rozmowami — temat rozłożony na cały sezon grzewczy, a każda sesja
+zaczyna od zera. Trzyma adresy urządzeń, ustalenia, które kosztowały godziny dochodzenia
+(sposób logowania do sterownika, martwy Modbus, falownik poza siecią), wnioski z danych
+Enei i listę otwartych wątków.
+
+**Dopisuj do niego ustalenia.** Skill bez aktualizacji zestarzeje się w miesiąc i zacznie
+wprowadzać w błąd. Zapis decyzji o samych nastawach sterownika idzie osobno, do
+`dom/ustawienia-pompy.md`.
+
 ## frontend-design
 
 Wytyczne projektowe: kierunek estetyczny, typografia, unikanie wyglądu „z szablonu".
