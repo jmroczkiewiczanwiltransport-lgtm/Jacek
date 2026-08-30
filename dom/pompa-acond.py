@@ -34,7 +34,9 @@ import socket
 import sys
 import time
 import unicodedata
+import gzip
 import http.cookiejar
+import zlib
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -70,7 +72,8 @@ def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
     # Panel wysyła ten nagłówek przy każdym odpytaniu — robimy tak samo,
     # żeby sterownik traktował nas jak własną stronę.
     zadanie = urllib.request.Request(url, headers={'User-Agent': 'pompa-acond',
-                                                   'x-tecomat': 'data'})
+                                                   'x-tecomat': 'data',
+                                                   'Accept-Encoding': 'identity'})
     if ciasteczko:
         zadanie.add_header('Cookie', ciasteczko)
     if uzytkownik:
@@ -78,7 +81,7 @@ def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
         zadanie.add_header('Authorization', 'Basic ' + poswiadczenie)
     try:
         with _otwieracz().open(zadanie, timeout=limit) as odpowiedz:
-            surowe = odpowiedz.read()
+            surowe = _rozpakuj(odpowiedz.read(), odpowiedz.headers.get('Content-Encoding', ''))
     except urllib.error.HTTPError as powod:
         if powod.code in (401, 403):
             raise OSError(f'strona wymaga logowania ({powod.code}) — podaj --ciasteczko '
@@ -88,6 +91,21 @@ def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
     except urllib.error.URLError as powod:
         raise OSError(f'nie mogę pobrać strony: {powod.reason}')
     return czytaj_zmienne(surowe)
+
+
+def _rozpakuj(surowe, kodowanie):
+    """Sterownik potrafi spakować odpowiedź, nawet gdy o to nie prosimy."""
+    if surowe[:2] == b'\x1f\x8b' or 'gzip' in kodowanie.lower():
+        try:
+            return gzip.decompress(surowe)
+        except OSError:
+            pass
+    if 'deflate' in kodowanie.lower():
+        try:
+            return zlib.decompress(surowe, -zlib.MAX_WBITS)
+        except zlib.error:
+            pass
+    return surowe
 
 
 def czytaj_zmienne(surowe):
@@ -101,7 +119,12 @@ def czytaj_zmienne(surowe):
         pass
     # gdyby XML był niedomknięty albo w innym kodowaniu — bierzemy po znaku
     tekst = surowe.decode('windows-1250', errors='replace') if isinstance(surowe, bytes) else surowe
-    return dict(re.findall(r'<INPUT\s+NAME="([^"]+)"\s+VALUE="([^"]*)"', tekst))
+    zmienne = dict(re.findall(r'<INPUT\s+NAME="([^\"]+)"\s+VALUE="([^\"]*)"', tekst))
+    if not zmienne:
+        poczatek = ' '.join(tekst[:200].split())
+        raise OSError('sterownik odpowiedział, ale nie widzę w odpowiedzi żadnych wartości.\n'
+                      f'   Początek tego, co przyszło: {poczatek[:160] or "(pusto)"}')
+    return zmienne
 
 
 def bez_ogonkow(tekst):
