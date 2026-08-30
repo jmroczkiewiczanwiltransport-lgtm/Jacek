@@ -1,0 +1,242 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pompa ciepla//PL
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Pompa ciepła
+BEGIN:VEVENT
+UID:pompa-20260906-0@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20260906
+DTEND;VALUE=DATE:20260907
+SUMMARY:Sprawdź ciepłą wodę wieczorem
+DESCRIPTION:Tydzień po włączeniu blokady CWU poza harmonogramem. Jeś
+ li wieczorem brakuje ciepłej wody\, podnieś nastawę CWU z 45 na 48 °
+ C — zbiornik zmagazynuje więcej i wystarczy do południa.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Sprawdź ciepłą wodę wieczorem
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20260920-1@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20260920
+DTEND;VALUE=DATE:20260921
+SUMMARY:Podnieś nastawę pokojową przed sezonem
+DESCRIPTION:Nastawa stoi na 15\,3 °C — to ustawienie letnie. Podnieś
+  do normalnej\, ok. 21 °C. Bez tego podbicie wody w południe nie ma s
+ ię gdzie zatrzymać\, a dom nie będzie grzany. To najważniejsze zada
+ nie z całej listy.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Podnieś nastawę pokojową przed sezonem
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20261001-2@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20261001
+DTEND;VALUE=DATE:20261002
+SUMMARY:Spisz liczniki pompy
+DESCRIPTION:python3 pompa-acond.py liczniki http://192.168.88.9/ — alb
+ o z panelu\, ekran informacyjny. Patrz na przyrost biwalencji.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Spisz liczniki pompy
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20261101-3@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:Spisz liczniki pompy
+DESCRIPTION:python3 pompa-acond.py liczniki http://192.168.88.9/ — alb
+ o z panelu\, ekran informacyjny. Patrz na przyrost biwalencji.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Spisz liczniki pompy
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20261201-4@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20261201
+DTEND;VALUE=DATE:20261202
+SUMMARY:Spisz liczniki pompy
+DESCRIPTION:python3 pompa-acond.py liczniki http://192.168.88.9/ — alb
+ o z panelu\, ekran informacyjny. Patrz na przyrost biwalencji.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Spisz liczniki pompy
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20261201-5@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20261201
+DTEND;VALUE=DATE:20261202
+SUMMARY:Wyłącz harmonogram temperatury wody grzewczej
+DESCRIPTION:Zimą nie ma nadwyżki z paneli\, a wymuszanie 45 °C wody w
+  południe to sam gorszy COP bez zysku. Panel pompy → ikona zegara →
+  harmonogram temperatury wody grzewczej → odznacz DOZWOLONY.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Wyłącz harmonogram temperatury wody grzewczej
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20261215-6@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20261215
+DTEND;VALUE=DATE:20261216
+SUMMARY:Odśnież panele\, jeśli leży śnieg
+DESCRIPTION:Kilowatogodzina ze stycznia jest warta 0\,68 zł\, z lipca 0
+ \,00 zł — zimowa produkcja jest najcenniejsza w roku. Panele stoją 
+ na ziemi\, wystarczy miękka szczotka na kiju.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Odśnież panele\, jeśli leży śnieg
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20270101-7@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20270101
+DTEND;VALUE=DATE:20270102
+SUMMARY:Spisz liczniki pompy
+DESCRIPTION:python3 pompa-acond.py liczniki http://192.168.88.9/ — alb
+ o z panelu\, ekran informacyjny. Patrz na przyrost biwalencji.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Spisz liczniki pompy
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20270115-8@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20270115
+DTEND;VALUE=DATE:20270116
+SUMMARY:Odśnież panele\, jeśli leży śnieg
+DESCRIPTION:Kilowatogodzina ze stycznia jest warta 0\,68 zł\, z lipca 0
+ \,00 zł — zimowa produkcja jest najcenniejsza w roku. Panele stoją 
+ na ziemi\, wystarczy miękka szczotka na kiju.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Odśnież panele\, jeśli leży śnieg
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20270201-9@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20270201
+DTEND;VALUE=DATE:20270202
+SUMMARY:Porównaj liczniki z punktem zerowym
+DESCRIPTION:Stan na 30.08.2026: energia 4506 kWh\, sprężarka 6039 h\, 
+ biwalencja 1: 119 h\, biwalencja 2: 43 h. Jeśli biwalencje urosły o k
+ ilkadziesiąt godzin — grzałka elektryczna dogrzewa i tam idą pieni
+ ądze.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Porównaj liczniki z punktem zerowym
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20270201-10@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20270201
+DTEND;VALUE=DATE:20270202
+SUMMARY:Spisz liczniki pompy
+DESCRIPTION:python3 pompa-acond.py liczniki http://192.168.88.9/ — alb
+ o z panelu\, ekran informacyjny. Patrz na przyrost biwalencji.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Spisz liczniki pompy
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20270215-11@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20270215
+DTEND;VALUE=DATE:20270216
+SUMMARY:Odśnież panele\, jeśli leży śnieg
+DESCRIPTION:Kilowatogodzina ze stycznia jest warta 0\,68 zł\, z lipca 0
+ \,00 zł — zimowa produkcja jest najcenniejsza w roku. Panele stoją 
+ na ziemi\, wystarczy miękka szczotka na kiju.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Odśnież panele\, jeśli leży śnieg
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20270301-12@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20270301
+DTEND;VALUE=DATE:20270302
+SUMMARY:Spisz liczniki pompy
+DESCRIPTION:python3 pompa-acond.py liczniki http://192.168.88.9/ — alb
+ o z panelu\, ekran informacyjny. Patrz na przyrost biwalencji.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Spisz liczniki pompy
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20270301-13@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20270301
+DTEND;VALUE=DATE:20270302
+SUMMARY:Włącz z powrotem harmonogram wody grzewczej
+DESCRIPTION:Wraca sezon\, w którym słońce jeszcze świeci\, a ogrzewa
+ nie jeszcze działa. Panel pompy → zegar → harmonogram temperatury 
+ wody grzewczej → zaznacz DOZWOLONY.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Włącz z powrotem harmonogram wody grzewczej
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:pompa-20270401-14@dom
+DTSTAMP:20260830T120210Z
+DTSTART;VALUE=DATE:20270401
+DTEND;VALUE=DATE:20270402
+SUMMARY:Spisz liczniki pompy
+DESCRIPTION:python3 pompa-acond.py liczniki http://192.168.88.9/ — alb
+ o z panelu\, ekran informacyjny. Patrz na przyrost biwalencji.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Spisz liczniki pompy
+TRIGGER:-P1DT0H0M0S
+END:VALARM
+END:VEVENT
+END:VCALENDAR

@@ -38,7 +38,8 @@ import http.cookiejar
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from datetime import datetime, timedelta
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 KATALOG = os.path.dirname(os.path.abspath(__file__))
 
@@ -204,6 +205,129 @@ def strony(argumenty):
             print(f'\n   ── PAGE{numer}.XML ──')
             for napis in napisy:
                 print(f'      {napis}')
+
+
+def _historia_z_pliku(plik, godzin=24):
+    """Ostatnia doba z zapisu — do wykresu na panelu."""
+    if not os.path.exists(plik):
+        return []
+    with open(plik, encoding='utf-8') as f:
+        naglowek = f.readline().rstrip('\n').split(';')
+        wiersze = [w.rstrip('\n').split(';') for w in f if w.strip()]
+    szukaj = lambda fragment: next(
+        (i for i, n in sorted(enumerate(naglowek), key=lambda x: len(x[1]))
+         if fragment in bez_ogonkow(n)), None)
+    i_pok, i_zew = szukaj('pokojowa'), szukaj('zewnetrzna')
+    granica = datetime.now() - timedelta(hours=godzin)
+    wynik = []
+    for wiersz in wiersze[-4000:]:
+        try:
+            czas = datetime.strptime(wiersz[0][:19], '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            continue
+        if czas < granica:
+            continue
+        odczyt = lambda i: (liczba(wiersz[i]) if i is not None and i < len(wiersz) else None)
+        wynik.append({'czas': int(czas.timestamp()),
+                      'pokojowa': odczyt(i_pok), 'zewnetrzna': odczyt(i_zew)})
+    return wynik[::max(1, len(wynik) // 200)] if wynik else []
+
+
+def _najblizsze_zadania(ile=3):
+    plik = os.path.join(KATALOG, 'przypomnienia.json')
+    if not os.path.exists(plik):
+        return []
+    try:
+        with open(plik, encoding='utf-8') as f:
+            zadania = json.load(f).get('zadania', [])
+    except (ValueError, OSError):
+        return []
+    dzis = datetime.now().date()
+    przyszle = []
+    for z in zadania:
+        try:
+            dzien = datetime.strptime(z['data'], '%Y-%m-%d').date()
+        except (KeyError, ValueError):
+            continue
+        if dzien >= dzis:
+            przyszle.append({'data': z['data'], 'tytul': z.get('tytul', ''),
+                             'za_dni': (dzien - dzis).days})
+    return sorted(przyszle, key=lambda z: z['data'])[:ile]
+
+
+def panel(argumenty):
+    """Panel pompy na telefon — serwuje stronę w sieci domowej."""
+    opisy = wczytaj_opisy_panelu()
+    plik_danych = argumenty.plik or os.path.join(KATALOG, 'dane-pompy.csv')
+    adres_falownika = argumenty.falownik
+
+    class Obsluga(BaseHTTPRequestHandler):
+        def log_message(self, *_):
+            pass
+
+        def _odpowiedz(self, kod, dane, typ='application/json; charset=utf-8'):
+            tresc = dane if isinstance(dane, bytes) else json.dumps(dane, ensure_ascii=False).encode()
+            self.send_response(kod)
+            self.send_header('Content-Type', typ)
+            self.send_header('Content-Length', str(len(tresc)))
+            self.send_header('Cache-Control', 'no-store')
+            self.end_headers()
+            self.wfile.write(tresc)
+
+        def do_GET(self):
+            if self.path in ('/', '/panel-pompy.html'):
+                with open(os.path.join(KATALOG, 'panel-pompy.html'), 'rb') as f:
+                    return self._odpowiedz(200, f.read(), 'text/html; charset=utf-8')
+            if self.path == '/favicon.ico':
+                return self._odpowiedz(204, b'', 'image/x-icon')
+            if self.path != '/api/stan':
+                return self._odpowiedz(404, {'blad': 'Nie ma takiej ścieżki.'})
+
+            odpowiedz = {'zrodlo': f'pompa {argumenty.host}', 'pompa': {}}
+            try:
+                zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo,
+                                         limit=8, ciasteczko=argumenty.ciasteczko)
+                for zmienna, wartosc in zmienne.items():
+                    if zmienna in opisy and liczba(wartosc) is not None:
+                        odpowiedz['pompa'][opisy[zmienna][0]] = liczba(wartosc)
+                if not opisy:
+                    odpowiedz['blad'] = ('Brak opisy-panelu.json — panel nie wie, która zmienna '
+                                         'jest którą. Skopiuj opisy-panelu.przyklad.json.')
+            except OSError as powod:
+                odpowiedz['blad'] = f'Pompa nie odpowiada: {powod}'
+
+            if adres_falownika:
+                try:
+                    from falownik import odczytaj as odczytaj_falownik   # noqa: PLC0415
+                    wynik = odczytaj_falownik(adres_falownika, 502, argumenty.jednostka)
+                    odpowiedz['falownik'] = {n: w for n, (w, _) in wynik.items() if w is not None}
+                    odpowiedz['zrodlo'] += f' · falownik {adres_falownika}'
+                except Exception as powod:                               # noqa: BLE001
+                    odpowiedz['falownik'] = None
+                    odpowiedz.setdefault('blad', f'Falownik nie odpowiada: {powod}')
+
+            odpowiedz['historia'] = _historia_z_pliku(plik_danych)
+            odpowiedz['zadania'] = _najblizsze_zadania()
+            self._odpowiedz(200, odpowiedz)
+
+    nasluch = '127.0.0.1' if argumenty.tylko_lokalnie else '0.0.0.0'
+    serwer = ThreadingHTTPServer((nasluch, argumenty.port_panelu), Obsluga)
+    print(f'Panel pompy: http://localhost:{argumenty.port_panelu}')
+    if not argumenty.tylko_lokalnie:
+        adres = 'ten-komputer'
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as gniazdo:
+                gniazdo.connect(('192.168.88.1', 1))
+                adres = gniazdo.getsockname()[0]
+        except OSError:
+            pass
+        print(f'Z telefonu w tej samej sieci: http://{adres}:{argumenty.port_panelu}')
+        print('(panel jest widoczny w sieci domowej — tylko do odczytu, niczego nie ustawia)')
+    print('Zatrzymanie: Ctrl+C')
+    try:
+        serwer.serve_forever()
+    except KeyboardInterrupt:
+        print('\nZamykam panel.')
 
 
 def liczniki(argumenty):
@@ -988,7 +1112,7 @@ def main():
     parser = argparse.ArgumentParser(description='Pompa ciepła ACOND przez Modbus TCP.')
     parser.add_argument('polecenie',
                         choices=['sprawdz', 'strona', 'strony', 'liczniki', 'skanuj',
-                                 'dopasuj', 'czytaj', 'obserwuj', 'zapisuj', 'podsumuj', 'yaml'])
+                                 'dopasuj', 'czytaj', 'obserwuj', 'zapisuj', 'podsumuj', 'panel', 'yaml'])
     parser.add_argument('host', nargs='?', help='adres pompy (192.168.88.9) albo adres strony '
                                                'sterownika (http://192.168.88.9/PAGE115.XML); '
                                                'polecenie „podsumuj" go nie potrzebuje')
@@ -1006,6 +1130,10 @@ def main():
                         help='ostatni numer strony przy przeglądaniu (polecenie strony)')
     parser.add_argument('--szukaj', help='czego szukać w napisach, po przecinku')
     parser.add_argument('--strony', help='numery ekranów do odczytu liczników, np. 115,121')
+    parser.add_argument('--falownik', help='adres falownika, żeby panel pokazywał też produkcję')
+    parser.add_argument('--port-panelu', dest='port_panelu', type=int, default=8125)
+    parser.add_argument('--tylko-lokalnie', action='store_true',
+                        help='panel dostępny tylko z tego komputera, nie z telefonu')
     parser.add_argument('--tylko-podsumuj', action='store_true',
                         help='pokaż przyrosty, ale nie dopisuj nowego odczytu')
     parser.add_argument('--szukaj-wszystko', action='store_true',
@@ -1024,7 +1152,7 @@ def main():
                          '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
     if argumenty.polecenie == 'strony' and argumenty.od == 0:
         argumenty.od = 100
-    if argumenty.polecenie in ('strona', 'strony', 'liczniki') and not przez_strone:
+    if argumenty.polecenie in ('strona', 'strony', 'liczniki', 'panel') and not przez_strone:
         raise SystemExit('Polecenie „strona" potrzebuje adresu strony, np.\n'
                          '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
     if argumenty.polecenie == 'strony' and argumenty.od == 0:
@@ -1032,7 +1160,8 @@ def main():
 
     przez_www = {'strona': strona, 'strony': strony, 'liczniki': liczniki,
                  'dopasuj': lambda a: dopasuj_strone(a, wczytaj_panel(a)),
-                 'obserwuj': obserwuj_strone, 'zapisuj': zapisuj, 'yaml': yaml_strony}
+                 'obserwuj': obserwuj_strone, 'zapisuj': zapisuj, 'panel': panel,
+                 'yaml': yaml_strony}
     przez_modbus = {'sprawdz': sprawdz, 'skanuj': skanuj, 'dopasuj': dopasuj, 'czytaj': czytaj,
                     'obserwuj': obserwuj, 'yaml': yaml_ha}
 

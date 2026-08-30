@@ -1,0 +1,44 @@
+{
+  "_jak_uzywac": "Zadania sezonowe wokół pompy. Panel pokazuje najbliższe, a przypomnienia.py robi z tego plik kalendarza (.ics) do wgrania w telefon.",
+  "zadania": [
+    {
+      "data": "2026-09-06",
+      "tytul": "Sprawdź ciepłą wodę wieczorem",
+      "opis": "Tydzień po włączeniu blokady CWU poza harmonogramem. Jeśli wieczorem brakuje ciepłej wody, podnieś nastawę CWU z 45 na 48 °C — zbiornik zmagazynuje więcej i wystarczy do południa."
+    },
+    {
+      "data": "2026-09-20",
+      "tytul": "Podnieś nastawę pokojową przed sezonem",
+      "opis": "Nastawa stoi na 15,3 °C — to ustawienie letnie. Podnieś do normalnej, ok. 21 °C. Bez tego podbicie wody w południe nie ma się gdzie zatrzymać, a dom nie będzie grzany. To najważniejsze zadanie z całej listy."
+    },
+    {
+      "data": "2026-12-01",
+      "tytul": "Wyłącz harmonogram temperatury wody grzewczej",
+      "opis": "Zimą nie ma nadwyżki z paneli, a wymuszanie 45 °C wody w południe to sam gorszy COP bez zysku. Panel pompy → ikona zegara → harmonogram temperatury wody grzewczej → odznacz DOZWOLONY."
+    },
+    {
+      "data": "2027-02-01",
+      "tytul": "Porównaj liczniki z punktem zerowym",
+      "opis": "Stan na 30.08.2026: energia 4506 kWh, sprężarka 6039 h, biwalencja 1: 119 h, biwalencja 2: 43 h. Jeśli biwalencje urosły o kilkadziesiąt godzin — grzałka elektryczna dogrzewa i tam idą pieniądze."
+    },
+    {
+      "data": "2027-03-01",
+      "tytul": "Włącz z powrotem harmonogram wody grzewczej",
+      "opis": "Wraca sezon, w którym słońce jeszcze świeci, a ogrzewanie jeszcze działa. Panel pompy → zegar → harmonogram temperatury wody grzewczej → zaznacz DOZWOLONY."
+    },
+    {
+      "data": "2026-10-01",
+      "tytul": "Spisz liczniki pompy",
+      "powtarzaj_miesiecy": 1,
+      "ile_razy": 7,
+      "opis": "python3 pompa-acond.py liczniki http://192.168.88.9/ — albo z panelu, ekran informacyjny. Patrz na przyrost biwalencji."
+    },
+    {
+      "data": "2026-12-15",
+      "tytul": "Odśnież panele, jeśli leży śnieg",
+      "powtarzaj_miesiecy": 1,
+      "ile_razy": 3,
+      "opis": "Kilowatogodzina ze stycznia jest warta 0,68 zł, z lipca 0,00 zł — zimowa produkcja jest najcenniejsza w roku. Panele stoją na ziemi, wystarczy miękka szczotka na kiju."
+    }
+  ]
+}

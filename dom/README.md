@@ -274,6 +274,35 @@ pogodzie. Krzywa jest nastawą w sterowniku, ale z zewnątrz widać jej skutek i
 się liczy. Przy ogrzewaniu podłogowym każdy stopień wody w dół to około 2–2,5 % mniej
 prądu, więc warto wiedzieć, gdzie się stoi, zanim zacznie się cokolwiek przestawiać.
 
+### Panel pompy na telefon
+
+```bash
+python3 pompa-acond.py panel http://192.168.88.9/PAGE115.XML --falownik 192.168.88.20
+```
+
+Serwuje stronę pod `http://<adres-komputera>:8125` — otwierasz ją w telefonie w tej samej
+sieci i dodajesz do ekranu głównego. Pokazuje jednym rzutem oka: temperaturę w domu i na
+dworze, ciepłą wodę, moc grzewczą, produkcję z paneli i bilans z siecią, obieg grzewczy,
+wykres ostatniej doby z `dane-pompy.csv` oraz najbliższe zadania z `przypomnienia.json`.
+
+Falownik jest opcjonalny — bez `--falownik` panel pokazuje samą pompę. Strona jest
+**wyłącznie do odczytu**: niczego w pompie nie ustawia. Domyślnie widać ją w całej sieci
+domowej; `--tylko-lokalnie` ogranicza dostęp do samego komputera.
+
+### Przypomnienia w telefonie
+
+Zadania sezonowe — podniesienie nastawy przed sezonem, wyłączenie harmonogramu na zimę,
+spisanie liczników, odśnieżanie paneli — siedzą w `przypomnienia.json`. Skrypt robi z nich
+plik kalendarza:
+
+```bash
+python3 przypomnienia.py
+```
+
+Powstaje `wyniki/pompa-przypomnienia.ics`. Wyślij go sobie mailem i otwórz załącznik
+w telefonie — wpadną do kalendarza i będą przypominać dzień wcześniej, tak jak terminy
+rachunków. Te same zadania widać na panelu w sekcji „Do zrobienia".
+
 ### Liczniki raz w miesiącu — minimum, które warto robić
 
 Jeśli nie chcesz prowadzić ciągłego zapisu, jest wersja minimalna: raz w miesiącu

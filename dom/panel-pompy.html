@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pompa ciepła</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1v9' stroke='%23e8833d' stroke-width='2.5' fill='none'/%3E%3Ccircle cx='8' cy='12' r='3' fill='%23e8833d'/%3E%3C/svg%3E">
+<style>
+  :root {
+    color-scheme: dark light;
+    --tlo: #14161c;      --karta: #1e212a;   --kreska: #2e3340;
+    --tekst: #eceff5;    --slaby: #949cad;
+    --cieplo: #e8833d;   --zimno: #4a9fd8;   --slonce: #f0c419;
+    --dobre: #6cc38a;    --zle: #e07a6a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --tlo: #f2f4f7; --karta: #fff; --kreska: #e2e6ec; --tekst: #1a1d24; --slaby: #6b7280; }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--tlo); color: var(--tekst);
+         font: 16px/1.4 -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+         padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+  header { padding: 18px 18px 6px; display: flex; align-items: baseline; gap: 10px; }
+  h1 { font-size: 19px; margin: 0; font-weight: 650; letter-spacing: -.02em; }
+  #czas { font-size: 13px; color: var(--slaby); margin-left: auto; }
+  main { padding: 8px 14px 32px; max-width: 640px; margin: 0 auto; }
+  .stan { margin: 6px 4px 14px; font-size: 15px; font-weight: 600; display: flex;
+          align-items: center; gap: 9px; }
+  .kropka { width: 10px; height: 10px; border-radius: 50%; background: var(--slaby); flex: none; }
+  .kropka.grzeje { background: var(--cieplo); box-shadow: 0 0 0 4px rgba(232,131,61,.18); }
+  .kropka.slonce { background: var(--slonce); box-shadow: 0 0 0 4px rgba(240,196,25,.18); }
+  .siatka { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .kafel { background: var(--karta); border: 1px solid var(--kreska); border-radius: 16px;
+           padding: 13px 15px; }
+  .kafel.szeroki { grid-column: 1 / -1; }
+  .etykieta { font-size: 12px; color: var(--slaby); text-transform: uppercase;
+              letter-spacing: .05em; font-weight: 600; }
+  .wartosc { font-size: 30px; font-weight: 660; letter-spacing: -.03em; margin-top: 3px;
+             font-variant-numeric: tabular-nums; }
+  .wartosc .jedn { font-size: 15px; font-weight: 500; color: var(--slaby); margin-left: 3px; }
+  .obok { font-size: 13px; color: var(--slaby); margin-top: 2px; }
+  .cieplo { color: var(--cieplo); } .zimno { color: var(--zimno); } .slonce { color: var(--slonce); }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--slaby);
+       font-weight: 600; margin: 24px 4px 9px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td { padding: 9px 2px; border-bottom: 1px solid var(--kreska); }
+  tr:last-child td { border-bottom: 0; }
+  td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600;
+                  white-space: nowrap; padding-left: 12px; }
+  svg.wykres { width: 100%; height: 96px; display: block; margin-top: 6px; overflow: visible; }
+  .legenda { display: flex; gap: 14px; font-size: 12px; color: var(--slaby); margin-top: 4px; }
+  .legenda i { display: inline-block; width: 9px; height: 3px; border-radius: 2px;
+               vertical-align: middle; margin-right: 5px; }
+  .blad { background: var(--karta); border: 1px solid var(--zle); color: var(--zle);
+          border-radius: 14px; padding: 13px 15px; font-size: 14px; margin-bottom: 12px; }
+  footer { text-align: center; color: var(--slaby); font-size: 12px; padding: 18px; }
+</style>
+</head>
+<body>
+<header><h1>Pompa ciepła</h1><span id="czas">…</span></header>
+<main>
+  <div id="blad"></div>
+  <div id="stan" class="stan" hidden><span class="kropka"></span><span></span></div>
+  <div id="kafle" class="siatka"></div>
+  <div id="reszta"></div>
+</main>
+<footer id="stopka"></footer>
+
+<script>
+'use strict';
+const $ = (w) => document.querySelector(w);
+const el = (tag, wl = {}, dz = []) => {
+  const w = Object.assign(document.createElement(tag), wl);
+  for (const d of [].concat(dz)) w.append(d);
+  return w;
+};
+
+function kafel(etykieta, wartosc, jednostka, obok, klasa) {
+  return el('div', { className: 'kafel' }, [
+    el('div', { className: 'etykieta', textContent: etykieta }),
+    el('div', { className: 'wartosc ' + (klasa || '') }, [
+      wartosc === null || wartosc === undefined ? '—' : String(wartosc),
+      el('span', { className: 'jedn', textContent: jednostka || '' }),
+    ]),
+    ...(obok ? [el('div', { className: 'obok', textContent: obok })] : []),
+  ]);
+}
+
+// Prosty wykres liniowy — dwie serie na wspólnej osi czasu.
+function wykres(serie) {
+  const czasy = serie.flatMap((s) => s.punkty.map((p) => p[0]));
+  if (czasy.length < 2) return null;
+  const odCzasu = Math.min(...czasy), doCzasu = Math.max(...czasy);
+  const wszystkie = serie.flatMap((s) => s.punkty.map((p) => p[1]));
+  let dol = Math.min(...wszystkie), gora = Math.max(...wszystkie);
+  if (gora - dol < 1) { gora += 0.5; dol -= 0.5; }
+  const x = (t) => ((t - odCzasu) / (doCzasu - odCzasu || 1)) * 100;
+  const y = (v) => 92 - ((v - dol) / (gora - dol)) * 84;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'wykres');
+  svg.setAttribute('viewBox', '0 0 100 96');
+  svg.setAttribute('preserveAspectRatio', 'none');
+  for (const s of serie) {
+    if (s.punkty.length < 2) continue;
+    const sciezka = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    sciezka.setAttribute('d', s.punkty.map((p, i) =>
+      `${i ? 'L' : 'M'}${x(p[0]).toFixed(2)} ${y(p[1]).toFixed(2)}`).join(' '));
+    sciezka.setAttribute('fill', 'none');
+    sciezka.setAttribute('stroke', s.kolor);
+    sciezka.setAttribute('stroke-width', '1.6');
+    sciezka.setAttribute('vector-effect', 'non-scaling-stroke');
+    sciezka.setAttribute('stroke-linejoin', 'round');
+    svg.append(sciezka);
+  }
+  return { svg, dol, gora };
+}
+
+async function odswiez() {
+  let dane;
+  try {
+    dane = await (await fetch('api/stan', { cache: 'no-store' })).json();
+  } catch (e) {
+    $('#blad').innerHTML = '';
+    $('#blad').append(el('div', { className: 'blad',
+      textContent: 'Brak kontaktu z serwerem panelu. Czy „pompa-acond.py panel" nadal działa?' }));
+    return;
+  }
+  $('#blad').innerHTML = '';
+  if (dane.blad) {
+    $('#blad').append(el('div', { className: 'blad', textContent: dane.blad }));
+  }
+
+  const p = dane.pompa || {};
+  const f = dane.falownik || null;
+  const w = (nazwa) => (p[nazwa] === undefined ? null : p[nazwa]);
+
+  // ── jednym zdaniem: co się teraz dzieje ──
+  const moc = w('Aktualna wydajność PC');
+  const grzeje = moc !== null && moc > 0.05;
+  const produkcja = f && f['Moc oddawana (AC)'] !== undefined ? f['Moc oddawana (AC)'] / 1000 : null;
+  const zeSlonca = grzeje && produkcja !== null && produkcja > 1.5;
+  const stan = $('#stan');
+  stan.hidden = false;
+  stan.querySelector('.kropka').className = 'kropka' + (zeSlonca ? ' slonce' : grzeje ? ' grzeje' : '');
+  stan.querySelector('span:last-child').textContent = !grzeje
+    ? 'Pompa stoi'
+    : zeSlonca ? `Grzeje ${moc.toFixed(1)} kW — słońce daje ${produkcja.toFixed(1)} kW`
+               : `Grzeje ${moc.toFixed(1)} kW`;
+
+  // ── kafle ──
+  const kafle = $('#kafle');
+  kafle.innerHTML = '';
+  const pokojowa = w('Temperatura pokojowa'), nastawa = w('Nastawa pokojowa');
+  kafle.append(kafel('W domu', pokojowa?.toFixed(1), '°C',
+    nastawa !== null ? `nastawa ${nastawa.toFixed(1)} °C` : null, 'cieplo'));
+  kafle.append(kafel('Na dworze', w('Temperatura zewnętrzna')?.toFixed(1), '°C',
+    w('Temperatura zewnętrzna średnia') !== null
+      ? `średnia ${w('Temperatura zewnętrzna średnia').toFixed(1)} °C` : null, 'zimno'));
+  kafle.append(kafel('Ciepła woda', w('Temperatura CWU')?.toFixed(1), '°C', 'zbiornik CWU'));
+  kafle.append(kafel('Moc grzewcza', moc?.toFixed(2), 'kW', grzeje ? 'pracuje' : 'postój'));
+  if (produkcja !== null) {
+    kafle.append(kafel('Z paneli', produkcja.toFixed(1), 'kW',
+      f['Uzysk dzisiaj'] !== undefined ? `dziś ${f['Uzysk dzisiaj'].toFixed(1)} kWh` : null, 'slonce'));
+    const siec = f['Moc na liczniku (+ pobór / − oddawanie)'];
+    if (siec !== undefined) {
+      kafle.append(kafel(siec >= 0 ? 'Z sieci' : 'Do sieci', Math.abs(siec / 1000).toFixed(1), 'kW',
+        siec >= 0 ? 'kupujesz' : 'oddajesz', siec >= 0 ? '' : 'slonce'));
+    }
+  }
+
+  // ── obieg grzewczy i licznik ──
+  const reszta = $('#reszta');
+  reszta.innerHTML = '';
+  const wiersze = [
+    ['Wyjście wody z PC', w('Wyjście wody z PC'), '°C'],
+    ['Wstęp wody do PC', w('Wstęp wody do PC'), '°C'],
+    ['Koniec sezonu grzew.', w('Koniec sezonu grzewczego'), '°C'],
+    ['Licznik energii', w('Licznik energii elektrycznej'), 'kWh'],
+  ].filter((r) => r[1] !== null && r[1] !== undefined);
+  if (wiersze.length) {
+    reszta.append(el('h2', { textContent: 'Obieg grzewczy' }));
+    const tabela = el('table');
+    for (const [nazwa, wartosc, jedn] of wiersze) {
+      tabela.append(el('tr', {}, [
+        el('td', { textContent: nazwa }),
+        el('td', { textContent: `${jedn === 'kWh' ? wartosc.toFixed(0) : wartosc.toFixed(1)} ${jedn}` }),
+      ]));
+    }
+    reszta.append(el('div', { className: 'kafel szeroki' }, [tabela]));
+  }
+
+  // ── ostatnia doba ──
+  if (dane.historia && dane.historia.length > 1) {
+    const serie = [
+      { nazwa: 'w domu', kolor: 'var(--cieplo)',
+        punkty: dane.historia.filter((h) => h.pokojowa !== null).map((h) => [h.czas, h.pokojowa]) },
+      { nazwa: 'na dworze', kolor: 'var(--zimno)',
+        punkty: dane.historia.filter((h) => h.zewnetrzna !== null).map((h) => [h.czas, h.zewnetrzna]) },
+    ].filter((s) => s.punkty.length > 1);
+    const rysunek = serie.length ? wykres(serie) : null;
+    if (rysunek) {
+      reszta.append(el('h2', { textContent: 'Ostatnia doba' }));
+      reszta.append(el('div', { className: 'kafel szeroki' }, [
+        rysunek.svg,
+        el('div', { className: 'legenda' }, serie.map((s) =>
+          el('span', {}, [el('i', { style: `background:${s.kolor}` }), s.nazwa]))),
+        el('div', { className: 'obok',
+          textContent: `zakres ${rysunek.dol.toFixed(1)}–${rysunek.gora.toFixed(1)} °C` }),
+      ]));
+    }
+  }
+
+  // ── co i kiedy trzeba zrobić ──
+  if (dane.zadania && dane.zadania.length) {
+    reszta.append(el('h2', { textContent: 'Do zrobienia' }));
+    const tabela = el('table');
+    for (const z of dane.zadania) {
+      const kiedy = z.za_dni === 0 ? 'dziś' : z.za_dni === 1 ? 'jutro' : `za ${z.za_dni} dni`;
+      tabela.append(el('tr', {}, [
+        el('td', {}, [z.tytul, el('div', { className: 'obok',
+          textContent: new Date(z.data).toLocaleDateString('pl-PL',
+            { day: 'numeric', month: 'long' }) })]),
+        el('td', { textContent: kiedy, style: z.za_dni <= 7 ? 'color:var(--cieplo)' : '' }),
+      ]));
+    }
+    reszta.append(el('div', { className: 'kafel szeroki' }, [tabela]));
+  }
+
+  $('#czas').textContent = new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+  $('#stopka').textContent = dane.zrodlo || '';
+}
+
+odswiez();
+setInterval(odswiez, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) odswiez(); });
+</script>
+</body>
+</html>
