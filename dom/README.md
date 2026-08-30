@@ -246,6 +246,40 @@ albo już świeci, a ogrzewanie już albo jeszcze działa.
 To przesunięcie robi się automatyzacją w Home Assistancie — dlatego warto go postawić
 przed pełnią sezonu. Ale zapis danych możesz uruchomić już dziś, samym skryptem.
 
+### 3c. Prąd z sieci — kiedy, nie ile
+
+Przy fotowoltaice w net-billingu o pieniądzach decyduje godzina, a nie suma.
+Kilowatogodzina zużyta na miejscu jest warta tyle, ile kosztuje kupiona; ta sama
+oddana do sieci — jakieś trzy do czterech razy mniej. Dlatego liczy się to, **o której**
+pompa bierze prąd z sieci.
+
+Dane godzinowe pobierzesz z eBOK swojego operatora (u Enei: Zużycie → Dane godzinowe →
+eksport). Potem:
+
+```bash
+cd dom
+python3 prad-enea.py dane-godzinowe.csv --cena-kupna 1.10 --cena-sprzedazy 0.28
+```
+
+Ceny podaj swoje, z faktury — domyślne to tylko rząd wielkości. Skrypt sam rozpoznaje
+układ pliku: szuka kolumn z datą, godziną oraz energią pobraną i oddaną, radzi sobie
+z przecinkiem dziesiętnym i z obiema konwencjami numerowania godzin (0–23 oraz 1–24).
+
+Co pokazuje:
+
+- **miesiącami** — pobrane, oddane, bilans,
+- **profil dobowy** — o której godzinie bierzesz z sieci, a o której oddajesz,
+- **udział poboru w godzinach 9–16** — czyli ile da się w ogóle przesunąć na własną
+  produkcję; reszty i tak trzeba kupić,
+- **czy zmiana taryfy ma sens** — jaka część poboru wypada w tańszych strefach G12
+  i G12w. Poniżej mniej więcej 55 % zmiana zwykle nie zwraca droższej strefy dziennej,
+- **pieniądze** — koszt pobranej, depozyt za oddaną i różnica między nimi.
+
+Z tego wychodzi konkretny wniosek, ile warte jest przesunięcie grzania CWU i bufora
+na południe. Latem to liczba teoretyczna, bo nie ma czym tej energii zużyć —
+ale jesienią i wiosną, gdy słońce jeszcze pracuje, a ogrzewanie już chodzi,
+jest to najprostsze dostępne oszczędzanie.
+
 ### 4. Sceny, automatyzacje i pulpit
 
 ```bash
