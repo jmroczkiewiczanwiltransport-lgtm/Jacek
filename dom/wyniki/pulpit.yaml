@@ -1,0 +1,60 @@
+# Pulpit — wklej w: Pulpity → ⋮ → Edytuj → ⋮ → Edytor kodu YAML.
+views:
+- title: Dom
+  path: dom
+  icon: mdi:home
+  cards:
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+    - type: heading
+      heading: Sceny
+    - type: tile
+      entity: scene.wieczor
+      name: Wieczor
+    - type: tile
+      entity: scene.noc
+      name: Noc
+    - type: tile
+      entity: scene.wszystko_gasnie
+      name: Wszystko gasnie
+    - type: tile
+      entity: scene.jasno_na_maxa
+      name: Jasno na maxa
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+    - type: heading
+      heading: Elewacja
+    - type: tile
+      entity: light.ledy_front
+      features:
+      - type: light-brightness
+    - type: tile
+      entity: light.ledy_prawa_strona
+      features:
+      - type: light-brightness
+    - type: tile
+      entity: light.ledy_lewa_strona
+      features:
+      - type: light-brightness
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+    - type: heading
+      heading: Ogrod
+    - type: tile
+      entity: light.ledy_ogrod
+      features:
+      - type: light-brightness
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+    - type: heading
+      heading: Pozostałe
+    - type: tile
+      entity: switch.garaz

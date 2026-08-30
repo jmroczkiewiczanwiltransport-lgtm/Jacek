@@ -1,0 +1,68 @@
+# Sceny — do scenes.yaml w Home Assistancie.
+# Wygenerowane z tuya/automatyka.json — nie edytuj tu, tylko tam i przegeneruj.
+- id: dom_wieczor
+  name: Wieczor
+  entities:
+    light.ledy_front:
+      state: 'on'
+      brightness: 153
+      color_temp_kelvin: 3080
+    light.ledy_prawa_strona:
+      state: 'on'
+      brightness: 153
+      color_temp_kelvin: 3080
+    light.ledy_lewa_strona:
+      state: 'on'
+      brightness: 153
+      color_temp_kelvin: 3080
+    light.ledy_ogrod:
+      state: 'on'
+      brightness: 115
+      color_temp_kelvin: 2700
+- id: dom_noc
+  name: Noc
+  entities:
+    light.ledy_front:
+      state: 'on'
+      brightness: 38
+      color_temp_kelvin: 2700
+    light.ledy_prawa_strona:
+      state: 'on'
+      brightness: 38
+      color_temp_kelvin: 2700
+    light.ledy_lewa_strona:
+      state: 'on'
+      brightness: 38
+      color_temp_kelvin: 2700
+    light.ledy_ogrod:
+      state: 'off'
+- id: dom_wszystko_gasnie
+  name: Wszystko gasnie
+  entities:
+    light.ledy_front:
+      state: 'off'
+    light.ledy_prawa_strona:
+      state: 'off'
+    light.ledy_lewa_strona:
+      state: 'off'
+    light.ledy_ogrod:
+      state: 'off'
+    switch.garaz:
+      state: 'off'
+- id: dom_jasno_na_maxa
+  name: Jasno na maxa
+  entities:
+    light.ledy_front:
+      state: 'on'
+      brightness: 255
+    light.ledy_prawa_strona:
+      state: 'on'
+      brightness: 255
+    light.ledy_lewa_strona:
+      state: 'on'
+      brightness: 255
+    light.ledy_ogrod:
+      state: 'on'
+      brightness: 255
+    switch.garaz:
+      state: 'on'

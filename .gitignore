@@ -1,8 +1,11 @@
 hue/automatyka.json
+hue/hue.json
 tuya/urzadzenia.json
 tuya/automatyka.json
 tuya/devices.json
 tuya/tinytuya.json
 tuya/snapshot.json
 tuya/__pycache__/
+dom/prywatne/
+dom/__pycache__/
 node_modules/
