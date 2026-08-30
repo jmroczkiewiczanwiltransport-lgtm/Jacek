@@ -36,6 +36,10 @@ if not exist opisy-panelu.json (
 
 rem  Bez otwartego portu telefon nie wejdzie — zapora odrzuca połączenie po cichu.
 rem  Regułę zakładamy raz; Windows poprosi wtedy o zgodę administratora.
+rem  W trybie cichym (autostart) nie ruszamy zapory: nikt nie zobaczyłby
+rem  okienka z prośbą o zgodę, a reguła i tak jest już założona.
+if /i "%~1"=="cicho" goto po_zaporze
+
 rem  Nazwa reguły bez spacji — inaczej gubi się w przekazywaniu argumentów.
 netsh advfirewall firewall show rule name=PanelPompy >nul 2>&1
 if errorlevel 1 (
@@ -51,6 +55,8 @@ if errorlevel 1 (
   )
   echo.
 )
+
+:po_zaporze
 
 rem  Sterownik chce logowania. Załóż obok tego skrótu plik logowanie.txt:
 rem  nazwa użytkownika w pierwszej linijce, hasło w drugiej — skrypt zaloguje
@@ -76,7 +82,7 @@ echo.
 echo   Gdyby telefon nie wchodził na panel, sprawdź w PowerShellu:
 echo       Get-NetConnectionProfile
 echo   przy WiFi ma być  NetworkCategory : Private  (nie Public).
-pause
+if /i not "%~1"=="cicho" pause
 exit /b
 
 :brak_pythona
@@ -88,4 +94,4 @@ echo   na pierwszym ekranie instalatora.
 echo.
 echo   Potem uruchom ten plik jeszcze raz.
 echo.
-pause
+if /i not "%~1"=="cicho" pause

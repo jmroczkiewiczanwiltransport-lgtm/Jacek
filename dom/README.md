@@ -296,6 +296,32 @@ Na Windowsie nie trzeba tego wpisywać z ręki — wystarczy kliknąć dwa razy
 `_URUCHOM-PANEL.bat`. Skrót sam znajdzie Pythona, przygotuje `opisy-panelu.json`
 i przy pierwszym uruchomieniu otworzy port 8125 w zaporze (Windows zapyta o zgodę
 administratora — bez tego telefon nie wejdzie, połączenie jest odrzucane po cichu).
+### Autostart (Windows)
+
+Panel żyje tak długo, jak okno terminala — a historia zbierana tylko wtedy, gdy
+ktoś pamiętał kliknąć skrót, jest bezużyteczna. `_ZAINSTALUJ-AUTOSTART.bat`
+załatwia to raz:
+
+1. Przenosi panel do `%LOCALAPPDATA%\PanelPompy` — w Pobranych zostać nie może,
+   bo folder z paczką zmienia nazwę przy każdej aktualizacji i skrót w
+   Autostarcie wskazywałby w pustkę.
+2. Zakłada w Autostarcie Windows plik `Panel pompy.vbs`, który uruchamia panel
+   **bez okna terminala**. Wypisywane komunikaty idą do `panel.log` w folderze
+   panelu.
+3. Uruchamia panel od razu, bez czekania na restart.
+
+Pliki programu nadpisuje przy każdej instalacji — to jest właśnie aktualizacja.
+`logowanie.txt`, `opisy-panelu.json` i `dane-pompy.csv` kopiuje **tylko wtedy,
+gdy ich tam jeszcze nie ma**, żeby aktualizacja nie skasowała zebranej historii
+ani danych do logowania.
+
+Aktualizacja sprowadza się więc do: pobrać paczkę → kliknąć
+`_ZAINSTALUJ-AUTOSTART.bat` jeszcze raz.
+
+Wyłącza się to przez `_USUN-AUTOSTART.bat`: kasuje skrót z Autostartu i zatrzymuje
+działający panel (chodzi bez okna, więc nie da się go zamknąć krzyżykiem).
+Folder z historią zostaje.
+
 ### Logowanie do sterownika
 
 Sterownik nie oddaje danych bez zalogowania. Załóż obok skryptu plik
