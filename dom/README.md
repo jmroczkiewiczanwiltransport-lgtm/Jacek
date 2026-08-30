@@ -90,10 +90,15 @@ Trzy rzeczy do załatwienia, zanim cokolwiek zadziała:
 | ETH1 | 192.168.134.176 (stały) | sieć serwisowa pompy — **nie ten** |
 | ETH2 | 192.168.88.x (z DHCP) | sieć domowa — **ten** |
 
-Adres z ETH2 przydzielany jest dynamicznie i **już się zmieniał**: ekran sterownika
-pokazywał `192.168.88.9`, a panel WWW otwierał się później pod `192.168.88.4`.
-Aktualny sprawdzisz w przeglądarce albo na sterowniku (Info ETH2). Dopóki adres skacze,
-integracja będzie co jakiś czas padać. Zarezerwuj go na routerze dla adresu MAC
+Adres z ETH2 (`192.168.88.9`, brama `192.168.88.1`) przydzielany jest z DHCP, więc po
+restarcie routera może się zmienić i integracja przestanie działać. Sprawdzisz go
+w panelu pompy na stronie informacyjnej (ikona **i**, `PAGE121.XML`) albo na ekranie
+sterownika.
+
+Panel WWW sterownika to strony XML (`PAGE115.XML` — ekran główny, `PAGE121.XML` —
+informacje: wersje oprogramowania, adresy obu interfejsów, motogodziny sprężarki,
+wentylatora, pomp i CWU). Jeśli wartości siedzą wprost w tym XML-u, Home Assistant
+może je czytać po HTTP i Modbus nie będzie w ogóle potrzebny do samych odczytów. Zarezerwuj go na routerze dla adresu MAC
 `F8-DC-7A-7D-24-89` (u Ciebie router trzyma sieć 192.168.88.x, to typowe dla MikroTika:
 IP → DHCP Server → Leases → „Make Static”).
 

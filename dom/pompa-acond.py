@@ -162,6 +162,22 @@ def sprawdz(argumenty):
     print('czy Modbus jest odblokowany i pod jakim adresem jednostki (slave id) nasłuchuje.')
 
 
+def jednostka_z_nazwy(nazwa):
+    """Zgaduje jednostkę po nazwie z panelu — poprawisz ręcznie, jeśli spudłuje."""
+    male = nazwa.lower()
+    if any(s in male for s in ('wydajn', 'moc', 'kw')):
+        return 'kW'
+    if any(s in male for s in ('zuzycie', 'energia', 'kwh', 'licznik')):
+        return 'kWh'
+    if any(s in male for s in ('cisnien', 'bar')):
+        return 'bar'
+    if any(s in male for s in ('wilgot', 'procent', 'obcia')):
+        return '%'
+    if any(s in male for s in ('godzin', 'czas', 'motohodz')):
+        return 'h'
+    return '°C'
+
+
 def dopasuj(argumenty):
     """Szuka rejestrów o wartościach odczytanych z panelu WWW pompy.
 
@@ -230,8 +246,9 @@ def dopasuj(argumenty):
             with open(plik, encoding='utf-8') as f:
                 istniejace = json.load(f).get('sensory', {})
         for nr, (nazwa, dzielnik) in sorted(rozpoznane.items()):
-            zapisywalny = 'wymagana' in nazwa.lower() or 'nastawa' in nazwa.lower() or 'zadanie' in nazwa.lower()
-            istniejace[str(nr)] = [nazwa, '°C', dzielnik, zapisywalny]
+            male = nazwa.lower()
+            zapisywalny = any(s in male for s in ('wymagana', 'nastawa', 'zadanie', 'koniec sezonu'))
+            istniejace[str(nr)] = [nazwa, jednostka_z_nazwy(nazwa), dzielnik, zapisywalny]
         with open(plik, 'w', encoding='utf-8') as f:
             json.dump({'_jak_uzywac': WZOR_OPISOW['_jak_uzywac'], 'sensory': istniejace},
                       f, ensure_ascii=False, indent=2)
