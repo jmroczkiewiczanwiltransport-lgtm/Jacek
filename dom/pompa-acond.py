@@ -35,6 +35,7 @@ import sys
 import time
 import unicodedata
 import gzip
+import hashlib
 import threading
 import time
 import http.cookiejar
@@ -58,17 +59,78 @@ from modbus import (CZYTAJ_HOLDING, CZYTAJ_INPUT, ZAPISZ_JEDEN, BLEDY, Modbus,  
 # skrótami, ale stałymi: dopóki nie zmieni się program sterownika, ten sam
 # skrót zawsze oznacza tę samą wielkość.
 
-# Sterownik nadaje ciasteczko sesji (SoftPLC) sam z siebie, bez logowania.
-# Trzymamy je między zapytaniami, tak jak robi to przeglądarka.
+# Sterownik nadaje ciasteczko sesji (SoftPLC) przy pierwszym zapytaniu, ale
+# świeża sesja jest bezużyteczna, dopóki się nią nie zalogujemy. Trzymamy je
+# między zapytaniami, tak jak robi to przeglądarka.
+# Sterownik odpowiada inaczej, gdy nie ma nas za przeglądarkę, więc
+# przedstawiamy się dokładnie tak jak Chrome na panelu.
+_NAGLOWKI = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                  '(KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Accept-Encoding': 'gzip, deflate',
+    'Upgrade-Insecure-Requests': '1',
+    'Connection': 'keep-alive',
+}
+
 _OTWIERACZ = None
+_SLOIK = None
 
 
 def _otwieracz():
-    global _OTWIERACZ
+    global _OTWIERACZ, _SLOIK
     if _OTWIERACZ is None:
+        _SLOIK = http.cookiejar.CookieJar()
         _OTWIERACZ = urllib.request.build_opener(
-            urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+            urllib.request.HTTPCookieProcessor(_SLOIK))
     return _OTWIERACZ
+
+
+def _numer_sesji():
+    """Wartość ciasteczka SoftPLC, którą sterownik nam nadał."""
+    _otwieracz()
+    for ciastko in _SLOIK:
+        if ciastko.name == 'SoftPLC':
+            return ciastko.value
+    return None
+
+
+def zaloguj(baza, uzytkownik, haslo, limit=15):
+    """Przechodzi procedurę logowania sterownika Tecomat.
+
+    Hasło nie idzie po sieci otwartym tekstem: przeglądarka wysyła
+    SHA-1 z numeru sesji sklejonego z hasłem (SHA1.JS → ProccessLogin).
+    Numer sesji jest inny za każdym razem, więc gotowego skrótu nie da się
+    zapamiętać — trzeba przejść całą procedurę od nowa, i to właśnie tu
+    robimy."""
+    adres = urllib.parse.urljoin(baza, 'SYSWWW/LOGIN.XML')
+    try:
+        _pobierz(adres, limit, None, None, None)      # po sesję; oddaje stronę logowania
+    except _Logowanie:
+        pass
+    sesja = _numer_sesji()
+    if not sesja:
+        raise OSError('sterownik nie nadał sesji — nie mam z czego policzyć skrótu hasła')
+
+    skrot = hashlib.sha1((sesja + haslo).encode('utf-8')).hexdigest()
+    tresc = urllib.parse.urlencode({'USER': uzytkownik, 'PASS': skrot}).encode()
+    zadanie = urllib.request.Request(adres, data=tresc, headers=dict(
+        _NAGLOWKI, **{'Content-Type': 'application/x-www-form-urlencoded',
+                      'Origin': baza.rstrip('/'), 'Referer': adres}))
+    try:
+        with _otwieracz().open(zadanie, timeout=limit) as odpowiedz:
+            wynik = _rozpakuj(odpowiedz.read(), odpowiedz.headers.get('Content-Encoding', ''))
+    except urllib.error.HTTPError as powod:
+        raise OSError(f'logowanie odrzucone ({powod.code})')
+    except urllib.error.URLError as powod:
+        raise OSError(f'nie mogę się zalogować: {powod.reason}')
+
+    # Po udanym logowaniu sterownik przekierowuje na stronę z danymi. Gdy
+    # wraca formularz, znaczy, że nie przyjął loginu albo hasła.
+    if b'LOGIN' in wynik[:400].upper():
+        raise OSError('sterownik nie przyjął loginu lub hasła')
+    return _numer_sesji()
 
 
 def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
@@ -98,16 +160,28 @@ def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
         return czytaj_zmienne(_pobierz(url, limit, ciasteczko, uzytkownik, haslo))
     except _Logowanie:
         pass
-    # Dopiero na końcu wariant „z otwartego panelu".
+    # Wariant „z otwartego panelu".
     try:
         return czytaj_zmienne(_pobierz(url, limit, ciasteczko, uzytkownik, haslo, jak_panel=True))
     except _Logowanie:
-        raise OSError(
-            'sterownik żąda zalogowania.\n'
-            '   W przeglądarce ta sama strona otwiera się bez hasła, więc najpewniej\n'
-            '   wystarczy podać ciasteczko sesji: otwórz panel w przeglądarce, F12 →\n'
-            '   Network → dowolne żądanie → Request Headers → Cookie, i uruchom\n'
-            '   skrypt z --ciasteczko "SoftPLC=…"')
+        pass
+
+    # Zostało prawdziwe logowanie. Wymaga loginu i hasła — z wiersza poleceń
+    # albo z pliku logowanie.txt obok skryptu.
+    if not uzytkownik:
+        uzytkownik, haslo = wczytaj_logowanie()
+    if uzytkownik:
+        zaloguj(baza, uzytkownik, haslo, limit)
+        try:
+            return czytaj_zmienne(_pobierz(url, limit, None, None, None))
+        except _Logowanie:
+            raise OSError('zalogowałem się, ale sterownik dalej nie oddaje danych')
+    raise OSError(
+        'sterownik żąda zalogowania, a nie mam loginu ani hasła.\n'
+        '   Załóż obok skryptu plik logowanie.txt — nazwa użytkownika w pierwszej\n'
+        '   linijce, hasło w drugiej. Skrypt zaloguje się wtedy sam, także po\n'
+        '   restarcie sterownika. Można też podać je w wierszu poleceń:\n'
+        '   --uzytkownik NAZWA --haslo HASLO')
 
 
 class _Logowanie(Exception):
@@ -115,17 +189,7 @@ class _Logowanie(Exception):
 
 
 def _pobierz(url, limit, ciasteczko, uzytkownik, haslo, jak_panel=False):
-    naglowki = {
-        # Sterownik odpowiada inaczej, gdy nie ma nas za przeglądarkę, więc
-        # przedstawiamy się dokładnie tak jak Chrome na panelu.
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                      '(KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Accept-Encoding': 'gzip, deflate',
-        'Upgrade-Insecure-Requests': '1',
-        'Connection': 'keep-alive',
-    }
+    naglowki = dict(_NAGLOWKI)
     if jak_panel:
         naglowki['x-tecomat'] = 'data'
     zadanie = urllib.request.Request(url, headers=naglowki)
@@ -614,6 +678,21 @@ def obserwuj_strone(argumenty):
             time.sleep(argumenty.co)
     except KeyboardInterrupt:
         print('\nKoniec.')
+
+
+def wczytaj_logowanie():
+    """Login i hasło z pliku logowanie.txt — po jednym w linijce.
+
+    Plik zamiast wiersza poleceń, żeby hasło nie zostawało w historii powłoki
+    ani w treści skrótu .bat."""
+    plik = os.path.join(KATALOG, 'logowanie.txt')
+    if not os.path.exists(plik):
+        return None, None
+    with open(plik, encoding='utf-8') as f:
+        linie = [w.strip() for w in f if w.strip()]
+    if len(linie) < 2:
+        raise OSError(f'{plik}: potrzebuję dwóch linijek — nazwy użytkownika i hasła')
+    return linie[0], linie[1]
 
 
 def wczytaj_opisy_panelu():

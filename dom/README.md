@@ -296,8 +296,29 @@ Na Windowsie nie trzeba tego wpisywać z ręki — wystarczy kliknąć dwa razy
 `_URUCHOM-PANEL.bat`. Skrót sam znajdzie Pythona, przygotuje `opisy-panelu.json`
 i przy pierwszym uruchomieniu otworzy port 8125 w zaporze (Windows zapyta o zgodę
 administratora — bez tego telefon nie wejdzie, połączenie jest odrzucane po cichu).
-Gdyby sterownik chciał ciasteczka sesji, wklej samą wartość — np. `SoftPLC=11480121` —
-do pliku `ciasteczko.txt` obok skrótu; reszta dzieje się sama.
+### Logowanie do sterownika
+
+Sterownik nie oddaje danych bez zalogowania. Załóż obok skryptu plik
+`logowanie.txt` — nazwa użytkownika w pierwszej linijce, hasło w drugiej — i to
+wszystko: skrypt przechodzi całą procedurę sam, także po restarcie sterownika
+i po wygaśnięciu sesji w trakcie działania panelu.
+
+Hasło nie idzie po sieci otwartym tekstem. Sterownik (Tecomat, `SHA1.JS` →
+`ProccessLogin`) każe przeglądarce wysłać **SHA-1 z numeru sesji sklejonego
+z hasłem**, a numer sesji jest inny przy każdym logowaniu. Dlatego podsłuchany
+skrót jest bezużyteczny — i dlatego nie da się „zapamiętać" gotowego
+ciasteczka na stałe. Skrypt robi dokładnie to samo, co formularz w
+przeglądarce: pobiera `SYSWWW/LOGIN.XML` po sesję, liczy skrót i wysyła POST
+z polami `USER` i `PASS`.
+
+Plik `logowanie.txt` jest w `.gitignore`. Login i hasło można też podać
+w wierszu poleceń (`--uzytkownik`, `--haslo`), ale wtedy zostają w historii
+powłoki — plik jest bezpieczniejszy.
+
+Droga awaryjna, gdyby logowanie kiedyś przestało działać: `--ciasteczko
+"SoftPLC=…"` albo ta sama wartość w pliku `ciasteczko.txt` obok skrótu.
+Ciasteczko wygasa, więc trzeba je wtedy przepisywać z F12 — dlatego to
+ostateczność, nie sposób pracy.
 
 Panel przy okazji **sam prowadzi historię**: co 5 minut dopisuje odczyt do
 `dane-pompy.csv`, z którego rysuje potem wykres. Nie trzeba więc trzymać osobnego

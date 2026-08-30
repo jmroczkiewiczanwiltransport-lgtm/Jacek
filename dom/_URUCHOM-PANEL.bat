@@ -52,8 +52,10 @@ if errorlevel 1 (
   echo.
 )
 
-rem  Sterownik czasem chce ciasteczka sesji. Jeśli je masz, wklej samą wartość
-rem  (np.  SoftPLC=11480121 ) do pliku ciasteczko.txt obok tego skrótu.
+rem  Sterownik chce logowania. Załóż obok tego skrótu plik logowanie.txt:
+rem  nazwa użytkownika w pierwszej linijce, hasło w drugiej — skrypt zaloguje
+rem  się wtedy sam, także po restarcie sterownika. Plik ciasteczko.txt poniżej
+rem  to droga awaryjna: ciasteczko wygasa i trzeba je przepisywać z F12.
 set CIASTECZKO=
 if exist ciasteczko.txt set /p CIASTECZKO=<ciasteczko.txt
 
