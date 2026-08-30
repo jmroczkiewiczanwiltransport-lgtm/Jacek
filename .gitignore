@@ -8,5 +8,7 @@ tuya/snapshot.json
 tuya/__pycache__/
 dom/prywatne/
 dom/opisy-pompy.json
+dom/opisy-panelu.json
+dom/panel-acond.json
 dom/__pycache__/
 node_modules/

@@ -1,17 +1,17 @@
 {
-  "_jak_uzywac": "WZÓR — nazwy są takie jak na panelu ACOND THERM, liczby są przykładowe. Skopiuj plik na panel-acond.json, otwórz panel pompy i wpisz wartości, które widzisz W TEJ CHWILI. Potem: python3 pompa-acond.py dopasuj 192.168.88.9 --panel panel-acond.json --ile 500",
-  "_uwaga": "Przepisuj wszystko za jednym razem i od razu uruchamiaj dopasowanie — temperatury się zmieniają, a nieaktualna liczba nie dopasuje się do niczego.",
+  "_jak_uzywac": "WZÓR — liczby są przykładowe. Skopiuj plik na panel-acond.json, otwórz panel pompy i wpisz wartości, które widzisz W TEJ CHWILI. Potem: python3 pompa-acond.py dopasuj http://192.168.88.9/PAGE115.XML --panel panel-acond.json",
+  "_wpisuj_w_cudzyslowie": "Wartości podawaj jako tekst, dokładnie tak jak na ekranie — \"0.00\", a nie 0. Sterownik wyświetla każdą wielkość w swoim formacie i to samo w sobie rozstrzyga część niejednoznaczności.",
   "_puste": "Czego nie widzisz na swoim panelu, to skasuj. Nazwy zostaw — trafią do Home Assistanta jako nazwy czujników.",
-
-  "Temperatura pokojowa": 22.2,
-  "Nastawa pokojowa": 15.1,
-  "Wyjscie wody z PC": 29.8,
-  "Wstep wody do PC": 25.9,
-  "Wstep wody do PC - wymagana": 20.0,
-  "CWU temperatura": 41.3,
-  "CWU - wymagana": 45.0,
-  "Aktualna wydajnosc PC": 0.0,
-  "Temperatura zewnetrzna": 35.0,
-  "Temperatura zewnetrzna srednia": 22.8,
-  "Koniec sezonu grzewczego": 14.5
+  "Temperatura pokojowa": "22.2",
+  "Nastawa pokojowa": "15.1",
+  "Wyjscie wody z PC": "30.0",
+  "Wstep wody do PC": "26.0",
+  "Wstep wody do PC - wymagana": "20.0",
+  "CWU temperatura": "41.3",
+  "CWU - wymagana": "45.0",
+  "Aktualna wydajnosc PC": "0.00",
+  "Temperatura zewnetrzna": "35.0",
+  "Temperatura zewnetrzna srednia": "22.8",
+  "Koniec sezonu grzewczego": "14.5",
+  "Licznik energii elektrycznej": "4506"
 }

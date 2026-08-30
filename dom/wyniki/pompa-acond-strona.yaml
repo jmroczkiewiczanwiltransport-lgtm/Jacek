@@ -1,0 +1,72 @@
+# Pompa ciepła ACOND — odczyty ze strony sterownika. Do configuration.yaml.
+# Home Assistant pobiera stronę tak samo jak przeglądarka i wyciąga z niej
+# wartości. Niczego w pompie nie zmienia — to wyłącznie odczyt.
+
+rest:
+  - resource: http://192.168.88.9/PAGE115.XML
+    scan_interval: 60
+    timeout: 15
+    sensor:
+      - name: "Pompa Aktualna wydajnosc PC"
+        unique_id: acond_aktualna_wydajnosc_pc
+        value_template: >-
+          {{ value | regex_findall_index('__TD50B2FF2_REAL_\.2f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "kW"
+        device_class: power
+        state_class: measurement
+
+      - name: "Pompa CWU temperatura"
+        unique_id: acond_cwu_temperatura
+        value_template: >-
+          {{ value | regex_findall_index('__T881A25AA_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Pompa Koniec sezonu grzewczego"
+        unique_id: acond_koniec_sezonu_grzewczego
+        value_template: >-
+          {{ value | regex_findall_index('__TB48CC351_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Pompa Licznik energii elektrycznej"
+        unique_id: acond_licznik_energii_elektrycznej
+        value_template: >-
+          {{ value | regex_findall_index('__TA725D6FD_REAL_\.0f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "kWh"
+        device_class: energy
+        state_class: total_increasing
+
+      - name: "Pompa Temperatura pokojowa"
+        unique_id: acond_temperatura_pokojowa
+        value_template: >-
+          {{ value | regex_findall_index('__T46AA2571_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Pompa Temperatura zewnetrzna"
+        unique_id: acond_temperatura_zewnetrzna
+        value_template: >-
+          {{ value | regex_findall_index('__T033A2538_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Pompa Temperatura zewnetrzna srednia"
+        unique_id: acond_temperatura_zewnetrzna_srednia
+        value_template: >-
+          {{ value | regex_findall_index('__TDE3BFC02_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+
+      - name: "Pompa Wstep wody do PC"
+        unique_id: acond_wstep_wody_do_pc
+        value_template: >-
+          {{ value | regex_findall_index('__T50A32455_REAL_\.1f" VALUE="([^"]*)"') | float }}
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement

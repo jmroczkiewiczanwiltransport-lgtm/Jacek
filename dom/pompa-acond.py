@@ -6,6 +6,14 @@ pompa jest wpięta do sieci. Tablica rejestrów jest w dokumentacji producenta
 (AC-Z010), ale nie trzeba jej mieć, żeby zacząć: te narzędzia odczytują rejestry
 wprost z pompy i pomagają rozpoznać, co jest czym.
 
+    python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML
+    python3 pompa-acond.py dopasuj http://192.168.88.9/PAGE115.XML --panel panel-acond.json
+    python3 pompa-acond.py yaml http://192.168.88.9/PAGE115.XML
+
+Sterownik ACOND serwuje swoje ekrany jako XML z wartościami w środku, więc
+odczyty można brać wprost stamtąd — bez Modbusa. Gdy strona nie wystarcza,
+zostaje droga przez rejestry:
+
     python3 pompa-acond.py sprawdz 192.168.88.9
     python3 pompa-acond.py skanuj 192.168.88.9
     python3 pompa-acond.py dopasuj 192.168.88.9 --panel panel-acond.json
@@ -18,12 +26,17 @@ obsługa jest pewniejsza niż biblioteka zmieniająca API między wersjami.
 """
 
 import argparse
+import base64
 import json
 import os
+import re
 import socket
 import struct
 import sys
 import time
+import urllib.error
+import urllib.request
+import xml.etree.ElementTree as ET
 
 KATALOG = os.path.dirname(os.path.abspath(__file__))
 
@@ -116,6 +129,209 @@ def podpowiedz(slowo):
     return '  '.join(tropy)
 
 
+# ──────────────────── odczyt ze strony WWW sterownika ────────────────────
+# Panel ACOND THERM serwuje strony XML, w których wartości siedzą wprost —
+# każda jako <INPUT NAME="__T<skrót>_<typ>_<format>" VALUE="…" />. Nazwy są
+# skrótami, ale stałymi: dopóki nie zmieni się program sterownika, ten sam
+# skrót zawsze oznacza tę samą wielkość.
+
+def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15):
+    zadanie = urllib.request.Request(url, headers={'User-Agent': 'pompa-acond'})
+    if uzytkownik:
+        poswiadczenie = base64.b64encode(f'{uzytkownik}:{haslo or ""}'.encode()).decode()
+        zadanie.add_header('Authorization', 'Basic ' + poswiadczenie)
+    try:
+        with urllib.request.urlopen(zadanie, timeout=limit) as odpowiedz:
+            surowe = odpowiedz.read()
+    except urllib.error.HTTPError as powod:
+        if powod.code in (401, 403):
+            raise OSError(f'strona wymaga logowania ({powod.code}) — podaj --uzytkownik i --haslo')
+        raise OSError(f'strona odpowiedziała {powod.code}')
+    except urllib.error.URLError as powod:
+        raise OSError(f'nie mogę pobrać strony: {powod.reason}')
+    return czytaj_zmienne(surowe)
+
+
+def czytaj_zmienne(surowe):
+    """Z treści strony wyciąga {nazwa zmiennej: wartość jako tekst}."""
+    try:
+        korzen = ET.fromstring(surowe)
+        zmienne = {w.get('NAME'): w.get('VALUE', '') for w in korzen.iter('INPUT') if w.get('NAME')}
+        if zmienne:
+            return zmienne
+    except ET.ParseError:
+        pass
+    # gdyby XML był niedomknięty albo w innym kodowaniu — bierzemy po znaku
+    tekst = surowe.decode('windows-1250', errors='replace') if isinstance(surowe, bytes) else surowe
+    return dict(re.findall(r'<INPUT\s+NAME="([^"]+)"\s+VALUE="([^"]*)"', tekst))
+
+
+def liczba(tekst):
+    try:
+        return float(str(tekst).replace(',', '.'))
+    except (TypeError, ValueError):
+        return None
+
+
+def rodzaj_zmiennej(nazwa):
+    """Z nazwy zmiennej czyta jej typ: __T9E13248E_REAL_.1f → REAL."""
+    trafienie = re.match(r'_*T[0-9A-Fa-f]+_([A-Z]+)', str(nazwa))
+    return trafienie.group(1) if trafienie else '?'
+
+
+def strona(argumenty):
+    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+    print(f'Zmiennych na stronie: {len(zmienne)}\n')
+
+    liczbowe = {n: w for n, w in zmienne.items() if rodzaj_zmiennej(n) in ('REAL', 'INT', 'UINT', 'USINT', 'DINT')}
+    napisy = {n: w for n, w in zmienne.items() if rodzaj_zmiennej(n) == 'STRING' and w.strip()}
+    logiczne = {n: w for n, w in zmienne.items() if rodzaj_zmiennej(n) == 'BOOL'}
+    inne = {n: w for n, w in zmienne.items()
+            if n not in liczbowe and n not in napisy and n not in logiczne}
+
+    print('LICZBY  (to z nich robimy czujniki)')
+    for n, w in sorted(liczbowe.items(), key=lambda x: -abs(liczba(x[1]) or 0)):
+        print(f'   {n:<30} {w:>10}')
+    if inne:
+        print('\nDATY I GODZINY')
+        for n, w in sorted(inne.items()):
+            print(f'   {n:<30} {w:>10}')
+    print('\nNAPISY  (podpisy z ekranu — pomagają rozpoznać, co jest czym)')
+    for n, w in sorted(napisy.items()):
+        print(f'   {n:<30} {w}')
+    print(f'\nWARTOŚCI LOGICZNE: {len(logiczne)} (włączniki i sygnalizacja)')
+    print('\nDalej: przepisz odczyty z ekranu do panel-acond.json i uruchom')
+    print(f'   python3 pompa-acond.py dopasuj {argumenty.host} --panel panel-acond.json')
+
+
+def dopasuj_strone(argumenty, panel):
+    zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+    liczbowe = {n: liczba(w) for n, w in zmienne.items() if liczba(w) is not None}
+    print(f'Pobrałem {len(zmienne)} zmiennych, w tym {len(liczbowe)} liczbowych.\n')
+
+    surowe = {n: w for n, w in zmienne.items() if liczba(w) is not None}
+    rozpoznane, niepewne, przepadle = {}, [], []
+    for nazwa, wartosc in panel.items():
+        # Wartość podana jako tekst („0.00") musi zgodzić się co do znaku — a że
+        # sterownik wyświetla każdą wielkość w swoim formacie, samo to potrafi
+        # rozstrzygnąć, która zmienna jest którą.
+        if isinstance(wartosc, str):
+            kandydaci = [n for n, w in surowe.items() if w.strip() == wartosc.strip()]
+            if not kandydaci:
+                kandydaci = [n for n, w in liczbowe.items() if w == liczba(wartosc)]
+        else:
+            kandydaci = [n for n, w in liczbowe.items() if w == float(wartosc)]
+        if not kandydaci:
+            przepadle.append((nazwa, wartosc))
+        elif len(kandydaci) == 1:
+            rozpoznane[kandydaci[0]] = nazwa
+            print(f'   {nazwa:<32} → {kandydaci[0]}')
+        else:
+            niepewne.append((nazwa, wartosc, kandydaci))
+
+    for nazwa, wartosc, kandydaci in niepewne:
+        print(f'   {nazwa:<32} → {len(kandydaci)} pasujących: {", ".join(kandydaci)}')
+    for nazwa, wartosc in przepadle:
+        print(f'   {nazwa:<32} → nie znalazłem wartości {wartosc}')
+
+    if niepewne:
+        print('\nKilka zmiennych ma tę samą wartość. Rozstrzygniesz je obserwacją:')
+        print(f'   python3 pompa-acond.py obserwuj {argumenty.host}')
+        print('Temperatury mierzone drgają same, nastawy stoją — to je rozdziela.')
+    if przepadle:
+        print('\nCzego nie znalazłem, to zwykle znaczy, że odczyt zdążył się zmienić.')
+        print('Przepisz wartości jeszcze raz i uruchom od nowa.')
+
+    if rozpoznane:
+        plik = os.path.join(KATALOG, 'opisy-panelu.json')
+        istniejace = {}
+        if os.path.exists(plik):
+            with open(plik, encoding='utf-8') as f:
+                istniejace = json.load(f).get('zmienne', {})
+        for zmienna, nazwa in rozpoznane.items():
+            istniejace[zmienna] = [nazwa, jednostka_z_nazwy(nazwa)]
+        with open(plik, 'w', encoding='utf-8') as f:
+            json.dump({'_zrodlo': argumenty.host, 'zmienne': istniejace}, f, ensure_ascii=False, indent=2)
+        print(f'\nZapisałem {plik} — {len(rozpoznane)} zmiennych.')
+        print(f'Dalej:  python3 pompa-acond.py yaml {argumenty.host}')
+
+
+def obserwuj_strone(argumenty):
+    print(f'Obserwuję {argumenty.host}. Zmieniaj nastawy na panelu. Ctrl+C kończy.\n')
+    poprzednie = None
+    try:
+        while True:
+            zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo)
+            if poprzednie is None:
+                print(f'{time.strftime("%H:%M:%S")}  pierwszy odczyt: {len(zmienne)} zmiennych')
+            else:
+                for nazwa, wartosc in zmienne.items():
+                    stare = poprzednie.get(nazwa)
+                    if stare is not None and stare != wartosc:
+                        print(f'{time.strftime("%H:%M:%S")}  {nazwa:<30} {stare} → {wartosc}')
+            poprzednie = zmienne
+            time.sleep(argumenty.co)
+    except KeyboardInterrupt:
+        print('\nKoniec.')
+
+
+def yaml_strony(argumenty):
+    plik_opisow = argumenty.opisy or os.path.join(KATALOG, 'opisy-panelu.json')
+    if not os.path.exists(plik_opisow):
+        raise SystemExit(f'Brak {plik_opisow} — uruchom najpierw „dopasuj".')
+    with open(plik_opisow, encoding='utf-8') as f:
+        zmienne = json.load(f).get('zmienne', {})
+    if not zmienne:
+        raise SystemExit(f'{plik_opisow} nie zawiera żadnych zmiennych.')
+
+    linie = [
+        '# Pompa ciepła ACOND — odczyty ze strony sterownika. Do configuration.yaml.',
+        '# Home Assistant pobiera stronę tak samo jak przeglądarka i wyciąga z niej',
+        '# wartości. Niczego w pompie nie zmienia — to wyłącznie odczyt.',
+        '',
+        'rest:',
+        f'  - resource: {argumenty.host}',
+        '    scan_interval: 60',
+        '    timeout: 15',
+    ]
+    if argumenty.uzytkownik:
+        linie += [f'    username: {argumenty.uzytkownik}',
+                  '    password: !secret acond_haslo',
+                  '    authentication: basic']
+    linie.append('    sensor:')
+
+    for zmienna, opis in sorted(zmienne.items(), key=lambda x: x[1][0]):
+        nazwa, jednostka = (opis + [''])[:2]
+        wzorzec = re.escape(zmienna) + '" VALUE="([^"]*)"'
+        linie += [
+            f'      - name: "Pompa {nazwa}"',
+            f'        unique_id: acond_{identyfikator_ha(nazwa)}',
+            '        value_template: >-',
+            f"          {{{{ value | regex_findall_index('{wzorzec}') | float }}}}",
+        ]
+        if jednostka:
+            linie.append(f'        unit_of_measurement: "{jednostka}"')
+        klasa = {'°C': 'temperature', 'kW': 'power', 'kWh': 'energy', 'bar': 'pressure'}.get(jednostka)
+        if klasa:
+            linie.append(f'        device_class: {klasa}')
+            linie.append('        state_class: ' +
+                         ('total_increasing' if jednostka == 'kWh' else 'measurement'))
+        linie.append('')
+
+    plik = os.path.join(KATALOG, 'wyniki', 'pompa-acond-strona.yaml')
+    os.makedirs(os.path.dirname(plik), exist_ok=True)
+    with open(plik, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(linie))
+    print(f'Zapisano {plik}  (czujników: {len(zmienne)})')
+    print('Wklej do configuration.yaml, sprawdź konfigurację i przeładuj Home Assistanta.')
+
+
+def identyfikator_ha(nazwa):
+    czysta = ''.join(z for z in __import__('unicodedata').normalize('NFD', nazwa.lower())
+                     if __import__('unicodedata').category(z) != 'Mn').replace('ł', 'l')
+    return re.sub(r'_+', '_', re.sub(r'[^a-z0-9]+', '_', czysta)).strip('_')
+
+
 # ─────────────────────────────── polecenia ───────────────────────────────
 
 def sprawdz(argumenty):
@@ -178,21 +394,25 @@ def jednostka_z_nazwy(nazwa):
     return '°C'
 
 
+def wczytaj_panel(argumenty):
+    sciezka = argumenty.panel or os.path.join(KATALOG, 'panel-acond.json')
+    if not os.path.exists(sciezka):
+        wzor = 'panel-acond.przyklad.json'
+        raise SystemExit(f'Brak {sciezka}. Skopiuj wzór i wpisz swoje odczyty:\n'
+                         f'   cp {wzor} {os.path.basename(sciezka)}')
+    with open(sciezka, encoding='utf-8') as f:
+        panel = {k: w for k, w in json.load(f).items() if not k.startswith('_')}
+    if not panel:
+        raise SystemExit(f'{sciezka} nie zawiera żadnych odczytów.')
+    return panel
+
+
 def dopasuj(argumenty):
     """Szuka rejestrów o wartościach odczytanych z panelu WWW pompy.
 
     Panel pokazuje „CWU 43,5 °C" — w rejestrze siedzi wtedy zwykle 435. Mając
     kilka takich par, tablicę rejestrów można złożyć bez dokumentacji."""
-    sciezka = argumenty.panel or os.path.join(KATALOG, 'panel-acond.json')
-    if not os.path.exists(sciezka):
-        wzor = os.path.join(KATALOG, 'panel-acond.przyklad.json')
-        raise SystemExit(f'Brak {sciezka}. Skopiuj wzór i wpisz swoje odczyty:\n'
-                         f'   cp {os.path.basename(wzor)} {os.path.basename(sciezka)}')
-    with open(sciezka, encoding='utf-8') as f:
-        panel = {k: w for k, w in json.load(f).items() if not k.startswith('_')}
-    if not panel:
-        raise SystemExit(f'{sciezka} nie zawiera żadnych odczytów.')
-
+    panel = wczytaj_panel(argumenty)
     print(f'Czytam rejestry {argumenty.od}–{argumenty.od + argumenty.ile - 1} z {argumenty.host} …')
     surowe = {}
     for poczatek in range(argumenty.od, argumenty.od + argumenty.ile, 100):
@@ -413,7 +633,7 @@ def yaml_ha(argumenty):
             '',
         ]
 
-    plik = os.path.join(KATALOG, 'wyniki', 'pompa-acond.yaml')
+    plik = os.path.join(KATALOG, 'wyniki', 'pompa-acond-modbus.yaml')
     os.makedirs(os.path.dirname(plik), exist_ok=True)
     with open(plik, 'w', encoding='utf-8') as f:
         f.write('\n'.join(linie))
@@ -425,8 +645,9 @@ def yaml_ha(argumenty):
 def main():
     parser = argparse.ArgumentParser(description='Pompa ciepła ACOND przez Modbus TCP.')
     parser.add_argument('polecenie',
-                        choices=['sprawdz', 'skanuj', 'dopasuj', 'czytaj', 'obserwuj', 'yaml'])
-    parser.add_argument('host', help='adres pompy w sieci domowej, np. 192.168.88.9')
+                        choices=['sprawdz', 'strona', 'skanuj', 'dopasuj', 'czytaj', 'obserwuj', 'yaml'])
+    parser.add_argument('host', help='adres pompy (192.168.88.9) albo adres strony sterownika '
+                                     '(http://192.168.88.9/PAGE115.XML)')
     parser.add_argument('--port', type=int, default=502)
     parser.add_argument('--jednostka', type=int, default=1, help='adres Modbus (slave id)')
     parser.add_argument('--od', type=int, default=0, help='pierwszy rejestr')
@@ -436,11 +657,26 @@ def main():
     parser.add_argument('--pokaz-zera', action='store_true')
     parser.add_argument('--opisy', help='plik z opisami rejestrów (do polecenia yaml)')
     parser.add_argument('--panel', help='plik z odczytami z panelu WWW (do polecenia dopasuj)')
+    parser.add_argument('--uzytkownik', help='login do panelu sterownika, jeśli wymaga')
+    parser.add_argument('--haslo', help='hasło do panelu sterownika')
     argumenty = parser.parse_args()
 
+    # Adres z „http" znaczy: czytamy stronę sterownika, a nie rejestry Modbusa.
+    przez_strone = str(argumenty.host).lower().startswith('http')
+    if argumenty.polecenie == 'strona' and not przez_strone:
+        raise SystemExit('Polecenie „strona" potrzebuje adresu strony, np.\n'
+                         '   python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML')
+
+    przez_www = {'strona': strona, 'dopasuj': lambda a: dopasuj_strone(a, wczytaj_panel(a)),
+                 'obserwuj': obserwuj_strone, 'yaml': yaml_strony}
+    przez_modbus = {'sprawdz': sprawdz, 'skanuj': skanuj, 'dopasuj': dopasuj, 'czytaj': czytaj,
+                    'obserwuj': obserwuj, 'yaml': yaml_ha}
+
     try:
-        {'sprawdz': sprawdz, 'skanuj': skanuj, 'dopasuj': dopasuj, 'czytaj': czytaj,
-         'obserwuj': obserwuj, 'yaml': yaml_ha}[argumenty.polecenie](argumenty)
+        wykonanie = (przez_www if przez_strone else przez_modbus).get(argumenty.polecenie)
+        if wykonanie is None:
+            raise SystemExit(f'Polecenie „{argumenty.polecenie}" nie działa z tym rodzajem adresu.')
+        wykonanie(argumenty)
     except OSError as powod:
         print(f'\nNie udało się: {powod}')
         print('\nCo sprawdzić:')
@@ -451,4 +687,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
+    except BrokenPipeError:                 # np. „| head"
+        os._exit(0)

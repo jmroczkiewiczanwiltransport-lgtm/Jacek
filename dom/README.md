@@ -107,64 +107,77 @@ z poziomu ekranu sterownika się tego nie zrobi. Przy okazji poproś o dokumenta
 protokołu z tablicą rejestrów: `AC-Z010` dla oprogramowania w wersji `160.36`
 (dokumentacja.acond.cz, publiczny plik `AC-Z010-EN.pdf`).
 
-**Sprawdzenie, czy w ogóle jest z czym rozmawiać.** Zanim zadzwonisz do serwisu, zajmij
-30 sekund i sprawdź, czy Modbus przypadkiem nie jest już otwarty:
+**Najkrótsza droga: strona sterownika.** Panel ACOND THERM serwuje swoje ekrany jako
+XML, w którym wartości siedzą wprost — każda jako `<INPUT NAME="__T…_REAL_.1f" VALUE="41.3" />`.
+Home Assistant potrafi taką stronę pobrać i wyciągnąć z niej liczby, więc **do samych
+odczytów Modbus nie jest w ogóle potrzebny** — ani telefon do serwisu.
+
+Zobacz, co jest na stronie:
 
 ```bash
 cd dom
-python3 pompa-acond.py sprawdz 192.168.88.4
+python3 pompa-acond.py strona http://192.168.88.9/PAGE115.XML
 ```
 
-Skrypt sprawdzi port Modbusa i panel WWW, a jeśli Modbus odpowiada — od razu powie,
-pod jakim adresem jednostki. Gdy panel WWW odpowiada, a Modbus nie, znaczy że adres
-i sieć są dobre i brakuje wyłącznie odblokowania po stronie pompy.
-
-**Rozpoznanie rejestrów — najkrótszą drogą.** Panel WWW pompy pokazuje temperatury
-z nazwami; w rejestrach Modbusa siedzą te same liczby, tyle że w dziesiątych stopnia
-(43,5 °C → 435). Wystarczy więc przepisać odczyty z panelu i dać skryptowi je znaleźć:
+Nazwy zmiennych to skróty (`__T881A25AA_REAL_.1f`), ale stałe — dopóki nie zmieni się
+program sterownika, ten sam skrót zawsze oznacza tę samą wielkość. Żeby je rozszyfrować,
+przepisz odczyty z ekranu i daj skryptowi je dopasować:
 
 ```bash
 cp panel-acond.przyklad.json panel-acond.json
-# otwórz panel pompy w przeglądarce i przepisz do pliku to, co widzisz TERAZ
-python3 pompa-acond.py dopasuj 192.168.88.4 --panel panel-acond.json --ile 500
+# wpisz do pliku to, co panel pokazuje W TEJ CHWILI — jako tekst, w formacie z ekranu
+python3 pompa-acond.py dopasuj http://192.168.88.9/PAGE115.XML --panel panel-acond.json
 ```
 
-Skrypt odczyta rejestry, dopasuje je do podanych wartości i zapisze `opisy-pompy.json`.
-Odczyty przepisuj za jednym razem i od razu uruchamiaj dopasowanie — temperatury się
-zmieniają, a nieaktualna liczba nie dopasuje się do niczego.
+Wartości podawaj dokładnie tak, jak są wyświetlone (`"0.00"`, a nie `0`) — format sam
+rozstrzyga część niejednoznaczności, bo każda wielkość ma swój.
 
-Gdy kilka rejestrów ma tę samą wartość (np. temperatura wymagana i zadanie), skrypt to
-zgłosi. Rozstrzygniesz je obserwacją: zmień tę jedną nastawę na panelu i zobacz, który
-rejestr drgnął.
-
-**Rozpoznanie na piechotę.** Gdyby dopasowanie zawiodło, zostaje przegląd wszystkiego:
+Gdzie kilka zmiennych ma tę samą wartość (typowo nastawy: 20,0 potrafi wystąpić pięć
+razy), skrypt to zgłosi zamiast zgadywać. Rozstrzygniesz je obserwacją:
 
 ```bash
-python3 pompa-acond.py skanuj 192.168.88.4
+python3 pompa-acond.py obserwuj http://192.168.88.9/PAGE115.XML
 ```
 
-Pokaże wszystkie niezerowe rejestry z podpowiedzią, czym mogą być („482 → 48,2 °C?”).
-Porównaj je z tym, co pokazuje ekran sterownika — temperatura zewnętrzna i temperatura
-wody zwykle rzucają się w oczy od razu. Manometry na froncie szafy też są wskazówką:
-dolny pokazuje ciśnienie obiegu grzewczego (powinno stać w zielonym polu, ok. 1–2 bar),
-więc rejestr z wartością rzędu 10–20 to prawdopodobnie właśnie ono, w dziesiątych bara. Nastawy najprościej znaleźć tak:
+Temperatury mierzone drgają same z siebie, nastawy stoją w miejscu — to je rozdziela.
+A gdy zmienisz nastawę na panelu, od razu widać, która zmienna skoczyła.
+
+Na koniec:
 
 ```bash
-python3 pompa-acond.py obserwuj 192.168.88.4 --od 0 --ile 500
+python3 pompa-acond.py yaml http://192.168.88.9/PAGE115.XML
 ```
 
-Skrypt wypisuje każdą zmianę na bieżąco; pokręć nastawą na sterowniku i zobacz, który
-rejestr drgnął. Rozpoznane rejestry wpisz do `opisy-pompy.json` (wzór:
-`opisy-pompy.przyklad.json`) i wygeneruj konfigurację:
+Powstaje `wyniki/pompa-acond-strona.yaml` — sekcja `rest:` do `configuration.yaml`. Jedno
+zapytanie na minutę, wszystkie czujniki naraz, z jednostkami i klasami urządzeń, więc
+temperatury i licznik energii od razu trafiają na wykresy i do panelu energii.
+
+Jeśli strona wymaga logowania, dopisz `--uzytkownik` i `--haslo`; wygenerowany YAML
+weźmie wtedy hasło z `secrets.yaml`.
+
+**Droga zapasowa: Modbus TCP.** Potrzebna tylko wtedy, gdy strona nie wystarcza —
+albo gdy kiedyś zechcesz nie tylko czytać, ale i sterować.
+
+Najpierw sprawdź, czy Modbus jest w ogóle otwarty:
 
 ```bash
-python3 pompa-acond.py yaml 192.168.88.4
+python3 pompa-acond.py sprawdz 192.168.88.9
 ```
 
-Powstanie `wyniki/pompa-acond.yaml` — wklej do `configuration.yaml`, sprawdź konfigurację
-i przeładuj. Odczyty pojawią się jako encje i wejdą na pulpit razem ze światłami.
+Jeśli nie odpowiada, komunikację musi odblokować **serwis ACOND-a** — z poziomu ekranu
+sterownika się tego nie zrobi. Przy okazji poproś o dokumentację protokołu: `AC-Z010`
+dla oprogramowania `160.36`. Dalej analogicznie, tylko na rejestrach:
+
+```bash
+python3 pompa-acond.py skanuj 192.168.88.9
+python3 pompa-acond.py dopasuj 192.168.88.9 --panel panel-acond.json --ile 500
+python3 pompa-acond.py yaml 192.168.88.9
+```
 
 > **Zacznij od samych odczytów — i najlepiej na tym zostań.**
+>
+> Poniższe dotyczy wyłącznie sterowania przez Modbus. Czytanie strony sterownika jest
+> bezpieczne: to to samo, co robi Twoja przeglądarka, i niczego w pompie nie rusza.
 >
 > Odczyt niczego w pompie nie zmienia. Zapis owszem, i to bardziej, niż wygląda:
 > sterowanie przez Modbus jest w ACOND-zie pomyślane jako oddanie regulacji systemowi
