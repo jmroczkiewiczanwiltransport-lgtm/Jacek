@@ -6,6 +6,7 @@ pompa jest wpięta do sieci. Tablica rejestrów jest w dokumentacji producenta
 (AC-Z010), ale nie trzeba jej mieć, żeby zacząć: te narzędzia odczytują rejestry
 wprost z pompy i pomagają rozpoznać, co jest czym.
 
+    python3 pompa-acond.py sprawdz 192.168.88.9
     python3 pompa-acond.py skanuj 192.168.88.9
     python3 pompa-acond.py obserwuj 192.168.88.9 --od 0 --ile 60
     python3 pompa-acond.py czytaj 192.168.88.9 --od 10 --ile 4
@@ -115,6 +116,50 @@ def podpowiedz(slowo):
 
 
 # ─────────────────────────────── polecenia ───────────────────────────────
+
+def sprawdz(argumenty):
+    """Sprawdza, co pompa w ogóle wystawia — zanim zacznie się szukać rejestrów."""
+    print(f'Sprawdzam {argumenty.host}\n')
+    porty = [(argumenty.port, 'Modbus TCP'), (80, 'panel WWW'), (443, 'panel WWW po HTTPS'),
+             (502, 'Modbus TCP (domyślny)')]
+    otwarte = {}
+    for port, opis in dict.fromkeys(porty):
+        if port in otwarte:
+            continue
+        gniazdo = socket.socket()
+        gniazdo.settimeout(3)
+        wynik = gniazdo.connect_ex((argumenty.host, port))
+        gniazdo.close()
+        otwarte[port] = wynik == 0
+        stan = 'otwarty' if wynik == 0 else ('odrzucony' if wynik in (111,) else 'brak odpowiedzi')
+        print(f'   port {port:<5} {opis:<26} {stan}')
+
+    print()
+    modbus = otwarte.get(argumenty.port) or otwarte.get(502)
+    if not modbus:
+        print('Modbus nie odpowiada. Najczęstsze powody:')
+        print('  • komunikacja Modbus nie jest jeszcze odblokowana w pompie — włącza ją serwis ACOND-a,')
+        print('  • to adres z sieci serwisowej (ETH1), a nie domowej (ETH2),')
+        print('  • pompa dostała z DHCP inny adres — sprawdź na ekranie sterownika.')
+        if any(otwarte.get(p) for p in (80, 443)):
+            print('\nPanel WWW odpowiada, więc adres i sieć są dobre — brakuje samego Modbusa.')
+        return
+
+    print('Port Modbusa otwarty — sprawdzam, czy naprawdę mówi Modbusem…')
+    for jednostka in (argumenty.jednostka, 1, 0, 2, 3):
+        try:
+            with Modbus(argumenty.host, argumenty.port, jednostka, limit=3) as m:
+                slowa = m.czytaj(0, 4)
+            print(f'   odpowiada jako jednostka {jednostka}: {slowa}')
+            print(f'\nJest kontakt. Następny krok:')
+            print(f'   python3 pompa-acond.py skanuj {argumenty.host}' +
+                  (f' --jednostka {jednostka}' if jednostka != 1 else ''))
+            return
+        except OSError as powod:
+            print(f'   jednostka {jednostka}: {powod}')
+    print('\nPort jest otwarty, ale nic sensownego nie odpowiada. Spytaj serwisu ACOND-a,')
+    print('czy Modbus jest odblokowany i pod jakim adresem jednostki (slave id) nasłuchuje.')
+
 
 def skanuj(argumenty):
     """Przechodzi rejestry blokami i pokazuje, gdzie pompa w ogóle odpowiada."""
@@ -283,7 +328,7 @@ def yaml_ha(argumenty):
 
 def main():
     parser = argparse.ArgumentParser(description='Pompa ciepła ACOND przez Modbus TCP.')
-    parser.add_argument('polecenie', choices=['skanuj', 'czytaj', 'obserwuj', 'yaml'])
+    parser.add_argument('polecenie', choices=['sprawdz', 'skanuj', 'czytaj', 'obserwuj', 'yaml'])
     parser.add_argument('host', help='adres pompy w sieci domowej, np. 192.168.88.9')
     parser.add_argument('--port', type=int, default=502)
     parser.add_argument('--jednostka', type=int, default=1, help='adres Modbus (slave id)')
@@ -296,7 +341,8 @@ def main():
     argumenty = parser.parse_args()
 
     try:
-        {'skanuj': skanuj, 'czytaj': czytaj, 'obserwuj': obserwuj, 'yaml': yaml_ha}[argumenty.polecenie](argumenty)
+        {'sprawdz': sprawdz, 'skanuj': skanuj, 'czytaj': czytaj,
+         'obserwuj': obserwuj, 'yaml': yaml_ha}[argumenty.polecenie](argumenty)
     except OSError as powod:
         print(f'\nNie udało się: {powod}')
         print('\nCo sprawdzić:')

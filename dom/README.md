@@ -72,6 +72,11 @@ Lokalnie jest lepiej — chmurę możesz zostawić w narzędziu `tuya/` jako zap
 
 ### 3. Pompa ciepła ACOND
 
+Zestaw to szafa hydrauliczna **iZZiFAST** z pompą **ACOND** — kompletna kotłownia
+w jednej obudowie (bufor, pompa obiegowa, armatura), a sterownik wpuszczony w jej front
+to sterownik ACOND-a. To on jest punktem, do którego się podłączamy; szafa sama w sobie
+nie ma osobnej elektroniki do gadania.
+
 Sterownik ACOND wystawia **Modbus TCP na porcie 502**, po tym samym kablu, którym pompa
 jest wpięta do sieci — nic dokładać nie trzeba. Home Assistant ma wbudowaną obsługę
 Modbusa, więc nie potrzeba żadnego dodatku.
@@ -95,17 +100,30 @@ z poziomu ekranu sterownika się tego nie zrobi. Przy okazji poproś o dokumenta
 protokołu z tablicą rejestrów: `AC-Z010` dla oprogramowania w wersji `160.36`
 (dokumentacja.acond.cz, publiczny plik `AC-Z010-EN.pdf`).
 
+**Sprawdzenie, czy w ogóle jest z czym rozmawiać.** Zanim zadzwonisz do serwisu, zajmij
+30 sekund i sprawdź, czy Modbus przypadkiem nie jest już otwarty:
+
+```bash
+cd dom
+python3 pompa-acond.py sprawdz 192.168.88.9
+```
+
+Skrypt sprawdzi port Modbusa i panel WWW, a jeśli Modbus odpowiada — od razu powie,
+pod jakim adresem jednostki. Gdy panel WWW odpowiada, a Modbus nie, znaczy że adres
+i sieć są dobre i brakuje wyłącznie odblokowania po stronie pompy.
+
 **Rozpoznanie rejestrów.** Tablicy nie trzeba mieć, żeby zacząć — skrypt `pompa-acond.py`
 odczyta rejestry wprost z pompy:
 
 ```bash
-cd dom
 python3 pompa-acond.py skanuj 192.168.88.9
 ```
 
 Pokaże wszystkie niezerowe rejestry z podpowiedzią, czym mogą być („482 → 48,2 °C?”).
 Porównaj je z tym, co pokazuje ekran sterownika — temperatura zewnętrzna i temperatura
-wody zwykle rzucają się w oczy od razu. Nastawy najprościej znaleźć tak:
+wody zwykle rzucają się w oczy od razu. Manometry na froncie szafy też są wskazówką:
+dolny pokazuje ciśnienie obiegu grzewczego (powinno stać w zielonym polu, ok. 1–2 bar),
+więc rejestr z wartością rzędu 10–20 to prawdopodobnie właśnie ono, w dziesiątych bara. Nastawy najprościej znaleźć tak:
 
 ```bash
 python3 pompa-acond.py obserwuj 192.168.88.9 --od 0 --ile 100
