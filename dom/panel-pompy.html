@@ -51,6 +51,25 @@
   .legenda { display: flex; gap: 14px; font-size: 12px; color: var(--slaby); margin-top: 4px; }
   .legenda i { display: inline-block; width: 9px; height: 3px; border-radius: 2px;
                vertical-align: middle; margin-right: 5px; }
+  .sterowanie { background: var(--karta); border: 1px solid var(--kreska); border-radius: 16px;
+                padding: 14px 15px; margin-top: 10px; }
+  .rzad { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+          margin-top: 8px; }
+  .krok { width: 56px; height: 56px; flex: none; border-radius: 50%; border: 1px solid var(--kreska);
+          background: var(--tlo); color: var(--tekst); font-size: 26px; font-weight: 500;
+          line-height: 1; cursor: pointer; }
+  .krok:active { background: var(--kreska); }
+  .krok:disabled { opacity: .4; cursor: default; }
+  .teraz { font-size: 32px; font-weight: 660; letter-spacing: -.03em;
+           font-variant-numeric: tabular-nums; }
+  .teraz .jedn { font-size: 15px; font-weight: 500; color: var(--slaby); margin-left: 3px; }
+  .cele { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .cel { flex: 1 1 0; min-width: 64px; padding: 10px 6px; border-radius: 11px; cursor: pointer;
+         border: 1px solid var(--kreska); background: var(--tlo); color: var(--tekst);
+         font-size: 14px; font-weight: 600; font-family: inherit; }
+  .cel:active { background: var(--kreska); }
+  .cel:disabled { opacity: .4; cursor: default; }
+  .szept { font-size: 12px; color: var(--slaby); margin-top: 10px; min-height: 16px; }
   .blad { background: var(--karta); border: 1px solid var(--zle); color: var(--zle);
           border-radius: 14px; padding: 13px 15px; font-size: 14px; margin-bottom: 12px; }
   footer { text-align: center; color: var(--slaby); font-size: 12px; padding: 18px; }
@@ -62,6 +81,7 @@
   <div id="blad"></div>
   <div id="stan" class="stan" hidden><span class="kropka"></span><span></span></div>
   <div id="kafle" class="siatka"></div>
+  <div id="sterowanie"></div>
   <div id="reszta"></div>
 </main>
 <footer id="stopka"></footer>
@@ -179,6 +199,12 @@ async function odswiez() {
     }
   }
 
+  // ── sterowanie nastawą ──
+  // Sterownik przyjmuje impulsy „naciśnięto przycisk", po 0,1 °C. Skok na
+  // konkretną wartość to seria takich impulsów, więc trwa i trzeba pokazać,
+  // że coś się dzieje — inaczej wygląda na zawieszony panel.
+  rysujSterowanie(dane, nastawa);
+
   // ── obieg grzewczy i licznik ──
   const reszta = $('#reszta');
   reszta.innerHTML = '';
@@ -244,6 +270,75 @@ async function odswiez() {
 odswiez();
 setInterval(odswiez, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) odswiez(); });
+
+let zajete = false;
+// Potwierdzenie musi przeżyć przerysowanie panelu — inaczej znika w tej samej
+// sekundzie, w której się pojawia, i nie wiadomo, czy polecenie doszło.
+let ostatniKomunikat = '';
+
+function rysujSterowanie(dane, nastawa) {
+  const gdzie = $('#sterowanie');
+  if (!dane.steruje) { gdzie.innerHTML = ''; return; }
+  if (zajete) return;                       // nie podmieniaj pod palcami w trakcie zmiany
+
+  const [dol, gora] = dane.zakres || [15, 24];
+  const cele = [18, 20, 21, 22].filter((c) => c >= dol && c <= gora);
+  gdzie.innerHTML = '';
+
+  const teraz = el('div', { className: 'teraz' }, [
+    nastawa === null ? '—' : nastawa.toFixed(1),
+    el('span', { className: 'jedn', textContent: '°C' }),
+  ]);
+  const mniej = el('button', { className: 'krok', textContent: '−', title: 'o 0,1 °C mniej' });
+  const wiecej = el('button', { className: 'krok', textContent: '+', title: 'o 0,1 °C więcej' });
+  const szept = el('div', { className: 'szept', textContent: ostatniKomunikat });
+
+  mniej.onclick = () => wyslij({ akcja: 'nastawa-w-dol' }, szept);
+  wiecej.onclick = () => wyslij({ akcja: 'nastawa-w-gore' }, szept);
+
+  const rzadCelow = el('div', { className: 'cele' },
+    cele.map((c) => {
+      const b = el('button', { className: 'cel', textContent: `${c} °C` });
+      b.onclick = () => wyslij({ akcja: 'nastawa-cel', wartosc: c }, szept,
+        `Ustawiam ${c} °C — sterownik idzie po 0,1 °C, chwilę to potrwa…`);
+      return b;
+    }));
+
+  gdzie.append(el('div', { className: 'sterowanie' }, [
+    el('div', { className: 'etykieta', textContent: 'Nastawa pokojowa' }),
+    el('div', { className: 'rzad' }, [mniej, teraz, wiecej]),
+    rzadCelow,
+    szept,
+  ]));
+}
+
+async function wyslij(zlecenie, szept, komunikat) {
+  if (zajete) return;
+  zajete = true;
+  for (const b of document.querySelectorAll('#sterowanie button')) b.disabled = true;
+  szept.textContent = komunikat || 'Wysyłam…';
+  try {
+    const odp = await fetch('api/ustaw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(zlecenie),
+    });
+    const wynik = await odp.json();
+    if (wynik.blad) {
+      ostatniKomunikat = wynik.blad;
+    } else if (wynik.osiagnieto === false) {
+      ostatniKomunikat = `Zatrzymałem się na ${wynik.nastawa?.toFixed(1)} °C — ${wynik.powod}`;
+    } else {
+      ostatniKomunikat = `Ustawione: ${wynik.nastawa?.toFixed(1)} °C`;
+    }
+  } catch {
+    ostatniKomunikat = 'Nie dotarło do panelu. Czy nadal działa?';
+  }
+  szept.textContent = ostatniKomunikat;
+  zajete = false;
+  odswiez();
+}
+
 </script>
 </body>
 </html>

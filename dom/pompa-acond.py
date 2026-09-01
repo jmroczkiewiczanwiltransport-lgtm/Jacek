@@ -227,6 +227,101 @@ def _rozpakuj(surowe, kodowanie):
     return surowe
 
 
+# ───────────────────────────── sterowanie ─────────────────────────────
+#
+# Panel sterownika nie wysyła nowej wartości, tylko impuls „naciśnięto przycisk":
+# POST na tę samą stronę, treść `<nazwa zmiennej>=1`. Sterownik sam przesuwa
+# nastawę o 0,1 °C i sam pilnuje swoich granic — więc błąd po naszej stronie
+# może co najwyżej przesunąć nastawę o dziesiątą stopnia, a nie ustawić
+# bezsensownej wartości.
+#
+# Sterujemy wyłącznie tym, co jest w tej tabeli. Panel po sieci podaje **nazwę
+# akcji**, nigdy nazwę zmiennej — inaczej każdy w sieci domowej mógłby zapisać
+# dowolny parametr sterownika, łącznie z tymi, których cofnięcie wymaga serwisu.
+
+STEROWANIE = {
+    'nastawa-w-gore': ('__TCA37B6A0_BOOL_i', 'Nastawa pokojowa w górę'),
+    'nastawa-w-dol':  ('__TF795EE37_BOOL_i', 'Nastawa pokojowa w dół'),
+}
+
+# Poza tym zakresem nie ustawiamy nic, nawet gdyby sterownik pozwalał.
+NASTAWA_MIN, NASTAWA_MAX = 15.0, 24.0
+KROK_NASTAWY = 0.1
+
+
+def impuls(url, akcja, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
+    """Wysyła jedno „naciśnięcie przycisku" do sterownika."""
+    if akcja not in STEROWANIE:
+        raise OSError(f'nieznana akcja: {akcja}')
+    zmienna = STEROWANIE[akcja][0]
+    czesci = urllib.parse.urlsplit(url)
+    baza = urllib.parse.urlunsplit((czesci.scheme, czesci.netloc, '/', '', ''))
+
+    def wyslij():
+        tresc = urllib.parse.urlencode({zmienna: '1'}).encode()
+        zadanie = urllib.request.Request(url, data=tresc, headers=dict(
+            _NAGLOWKI, **{'Content-Type': 'application/x-www-form-urlencoded',
+                          'Origin': baza.rstrip('/'), 'Referer': url}))
+        if ciasteczko:
+            zadanie.add_header('Cookie', ciasteczko)
+        try:
+            with _otwieracz().open(zadanie, timeout=limit) as odpowiedz:
+                return _rozpakuj(odpowiedz.read(), odpowiedz.headers.get('Content-Encoding', ''))
+        except urllib.error.HTTPError as powod:
+            if powod.code in (401, 403):
+                raise _Logowanie()
+            raise OSError(f'sterownik odpowiedział {powod.code}')
+        except urllib.error.URLError as powod:
+            raise OSError(f'nie mogę wysłać polecenia: {powod.reason}')
+
+    wynik = wyslij()
+    if b'LOGIN' in wynik[:400].upper():
+        # Sesja wygasła między odczytem a zapisem — logujemy się i powtarzamy raz.
+        if not uzytkownik:
+            uzytkownik, haslo = wczytaj_logowanie()
+        if not uzytkownik:
+            raise OSError('sterownik żąda zalogowania, a nie mam loginu ani hasła')
+        zaloguj(baza, uzytkownik, haslo, limit)
+        wynik = wyslij()
+        if b'LOGIN' in wynik[:400].upper():
+            raise OSError('zalogowałem się, ale sterownik nie przyjął polecenia')
+    return czytaj_zmienne(wynik)
+
+
+def ustaw_nastawe(url, cel, zmienna_nastawy, uzytkownik=None, haslo=None,
+                  ciasteczko=None, najwiecej_krokow=120):
+    """Doprowadza nastawę pokojową do celu serią impulsów.
+
+    Jeden impuls to 0,1 °C, więc droga z 15,3 na 21,0 to blisko sześćdziesiąt
+    kliknięć. Nie liczymy ich w ciemno: po każdym impulsie czytamy, ile
+    faktycznie jest, i przerywamy, gdy odczyt przestaje się ruszać — inaczej
+    przy zablokowanej nastawie wysyłalibyśmy setki poleceń w nieskończoność."""
+    cel = max(NASTAWA_MIN, min(NASTAWA_MAX, round(float(cel), 1)))
+    zmienne = pobierz_strone(url, uzytkownik, haslo, ciasteczko=ciasteczko)
+    teraz = liczba(zmienne.get(zmienna_nastawy))
+    if teraz is None:
+        raise OSError('nie widzę nastawy pokojowej na tej stronie')
+
+    bez_ruchu = 0
+    for _ in range(najwiecej_krokow):
+        if abs(teraz - cel) < KROK_NASTAWY / 2:
+            return {'nastawa': teraz, 'cel': cel, 'osiagnieto': True}
+        akcja = 'nastawa-w-gore' if cel > teraz else 'nastawa-w-dol'
+        zmienne = impuls(url, akcja, uzytkownik, haslo, ciasteczko=ciasteczko)
+        po = liczba(zmienne.get(zmienna_nastawy))
+        if po is None or abs(po - teraz) < KROK_NASTAWY / 2:
+            bez_ruchu += 1
+            if bez_ruchu >= 3:
+                return {'nastawa': teraz, 'cel': cel, 'osiagnieto': False,
+                        'powod': 'sterownik nie przyjmuje dalszych zmian'}
+        else:
+            bez_ruchu = 0
+            teraz = po
+        time.sleep(0.25)          # sterownik nie lubi serii bez przerwy
+    return {'nastawa': teraz, 'cel': cel, 'osiagnieto': False,
+            'powod': f'przerwałem po {najwiecej_krokow} krokach'}
+
+
 def czytaj_zmienne(surowe):
     """Z treści strony wyciąga {nazwa zmiennej: wartość jako tekst}."""
     try:
@@ -484,6 +579,11 @@ def panel(argumenty):
     # zapis historii — inaczej wykres 24 h byłby pusty aż do końca świata.
     odstep_zapisu = max(0, argumenty.co_historia) * 60
 
+    # Sterowanie ograniczamy do jednej wielkości i szukamy jej po opisie, a nie
+    # po zaszytym skrócie — skróty są stałe tylko dla tego programu sterownika.
+    zmienna_nastawy = next((k for k, v in opisy.items() if v[0] == 'Nastawa pokojowa'), None)
+    steruje = not argumenty.bez_sterowania and zmienna_nastawy is not None
+
     class Obsluga(BaseHTTPRequestHandler):
         def log_message(self, *_):
             pass
@@ -534,7 +634,39 @@ def panel(argumenty):
             odpowiedz['historia'] = _historia_z_pliku(plik_danych)
             odpowiedz['zuzycie'] = _zuzycie_z_licznika(plik_danych)
             odpowiedz['zadania'] = _najblizsze_zadania()
+            odpowiedz['steruje'] = steruje
+            odpowiedz['zakres'] = [NASTAWA_MIN, NASTAWA_MAX]
             self._odpowiedz(200, odpowiedz)
+
+        def do_POST(self):
+            """Sterowanie: przyjmujemy nazwę akcji, nigdy nazwę zmiennej.
+
+            Panel jest widoczny w całej sieci domowej, więc gdyby przyjmował
+            dowolną zmienną, każdy mógłby przestawić parametry instalacji."""
+            if self.path != '/api/ustaw':
+                return self._odpowiedz(404, {'blad': 'Nie ma takiej ścieżki.'})
+            if not steruje:
+                return self._odpowiedz(403, {'blad': 'Sterowanie wyłączone.'})
+            try:
+                ile = int(self.headers.get('Content-Length') or 0)
+                zlecenie = json.loads(self.rfile.read(ile) or b'{}')
+            except (ValueError, OSError):
+                return self._odpowiedz(400, {'blad': 'Nie rozumiem polecenia.'})
+
+            akcja = zlecenie.get('akcja')
+            try:
+                if akcja in ('nastawa-w-gore', 'nastawa-w-dol'):
+                    zmienne = impuls(argumenty.host, akcja, argumenty.uzytkownik,
+                                     argumenty.haslo, ciasteczko=argumenty.ciasteczko)
+                    return self._odpowiedz(200, {'nastawa': liczba(zmienne.get(zmienna_nastawy))})
+                if akcja == 'nastawa-cel':
+                    wynik = ustaw_nastawe(argumenty.host, zlecenie.get('wartosc'),
+                                          zmienna_nastawy, argumenty.uzytkownik,
+                                          argumenty.haslo, ciasteczko=argumenty.ciasteczko)
+                    return self._odpowiedz(200, wynik)
+            except (OSError, TypeError, ValueError) as powod:
+                return self._odpowiedz(502, {'blad': f'Sterownik nie przyjął: {powod}'})
+            return self._odpowiedz(400, {'blad': f'Nieznana akcja: {akcja}'})
 
     def zbieraj():
         """Dopisuje odczyt co ustalony czas, niezależnie od tego, czy ktoś patrzy.
@@ -579,7 +711,11 @@ def panel(argumenty):
         except OSError:
             pass
         print(f'Z telefonu w tej samej sieci: http://{adres}:{argumenty.port_panelu}')
-        print('(panel jest widoczny w sieci domowej — tylko do odczytu, niczego nie ustawia)')
+        if steruje:
+            print('(panel jest widoczny w sieci domowej i pozwala zmieniać nastawę '
+                  'pokojową o 0,1 °C — --bez-sterowania to wyłącza)')
+        else:
+            print('(panel jest widoczny w sieci domowej — tylko do odczytu, niczego nie ustawia)')
     print('Zatrzymanie: Ctrl+C')
     try:
         serwer.serve_forever()
@@ -1400,6 +1536,8 @@ def main():
     # Osobno od --port, bo tamten dotyczy Modbusu pompy — falownik to inne urządzenie.
     parser.add_argument('--port-falownika', dest='port_falownika', type=int, default=502,
                         help='port Modbus falownika (domyślnie 502)')
+    parser.add_argument('--bez-sterowania', dest='bez_sterowania', action='store_true',
+                        help='panel tylko do odczytu, bez przycisków nastawy')
     parser.add_argument('--co-historia', dest='co_historia', type=float, default=5,
                         help='co ile minut panel dopisuje odczyt do historii (0 wyłącza)')
     parser.add_argument('--tylko-lokalnie', action='store_true',

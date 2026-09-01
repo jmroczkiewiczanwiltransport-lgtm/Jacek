@@ -322,6 +322,23 @@ Wyłącza się to przez `_USUN-AUTOSTART.bat`: kasuje skrót z Autostartu i zatr
 działający panel (chodzi bez okna, więc nie da się go zamknąć krzyżykiem).
 Folder z historią zostaje.
 
+### Sterowanie z panelu
+
+Panel pozwala zmieniać **nastawę pokojową** — przyciskami −/− po 0,1 °C albo
+skokiem na 18, 20, 21 lub 22 °C. `--bez-sterowania` zostawia sam odczyt.
+
+Sterownik nie przyjmuje nowej wartości. Jego panel wysyła **impuls „naciśnięto
+przycisk"**: POST na tę samą stronę, treść `<nazwa zmiennej>=1`. Wartość przesuwa
+sam sterownik, o 0,1 °C, i sam pilnuje swoich granic — więc błąd po naszej stronie
+może co najwyżej przesunąć nastawę o dziesiątą stopnia, a nie ustawić bezsensownej.
+Skok na konkretną wartość to seria takich impulsów: po każdym czytamy, ile
+faktycznie jest, i przerywamy, gdy odczyt przestaje się ruszać.
+
+Sterujemy wyłącznie tym, co jest w tabeli `STEROWANIE`. Panel po sieci podaje
+**nazwę akcji**, nigdy nazwę zmiennej — inaczej każdy w sieci domowej mógłby
+zapisać dowolny parametr sterownika, łącznie z tymi, których cofnięcie wymaga
+serwisu. Zakres nastawy jest dodatkowo ograniczony w kodzie (15–24 °C).
+
 ### Logowanie do sterownika
 
 Sterownik nie oddaje danych bez zalogowania. Załóż obok skryptu plik

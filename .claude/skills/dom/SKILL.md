@@ -53,6 +53,14 @@ procedurę. `pompa-acond.py` robi to sam w `zaloguj()`. Nie wracaj do pomysłu
 z zapisywaniem ciasteczka; to była ślepa uliczka, po której zostało tylko awaryjne
 `--ciasteczko`.
 
+**Zapis do sterownika idzie impulsami, nie wartościami.** Panel sterownika przy
+kliknięciu „+" wysyła POST na `PAGE115.XML` z treścią `__TCA37B6A0_BOOL_i=1`
+(„−" to `__TF795EE37_BOOL_i=1`). Nowej wartości nie przekazuje wcale — sterownik
+sam przesuwa nastawę o 0,1 °C i sam pilnuje swoich granic. Dlatego skok z 15,3
+na 21,0 to blisko sześćdziesiąt impulsów, a nie jeden zapis. Nazwy kolejnych
+przycisków (CWU, harmonogramy, tryb urlopowy) trzeba podejrzeć tak samo:
+F12 → Network → filtr `method:POST` → kliknąć raz → zakładka Payload.
+
 **Modbus TCP w pompie nie działa.** Port 502 jest otwarty, ale sterownik nim nie mówi
 — wszystkie jednostki (0, 1, 2, 3) dają timeout. Serwer Modbus nie jest uruchomiony
 w programie sterownika. Nie próbuj tej drogi jeszcze raz; czytanie ze strony WWW
@@ -145,9 +153,11 @@ pokojową z letnich 15,3 °C na ok. 21 °C), 1 października (spisać liczniki),
 1. **Panel na komputerze, który zostaje w domu.** Laptop Jacka jeździ do pracy, więc
    dziury w historii wypadną w godzinach 8–16 — dokładnie tam, gdzie toczy się gra
    z harmonogramami. Jacek zadeklarował, że przeniesie panel na inny komputer.
-2. **Sterowanie z panelu** (zmiana nastawy z telefonu). Wykonalne tą samą drogą co
-   logowanie: trzeba podejrzeć w F12 jedno żądanie zapisu (kliknięcie „+" przy nastawie).
-   Zaczynać od **jednej zmiennej** (nastawa pokojowa), z ograniczeniem zakresu w kodzie.
+2. **Kolejne przyciski sterowania.** Nastawa pokojowa jest zrobiona (tabela
+   `STEROWANIE` w `pompa-acond.py`). Do dołożenia, każdy po jednym podejrzeniu
+   w F12: podgrzanie CWU na żądanie, włącznik harmonogramu wody grzewczej
+   (zadania z 1 grudnia i 1 marca stałyby się jednym kliknięciem), tryb urlopowy,
+   nastawa CWU 45/48 °C.
 3. **Rezerwacje adresów w routerze** dla `.9`, `.10` i komputera z panelem — zaczęte,
    niedokończone.
 4. **Falownik** — dopiero gdyby trafił do sieci.
