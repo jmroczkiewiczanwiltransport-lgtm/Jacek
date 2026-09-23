@@ -143,16 +143,37 @@ def zaloguj(baza, uzytkownik, haslo, limit=15):
 PLIK_ADRESU = os.path.join(KATALOG, 'adres-pompy.txt')
 
 
+def _prywatny(adres):
+    """Czy to adres z sieci domowej (RFC 1918), a nie z VPN-a albo publiczny."""
+    czesci = adres.split('.')
+    if len(czesci) != 4 or not all(c.isdigit() for c in czesci):
+        return False
+    a, b = int(czesci[0]), int(czesci[1])
+    return a == 10 or (a == 172 and 16 <= b <= 31) or (a == 192 and b == 168)
+
+
 def _adres_lokalny():
-    """Adres tego komputera w sieci domowej — stąd bierzemy, którą sieć przeczesać."""
-    for cel in (('8.8.8.8', 1), ('192.168.1.1', 1), ('192.168.88.1', 1)):
+    """Adres tego komputera w sieci domowej — stąd bierzemy, którą sieć przeczesać.
+
+    Samo „jakim adresem wychodzę na świat" nie wystarcza: gdy na komputerze
+    działa VPN (Radmin, Hamachi, firmowy), trasa domyślna prowadzi przez niego
+    i dostajemy adres w rodzaju 26.x, który z pompą nie ma nic wspólnego.
+    Dlatego zbieramy kandydatów i wybieramy spośród adresów sieci domowych."""
+    kandydaci = []
+    for cel in (('192.168.88.1', 1), ('192.168.1.1', 1), ('10.0.0.1', 1), ('8.8.8.8', 1)):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as gniazdo:
                 gniazdo.connect(cel)          # nic nie wysyła, tylko wybiera trasę
-                return gniazdo.getsockname()[0]
+                kandydaci.append(gniazdo.getsockname()[0])
         except OSError:
             continue
-    return None
+    try:
+        kandydaci += socket.gethostbyname_ex(socket.gethostname())[2]
+    except OSError:
+        pass
+
+    prywatne = [a for a in kandydaci if _prywatny(a) and not a.startswith('127.')]
+    return (prywatne or [a for a in kandydaci if not a.startswith('127.')] or [None])[0]
 
 
 def zapamietany_adres():

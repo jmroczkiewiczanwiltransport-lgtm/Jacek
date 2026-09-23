@@ -53,6 +53,12 @@ procedurę. `pompa-acond.py` robi to sam w `zaloguj()`. Nie wracaj do pomysłu
 z zapisywaniem ciasteczka; to była ślepa uliczka, po której zostało tylko awaryjne
 `--ciasteczko`.
 
+**Na laptopie Jacka działa VPN z adresem `26.x`.** Pytanie systemu „jakim adresem
+wychodzę na świat" zwracało właśnie ten adres, więc panel wypisywał go jako adres
+do wpisania w telefonie — i telefon nigdy nie mógł trafić. `_adres_lokalny()`
+wybiera teraz spośród adresów RFC 1918. Warto o tym pamiętać przy każdej diagnozie
+sieciowej na tym komputerze.
+
 **Adres sterownika się zmienia.** ETH2 stoi na DHCP i router przydzielił mu we
 wrześniu 2026 `.8` zamiast `.9`. Objawy wyglądają jak awaria pompy: panel milczy,
 historia się urywa, sterowanie nie działa. Zanim zaczniesz szukać czegokolwiek
