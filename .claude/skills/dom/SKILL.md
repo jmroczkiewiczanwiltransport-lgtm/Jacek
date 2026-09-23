@@ -16,7 +16,7 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 
 | Co | Adres | Uwagi |
 |---|---|---|
-| Pompa ciepła ACOND THERM | `192.168.88.9` | sterownik Tecomat Foxtrot, sw 160.36 |
+| Pompa ciepła ACOND THERM | `192.168.88.8` (DHCP — bywa inny) | sterownik Tecomat Foxtrot, sw 160.36; ETH1 `192.168.134.176` to osobna sieć, nie ruszać |
 | Mostek Philips Hue | `192.168.88.10` | sparowany, klucz w `~/.hue-most.json` |
 | Komputer Jacka (Windows 11) | `192.168.88.18` | laptop, bywa poza domem |
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
@@ -52,6 +52,14 @@ skrótu ani ciasteczka nie da się zapamiętać na stałe** — trzeba przechodz
 procedurę. `pompa-acond.py` robi to sam w `zaloguj()`. Nie wracaj do pomysłu
 z zapisywaniem ciasteczka; to była ślepa uliczka, po której zostało tylko awaryjne
 `--ciasteczko`.
+
+**Adres sterownika się zmienia.** ETH2 stoi na DHCP i router przydzielił mu we
+wrześniu 2026 `.8` zamiast `.9`. Objawy wyglądają jak awaria pompy: panel milczy,
+historia się urywa, sterowanie nie działa. Zanim zaczniesz szukać czegokolwiek
+innego, sprawdź adres — na sterowniku widać go na ekranie „Info ETH2".
+`pompa-acond.py` radzi sobie z tym sam (skanuje sieć, rozpoznaje po
+`SYSWWW/LOGIN.XML`, zapamiętuje w `adres-pompy.txt`), ale rezerwacja w routerze
+nadal jest niezrobiona i to ona rozwiązałaby sprawę u źródła.
 
 **Zapis do sterownika idzie impulsami, nie wartościami.** Panel sterownika przy
 kliknięciu „+" wysyła POST na `PAGE115.XML` z treścią `__TCA37B6A0_BOOL_i=1`
@@ -148,11 +156,31 @@ Najbliższe: 6 września (sprawdzić ciepłą wodę wieczorem), 20 września (po
 pokojową z letnich 15,3 °C na ok. 21 °C), 1 października (spisać liczniki),
 1 grudnia (wyłączyć harmonogram wody grzewczej), 1 marca (włączyć z powrotem).
 
+## Jak Jacek mieszka i co z tego wynika
+
+**Wychodzi ~8:00, wraca ~18:00.** Okno 10–16, w którym grzejemy z własnego prądu,
+wypada w pustym domu — więc przegrzanie jastrychu w południe **nic nie kosztuje
+w komforcie**. To najmocniejszy argument za podbiciem nastawy pokojowej na te
+godziny (np. 22 °C w oknie, 21 poza nim) i jednocześnie powód, dla którego panel
+na jego laptopie nie zbierze danych z 8–18: laptop wyjeżdża razem z nim.
+
+**Kominek 18:00–23:00**, tylko w salonie, bez rozprowadzenia na inne pomieszczenia.
+Czujnik pokojowy jest ~6 m od niego i podbija się do 23 °C. Skutek: wieczorem
+sterownik uznaje, że dom jest nagrzany, i **wyłącza grzanie całego domu** — także
+sypialni, które z kominka nie dostają nic. Po 23:00, gdy ogień gaśnie, pompa
+nadrabia w nocy, przy najgorszym COP. Strata w pieniądzach umiarkowana, strata
+w komforcie większa. Rozważane: przeniesienie czujnika do pomieszczenia
+neutralnego albo oparcie regulacji na krzywej grzewczej.
+
+**Nastawa pokojowa podniesiona 20.09.2026 z letnich 15,3 na 21 °C.**
+
 ## Otwarte wątki
 
-1. **Panel na komputerze, który zostaje w domu.** Laptop Jacka jeździ do pracy, więc
-   dziury w historii wypadną w godzinach 8–16 — dokładnie tam, gdzie toczy się gra
-   z harmonogramami. Jacek zadeklarował, że przeniesie panel na inny komputer.
+1. **Panel na komputerze, który zostaje w domu.** Laptop jeździ do pracy, więc
+   historia ma dziurę 8–18 — dokładnie tam, gdzie toczy się gra z harmonogramami.
+   Jacek zadeklarował przeniesienie na inny komputer; nadal niezrobione. **To blokuje
+   wszystkie decyzje oparte na pomiarach**, więc przy każdej takiej rozmowie warto
+   o tym przypomnieć, zamiast doradzać na wyczucie.
 2. **Kolejne przyciski sterowania.** Nastawa pokojowa jest zrobiona (tabela
    `STEROWANIE` w `pompa-acond.py`). Do dołożenia, każdy po jednym podejrzeniu
    w F12: podgrzanie CWU na żądanie, włącznik harmonogramu wody grzewczej

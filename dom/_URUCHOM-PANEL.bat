@@ -3,9 +3,10 @@ chcp 65001 >nul
 title Panel pompy ciepla
 cd /d "%~dp0"
 
-rem  Adres panelu pompy. Gdyby sterownik dostal inny adres z routera,
-rem  popraw go w tej jednej linii.
-set POMPA=http://192.168.88.9/PAGE115.XML
+rem  Adres sterownika. To tylko podpowiedz na start: gdy pompa nie odpowiada
+rem  pod tym adresem, panel przeczesuje siec, sam ja znajduje i zapamietuje
+rem  nowy adres w pliku adres-pompy.txt. Poprawiac tego nie trzeba.
+set POMPA=http://192.168.88.8/PAGE115.XML
 set PORT=8125
 
 rem  Adres falownika w sieci domowej. Zostaw pusty, dopóki nie włączysz w nim

@@ -133,6 +133,109 @@ def zaloguj(baza, uzytkownik, haslo, limit=15):
     return _numer_sesji()
 
 
+# ─────────────────────── szukanie sterownika w sieci ───────────────────────
+#
+# Sterownik siedzi na DHCP i router potrafi mu zmienić adres. Wtedy wszystko
+# przestaje działać naraz — panel, zapis historii, sterowanie — a przyczyna
+# wygląda jak awaria pompy. Dlatego zamiast trzymać się zaszytego adresu,
+# umiemy go odnaleźć i zapamiętać.
+
+PLIK_ADRESU = os.path.join(KATALOG, 'adres-pompy.txt')
+
+
+def _adres_lokalny():
+    """Adres tego komputera w sieci domowej — stąd bierzemy, którą sieć przeczesać."""
+    for cel in (('8.8.8.8', 1), ('192.168.1.1', 1), ('192.168.88.1', 1)):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as gniazdo:
+                gniazdo.connect(cel)          # nic nie wysyła, tylko wybiera trasę
+                return gniazdo.getsockname()[0]
+        except OSError:
+            continue
+    return None
+
+
+def zapamietany_adres():
+    try:
+        with open(PLIK_ADRESU, encoding='utf-8') as f:
+            return f.read().strip() or None
+    except OSError:
+        return None
+
+
+def zapamietaj_adres(url):
+    try:
+        with open(PLIK_ADRESU, 'w', encoding='utf-8') as f:
+            f.write(url + '\n')
+    except OSError:
+        pass                                   # brak zapisu nie może psuć odczytu
+
+
+def _to_sterownik(adres, port, limit):
+    """Czy pod tym adresem odpowiada Tecomat, a nie przypadkowy serwer WWW?
+
+    Rozpoznajemy po stronie logowania — `SYSWWW/LOGIN.XML` jest na tyle
+    charakterystyczna, że nie pomylimy jej z drukarką czy routerem."""
+    otwieracz = urllib.request.build_opener()  # osobny, żeby nie mieszać ciasteczek
+    for sciezka in ('/SYSWWW/LOGIN.XML', '/PAGE115.XML'):
+        zadanie = urllib.request.Request(f'http://{adres}:{port}{sciezka}', headers=_NAGLOWKI)
+        try:
+            with otwieracz.open(zadanie, timeout=limit) as odpowiedz:
+                tresc = _rozpakuj(odpowiedz.read(2048), odpowiedz.headers.get('Content-Encoding', ''))
+        except (urllib.error.URLError, OSError):
+            continue
+        if b'<LOGIN' in tresc or b'__T' in tresc:
+            return True
+    return False
+
+
+def znajdz_sterownik(wzor_url, siec=None, limit=0.6, mow=False):
+    """Przeczesuje sieć domową i zwraca adres sterownika w formie pełnego URL-a.
+
+    Zachowujemy port i ścieżkę ze wzorca — zmieniamy wyłącznie sam adres."""
+    czesci = urllib.parse.urlsplit(wzor_url if '//' in wzor_url else 'http://' + wzor_url)
+    port = czesci.port or 80
+    sciezka = czesci.path if czesci.path not in ('', '/') else '/PAGE115.XML'
+
+    if siec:
+        poczatek = siec.split('/')[0].rsplit('.', 1)[0]
+    else:
+        moj = _adres_lokalny()
+        if not moj:
+            raise OSError('nie wiem, w jakiej jestem sieci — podaj ją przez --siec')
+        poczatek = moj.rsplit('.', 1)[0]
+
+    if mow:
+        print(f'Szukam sterownika w sieci {poczatek}.1–254 (port {port})…', flush=True)
+
+    otwarte, zamek = [], threading.Lock()
+
+    def puknij(numer):
+        adres = f'{poczatek}.{numer}'
+        with socket.socket() as gniazdo:
+            gniazdo.settimeout(limit)
+            if gniazdo.connect_ex((adres, port)) == 0:
+                with zamek:
+                    otwarte.append(adres)
+
+    watki = [threading.Thread(target=puknij, args=(n,)) for n in range(1, 255)]
+    for w in watki:
+        w.start()
+    for w in watki:
+        w.join()
+
+    for adres in sorted(otwarte, key=lambda a: int(a.rsplit('.', 1)[1])):
+        if _to_sterownik(adres, port, max(limit, 2.0)):
+            znaleziony = f'http://{adres}:{port}{sciezka}' if port != 80 \
+                else f'http://{adres}{sciezka}'
+            if mow:
+                print(f'Znalazłem sterownik: {znaleziony}')
+            return znaleziony
+
+    raise OSError(f'nie znalazłem sterownika w sieci {poczatek}.0/24'
+                  + (f' — port {port} otwarty na: {", ".join(sorted(otwarte))}' if otwarte else ''))
+
+
 def pobierz_strone(url, uzytkownik=None, haslo=None, limit=15, ciasteczko=None):
     """Pobiera stronę sterownika i zwraca {nazwa zmiennej: wartość}.
 
@@ -570,6 +673,14 @@ def _najblizsze_zadania(ile=3):
     return sorted(przyszle, key=lambda z: z['data'])[:ile]
 
 
+def szukaj(argumenty):
+    """Znajduje sterownik w sieci i zapamiętuje jego adres."""
+    znaleziony = znajdz_sterownik(argumenty.host, argumenty.siec, mow=True)
+    zapamietaj_adres(znaleziony)
+    print(f'\nZapamiętane w {PLIK_ADRESU} — panel użyje tego adresu sam.')
+    print(f'\nSprawdzenie:\n   python3 pompa-acond.py strona {znaleziony}')
+
+
 def panel(argumenty):
     """Panel pompy na telefon — serwuje stronę w sieci domowej."""
     opisy = wczytaj_opisy_panelu()
@@ -583,6 +694,43 @@ def panel(argumenty):
     # po zaszytym skrócie — skróty są stałe tylko dla tego programu sterownika.
     zmienna_nastawy = next((k for k, v in opisy.items() if v[0] == 'Nastawa pokojowa'), None)
     steruje = not argumenty.bez_sterowania and zmienna_nastawy is not None
+
+    # Adres sterownika potrafi się zmienić — trzymamy go w jednym miejscu,
+    # żeby po odnalezieniu nowego reszta panelu od razu z niego korzystała.
+    adres_pompy = [zapamietany_adres() or argumenty.host]
+    ostatnie_szukanie = [0.0]
+
+    def czytaj_pompe(limit=8):
+        """Czyta pompę; gdy nie odpowiada pod znanym adresem, szuka jej w sieci."""
+        proby, zapisany = [adres_pompy[0]], zapamietany_adres()
+        if argumenty.host not in proby:
+            proby.append(argumenty.host)
+        if zapisany and zapisany not in proby:
+            proby.append(zapisany)
+
+        ostatni_blad = None
+        for url in proby:
+            try:
+                zmienne = pobierz_strone(url, argumenty.uzytkownik, argumenty.haslo,
+                                         limit=limit, ciasteczko=argumenty.ciasteczko)
+                adres_pompy[0] = url
+                return zmienne
+            except OSError as powod:
+                ostatni_blad = powod
+
+        # Żaden znany adres nie odpowiada. Przeczesanie sieci to 254 połączenia,
+        # więc nie robimy tego częściej niż raz na pięć minut.
+        if argumenty.bez_szukania or time.monotonic() - ostatnie_szukanie[0] < 300:
+            raise ostatni_blad or OSError('pompa nie odpowiada')
+        ostatnie_szukanie[0] = time.monotonic()
+        znaleziony = znajdz_sterownik(adres_pompy[0], argumenty.siec)
+        zmienne = pobierz_strone(znaleziony, argumenty.uzytkownik, argumenty.haslo,
+                                 limit=limit, ciasteczko=argumenty.ciasteczko)
+        adres_pompy[0] = znaleziony
+        zapamietaj_adres(znaleziony)
+        print(f'{datetime.now():%H:%M:%S}  sterownik zmienił adres — teraz {znaleziony}',
+              flush=True)
+        return zmienne
 
     class Obsluga(BaseHTTPRequestHandler):
         def log_message(self, *_):
@@ -606,10 +754,12 @@ def panel(argumenty):
             if self.path != '/api/stan':
                 return self._odpowiedz(404, {'blad': 'Nie ma takiej ścieżki.'})
 
-            odpowiedz = {'zrodlo': f'pompa {argumenty.host}', 'pompa': {}}
+            odpowiedz = {'zrodlo': f'pompa {adres_pompy[0]}', 'pompa': {}}
             try:
-                zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik, argumenty.haslo,
-                                         limit=8, ciasteczko=argumenty.ciasteczko)
+                zmienne = czytaj_pompe()
+                # Adres mógł się przed chwilą zmienić — w stopce ma być ten,
+                # z którego naprawdę przyszły te liczby.
+                odpowiedz['zrodlo'] = f'pompa {adres_pompy[0]}'
                 for zmienna, wartosc in zmienne.items():
                     if zmienna in opisy and liczba(wartosc) is not None:
                         odpowiedz['pompa'][opisy[zmienna][0]] = liczba(wartosc)
@@ -656,11 +806,11 @@ def panel(argumenty):
             akcja = zlecenie.get('akcja')
             try:
                 if akcja in ('nastawa-w-gore', 'nastawa-w-dol'):
-                    zmienne = impuls(argumenty.host, akcja, argumenty.uzytkownik,
+                    zmienne = impuls(adres_pompy[0], akcja, argumenty.uzytkownik,
                                      argumenty.haslo, ciasteczko=argumenty.ciasteczko)
                     return self._odpowiedz(200, {'nastawa': liczba(zmienne.get(zmienna_nastawy))})
                 if akcja == 'nastawa-cel':
-                    wynik = ustaw_nastawe(argumenty.host, zlecenie.get('wartosc'),
+                    wynik = ustaw_nastawe(adres_pompy[0], zlecenie.get('wartosc'),
                                           zmienna_nastawy, argumenty.uzytkownik,
                                           argumenty.haslo, ciasteczko=argumenty.ciasteczko)
                     return self._odpowiedz(200, wynik)
@@ -677,9 +827,7 @@ def panel(argumenty):
         milczy_od = None
         while True:
             try:
-                zmienne = pobierz_strone(argumenty.host, argumenty.uzytkownik,
-                                         argumenty.haslo, limit=8,
-                                         ciasteczko=argumenty.ciasteczko)
+                zmienne = czytaj_pompe()
                 if opisy:
                     _dopisz_odczyt(plik_danych, zmienne, opisy)
                 if milczy_od:
@@ -703,14 +851,8 @@ def panel(argumenty):
     serwer = ThreadingHTTPServer((nasluch, argumenty.port_panelu), Obsluga)
     print(f'Panel pompy: http://localhost:{argumenty.port_panelu}')
     if not argumenty.tylko_lokalnie:
-        adres = 'ten-komputer'
-        try:
-            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as gniazdo:
-                gniazdo.connect(('192.168.88.1', 1))
-                adres = gniazdo.getsockname()[0]
-        except OSError:
-            pass
-        print(f'Z telefonu w tej samej sieci: http://{adres}:{argumenty.port_panelu}')
+        moj_adres = _adres_lokalny() or 'ten-komputer'
+        print(f'Z telefonu w tej samej sieci: http://{moj_adres}:{argumenty.port_panelu}')
         if steruje:
             print('(panel jest widoczny w sieci domowej i pozwala zmieniać nastawę '
                   'pokojową o 0,1 °C — --bez-sterowania to wyłącza)')
@@ -1513,7 +1655,8 @@ def main():
     parser = argparse.ArgumentParser(description='Pompa ciepła ACOND przez Modbus TCP.')
     parser.add_argument('polecenie',
                         choices=['sprawdz', 'strona', 'strony', 'liczniki', 'skanuj',
-                                 'dopasuj', 'czytaj', 'obserwuj', 'zapisuj', 'podsumuj', 'panel', 'yaml'])
+                                 'dopasuj', 'czytaj', 'obserwuj', 'zapisuj', 'podsumuj', 'panel',
+                                 'yaml', 'znajdz'])
     parser.add_argument('host', nargs='?', help='adres pompy (192.168.88.9) albo adres strony '
                                                'sterownika (http://192.168.88.9/PAGE115.XML); '
                                                'polecenie „podsumuj" go nie potrzebuje')
@@ -1538,6 +1681,10 @@ def main():
                         help='port Modbus falownika (domyślnie 502)')
     parser.add_argument('--bez-sterowania', dest='bez_sterowania', action='store_true',
                         help='panel tylko do odczytu, bez przycisków nastawy')
+    parser.add_argument('--siec', help='sieć do przeczesania w poszukiwaniu sterownika, '
+                                       'np. 192.168.88.0/24 (domyślnie: ta, w której jestem)')
+    parser.add_argument('--bez-szukania', dest='bez_szukania', action='store_true',
+                        help='nie szukaj sterownika w sieci, gdy nie odpowiada')
     parser.add_argument('--co-historia', dest='co_historia', type=float, default=5,
                         help='co ile minut panel dopisuje odczyt do historii (0 wyłącza)')
     parser.add_argument('--tylko-lokalnie', action='store_true',
@@ -1552,7 +1699,9 @@ def main():
     argumenty = parser.parse_args()
 
     # Adres z „http" znaczy: czytamy stronę sterownika, a nie rejestry Modbusa.
-    przez_strone = str(argumenty.host).lower().startswith('http')
+    # „znajdz" z definicji dotyczy strony WWW, nawet gdy podano samą sieć.
+    przez_strone = (str(argumenty.host).lower().startswith('http')
+                    or argumenty.polecenie == 'znajdz')
     if argumenty.polecenie == 'podsumuj':
         return podsumuj(argumenty)
     if not argumenty.host:
@@ -1567,6 +1716,7 @@ def main():
         argumenty.od = 100
 
     przez_www = {'strona': strona, 'strony': strony, 'liczniki': liczniki,
+                 'znajdz': szukaj,
                  'dopasuj': lambda a: dopasuj_strone(a, wczytaj_panel(a)),
                  'obserwuj': obserwuj_strone, 'zapisuj': zapisuj, 'panel': panel,
                  'yaml': yaml_strony}

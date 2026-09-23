@@ -339,6 +339,31 @@ Sterujemy wyłącznie tym, co jest w tabeli `STEROWANIE`. Panel po sieci podaje
 zapisać dowolny parametr sterownika, łącznie z tymi, których cofnięcie wymaga
 serwisu. Zakres nastawy jest dodatkowo ograniczony w kodzie (15–24 °C).
 
+### Gdy sterownik zmieni adres
+
+Sterownik stoi na DHCP i router potrafi mu zmienić adres — zdarzyło się to
+we wrześniu 2026, z `192.168.88.9` na `.8`. Wygląda to jak awaria pompy:
+panel przestaje odpowiadać, historia się urywa, sterowanie nie działa, a
+przyczyna jest zupełnie gdzie indziej.
+
+Panel radzi sobie z tym sam. Gdy pompa nie odpowiada pod znanym adresem,
+przeczesuje sieć domową, rozpoznaje sterownik po stronie `SYSWWW/LOGIN.XML`
+i zapamiętuje nowy adres w `adres-pompy.txt`. Skanuje najwyżej raz na pięć
+minut — 254 połączenia to nie jest coś, co warto robić w pętli. Po restarcie
+zaczyna od zapamiętanego adresu, więc nie szuka po próżnicy.
+
+Ręcznie robi to polecenie:
+
+```bash
+python3 pompa-acond.py znajdz 192.168.88.0/24
+```
+
+`--siec` narzuca sieć do przeszukania, `--bez-szukania` wyłącza całe
+zachowanie. Adres w `_URUCHOM-PANEL.bat` jest tylko podpowiedzią na start.
+
+Najlepiej i tak **zarezerwować sterownikowi stały adres w routerze** — wtedy
+nic nie musi niczego szukać.
+
 ### Logowanie do sterownika
 
 Sterownik nie oddaje danych bez zalogowania. Załóż obok skryptu plik
