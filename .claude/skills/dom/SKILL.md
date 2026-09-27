@@ -201,8 +201,24 @@ diagnozie sieciowej sprawdzaj, czy narzędzie nie patrzy na ten adres.
 Zamiast listy dzierżaw z routera używaj **`dom/siec.py`** — przeczesuje sieć
 i wypisuje adresy, MAC-i i otwarte porty.
 
-**Domofon** ma trzy urządzenia z zapisanymi na sztywno adresami (`.8`, `.205`,
-`.210`); po przetasowaniu adresów pokazuje „offline" i błąd 10200 na monitorze.
+### Domofon Hikvision
+
+| Urządzenie | Adres | Uwagi |
+|---|---|---|
+| Monitor **DS-KH6320-WTE1** | `192.168.88.8` (statyczny) | MAC `a4:d5:c2:41:08:6e`, firmware V2.2.96 |
+| Stacja przy furtce (seria **DS-KD**) | `192.168.88.18` | MAC `a4:e8:8d:31:19:97`, **na DHCP — do przestawienia na statyczny** |
+
+Błąd **10200** na monitorze i „urządzenie offline" w aplikacji brały się stąd, że
+monitor miał wpisaną stację pod `192.168.88.210`, a ta przeniosła się na `.18`.
+Poprawia się to w monitorze: **Zarządzanie urządzeniami → Główny panel wejściowy
+(Seria D)**. Pola są tam wyszarzone, dopóki nie wejdzie się w tryb konfiguracji
+(ikona klucza na prawym pasku, hasło fabryczne `888999` — osobne od hasła `admin`
+do panelu WWW).
+
+Rozpoznawanie urządzeń: port **554 (RTSP)** i **8000** to kamery i domofony.
+Do zmiany adresów służy **SADP** Hikvisiona. **Nie resetuj** monitora ani stacji —
+kasuje to powiązania, kody otwierania i konta.
+
 Ta sama choroba co przy pompie, ten sam lek: stałe adresy.
 
 ## Otwarte wątki
