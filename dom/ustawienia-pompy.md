@@ -55,6 +55,35 @@ Spisany przed sezonem, do porównania w lutym:
 Najważniejszy jest przyrost biwalencji: grzałka robi kilowatogodzinę ciepła
 z kilowatogodziny prądu, pompa z jednej trzeciej.
 
+## 27.09.2026 — pierwsze tygodnie sezonu
+
+**Próg końca sezonu grzewczego: 14,5 → 12,8 °C**, zmienione świadomie przez
+Jacka. Sezon rusza, gdy średnia zewnętrzna spadnie poniżej progu — niższy próg
+odsuwa start o jakieś dwa tygodnie (z początku na połowę października). Dom przy
+średniej 15 °C trzyma 21,8 °C bez grzania, więc zwłoka nic nie kosztuje
+w komforcie, a oszczędza.
+
+**Nastawa pokojowa:** 20 września podniesiona z letnich 15,3 na 21 °C, ale
+27 września sterownik pokazuje **19,4**. Wartość do ustalenia i zapisania tutaj,
+gdy Jacek zdecyduje.
+
+### Odczyt licznika
+
+| | 30.08.2026 | 27.09.2026 | przyrost |
+|---|---|---|---|
+| Energia elektryczna | 4506 kWh | 4540 kWh | **+34 kWh / 4 tyg.** |
+
+Nieco ponad kilowatogodzina na dobę, przy ogrzewaniu jeszcze nieruszonym — to
+jest koszt samej ciepłej wody i punkt odniesienia dla pierwszego miesiąca
+z grzaniem.
+
+### Sprawy techniczne
+
+Sterownik zmienił adres w sieci (9 → 8 → 23) i przez trzy tygodnie panel nie
+zbierał danych — stąd dziura w historii od 2 do 27 września. Odnalazł się
+dopiero po adresie MAC (`f8:dc:7a:7d:24:89`). Panel robi to teraz sam.
+**Rezerwacja adresu w routerze wciąż niezrobiona** i to ona usunęłaby przyczynę.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
