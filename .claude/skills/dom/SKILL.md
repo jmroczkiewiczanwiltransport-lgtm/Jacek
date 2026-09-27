@@ -206,18 +206,31 @@ i wypisuje adresy, MAC-i i otwarte porty.
 | Urządzenie | Adres | Uwagi |
 |---|---|---|
 | Monitor **DS-KH6320-WTE1** | `192.168.88.8` (statyczny) | MAC `a4:d5:c2:41:08:6e`, firmware V2.2.96 |
-| Stacja przy furtce (seria **DS-KD**) | `192.168.88.18` | MAC `a4:e8:8d:31:19:97`, **na DHCP — do przestawienia na statyczny** |
+| Stacja przy furtce **DS-KV8113-WME1(C)** | `192.168.88.210` | nr seryjny `FW5799425`, firmware V2.2.65 build 231213, **do przestawienia na statyczny** |
 
-Błąd **10200** na monitorze i „urządzenie offline" w aplikacji brały się stąd, że
-monitor miał wpisaną stację pod `192.168.88.210`, a ta przeniosła się na `.18`.
-Poprawia się to w monitorze: **Zarządzanie urządzeniami → Główny panel wejściowy
-(Seria D)**. Pola są tam wyszarzone, dopóki nie wejdzie się w tryb konfiguracji
-(ikona klucza na prawym pasku, hasło fabryczne `888999` — osobne od hasła `admin`
-do panelu WWW).
+Urządzenie pod `192.168.88.18` (MAC `a4:e8:8d:31:19:97`, porty 554 i 8000) to
+**nie** stacja przy furtce — prawdopodobnie osobna kamera, do zidentyfikowania.
+Wcześniejsza hipoteza, że stacja przeniosła się na `.18`, była błędna: kreator
+monitora sam wykrył stację pod `.210`, czyli pod adresem, który monitor miał
+wpisany od początku.
+
+Błąd **10200** na monitorze i „urządzenie offline" w aplikacji: obraz wrócił
+dopiero po tym, jak Jacek zresetował monitor do ustawień fabrycznych (wbrew
+ostrzeżeniu) i przeszedł kreator od nowa. W kreatorze, na ekranie **8/9
+„Ustawienia panelu wejściowego"**, monitor sam znajduje stację — trzeba ją
+zaznaczyć i zatwierdzić, nie wpisywać adresu ręcznie. Po resecie monitor wraca
+na `192.168.88.64` albo `192.168.1.64`; własny adres ustawia się w kroku 3/9
+(„Lokalny adres IP") — uwaga, żeby nie wpisać tam adresu innego urządzenia.
+
+Poza kreatorem adres stacji poprawia się w: **Zarządzanie urządzeniami →
+Główny panel wejściowy (Seria D)**. Pola są wyszarzone, dopóki nie wejdzie się
+w tryb konfiguracji (ikona klucza na prawym pasku, hasło fabryczne `888999` —
+osobne od hasła `admin` do panelu WWW).
 
 Rozpoznawanie urządzeń: port **554 (RTSP)** i **8000** to kamery i domofony.
-Do zmiany adresów służy **SADP** Hikvisiona. **Nie resetuj** monitora ani stacji —
-kasuje to powiązania, kody otwierania i konta.
+Do zmiany adresów służy **SADP** Hikvisiona (instalator potrafi sypnąć „NSIS
+Error" — trzeba rozpakować cały ZIP poza OneDrive). **Nie resetuj** monitora ani
+stacji — kasuje to powiązania, kody otwierania i konta.
 
 Ta sama choroba co przy pompie, ten sam lek: stałe adresy.
 
