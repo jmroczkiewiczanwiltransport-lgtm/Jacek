@@ -185,9 +185,10 @@ async function odswiez() {
   if (z.dzis !== undefined) {
     kafle.append(kafel('Zużycie dziś', z.dzis.toFixed(1), 'kWh',
       z.wczoraj !== undefined ? `wczoraj ${z.wczoraj.toFixed(1)} kWh` : 'od północy'));
-  } else if (z.od_poczatku_zapisu !== undefined) {
-    kafle.append(kafel('Zużycie', z.od_poczatku_zapisu.toFixed(1), 'kWh',
-      `od ${z.zapis_od} — pełna doba dopiero jutro`));
+  } else if (z.od_odczytu !== undefined) {
+    // Po przerwie w zapisie nie udajemy doby — mówimy, od kiedy liczymy.
+    kafle.append(kafel('Zużycie', z.od_odczytu.toFixed(1), 'kWh',
+      `od ${z.odczyt_z} — to nie jest doba`));
   }
   if (produkcja !== null) {
     kafle.append(kafel('Z paneli', produkcja.toFixed(1), 'kW',

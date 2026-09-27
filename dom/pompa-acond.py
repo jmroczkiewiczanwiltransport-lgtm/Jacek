@@ -726,22 +726,29 @@ def _zuzycie_z_licznika(plik):
     if not odczyty:
         return {}
 
+    # Odczyt sprzed północy jest punktem odniesienia tylko wtedy, gdy naprawdę
+    # jest sprzed północy — a nie sprzed trzech tygodni. Po przerwie w zapisie
+    # (pompa nieosiągalna, komputer wyłączony) najbliższy wcześniejszy odczyt
+    # bywa sprzed miesiąca i różnica wobec niego nie jest zużyciem dobowym.
+    LUKA = timedelta(hours=6)
+
     polnoc = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     ostatni_przed = lambda chwila: next(
-        (w for c, w in reversed(odczyty) if c < chwila), None)
+        ((c, w) for c, w in reversed(odczyty) if c < chwila), None)
 
     wynik = {}
-    stan_o_polnocy = ostatni_przed(polnoc)
-    if stan_o_polnocy is not None:
-        wynik['dzis'] = round(odczyty[-1][1] - stan_o_polnocy, 1)
-        wczorajsza_polnoc = ostatni_przed(polnoc - timedelta(days=1))
-        if wczorajsza_polnoc is not None:
-            wynik['wczoraj'] = round(stan_o_polnocy - wczorajsza_polnoc, 1)
+    o_polnocy = ostatni_przed(polnoc)
+    if o_polnocy and polnoc - o_polnocy[0] <= LUKA:
+        wynik['dzis'] = round(odczyty[-1][1] - o_polnocy[1], 1)
+        wczoraj = ostatni_przed(polnoc - timedelta(days=1))
+        if wczoraj and (polnoc - timedelta(days=1)) - wczoraj[0] <= LUKA:
+            wynik['wczoraj'] = round(o_polnocy[1] - wczoraj[1], 1)
     else:
-        # Pierwszy dzień zbierania: nie ma stanu sprzed północy, więc mówimy
-        # tylko tyle, ile naprawdę wiemy — przyrost od początku zapisu.
-        wynik['od_poczatku_zapisu'] = round(odczyty[-1][1] - odczyty[0][1], 1)
-        wynik['zapis_od'] = odczyty[0][0].strftime('%H:%M')
+        # Nie ma czym zmierzyć doby. Mówimy tylko to, co wiemy na pewno:
+        # o ile licznik urósł od ostatniego zapisu i z kiedy on pochodzi.
+        poczatek = o_polnocy or odczyty[0]
+        wynik['od_odczytu'] = round(odczyty[-1][1] - poczatek[1], 1)
+        wynik['odczyt_z'] = poczatek[0].strftime('%d.%m %H:%M')
     return wynik
 
 
