@@ -347,8 +347,14 @@ panel przestaje odpowiadać, historia się urywa, sterowanie nie działa, a
 przyczyna jest zupełnie gdzie indziej.
 
 Panel radzi sobie z tym sam. Gdy pompa nie odpowiada pod znanym adresem,
-przeczesuje sieć domową, rozpoznaje sterownik po stronie `SYSWWW/LOGIN.XML`
-i zapamiętuje nowy adres w `adres-pompy.txt`. Skanuje najwyżej raz na pięć
+przeczesuje sieć domową i zapamiętuje nowy adres w `adres-pompy.txt` — razem
+z **adresem MAC** sterownika, w drugiej linijce.
+
+MAC jest tu ważniejszy niż cokolwiek innego: na DHCP zmienia się adres IP, MAC
+nigdy. Przeczesanie sieci wypełnia tablicę ARP systemu, więc znając MAC wiemy,
+pod jakim adresem stoi pompa — **nawet gdy jej serwer WWW nie odpowiada**.
+Dopiero gdy MAC-u jeszcze nie znamy, rozpoznajemy sterownik po treści: stronie
+logowania, ciasteczku `SoftPLC`, odmowie dostępu. Skanuje najwyżej raz na pięć
 minut — 254 połączenia to nie jest coś, co warto robić w pętli. Po restarcie
 zaczyna od zapamiętanego adresu, więc nie szuka po próżnicy.
 

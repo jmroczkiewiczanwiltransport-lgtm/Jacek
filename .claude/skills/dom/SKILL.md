@@ -16,7 +16,7 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 
 | Co | Adres | Uwagi |
 |---|---|---|
-| Pompa ciepła ACOND THERM | `192.168.88.8` (DHCP — bywa inny) | sterownik Tecomat Foxtrot, sw 160.36; ETH1 `192.168.134.176` to osobna sieć, nie ruszać |
+| Pompa ciepła ACOND THERM | adres z DHCP, zmienny (bywało `.9`, `.8`, `.23`) | MAC **`f8:dc:7a:7d:24:89`** — po nim się ją znajduje; sterownik Tecomat Foxtrot, sw 160.36; ETH1 `192.168.134.176` to osobna sieć, nie ruszać |
 | Mostek Philips Hue | `192.168.88.10` | sparowany, klucz w `~/.hue-most.json` |
 | Komputer Jacka (Windows 11) | `192.168.88.18` | laptop, bywa poza domem |
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
@@ -58,6 +58,12 @@ wychodzę na świat" zwracało właśnie ten adres, więc panel wypisywał go ja
 do wpisania w telefonie — i telefon nigdy nie mógł trafić. `_adres_lokalny()`
 wybiera teraz spośród adresów RFC 1918. Warto o tym pamiętać przy każdej diagnozie
 sieciowej na tym komputerze.
+
+**Sterownika szuka się po MAC-u, nie po adresie.** Adres zmieniał się już trzy
+razy (`.9` → `.8` → `.23`). We wrześniu 2026 doszło do tego, że pod starym adresem
+odpowiadał ping, ale żaden port nie był otwarty — bo adres przejęło inne
+urządzenie. Rozstrzygnęło dopiero `arp -a | findstr /i "f8-dc-7a"`. Zaczynaj od
+tego, zanim zaczniesz podejrzewać awarię pompy, zaporę albo swój kod.
 
 **Adres sterownika się zmienia.** ETH2 stoi na DHCP i router przydzielił mu we
 wrześniu 2026 `.8` zamiast `.9`. Objawy wyglądają jak awaria pompy: panel milczy,

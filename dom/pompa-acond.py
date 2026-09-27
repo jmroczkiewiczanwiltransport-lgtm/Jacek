@@ -31,6 +31,7 @@ import json
 import os
 import re
 import socket
+import subprocess
 import sys
 import time
 import unicodedata
@@ -177,37 +178,94 @@ def _adres_lokalny():
 
 
 def zapamietany_adres():
+    """Ostatni działający adres sterownika."""
+    return (_zapamietane() or [None])[0]
+
+
+def zapamietany_mac():
+    """Adres MAC sterownika — po nim odnajdziemy go pod każdym nowym adresem."""
+    zapis = _zapamietane()
+    return zapis[1] if len(zapis) > 1 else None
+
+
+def _zapamietane():
     try:
         with open(PLIK_ADRESU, encoding='utf-8') as f:
-            return f.read().strip() or None
+            return [w.strip() for w in f if w.strip()]
     except OSError:
-        return None
+        return []
 
 
-def zapamietaj_adres(url):
+def zapamietaj_adres(url, mac=None):
+    """Zapisuje adres, a pod nim MAC — dwie linijki, żeby dało się czytać okiem."""
+    if mac is None:
+        czesci = urllib.parse.urlsplit(url if '//' in url else 'http://' + url)
+        mac = _mac_dla(czesci.hostname or '') or zapamietany_mac()
     try:
         with open(PLIK_ADRESU, 'w', encoding='utf-8') as f:
             f.write(url + '\n')
+            if mac:
+                f.write(mac + '\n')
     except OSError:
         pass                                   # brak zapisu nie może psuć odczytu
+
+
+# Po czym poznajemy Tecomata w treści odpowiedzi.
+ZNAKI_STEROWNIKA = (b'<LOGIN', b'__T', b'ACOND', b'SoftPLC', b'PLCFORM', b'x-tecomat')
 
 
 def _to_sterownik(adres, port, limit):
     """Czy pod tym adresem odpowiada Tecomat, a nie przypadkowy serwer WWW?
 
-    Rozpoznajemy po stronie logowania — `SYSWWW/LOGIN.XML` jest na tyle
-    charakterystyczna, że nie pomylimy jej z drukarką czy routerem."""
+    Pierwsza wersja patrzyła wyłącznie na treść strony i przegapiła sterownik
+    stojący tuż przed nią. Bez sesji sterownik odpowiada rozmaicie — raz stroną
+    logowania, raz odmową — więc bierzemy pod uwagę także ciasteczko `SoftPLC`,
+    które nadaje przy każdym zapytaniu, i samą odmowę dostępu."""
     otwieracz = urllib.request.build_opener()  # osobny, żeby nie mieszać ciasteczek
-    for sciezka in ('/SYSWWW/LOGIN.XML', '/PAGE115.XML'):
+    for sciezka in ('/SYSWWW/LOGIN.XML', '/PAGE115.XML', '/'):
         zadanie = urllib.request.Request(f'http://{adres}:{port}{sciezka}', headers=_NAGLOWKI)
         try:
             with otwieracz.open(zadanie, timeout=limit) as odpowiedz:
-                tresc = _rozpakuj(odpowiedz.read(2048), odpowiedz.headers.get('Content-Encoding', ''))
+                naglowki = odpowiedz.headers
+                tresc = _rozpakuj(odpowiedz.read(16384),
+                                  naglowki.get('Content-Encoding', ''))
+        except urllib.error.HTTPError as powod:
+            # Sterownik broniący dostępu to wciąż sterownik.
+            if powod.code in (401, 403):
+                return True
+            continue
         except (urllib.error.URLError, OSError):
             continue
-        if b'<LOGIN' in tresc or b'__T' in tresc:
+        if 'SoftPLC' in (naglowki.get('Set-Cookie') or ''):
+            return True
+        if any(znak in tresc for znak in ZNAKI_STEROWNIKA):
             return True
     return False
+
+
+def _tablica_arp():
+    """Mapa {MAC: adres IP} z tablicy ARP systemu.
+
+    Adres MAC jest jedyną rzeczą, która przy sterowniku na DHCP się nie zmienia,
+    więc gdy raz go poznamy, odnalezienie pompy przestaje zależeć od tego, czy
+    jej serwer WWW akurat odpowiada."""
+    try:
+        wynik = subprocess.run(['arp', '-a'], capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return {}
+    mapa = {}
+    wzor = re.compile(r'(\d{1,3}(?:\.\d{1,3}){3}).*?((?:[0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2})')
+    for linia in wynik.stdout.splitlines():
+        trafienie = wzor.search(linia)
+        if trafienie:
+            mac = trafienie.group(2).lower().replace('-', ':')
+            mapa[mac] = trafienie.group(1)
+    return mapa
+
+
+def _mac_dla(adres):
+    """Adres MAC urządzenia o tym adresie IP, jeśli system go zna."""
+    return next((mac for mac, ip in _tablica_arp().items() if ip == adres), None)
 
 
 def znajdz_sterownik(wzor_url, siec=None, limit=0.6, mow=False):
@@ -245,10 +303,23 @@ def znajdz_sterownik(wzor_url, siec=None, limit=0.6, mow=False):
     for w in watki:
         w.join()
 
+    zlozenie = (lambda a: f'http://{a}:{port}{sciezka}' if port != 80
+                else f'http://{a}{sciezka}')
+
+    # Najpierw po adresie MAC: pukanie po całej sieci wypełniło tablicę ARP,
+    # więc jeśli znamy MAC sterownika, wiemy o nim więcej niż z jakiejkolwiek
+    # strony — i wiemy to nawet wtedy, gdy jego serwer WWW akurat nie odpowiada.
+    mac = zapamietany_mac()
+    if mac:
+        znaleziony_adres = _tablica_arp().get(mac)
+        if znaleziony_adres:
+            if mow:
+                print(f'Rozpoznałem sterownik po adresie MAC: {znaleziony_adres}')
+            return zlozenie(znaleziony_adres)
+
     for adres in sorted(otwarte, key=lambda a: int(a.rsplit('.', 1)[1])):
-        if _to_sterownik(adres, port, max(limit, 2.0)):
-            znaleziony = f'http://{adres}:{port}{sciezka}' if port != 80 \
-                else f'http://{adres}{sciezka}'
+        if _to_sterownik(adres, port, max(limit, 3.0)):
+            znaleziony = zlozenie(adres)
             if mow:
                 print(f'Znalazłem sterownik: {znaleziony}')
             return znaleziony
@@ -338,15 +409,17 @@ def _pobierz(url, limit, ciasteczko, uzytkownik, haslo, jak_panel=False):
 
 def _rozpakuj(surowe, kodowanie):
     """Sterownik potrafi spakować odpowiedź, nawet gdy o to nie prosimy."""
+    # Przy urwanym strumieniu (czytamy czasem tylko początek odpowiedzi)
+    # gzip rzuca EOFError, a to nie jest OSError — stąd szeroki wyjątek.
     if surowe[:2] == b'\x1f\x8b' or 'gzip' in kodowanie.lower():
         try:
             return gzip.decompress(surowe)
-        except OSError:
+        except Exception:                                        # noqa: BLE001
             pass
     if 'deflate' in kodowanie.lower():
         try:
             return zlib.decompress(surowe, -zlib.MAX_WBITS)
-        except zlib.error:
+        except Exception:                                        # noqa: BLE001
             pass
     return surowe
 
