@@ -18,6 +18,13 @@ echo   Panel zamieszka w:
 echo     %DOCEL%
 echo.
 
+rem  Zatrzymujemy panel, zanim podmienimy pliki. Bez tego stary proces trzyma
+rem  port 8125, nowy nie ma gdzie wstac i po cichu pada — a uzytkownik widzi
+rem  stara wersje i slusznie mysli, ze instalacja nic nie dala.
+echo   Zatrzymuje dzialajacy panel, jesli jakis chodzi...
+powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*pompa-acond.py*panel*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>&1
+echo.
+
 if not exist "%DOCEL%" mkdir "%DOCEL%"
 
 rem  Pliki programu — te nadpisujemy zawsze, to jest właśnie aktualizacja.

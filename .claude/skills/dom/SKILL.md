@@ -208,6 +208,9 @@ neutralnego albo oparcie regulacji na krzywej grzewczej.
   Tecomat (z prawdziwą procedurą logowania) i falownika SUN2000. Zmiany w pobieraniu
   danych albo w logowaniu sprawdzaj na nich, zanim każesz Jackowi cokolwiek uruchamiać
   — on ma jedno urządzenie i nie ma jak wrócić do stanu sprzed.
+- **Po aktualizacji sprawdź, czy chodzi nowa wersja.** Panel trzyma port 8125;
+  jeśli stary proces nie zostanie zatrzymany, nowy nie wstanie i użytkownik widzi
+  starą wersję mimo udanej instalacji. Instalator zatrzymuje go teraz sam.
 - **Nigdy nie nadpisuj danych użytkownika.** `logowanie.txt`, `opisy-panelu.json`
   i `dane-pompy.csv` to jego rzeczy; instalator kopiuje je tylko, gdy ich nie ma.
   Historia zbierana przez miesiące jest nie do odtworzenia.
