@@ -801,6 +801,12 @@ def panel(argumenty):
     adres_pompy = [zapamietany_adres() or argumenty.host]
     ostatnie_szukanie = [0.0]
 
+    # Liczniki (motogodziny, energia) rosną wolno i siedzą na innych stronach
+    # niż bieżące odczyty. Spisujemy je raz na dobę — dzięki temu przyrost za
+    # miesiąc jest gotowy sam, bez przepisywania liczb z ekranu sterownika.
+    odstep_licznikow = max(0, argumenty.co_liczniki) * 3600
+    ostatnie_liczniki = [0.0]
+
     def czytaj_pompe(limit=8):
         """Czyta pompę; gdy nie odpowiada pod znanym adresem, szuka jej w sieci."""
         proby, zapisany = [adres_pompy[0]], zapamietany_adres()
@@ -931,6 +937,16 @@ def panel(argumenty):
                 zmienne = czytaj_pompe()
                 if opisy:
                     _dopisz_odczyt(plik_danych, zmienne, opisy)
+                if odstep_licznikow and \
+                        time.monotonic() - ostatnie_liczniki[0] >= odstep_licznikow:
+                    ostatnie_liczniki[0] = time.monotonic()
+                    baza = re.sub(r'/PAGE\d+\.XML$', '', adres_pompy[0].rstrip('/'), flags=re.I)
+                    spis = czytaj_liczniki(baza, (115, 121), argumenty.uzytkownik,
+                                           argumenty.haslo, argumenty.ciasteczko)
+                    if spis:
+                        dopisz_liczniki(PLIK_LICZNIKOW, spis)
+                        print(f'{datetime.now():%H:%M:%S}  spisałem liczniki '
+                              f'({len(spis)} liczb) do {PLIK_LICZNIKOW}', flush=True)
                 if milczy_od:
                     print(f'{datetime.now():%H:%M:%S}  pompa znów odpowiada '
                           f'(cisza od {milczy_od:%H:%M})', flush=True)
@@ -966,6 +982,49 @@ def panel(argumenty):
         print('\nZamykam panel.')
 
 
+PLIK_LICZNIKOW = os.path.join(KATALOG, 'liczniki.csv')
+
+
+def czytaj_liczniki(baza, numery, uzytkownik=None, haslo=None, ciasteczko=None,
+                    limit=8, mow=False):
+    """Zbiera wszystkie liczby z podanych stron sterownika.
+
+    Klucz to „numer strony : nazwa zmiennej", bo ta sama nazwa potrafi wystąpić
+    na dwóch stronach i znaczyć co innego."""
+    zmienne = {}
+    for numer in numery:
+        try:
+            ze_strony = pobierz_strone(f'{baza}/PAGE{numer}.XML', uzytkownik, haslo,
+                                       limit=limit, ciasteczko=ciasteczko)
+        except OSError as powod:
+            if mow:
+                print(f'   PAGE{numer}: {powod}')
+            continue
+        for nazwa, wartosc in ze_strony.items():
+            if liczba(wartosc) is not None:
+                zmienne[f'{numer}:{nazwa}'] = wartosc
+    return zmienne
+
+
+def _kolumny_licznikow(plik, zmienne):
+    """Kolumny pliku liczników — z nagłówka, gdy plik już istnieje."""
+    if os.path.exists(plik):
+        with open(plik, encoding='utf-8') as f:
+            return f.readline().rstrip('\n').split(';')[1:], False
+    return sorted(zmienne), True
+
+
+def dopisz_liczniki(plik, zmienne, chwila=None):
+    """Dokłada do pliku jeden komplet odczytów liczników."""
+    kolumny, nowy = _kolumny_licznikow(plik, zmienne)
+    with open(plik, 'a', encoding='utf-8') as f:
+        if nowy:
+            f.write(';'.join(['czas'] + kolumny) + '\n')
+        f.write(';'.join([(chwila or datetime.now()).strftime('%Y-%m-%d %H:%M:%S')]
+                         + [str(zmienne.get(k, '')).strip() for k in kolumny]) + '\n')
+    return kolumny
+
+
 def liczniki(argumenty):
     """Spisuje liczniki pompy i pokazuje, o ile urosły od ostatniego razu.
 
@@ -976,41 +1035,26 @@ def liczniki(argumenty):
     numery = [int(x) for x in (argumenty.strony or '115,121').split(',')]
     opisy = wczytaj_opisy_panelu()
 
-    zmienne = {}
-    for numer in numery:
-        try:
-            strona_zmienne = pobierz_strone(f'{baza}/PAGE{numer}.XML', argumenty.uzytkownik,
-                                            argumenty.haslo, limit=8,
-                                            ciasteczko=argumenty.ciasteczko)
-        except OSError as powod:
-            print(f'   PAGE{numer}: {powod}')
-            continue
-        for nazwa, wartosc in strona_zmienne.items():
-            if liczba(wartosc) is not None:
-                zmienne[f'{numer}:{nazwa}'] = wartosc
+    zmienne = czytaj_liczniki(baza, numery, argumenty.uzytkownik, argumenty.haslo,
+                              argumenty.ciasteczko, mow=True)
     if not zmienne:
         raise SystemExit('Nie odczytałem żadnej liczby. Sprawdź adres i zalogowanie.')
 
-    plik = argumenty.plik or os.path.join(KATALOG, 'liczniki.csv')
+    plik = argumenty.plik or PLIK_LICZNIKOW
     poprzedni = None
-    if os.path.exists(plik):
+    kolumny, nowy = _kolumny_licznikow(plik, zmienne)
+    if not nowy:
         with open(plik, encoding='utf-8') as f:
-            naglowek = f.readline().rstrip('\n').split(';')
+            f.readline()
             wiersze = [w.rstrip('\n').split(';') for w in f if w.strip()]
-        kolumny = naglowek[1:]
         if wiersze:
             poprzedni = (wiersze[-1][0], dict(zip(kolumny, wiersze[-1][1:])))
     else:
-        kolumny = sorted(zmienne)
-        with open(plik, 'w', encoding='utf-8') as f:
-            f.write(';'.join(['czas'] + kolumny) + '\n')
         print(f'Zakładam {plik} — pierwszy odczyt, nie ma jeszcze z czym porównywać.\n')
 
     teraz = datetime.now()
     if not argumenty.tylko_podsumuj:
-        with open(plik, 'a', encoding='utf-8') as f:
-            f.write(';'.join([teraz.strftime('%Y-%m-%d %H:%M:%S')]
-                             + [str(zmienne.get(k, '')).strip() for k in kolumny]) + '\n')
+        kolumny = dopisz_liczniki(plik, zmienne, teraz)
 
     nazwa_ludzka = lambda klucz: opisy.get(klucz.split(':', 1)[1], [klucz])[0]
 
@@ -1786,6 +1830,8 @@ def main():
                                        'np. 192.168.88.0/24 (domyślnie: ta, w której jestem)')
     parser.add_argument('--bez-szukania', dest='bez_szukania', action='store_true',
                         help='nie szukaj sterownika w sieci, gdy nie odpowiada')
+    parser.add_argument('--co-liczniki', dest='co_liczniki', type=float, default=24,
+                        help='co ile godzin panel spisuje liczniki (0 wyłącza)')
     parser.add_argument('--co-historia', dest='co_historia', type=float, default=5,
                         help='co ile minut panel dopisuje odczyt do historii (0 wyłącza)')
     parser.add_argument('--tylko-lokalnie', action='store_true',

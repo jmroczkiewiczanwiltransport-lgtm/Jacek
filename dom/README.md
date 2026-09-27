@@ -339,6 +339,23 @@ Sterujemy wyłącznie tym, co jest w tabeli `STEROWANIE`. Panel po sieci podaje
 zapisać dowolny parametr sterownika, łącznie z tymi, których cofnięcie wymaga
 serwisu. Zakres nastawy jest dodatkowo ograniczony w kodzie (15–24 °C).
 
+### Liczniki spisują się same
+
+Motogodziny sprężarki, biwalencji i CWU siedzą na innych stronach sterownika niż
+bieżące odczyty, więc nie trafiają do `dane-pompy.csv`. Panel czyta je **raz na
+dobę** ze stron 115 i 121 i dopisuje do `liczniki.csv` — dzięki temu przyrost za
+miesiąc jest gotowy bez przepisywania liczb z ekranu sterownika. Odstęp zmienia
+`--co-liczniki <godziny>`, `0` wyłącza.
+
+Porównanie z poprzednim odczytem pokazuje jak zawsze:
+
+```bash
+python3 pompa-acond.py liczniki http://<adres>/PAGE115.XML
+```
+
+Najważniejszy jest przyrost biwalencji: grzałka robi kilowatogodzinę ciepła
+z kilowatogodziny prądu, pompa z jednej trzeciej.
+
 ### Gdy sterownik zmieni adres
 
 Sterownik stoi na DHCP i router potrafi mu zmienić adres — zdarzyło się to
