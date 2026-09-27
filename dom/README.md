@@ -339,6 +339,23 @@ Sterujemy wyłącznie tym, co jest w tabeli `STEROWANIE`. Panel po sieci podaje
 zapisać dowolny parametr sterownika, łącznie z tymi, których cofnięcie wymaga
 serwisu. Zakres nastawy jest dodatkowo ograniczony w kodzie (15–24 °C).
 
+### Kto jest w sieci — `siec.py`
+
+```bash
+python3 siec.py                    # sieć, w której jestem
+python3 siec.py 192.168.88.0/24
+```
+
+Wypisuje wszystkie urządzenia w sieci domowej: adres, MAC, otwarte porty
+i domysł, czym to jest. Powstało, bo lista dzierżaw DHCP w routerze bywa
+niedostępna — hasła do panelu nie zawsze się ma — a to samo widać od strony
+sieci: pukamy do każdego adresu, a system zapamiętuje adresy MAC w tablicy ARP.
+
+Przydaje się wszędzie tam, gdzie urządzenie „zniknęło": pompa, domofon, kamery,
+mostek Hue. **MAC nie zmienia się nigdy**, więc raz zapisany pozwala rozpoznać
+sprzęt, choćby jutro dostał inny numer. Kamery i domofony poznaje się po porcie
+554 (RTSP).
+
 ### Liczniki spisują się same
 
 Motogodziny sprężarki, biwalencji i CWU siedzą na innych stronach sterownika niż

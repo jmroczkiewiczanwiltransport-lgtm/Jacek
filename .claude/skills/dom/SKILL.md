@@ -186,6 +186,25 @@ neutralnego albo oparcie regulacji na krzywej grzewczej.
 
 **Nastawa pokojowa podniesiona 20.09.2026 z letnich 15,3 na 21 °C.**
 
+## Sieć domowa
+
+Router: **TP-Link HX520** (Aginet, mesh AP), `192.168.88.1`, MAC `0c:ef:15:88:5a:4b`,
+WiFi `TP-Link_5A4B`. Do tego wzmacniacz **RE205** (`5c:a6:e6:67:02:62`).
+**Hasła do panelu routera nikt nie zna** — nie ma go na naklejce, ustawił je ten,
+kto konfigurował sieć (adresacja `192.168.88.x` nie jest fabryczna dla TP-Linka).
+Bez hasła nie ma rezerwacji DHCP, więc adresy będą się przesuwać dalej.
+**Nie resetuj routera** — padłoby WiFi i wszystkie urządzenia dostałyby nowe adresy naraz.
+
+Na laptopie działa VPN z bramą `26.0.0.1` obok domowej `192.168.88.1`. Przy
+diagnozie sieciowej sprawdzaj, czy narzędzie nie patrzy na ten adres.
+
+Zamiast listy dzierżaw z routera używaj **`dom/siec.py`** — przeczesuje sieć
+i wypisuje adresy, MAC-i i otwarte porty.
+
+**Domofon** ma trzy urządzenia z zapisanymi na sztywno adresami (`.8`, `.205`,
+`.210`); po przetasowaniu adresów pokazuje „offline" i błąd 10200 na monitorze.
+Ta sama choroba co przy pompie, ten sam lek: stałe adresy.
+
 ## Otwarte wątki
 
 1. **Panel na komputerze, który zostaje w domu.** Laptop jeździ do pracy, więc
