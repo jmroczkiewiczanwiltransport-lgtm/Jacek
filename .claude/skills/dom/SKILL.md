@@ -232,6 +232,25 @@ Do zmiany adresów służy **SADP** Hikvisiona (instalator potrafi sypnąć „N
 Error" — trzeba rozpakować cały ZIP poza OneDrive). **Nie resetuj** monitora ani
 stacji — kasuje to powiązania, kody otwierania i konta.
 
+**Prawdopodobna przyczyna dawnych awarii — konflikt adresów.** Jacek: „często
+się wywalało, dopiero wyłączenie zasilania pomagało, ale na krótko". To sygnatura
+konfliktu IP. Monitor stoi **na sztywno** pod `192.168.88.8`, a pompa ciepła
+**miała kiedyś ten sam adres** (`.9` → **`.8`** → `.23`, ETH2 na DHCP). Router nie
+wie o ręcznie wpisanym adresie monitora, więc rozdaje `.8` dalej. Reset zasilania
+czyści ARP i jedno urządzenie wygrywa na chwilę — stąd „pomaga, ale na krótko".
+Spójne z tym, że stacja pod `.210` (poza pulą DHCP) nigdy nie sprawiała kłopotu.
+
+Naprawa, kolejność ma znaczenie:
+
+1. **Docelowo** — hasło do routera i rezerwacje DHCP po MAC dla pompy, monitora,
+   stacji, mostka Hue i komputera. Leczy wszystkie urządzenia naraz.
+2. **Awaryjnie**, gdy hasła nie będzie — przestawić monitor ze statycznego `.8`
+   na `192.168.88.211` (obok stacji, poza pulą). Wymaga ponownego dodania
+   monitora w aplikacji, więc nie robić tego pochopnie.
+
+Nie ruszać, dopóki działa i dopóki nie ma czasu na spokojne odtworzenie
+powiązania z aplikacją.
+
 Ta sama choroba co przy pompie, ten sam lek: stałe adresy.
 
 ## Otwarte wątki
