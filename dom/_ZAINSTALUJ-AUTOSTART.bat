@@ -28,7 +28,7 @@ echo.
 if not exist "%DOCEL%" mkdir "%DOCEL%"
 
 rem  Pliki programu — te nadpisujemy zawsze, to jest właśnie aktualizacja.
-for %%p in (pompa-acond.py modbus.py falownik.py panel-pompy.html przypomnienia.py przypomnienia.json opisy-panelu.przyklad.json _URUCHOM-PANEL.bat autostart.szablon.vbs) do (
+for %%p in (pompa-acond.py modbus.py falownik.py siec.py panel-pompy.html przypomnienia.py przypomnienia.json opisy-panelu.przyklad.json _URUCHOM-PANEL.bat autostart.szablon.vbs) do (
   if exist "%%p" copy /y "%%p" "%DOCEL%\" >nul
 )
 
