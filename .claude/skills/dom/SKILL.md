@@ -234,47 +234,104 @@ stacji — kasuje to powiązania, kody otwierania i konta.
 
 ### Skrzynka z alarmem i siecią domofonu
 
-W jednej zamkniętej obudowie siedzą:
+W jednej zamkniętej obudowie:
 
 | Element | Model | Uwagi |
 |---|---|---|
-| Centrala alarmu | **SATEL INTEGRA** | zasilana z transformatora Pulsar **AWT682**, 60 VA |
-| Moduł sieciowy alarmu | **SATEL ETHM-1** | zgłaszał „Brak kabla" i „Brak poł. SATEL2", po 2 razy |
-| Switch PoE | **Hikvision DS-3E0106P-E/M(B)** | naklejka 48 V / 0,8 A; budżet PoE **35 W**, wg producenta zasilanie 54 V / 0,92 A |
-| Akumulator | **ALARMTEC BP18-12**, 12 V 18 Ah | data **2023**, centrala resetuje się przy zaniku 230 V — akumulator nie trzyma |
+| Centrala alarmu | **SATEL INTEGRA 64** | transformator Pulsar **AWT682**, 60 VA |
+| Moduł sieciowy alarmu | **SATEL ETHM-1** | zgłaszał „Brak kabla" i „Brak poł. SATEL2" |
+| Switch PoE | **Hikvision DS-3E0106P-E/M(B)** | 5 gniazd, budżet PoE 35 W |
+| Akumulator | **ALARMTEC BP18-12**, 12 V 18 Ah | data **2023**, centrala resetuje się przy zaniku 230 V |
 
-Switch zasila po PoE stację przy furtce i monitor. Obciążenie ok. 20 W z 35 W —
-**budżet mocy nie jest przekroczony**.
+**Mapa gniazd switcha** (ustalona 28.09.2026 przez wypinanie kabli i obserwację
+pingów — metoda działa bezbłędnie, powtórzyć w razie wątpliwości):
 
-**Objaw.** Stacja `192.168.88.210` znika z sieci, nie wraca sama nigdy, wraca
-dopiero po odcięciu 230 V do skrzynki — i żyje wtedy około **15 minut**. Tak
-jest **od montażu rok temu**, nie jest to zużycie sprzętu. Monitor `.8` przez
-cały czas odpowiada bez potknięcia, więc sieć w domu jest zdrowa.
+| Gniazdo | Co |
+|---|---|
+| 1 | monitor domofonu `192.168.88.8` |
+| 2 | stacja przy furtce `192.168.88.210` — **28.09 przełożona do gniazda 3** |
+| 3 | wolne / po przełożeniu: stacja |
+| 4 | moduł ETHM-1 alarmu |
+| 5 UPLINK | do routera; **wtyk zrobiony fatalnie** — klej, wystające żyłki, do przerobienia |
 
-**Wiodąca hipoteza: przegrzewanie.** Switch PoE stoi w zamkniętej obudowie razem
-z grzejącym transformatorem 60 VA i akumulatorem, bez wentylacji. Kwadrans to
-czas nagrzania obudowy. Wpis alarmu „Brak kabla ETHM-1" wskazuje na ten sam
-switch — gniazdo ETHM-1 nie ma nic wspólnego z PoE ani z domofonem, łączy je
-tylko switch.
+### Domofon — objaw i co już wykluczono
 
-**Test rozstrzygający:** rejestrator pingów przy **otwartych drzwiczkach**
-skrzynki. Przeżycie ponad 15 minut = przegrzewanie, naprawa to wentylacja.
+**Objaw.** Stacja `.210` znika z sieci, nie wraca sama nigdy, wraca po restarcie
+zasilania. Czas życia **zmienny** — bywa 15 minut, bywa dłużej; krócej wieczorem,
+gdy kamera włącza podczerwień. Tak jest **od montażu rok temu**. Monitor `.8`
+odpowiada bez potknięcia przez całą dobę.
 
-### Ślepe uliczki przy domofonie — nie wracać
+**Wykluczone, nie wracać:**
 
-- **Konflikt adresów IP.** Sprawdzone: `arp -a` pokazuje pod `192.168.88.8`
-  MAC monitora `a4-d5-c2-41-08-6e`, nikogo obcego. Teoria obalona.
-- **Urządzenie pod `192.168.88.18`** to **laptop Jacka**, nie kamera.
-- **Wi-Fi stacji.** Urządzenie, które gubi Wi-Fi, wraca samo. Ta stacja nie
-  wraca nigdy. Obalone.
-- **Zasilanie domofonu z centrali alarmu.** Zdjęcie pokazuje, że switch ma
-  własny zasilacz 48 V. Wspólne jest tylko gniazdko 230 V — dlatego jeden
-  kabel kładzie oba systemy.
-- **Konwerter ATTE ETH10-2wire-A-SET** — nazwa padła od Jacka, ale w skrzynce
-  go nie ma. Do wyjaśnienia, czy był na fakturze.
+- **Konflikt adresów IP** — `arp -a` pod `.8` pokazuje MAC monitora, nikogo obcego.
+- **Wi-Fi stacji** — urządzenie, które gubi Wi-Fi, wraca samo. Ta stacja nie wraca.
+- **Zasilanie z centrali alarmu** — switch ma własny zasilacz, wspólne jest tylko
+  gniazdko 230 V.
+- **Budżet PoE** — dioda **PoE-MAX na switchu jest zgaszona** przez cały czas
+  awarii (film przejrzany klatka po klatce). Mruganie oznaczałoby granicę mocy.
+- **Przegrzewanie obudowy** — test przy **otwartych drzwiczkach** 28.09: stacja
+  padła mimo otwartej skrzynki.
+- **Nieznana kamera pod `.24`** — to **ten sam monitor** po Wi-Fi (identyczny
+  numer seryjny i BootTime co `.8`, MAC FN-LINK = moduł Wi-Fi). Wi-Fi monitora
+  wyłączone 28.09.
+
+**Zostało do sprawdzenia:** gniazdo w switchu (stacja przełożona na 3, test
+nocny), kabel do bramy, sama stacja.
+
+**Stacja ma stary firmware** — `V2.2.65 build 231213`, monitor `V2.2.96 build
+241111`. Aktualizacja stacji to pierwsza darmowa rzecz do zrobienia, bo
+zawieszanie się to typowy błąd łatany w kolejnych wersjach.
+
+### Domofon — narzędzia diagnostyczne, które się sprawdziły
+
+**Restart stacji bez gaszenia alarmu:** wyjąć jej kabel z switcha na 10 sekund.
+Stacja jest zasilana po PoE, więc to dla niej pełny restart. Potwierdzone przez
+`BootTime` w odpowiedzi SADP.
+
+**Rejestrator pingów** — wklejany do PowerShell, zapisuje do pliku:
+
+```powershell
+while ($true) {
+  $t = Get-Date -Format "HH:mm:ss"
+  $m = if (Test-Connection 192.168.88.8   -Count 1 -Quiet) {"OK "} else {"BRAK"}
+  $f = if (Test-Connection 192.168.88.210 -Count 1 -Quiet) {"OK "} else {"BRAK"}
+  $r = if (Test-Connection 192.168.88.1   -Count 1 -Quiet) {"OK "} else {"BRAK"}
+  $i = if (Test-Connection 8.8.8.8        -Count 1 -Quiet) {"OK "} else {"BRAK"}
+  "$t  monitor=$m  furtka=$f  router=$r  internet=$i" | Tee-Object -Append "$env:USERPROFILE\domofon.log"
+  Start-Sleep 10
+}
+```
+
+Kolumny z routerem i internetem są po to, żeby nie obwiniać sprzętu za czkawkę
+łącza — wpisy alarmu „Brak połączenia z serwerem SATEL" okazały się właśnie tym.
+
+**SADP w jednej linii** — zastępuje narzędzie Hikvisiona (którego instalator sypie
+„NSIS Error"). Zwraca model, numer seryjny, firmware, MAC i **BootTime** każdego
+urządzenia Hikvisiona w sieci, bez hasła:
+
+```powershell
+$a=[Net.IPAddress]::Parse("239.255.255.250"); $u=New-Object Net.Sockets.UdpClient; $u.Client.SetSocketOption([Net.Sockets.SocketOptionLevel]::Socket,[Net.Sockets.SocketOptionName]::ReuseAddress,$true); $u.Client.Bind((New-Object Net.IPEndPoint([Net.IPAddress]::Any,37020))); $u.JoinMulticastGroup($a); $x='<?xml version="1.0" encoding="utf-8"?><Probe><Uuid>'+[guid]::NewGuid().ToString()+'</Uuid><Types>inquiry</Types></Probe>'; $b=[Text.Encoding]::UTF8.GetBytes($x); [void]$u.Send($b,$b.Length,(New-Object Net.IPEndPoint($a,37020))); $k=(Get-Date).AddSeconds(8); while((Get-Date) -lt $k){ if($u.Available -gt 0){ $e=New-Object Net.IPEndPoint([Net.IPAddress]::Any,0); $d=$u.Receive([ref]$e); "--- $($e.Address) ---"; [Text.Encoding]::UTF8.GetString($d) }; Start-Sleep -Milliseconds 150 }; $u.Close(); "koniec"
+```
+
+**Uwaga przy wklejaniu do PowerShell:** wieloliniowe bloki potrafią się rozjechać
+i pierwsze linie giną. Przy dłuższych poleceniach dawać wszystko **w jednej
+linii**, rozdzielone średnikami.
+
+### Domofon — dane urządzeń
+
+| | Monitor | Stacja |
+|---|---|---|
+| Model | DS-KH6320-WTE1 | DS-KV8113-WME1(C) |
+| Adres | `192.168.88.8` statyczny | `192.168.88.210` statyczny |
+| MAC | `a4-d5-c2-41-08-6e` | `a4-d5-c2-40-f2-72` |
+| Nr seryjny | `…0120250219WRQ38689928U` | `…0120250219RRFW5799425` |
+| Firmware | V2.2.96 build 241111 | V2.2.65 build 231213 |
+
+Hasło trybu konfiguracji monitora: `888999` (osobne od `admin` do panelu WWW).
+**Nie resetować** monitora ani stacji — kasuje powiązania, kody i konta.
 
 **Instalator (montaż rok temu) odmówił naprawy.** Rękojmia na usługę to 2 lata,
-więc termin jeszcze biegnie.
+sprzęt ma rok gwarancji producenta u sprzedawcy.
 
 Ta sama choroba co przy pompie, ten sam lek: stałe adresy.
 
