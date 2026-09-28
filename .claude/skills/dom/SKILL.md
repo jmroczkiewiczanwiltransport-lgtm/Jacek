@@ -232,24 +232,49 @@ Do zmiany adresów służy **SADP** Hikvisiona (instalator potrafi sypnąć „N
 Error" — trzeba rozpakować cały ZIP poza OneDrive). **Nie resetuj** monitora ani
 stacji — kasuje to powiązania, kody otwierania i konta.
 
-**Prawdopodobna przyczyna dawnych awarii — konflikt adresów.** Jacek: „często
-się wywalało, dopiero wyłączenie zasilania pomagało, ale na krótko". To sygnatura
-konfliktu IP. Monitor stoi **na sztywno** pod `192.168.88.8`, a pompa ciepła
-**miała kiedyś ten sam adres** (`.9` → **`.8`** → `.23`, ETH2 na DHCP). Router nie
-wie o ręcznie wpisanym adresie monitora, więc rozdaje `.8` dalej. Reset zasilania
-czyści ARP i jedno urządzenie wygrywa na chwilę — stąd „pomaga, ale na krótko".
-Spójne z tym, że stacja pod `.210` (poza pulą DHCP) nigdy nie sprawiała kłopotu.
+### Skrzynka z alarmem i siecią domofonu
 
-Naprawa, kolejność ma znaczenie:
+W jednej zamkniętej obudowie siedzą:
 
-1. **Docelowo** — hasło do routera i rezerwacje DHCP po MAC dla pompy, monitora,
-   stacji, mostka Hue i komputera. Leczy wszystkie urządzenia naraz.
-2. **Awaryjnie**, gdy hasła nie będzie — przestawić monitor ze statycznego `.8`
-   na `192.168.88.211` (obok stacji, poza pulą). Wymaga ponownego dodania
-   monitora w aplikacji, więc nie robić tego pochopnie.
+| Element | Model | Uwagi |
+|---|---|---|
+| Centrala alarmu | **SATEL INTEGRA** | zasilana z transformatora Pulsar **AWT682**, 60 VA |
+| Moduł sieciowy alarmu | **SATEL ETHM-1** | zgłaszał „Brak kabla" i „Brak poł. SATEL2", po 2 razy |
+| Switch PoE | **Hikvision DS-3E0106P-E/M(B)** | naklejka 48 V / 0,8 A; budżet PoE **35 W**, wg producenta zasilanie 54 V / 0,92 A |
+| Akumulator | **ALARMTEC BP18-12**, 12 V 18 Ah | data **2023**, centrala resetuje się przy zaniku 230 V — akumulator nie trzyma |
 
-Nie ruszać, dopóki działa i dopóki nie ma czasu na spokojne odtworzenie
-powiązania z aplikacją.
+Switch zasila po PoE stację przy furtce i monitor. Obciążenie ok. 20 W z 35 W —
+**budżet mocy nie jest przekroczony**.
+
+**Objaw.** Stacja `192.168.88.210` znika z sieci, nie wraca sama nigdy, wraca
+dopiero po odcięciu 230 V do skrzynki — i żyje wtedy około **15 minut**. Tak
+jest **od montażu rok temu**, nie jest to zużycie sprzętu. Monitor `.8` przez
+cały czas odpowiada bez potknięcia, więc sieć w domu jest zdrowa.
+
+**Wiodąca hipoteza: przegrzewanie.** Switch PoE stoi w zamkniętej obudowie razem
+z grzejącym transformatorem 60 VA i akumulatorem, bez wentylacji. Kwadrans to
+czas nagrzania obudowy. Wpis alarmu „Brak kabla ETHM-1" wskazuje na ten sam
+switch — gniazdo ETHM-1 nie ma nic wspólnego z PoE ani z domofonem, łączy je
+tylko switch.
+
+**Test rozstrzygający:** rejestrator pingów przy **otwartych drzwiczkach**
+skrzynki. Przeżycie ponad 15 minut = przegrzewanie, naprawa to wentylacja.
+
+### Ślepe uliczki przy domofonie — nie wracać
+
+- **Konflikt adresów IP.** Sprawdzone: `arp -a` pokazuje pod `192.168.88.8`
+  MAC monitora `a4-d5-c2-41-08-6e`, nikogo obcego. Teoria obalona.
+- **Urządzenie pod `192.168.88.18`** to **laptop Jacka**, nie kamera.
+- **Wi-Fi stacji.** Urządzenie, które gubi Wi-Fi, wraca samo. Ta stacja nie
+  wraca nigdy. Obalone.
+- **Zasilanie domofonu z centrali alarmu.** Zdjęcie pokazuje, że switch ma
+  własny zasilacz 48 V. Wspólne jest tylko gniazdko 230 V — dlatego jeden
+  kabel kładzie oba systemy.
+- **Konwerter ATTE ETH10-2wire-A-SET** — nazwa padła od Jacka, ale w skrzynce
+  go nie ma. Do wyjaśnienia, czy był na fakturze.
+
+**Instalator (montaż rok temu) odmówił naprawy.** Rękojmia na usługę to 2 lata,
+więc termin jeszcze biegnie.
 
 Ta sama choroba co przy pompie, ten sam lek: stałe adresy.
 
