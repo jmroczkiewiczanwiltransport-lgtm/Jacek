@@ -695,6 +695,91 @@ def _historia_z_pliku(plik, godzin=24):
     return wynik[::max(1, len(wynik) // 200)] if wynik else []
 
 
+PLIK_KOMINKA = os.path.join(KATALOG, 'kominek.csv')
+_ZAMEK_KOMINKA = threading.Lock()
+CZAS_CSV = '%Y-%m-%d %H:%M:%S'
+
+
+def _wczytaj_kominek(plik):
+    """Dziennik palenia w kominku: para godzin na wiersz, najstarsze pierwsze.
+
+    Kominek stoi sześć metrów od czujnika pokojowego i przy paleniu podbija go
+    o dwa–trzy stopnie. Sterownik bierze to za ciepło w całym domu i wstrzymuje
+    pompę. Bez zapisu, kiedy się paliło, taka przerwa w danych wygląda jak
+    awaria — a jest skutkiem ognia w salonie."""
+    if not os.path.exists(plik):
+        return []
+    wpisy = []
+    with open(plik, encoding='utf-8') as f:
+        for numer, linia in enumerate(f):
+            pola = linia.rstrip('\n').split(';')
+            if not pola or not pola[0].strip():
+                continue
+            if numer == 0 and pola[0].strip() == 'od':
+                continue
+            if _chwila(pola[0]) is None:
+                continue   # śmieć w pliku nie może udawać wpisu
+            koniec = pola[1].strip() if len(pola) > 1 else ''
+            wpisy.append({'od': pola[0].strip(),
+                          'do': koniec if _chwila(koniec) else None})
+    return wpisy
+
+
+def _zapisz_kominek(plik, wpisy):
+    with open(plik, 'w', encoding='utf-8') as f:
+        f.write('od;do\n')
+        for wpis in wpisy:
+            f.write(f"{wpis['od']};{wpis['do'] or ''}\n")
+
+
+def _chwila(tekst):
+    try:
+        return datetime.strptime(tekst[:19], CZAS_CSV)
+    except (ValueError, TypeError):
+        return None
+
+
+def _stan_kominka(plik, ile=6):
+    """Co panel ma pokazać: czy pali się teraz i ostatnie paleniska."""
+    wpisy = _wczytaj_kominek(plik)
+    otwarty = wpisy[-1] if wpisy and wpisy[-1]['do'] is None else None
+    zaczal = _chwila(otwarty['od']) if otwarty else None
+    ostatnie = []
+    for wpis in wpisy[-ile:][::-1]:
+        od, do = _chwila(wpis['od']), _chwila(wpis['do'])
+        if od is None:
+            continue
+        ostatnie.append({
+            'od': int(od.timestamp()),
+            'do': int(do.timestamp()) if do else None,
+            'minut': int((do - od).total_seconds() // 60) if do else None,
+        })
+    stan = {'pali_sie': otwarty is not None, 'ostatnie': ostatnie}
+    if zaczal:
+        stan['od'] = int(zaczal.timestamp())
+        # Zapomniane „wygasło" potrafi wisieć dobami i psuć każdą późniejszą
+        # analizę. Panel ma o tym przypomnieć, ale nic nie zamykać za Jacka —
+        # zmyślona godzina byłaby gorsza niż jej brak.
+        stan['dlugo'] = (datetime.now() - zaczal) > timedelta(hours=12)
+    return stan
+
+
+def _zapisz_palenie(plik, akcja):
+    """Otwiera albo zamyka wpis w dzienniku kominka. Zwraca nowy stan."""
+    if akcja not in ('rozpal', 'wygas'):
+        raise ValueError(f'Nieznana akcja: {akcja}')
+    with _ZAMEK_KOMINKA:
+        wpisy = _wczytaj_kominek(plik)
+        teraz = datetime.now().strftime(CZAS_CSV)
+        pali_sie = bool(wpisy) and wpisy[-1]['do'] is None
+        if akcja == 'rozpal' and not pali_sie:
+            wpisy.append({'od': teraz, 'do': None})
+        elif akcja == 'wygas' and pali_sie:
+            wpisy[-1]['do'] = teraz
+        _zapisz_kominek(plik, wpisy)
+    return _stan_kominka(plik)
+
+
 def _zuzycie_z_licznika(plik):
     """Ile prądu pompa zjadła dziś i wczoraj — z przyrostu licznika.
 
@@ -891,6 +976,7 @@ def panel(argumenty):
             odpowiedz['historia'] = _historia_z_pliku(plik_danych)
             odpowiedz['zuzycie'] = _zuzycie_z_licznika(plik_danych)
             odpowiedz['zadania'] = _najblizsze_zadania()
+            odpowiedz['kominek'] = _stan_kominka(PLIK_KOMINKA)
             odpowiedz['steruje'] = steruje
             odpowiedz['zakres'] = [NASTAWA_MIN, NASTAWA_MAX]
             self._odpowiedz(200, odpowiedz)
@@ -900,10 +986,8 @@ def panel(argumenty):
 
             Panel jest widoczny w całej sieci domowej, więc gdyby przyjmował
             dowolną zmienną, każdy mógłby przestawić parametry instalacji."""
-            if self.path != '/api/ustaw':
+            if self.path not in ('/api/ustaw', '/api/kominek'):
                 return self._odpowiedz(404, {'blad': 'Nie ma takiej ścieżki.'})
-            if not steruje:
-                return self._odpowiedz(403, {'blad': 'Sterowanie wyłączone.'})
             try:
                 ile = int(self.headers.get('Content-Length') or 0)
                 zlecenie = json.loads(self.rfile.read(ile) or b'{}')
@@ -911,6 +995,17 @@ def panel(argumenty):
                 return self._odpowiedz(400, {'blad': 'Nie rozumiem polecenia.'})
 
             akcja = zlecenie.get('akcja')
+
+            # Dziennik kominka tylko dopisuje do pliku u nas — nie dotyka
+            # sterownika, więc działa także przy --bez-sterowania.
+            if self.path == '/api/kominek':
+                try:
+                    return self._odpowiedz(200, _zapisz_palenie(PLIK_KOMINKA, akcja))
+                except (OSError, ValueError) as powod:
+                    return self._odpowiedz(400, {'blad': f'Nie zapisałem: {powod}'})
+
+            if not steruje:
+                return self._odpowiedz(403, {'blad': 'Sterowanie wyłączone.'})
             try:
                 if akcja in ('nastawa-w-gore', 'nastawa-w-dol'):
                     zmienne = impuls(adres_pompy[0], akcja, argumenty.uzytkownik,

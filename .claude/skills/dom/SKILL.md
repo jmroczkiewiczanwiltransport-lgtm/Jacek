@@ -159,6 +159,44 @@ Skrótowo:
 - **Bez automatyki reagującej na rzeczywistą nadwyżkę** — dopóki nie wiadomo, jak często
   podbicie w południe trafia w dzień pochmurny. Do tego potrzebne są dane z zimy.
 
+## Harmonogramy w sterowniku — stan odczytany 17.10.2026
+
+Strony sterownika (zalogowany, `http://192.168.88.23`): ikona **zegara** w lewym
+górnym rogu prowadzi do harmonogramów, **termometr** do krzywej grzewczej,
+**wykres** do historii ostatniej doby.
+
+| Harmonogram | Stan | Godziny | Wartość |
+|---|---|---|---|
+| Temperatury wody grzewczej | **włączony** | codziennie **10:00–16:00** | 45,0 °C |
+| Blokada ogrzewania CWU poza harmonogramem | **włączona** | codziennie **10:00–16:00** | CWU 45,0 °C |
+| Temperatury pokojowej (obieg 1) | **wyłączony** | stare okna wieczorne, patrz niżej | 19,0–20,0 °C |
+
+To jest celowa „przerzutka na południe": całe grzanie — i wody użytkowej, i
+podłogi — zepchnięte do okna, w którym pracują panele. Działa.
+
+**Stare okna w wyłączonym harmonogramie pokojowym** (gdyby kiedyś go włączać,
+najpierw wyzerować): pon 16–18 / wt 14–18 / śr 5–7 i 16–18 / czw 5–7 i 16–18 /
+pt 16–18 / sob 13–17 / nd 6–9.
+
+**Krzywa grzewcza** (strona 126): −15 °C → 38 °C, −5 °C → 34 °C, +5 °C → 30 °C,
++15 °C → 24 °C. Nisko i dobrze — przy podłogówce niska woda to wysoki COP.
+**NIGHT DROP wpisany 22:00–06:00, ale obniżenie 0,0 °C**, czyli nie działa.
+Tak ma zostać.
+
+**Antysepsa (antylegionella) jest dozwolona** — do sprawdzenia, jak często
+startuje, bo dojście zbiornika do 60–65 °C wymaga grzałki elektrycznej.
+
+### Czujnik zewnętrzny stoi w słońcu
+
+17.10 pokazał **6,7 °C o 8:08 i 17,4 °C o 12:15**, przy średniej dobowej 11,5 °C.
+Jedenaście stopni skoku w cztery godziny w połowie października to nie powietrze,
+tylko nasłoneczniona obudowa.
+
+To działa **przeciwko** strategii południowej: sterownik dobiera temperaturę wody
+po tym odczycie, więc im mocniej świeci, tym bardziej odpuszcza — dokładnie wtedy,
+gdy prąd jest z dachu. Do sprawdzenia, po której stronie elewacji wisi; powinien
+być od północy, w cieniu.
+
 ## Kalendarz
 
 Zadania siedzą w `dom/przypomnienia.json`, panel pokazuje najbliższe trzy,

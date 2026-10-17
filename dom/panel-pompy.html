@@ -69,6 +69,12 @@
          font-size: 14px; font-weight: 600; font-family: inherit; }
   .cel:active { background: var(--kreska); }
   .cel:disabled { opacity: .4; cursor: default; }
+  .ogien { width: 100%; padding: 15px; border-radius: 13px; cursor: pointer; font-family: inherit;
+           font-size: 16px; font-weight: 650; border: 1px solid var(--kreska);
+           background: var(--tlo); color: var(--tekst); }
+  .ogien.pali { border-color: var(--cieplo); color: var(--cieplo); }
+  .ogien:active { background: var(--kreska); }
+  .ogien:disabled { opacity: .4; cursor: default; }
   .szept { font-size: 12px; color: var(--slaby); margin-top: 10px; min-height: 16px; }
   .blad { background: var(--karta); border: 1px solid var(--zle); color: var(--zle);
           border-radius: 14px; padding: 13px 15px; font-size: 14px; margin-bottom: 12px; }
@@ -82,6 +88,7 @@
   <div id="stan" class="stan" hidden><span class="kropka"></span><span></span></div>
   <div id="kafle" class="siatka"></div>
   <div id="sterowanie"></div>
+  <div id="kominek"></div>
   <div id="reszta"></div>
 </main>
 <footer id="stopka"></footer>
@@ -107,7 +114,7 @@ function kafel(etykieta, wartosc, jednostka, obok, klasa) {
 }
 
 // Prosty wykres liniowy — dwie serie na wspólnej osi czasu.
-function wykres(serie) {
+function wykres(serie, pasy = []) {
   const czasy = serie.flatMap((s) => s.punkty.map((p) => p[0]));
   if (czasy.length < 2) return null;
   const odCzasu = Math.min(...czasy), doCzasu = Math.max(...czasy);
@@ -121,6 +128,19 @@ function wykres(serie) {
   svg.setAttribute('class', 'wykres');
   svg.setAttribute('viewBox', '0 0 100 96');
   svg.setAttribute('preserveAspectRatio', 'none');
+  // Pasy idą pierwsze, żeby linie temperatur leżały na wierzchu.
+  for (const [od, do_] of pasy) {
+    const a = Math.max(0, x(od)), b = Math.min(100, x(do_));
+    if (b <= a) continue;
+    const pole = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    pole.setAttribute('x', a.toFixed(2));
+    pole.setAttribute('y', '0');
+    pole.setAttribute('width', (b - a).toFixed(2));
+    pole.setAttribute('height', '96');
+    pole.setAttribute('fill', 'var(--cieplo)');
+    pole.setAttribute('opacity', '0.13');
+    svg.append(pole);
+  }
   for (const s of serie) {
     if (s.punkty.length < 2) continue;
     const sciezka = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -205,6 +225,7 @@ async function odswiez() {
   // konkretną wartość to seria takich impulsów, więc trwa i trzeba pokazać,
   // że coś się dzieje — inaczej wygląda na zawieszony panel.
   rysujSterowanie(dane, nastawa);
+  rysujKominek(dane.kominek);
 
   // ── obieg grzewczy i licznik ──
   const reszta = $('#reszta');
@@ -235,13 +256,21 @@ async function odswiez() {
       { nazwa: 'na dworze', kolor: 'var(--zimno)',
         punkty: dane.historia.filter((h) => h.zewnetrzna !== null).map((h) => [h.czas, h.zewnetrzna]) },
     ].filter((s) => s.punkty.length > 1);
-    const rysunek = serie.length ? wykres(serie) : null;
+    // Przerwa w pracy pompy przy palącym się kominku wygląda jak awaria.
+    // Pas na wykresie od razu mówi, że to był ogień, a nie usterka.
+    const teraz = Math.floor(Date.now() / 1000);
+    const pasy = ((dane.kominek || {}).ostatnie || [])
+      .map((o) => [o.od, o.do || teraz]);
+    const rysunek = serie.length ? wykres(serie, pasy) : null;
     if (rysunek) {
       reszta.append(el('h2', { textContent: 'Ostatnia doba' }));
       reszta.append(el('div', { className: 'kafel szeroki' }, [
         rysunek.svg,
         el('div', { className: 'legenda' }, serie.map((s) =>
-          el('span', {}, [el('i', { style: `background:${s.kolor}` }), s.nazwa]))),
+          el('span', {}, [el('i', { style: `background:${s.kolor}` }), s.nazwa]))
+          .concat(pasy.length
+            ? [el('span', {}, [el('i', { style: 'background:var(--cieplo);opacity:.45' }), 'kominek'])]
+            : [])),
         el('div', { className: 'obok',
           textContent: `zakres ${rysunek.dol.toFixed(1)}–${rysunek.gora.toFixed(1)} °C` }),
       ]));
@@ -276,6 +305,95 @@ let zajete = false;
 // Potwierdzenie musi przeżyć przerysowanie panelu — inaczej znika w tej samej
 // sekundzie, w której się pojawia, i nie wiadomo, czy polecenie doszło.
 let ostatniKomunikat = '';
+
+// Potwierdzenie zapisu kominka, przeżywa przerysowanie panelu tak samo jak
+// komunikat sterowania.
+let komunikatKominka = '';
+
+const godzina = (ts) => new Date(ts * 1000)
+  .toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+
+function dzien(ts) {
+  const kiedy = new Date(ts * 1000), dzis = new Date();
+  const wczoraj = new Date(dzis.getTime() - 86400000);
+  const doba = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  if (doba(kiedy) === doba(dzis)) return 'dziś';
+  if (doba(kiedy) === doba(wczoraj)) return 'wczoraj';
+  return kiedy.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' });
+}
+
+function trwanie(minut) {
+  if (minut === null || minut === undefined) return '';
+  return minut >= 60
+    ? `${Math.floor(minut / 60)} h ${String(minut % 60).padStart(2, '0')} min`
+    : `${minut} min`;
+}
+
+// Jeden przycisk zamiast formularza z godzinami: wpis ma powstać w chwili,
+// gdy Jacek podkłada drzewo, a nie wtedy, gdy usiądzie i spróbuje sobie
+// przypomnieć, o której to było.
+function rysujKominek(stan) {
+  const gdzie = $('#kominek');
+  gdzie.innerHTML = '';
+  if (!stan) return;
+  const pali = !!stan.pali_sie;
+
+  const przycisk = el('button', {
+    className: pali ? 'ogien pali' : 'ogien',
+    textContent: pali ? 'Wygasło' : 'Rozpaliłem',
+  });
+  przycisk.addEventListener('click', () => kominekPrzelacz(pali ? 'wygas' : 'rozpal'));
+
+  const ostatnie = stan.ostatnie || [];
+  const opis = pali
+    ? `pali się od ${godzina(stan.od)} · ${trwanie(Math.floor((Date.now() / 1000 - stan.od) / 60))}`
+    : ostatnie.length
+      ? `ostatnio ${dzien(ostatnie[0].od)} ${godzina(ostatnie[0].od)}`
+        + (ostatnie[0].do ? `–${godzina(ostatnie[0].do)}` : '')
+      : 'jeszcze nic nie zapisane';
+
+  const karta = el('div', { className: 'sterowanie' }, [
+    el('div', { className: 'etykieta', textContent: 'Kominek' }),
+    el('div', { className: 'obok', style: 'margin:4px 0 12px', textContent: opis }),
+    przycisk,
+  ]);
+  if (stan.dlugo) {
+    karta.append(el('div', { className: 'szept', style: 'color:var(--zle)',
+      textContent: 'Pali się ponad 12 godzin — na pewno? Jeśli wygasło, naciśnij przycisk.' }));
+  }
+  karta.append(el('div', { className: 'szept', textContent: komunikatKominka }));
+  gdzie.append(karta);
+
+  const zamkniete = ostatnie.filter((o) => o.do);
+  if (zamkniete.length) {
+    const tabela = el('table');
+    for (const o of zamkniete.slice(0, 4)) {
+      tabela.append(el('tr', {}, [
+        el('td', { textContent: `${dzien(o.od)}  ${godzina(o.od)}–${godzina(o.do)}` }),
+        el('td', { textContent: trwanie(o.minut) }),
+      ]));
+    }
+    gdzie.append(el('h2', { textContent: 'Ostatnie paleniska' }));
+    gdzie.append(el('div', { className: 'kafel szeroki' }, [tabela]));
+  }
+}
+
+async function kominekPrzelacz(akcja) {
+  for (const b of document.querySelectorAll('#kominek button')) b.disabled = true;
+  try {
+    const odp = await fetch('api/kominek', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ akcja }),
+    });
+    const wynik = await odp.json();
+    if (!odp.ok) throw new Error(wynik.blad || 'panel odmówił');
+    komunikatKominka = akcja === 'rozpal' ? 'Zapisane — pali się.' : 'Zapisane — wygasło.';
+  } catch (powod) {
+    komunikatKominka = `Nie zapisałem: ${powod.message}`;
+  }
+  await odswiez();
+}
 
 function rysujSterowanie(dane, nastawa) {
   const gdzie = $('#sterowanie');

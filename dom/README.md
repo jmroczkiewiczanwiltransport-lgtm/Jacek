@@ -339,6 +339,26 @@ Sterujemy wyłącznie tym, co jest w tabeli `STEROWANIE`. Panel po sieci podaje
 zapisać dowolny parametr sterownika, łącznie z tymi, których cofnięcie wymaga
 serwisu. Zakres nastawy jest dodatkowo ograniczony w kodzie (15–24 °C).
 
+### Dziennik kominka
+
+Panel ma jeden przycisk: **„Rozpaliłem" / „Wygasło"**. Zapisuje godziny do
+`kominek.csv`, a ostatnie paleniska rysuje pomarańczowym pasem na wykresie
+ostatniej doby.
+
+Powód jest konkretny. Kominek stoi sześć metrów od czujnika pokojowego i przy
+paleniu podbija go o dwa–trzy stopnie, choć reszta domu się nie zmienia.
+Sterownik widzi „ciepło" i **wstrzymuje grzanie całego domu** — także pokoi,
+które kominka nie czują. Potem odrabia to nocą, przy najzimniejszym powietrzu
+i najgorszej sprawności.
+
+Bez zapisu taka przerwa w pracy pompy wygląda w danych jak awaria. Z zapisem
+widać od razu, że to był ogień, i można policzyć, ile naprawdę kosztuje.
+
+Przycisk działa też przy `--bez-sterowania` — dopisuje wiersz do pliku u nas,
+nie dotyka sterownika. Zapomniane „Wygasło" po dwunastu godzinach zapala
+ostrzeżenie, ale panel **niczego nie zamyka sam**: zmyślona godzina zepsułaby
+analizę bardziej niż jej brak.
+
 ### Kto jest w sieci — `siec.py`
 
 ```bash
