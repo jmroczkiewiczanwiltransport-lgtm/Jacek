@@ -34,6 +34,7 @@ import socket
 import subprocess
 import sys
 import time
+import traceback
 import unicodedata
 import gzip
 import hashlib
@@ -977,6 +978,13 @@ def panel(argumenty):
             odpowiedz['zuzycie'] = _zuzycie_z_licznika(plik_danych)
             odpowiedz['zadania'] = _najblizsze_zadania()
             odpowiedz['kominek'] = _stan_kominka(PLIK_KOMINKA)
+            # Ile minęło od ostatniego dopisku do historii. Panel sam powie,
+            # gdy przestanie rosnąć — inaczej wygląda zdrowo, bo dane na żywo
+            # czyta inną drogą niż ta, która zapisuje.
+            try:
+                odpowiedz['zapis_sprzed'] = int(time.time() - os.path.getmtime(plik_danych))
+            except OSError:
+                odpowiedz['zapis_sprzed'] = None
             odpowiedz['steruje'] = steruje
             odpowiedz['zakres'] = [NASTAWA_MIN, NASTAWA_MAX]
             self._odpowiedz(200, odpowiedz)
@@ -1027,6 +1035,7 @@ def panel(argumenty):
         wtedy, gdy najbardziej potrzebna: w nocy, w pracy, przez cały tydzień
         bez zaglądania. Dlatego zbieramy własnym zegarem."""
         milczy_od = None
+        ostatni_blad = [None]
         while True:
             try:
                 zmienne = czytaj_pompe()
@@ -1054,6 +1063,17 @@ def panel(argumenty):
                     milczy_od = datetime.now()
                     print(f'{milczy_od:%H:%M:%S}  brak odczytu ({powod}) '
                           f'— milczę, aż wróci', flush=True)
+            except Exception as powod:                                   # noqa: BLE001
+                # Wątek zbierający musi przeżyć wszystko. Gdy padał po cichu na
+                # nieoczekiwanym wyjątku, panel dalej pokazywał dane na żywo,
+                # a historia przestawała rosnąć — i nikt tego nie zauważał
+                # tygodniami. Lepiej hałaśliwy log niż cicha dziura w danych.
+                podpis = f'{type(powod).__name__}: {powod}'
+                if podpis != ostatni_blad[0]:
+                    ostatni_blad[0] = podpis
+                    print(f'{datetime.now():%H:%M:%S}  błąd zbierania — {podpis}',
+                          flush=True)
+                    traceback.print_exc()
             time.sleep(odstep_zapisu)
 
     if odstep_zapisu:

@@ -339,6 +339,40 @@ Sterujemy wyłącznie tym, co jest w tabeli `STEROWANIE`. Panel po sieci podaje
 zapisać dowolny parametr sterownika, łącznie z tymi, których cofnięcie wymaga
 serwisu. Zakres nastawy jest dodatkowo ograniczony w kodzie (15–24 °C).
 
+### Gdy panel pokazuje, ale nie zapisuje
+
+Panel czyta dane na żywo inną drogą niż tą, która dopisuje historię. Przez to
+potrafi wyglądać zupełnie zdrowo — kafelki się odświeżają, pompa odpowiada —
+podczas gdy `dane-pompy.csv` stoi w miejscu od tygodnia.
+
+U Jacka zdarzyło się dokładnie to: wątek zbierający padł na nieoczekiwanym
+wyjątku i zniknął po cichu, bo łapaliśmy tylko `OSError`. Panel działał dalej,
+historia przestała rosnąć, a wyszło to po dwóch dniach i tylko dlatego, że
+kafelek „Zużycie" uparcie pokazywał datę sprzed awarii.
+
+Teraz są dwa zabezpieczenia:
+
+- **Wątek zbierający przeżywa wszystko.** Nieoczekiwany błąd ląduje w logu
+  razem ze śladem stosu, raz na rodzaj błędu, i pętla leci dalej.
+- **Panel sam się skarży.** Gdy od ostatniego dopisku minie ponad kwadrans,
+  na górze pojawia się czerwona ramka: „Historia nie rośnie od…".
+
+Ręcznie sprawdza się to tak:
+
+```powershell
+Get-ChildItem "$env:LOCALAPPDATA\PanelPompy\dane-pompy.csv" | Select-Object LastWriteTime
+```
+
+Jeśli data jest stara, zajrzyj do okna panelu — od tej pory powód będzie tam
+wypisany.
+
+**Uwaga na dwa panele naraz.** Port 8125 trzyma tylko jeden proces; drugi kręci
+się bez sensu i dobija do sterownika. Kto chodzi:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "Name='python.exe'" | Select-Object ProcessId, CommandLine | Format-List
+```
+
 ### Dziennik kominka
 
 Panel ma jeden przycisk: **„Rozpaliłem" / „Wygasło"**. Zapisuje godziny do

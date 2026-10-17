@@ -398,6 +398,11 @@ Ta sama choroba co przy pompie, ten sam lek: stałe adresy.
 - **Po aktualizacji sprawdź, czy chodzi nowa wersja.** Panel trzyma port 8125;
   jeśli stary proces nie zostanie zatrzymany, nowy nie wstanie i użytkownik widzi
   starą wersję mimo udanej instalacji. Instalator zatrzymuje go teraz sam.
+- **Wątki w tle muszą przeżyć każdy wyjątek.** Wątek zbierający historię łapał
+  kiedyś tylko `OSError` i padał po cichu na wszystkim innym. Panel wyglądał
+  zdrowo — dane na żywo idą inną drogą — a historia stała tygodniami. Każda
+  pętla w tle: szeroki `except`, ślad w logu raz na rodzaj błędu, i leć dalej.
+  Dodatkowo panel pokazuje czerwoną ramkę, gdy historia nie rośnie od kwadransa.
 - **Nigdy nie nadpisuj danych użytkownika.** `logowanie.txt`, `opisy-panelu.json`
   i `dane-pompy.csv` to jego rzeczy; instalator kopiuje je tylko, gdy ich nie ma.
   Historia zbierana przez miesiące jest nie do odtworzenia.

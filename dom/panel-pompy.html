@@ -167,6 +167,18 @@ async function odswiez() {
     return;
   }
   $('#blad').innerHTML = '';
+  // Panel potrafi wyglądać zdrowo, a nie zapisywać: dane na żywo idą inną
+  // drogą niż historia. Bez tej linijki dziura w zapisie wychodzi dopiero
+  // wtedy, gdy ktoś sięgnie po dane sprzed tygodnia.
+  if (dane.zapis_sprzed !== null && dane.zapis_sprzed !== undefined
+      && dane.zapis_sprzed > 900) {
+    const godzin = Math.floor(dane.zapis_sprzed / 3600);
+    const odkad = godzin >= 24 ? `${Math.floor(godzin / 24)} dni`
+      : godzin >= 1 ? `${godzin} h` : `${Math.floor(dane.zapis_sprzed / 60)} min`;
+    $('#blad').append(el('div', { className: 'blad', textContent:
+      `Historia nie rośnie od ${odkad}. Panel pokazuje dane na żywo, ale ich nie zapisuje `
+      + '— sprawdź okno panelu, czy nie ma tam błędu.' }));
+  }
   if (dane.blad) {
     $('#blad').append(el('div', { className: 'blad', textContent: dane.blad }));
   }
