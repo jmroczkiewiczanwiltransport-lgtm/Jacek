@@ -206,9 +206,22 @@ async function odswiez() {
   const pokojowa = w('Temperatura pokojowa'), nastawa = w('Nastawa pokojowa');
   kafle.append(kafel('W domu', pokojowa?.toFixed(1), '°C',
     nastawa !== null ? `nastawa ${nastawa.toFixed(1)} °C` : null, 'cieplo'));
-  kafle.append(kafel('Na dworze', w('Temperatura zewnętrzna')?.toFixed(1), '°C',
-    w('Temperatura zewnętrzna średnia') !== null
-      ? `średnia ${w('Temperatura zewnętrzna średnia').toFixed(1)} °C` : null, 'zimno'));
+  // Czujnik zewnętrzny stoi w słońcu i w południe potrafi zawyżyć o kilka
+  // stopni, a sterownik dobiera po nim temperaturę wody. Obok jego odczytu
+  // pokazujemy temperaturę z modelu — żeby ta różnica była widoczna wtedy,
+  // gdy ma znaczenie, a nie dopiero w rachunku za prąd.
+  const pogoda = dane.pogoda && !dane.pogoda.blad ? dane.pogoda : null;
+  const zewnetrzna = w('Temperatura zewnętrzna'), srednia = w('Temperatura zewnętrzna średnia');
+  const opisZewn = [];
+  if (pogoda && pogoda.temperatura !== null && pogoda.temperatura !== undefined) {
+    const roznica = zewnetrzna === null ? null : zewnetrzna - pogoda.temperatura;
+    opisZewn.push(`model ${pogoda.temperatura.toFixed(1)} °C`
+      + (roznica !== null && Math.abs(roznica) >= 1
+        ? ` (czujnik ${roznica > 0 ? '+' : '−'}${Math.abs(roznica).toFixed(1)})` : ''));
+  }
+  if (srednia !== null) opisZewn.push(`średnia ${srednia.toFixed(1)} °C`);
+  kafle.append(kafel('Na dworze', zewnetrzna?.toFixed(1), '°C',
+    opisZewn.join(' · ') || null, 'zimno'));
   kafle.append(kafel('Ciepła woda', w('Temperatura CWU')?.toFixed(1), '°C', 'zbiornik CWU'));
   kafle.append(kafel('Moc grzewcza', moc?.toFixed(2), 'kW', grzeje ? 'pracuje' : 'postój'));
 
@@ -229,6 +242,28 @@ async function odswiez() {
     if (siec !== undefined) {
       kafle.append(kafel(siec >= 0 ? 'Z sieci' : 'Do sieci', Math.abs(siec / 1000).toFixed(1), 'kW',
         siec >= 0 ? 'kupujesz' : 'oddajesz', siec >= 0 ? '' : 'slonce'));
+    }
+  }
+
+  // Harmonogram podbija grzanie w południe niezależnie od pogody. W dzień
+  // pogodny to ciepło jest z dachu i prawie darmowe; pod chmurami to zwykły
+  // prąd z sieci, zużyty przy gorszej sprawności. Prognoza mówi o tym rano,
+  // a nie trzy dni później z danych operatora.
+  if (dane.pogoda) {
+    const pg = dane.pogoda;
+    if (pg.blad) {
+      kafle.append(kafel('Słońce', null, '', pg.blad));
+    } else {
+      const slowa = { sloneczny: 'pogodnie — grzej w południe', posredni: 'zmiennie',
+                      pochmurny: 'pochmurno — ciepło z sieci' };
+      const uwagi = [slowa[pg.ocena] || ''];
+      if (pg.zachmurzenie !== null && pg.zachmurzenie !== undefined) {
+        uwagi.push(`chmury ${Math.round(pg.zachmurzenie)} %`);
+      }
+      if (pg.stare) uwagi.push(`dane sprzed ${trwanie(Math.floor(pg.sprzed / 60))}`);
+      const okno = pg.okno ? `${pg.okno[0]}–${pg.okno[1]}` : '';
+      kafle.append(kafel(`Słońce ${okno}`.trim(), pg.suma_okna?.toFixed(1), 'kWh/m²',
+        uwagi.filter(Boolean).join(' · '), pg.ocena === 'sloneczny' ? 'slonce' : ''));
     }
   }
 

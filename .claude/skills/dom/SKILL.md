@@ -197,6 +197,25 @@ po tym odczycie, więc im mocniej świeci, tym bardziej odpuszcza — dokładnie
 gdy prąd jest z dachu. Do sprawdzenia, po której stronie elewacji wisi; powinien
 być od północy, w cieniu.
 
+### Pogoda w panelu — Open-Meteo, model ICON-D2
+
+Od 18.10 panel pobiera co kwadrans temperaturę, zachmurzenie i promieniowanie
+słoneczne z Open-Meteo (bez klucza, bez rejestracji). Model **icon_d2** — DWD,
+siatka 2 km, obejmuje Polskę; przy prognozie dalej niż dwie doby serwis sam
+schodzi na grubszą siatkę.
+
+Po co: temperatura z modelu stoi w kafelku obok odczytu czujnika, więc błąd
+nasłonecznionej obudowy widać na bieżąco; suma promieniowania w oknie
+10:00–16:00 mówi **rano**, czy południowe podbicie pójdzie z dachu, czy z sieci
+(dane Enei przychodzą dopiero po 2–3 dniach). Progi oceny: ≥ 2,0 kWh/m² to
+dzień pogodny, ≤ 0,9 pochmurny.
+
+Współrzędne domu leżą w `dom/pogoda.json` — **gitignore, bo repozytorium jest
+publiczne**. Adres ulicy nie wchodzi do repozytorium w żadnej postaci.
+
+Pobiera osobny wątek; `/api/stan` oddaje tylko ostatni udany odczyt z jego
+wiekiem, więc martwe łącze do Open-Meteo nigdy nie blokuje otwarcia panelu.
+
 ## Kalendarz
 
 Zadania siedzą w `dom/przypomnienia.json`, panel pokazuje najbliższe trzy,

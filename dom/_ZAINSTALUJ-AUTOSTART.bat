@@ -28,13 +28,13 @@ echo.
 if not exist "%DOCEL%" mkdir "%DOCEL%"
 
 rem  Pliki programu — te nadpisujemy zawsze, to jest właśnie aktualizacja.
-for %%p in (pompa-acond.py modbus.py falownik.py siec.py panel-pompy.html przypomnienia.py przypomnienia.json opisy-panelu.przyklad.json _URUCHOM-PANEL.bat autostart.szablon.vbs) do (
+for %%p in (pompa-acond.py modbus.py falownik.py siec.py pogoda.py panel-pompy.html przypomnienia.py przypomnienia.json opisy-panelu.przyklad.json pogoda.przyklad.json _URUCHOM-PANEL.bat autostart.szablon.vbs) do (
   if exist "%%p" copy /y "%%p" "%DOCEL%\" >nul
 )
 
 rem  Twoje pliki — kopiujemy tylko, jeśli tam ich jeszcze nie ma. Inaczej
 rem  aktualizacja skasowałaby zebraną historię albo dane do logowania.
-for %%p in (logowanie.txt ciasteczko.txt opisy-panelu.json dane-pompy.csv liczniki.csv kominek.csv) do (
+for %%p in (logowanie.txt ciasteczko.txt opisy-panelu.json dane-pompy.csv liczniki.csv kominek.csv pogoda.json) do (
   if exist "%%p" if not exist "%DOCEL%\%%p" copy /y "%%p" "%DOCEL%\" >nul
 )
 

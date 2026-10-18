@@ -838,6 +838,64 @@ def _zuzycie_z_licznika(plik):
     return wynik
 
 
+# --- Pogoda z zewnątrz -------------------------------------------------------
+# Czujnik zewnętrzny pompy stoi w słońcu: 17.10.2026 pokazał 6,7 °C o 8:08
+# i 17,4 °C o 12:15. Sterownik dobiera po nim temperaturę wody, więc trzeba
+# widzieć obok odczyt niezależny. Druga rzecz to prognoza nasłonecznienia —
+# mówi rano, czy południowe grzanie pójdzie z dachu, czy z sieci.
+OKNO_GRZANIA = (10, 16)
+ODSTEP_POGODY = 15 * 60
+_POGODA = {'dane': None, 'kiedy': 0.0, 'blad': None}
+_ZAMEK_POGODY = threading.Lock()
+
+
+def _odswiez_pogode(okno=OKNO_GRZANIA):
+    """Jedno pobranie do pamięci. Zwraca True, gdy przyszły dane."""
+    import pogoda as meteo                                          # noqa: PLC0415
+    dane = meteo.pogoda(okno=okno)
+    with _ZAMEK_POGODY:
+        if dane is None:
+            _POGODA['blad'] = ('Brak pogoda.json — skopiuj pogoda.przyklad.json '
+                               'i wpisz współrzędne domu.')
+        else:
+            _POGODA['dane'] = dane
+            _POGODA['kiedy'] = time.time()
+            _POGODA['blad'] = None
+    return dane is not None
+
+
+def _pogoda_na_panel(wiek_max=3 * ODSTEP_POGODY):
+    """To, co panel dostaje w /api/stan — nigdy nie sięga do sieci.
+
+    Strona ma się otworzyć także wtedy, gdy Open-Meteo nie odpowiada, więc
+    pobiera osobny wątek, a tu leży tylko ostatni udany odczyt z jego wiekiem."""
+    with _ZAMEK_POGODY:
+        dane, kiedy, blad = _POGODA['dane'], _POGODA['kiedy'], _POGODA['blad']
+    if not dane:
+        return {'blad': blad} if blad else None
+    wynik = dict(dane)
+    wynik['sprzed'] = int(time.time() - kiedy)
+    wynik['stare'] = wynik['sprzed'] > wiek_max
+    return wynik
+
+
+def pilnuj_pogody(okno=OKNO_GRZANIA, odstep=ODSTEP_POGODY):
+    """Wątek odświeżający pogodę. Jak każdy tutaj — przeżywa wszystko."""
+    ostatni_blad = [None]
+    while True:
+        try:
+            _odswiez_pogode(okno)
+        except Exception as powod:                                   # noqa: BLE001
+            podpis = f'{type(powod).__name__}: {powod}'
+            if podpis != ostatni_blad[0]:
+                ostatni_blad[0] = podpis
+                print(f'{datetime.now():%H:%M:%S}  pogoda niedostępna — {podpis}',
+                      flush=True)
+        else:
+            ostatni_blad[0] = None
+        time.sleep(odstep)
+
+
 def _najblizsze_zadania(ile=3):
     plik = os.path.join(KATALOG, 'przypomnienia.json')
     if not os.path.exists(plik):
@@ -978,6 +1036,7 @@ def panel(argumenty):
             odpowiedz['zuzycie'] = _zuzycie_z_licznika(plik_danych)
             odpowiedz['zadania'] = _najblizsze_zadania()
             odpowiedz['kominek'] = _stan_kominka(PLIK_KOMINKA)
+            odpowiedz['pogoda'] = _pogoda_na_panel()
             # Ile minęło od ostatniego dopisku do historii. Panel sam powie,
             # gdy przestanie rosnąć — inaczej wygląda zdrowo, bo dane na żywo
             # czyta inną drogą niż ta, która zapisuje.
@@ -1078,6 +1137,7 @@ def panel(argumenty):
 
     if odstep_zapisu:
         threading.Thread(target=zbieraj, daemon=True).start()
+    threading.Thread(target=pilnuj_pogody, daemon=True).start()
 
     nasluch = '127.0.0.1' if argumenty.tylko_lokalnie else '0.0.0.0'
     serwer = ThreadingHTTPServer((nasluch, argumenty.port_panelu), Obsluga)

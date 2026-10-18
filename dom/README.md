@@ -393,6 +393,47 @@ nie dotyka sterownika. Zapomniane „Wygasło" po dwunastu godzinach zapala
 ostrzeżenie, ale panel **niczego nie zamyka sam**: zmyślona godzina zepsułaby
 analizę bardziej niż jej brak.
 
+### Pogoda z zewnątrz — `pogoda.py`
+
+Panel pobiera co kwadrans dane z **Open-Meteo**, model **ICON-D2** (niemiecki
+DWD, siatka 2 km, obejmuje całą Polskę). Bez klucza i bez rejestracji; dla
+pojedynczego domu to najlepsza darmowa prognoza, jaka jest dla tego regionu.
+
+Dwa powody, oba policzalne:
+
+**Czujnik zewnętrzny stoi w słońcu.** 17.10.2026 pokazał 6,7 °C o 8:08 i
+17,4 °C o 12:15, choć powietrze tyle nie miało. Sterownik dobiera po nim
+temperaturę wody, więc w pogodny dzień odpuszcza grzanie dokładnie wtedy, gdy
+prąd jest najtańszy. Kafel „Na dworze" pokazuje teraz obok odczytu czujnika
+temperaturę z modelu i różnicę — widać, o ile obudowa zawyża, i to w chwili,
+gdy to się dzieje, a nie po miesiącu w rachunku.
+
+**Nasłonecznienie mówi, czy podbicie w południe ma sens.** Harmonogram grzeje
+w oknie 10:00–16:00 niezależnie od pogody. W dzień słoneczny to ciepło jest
+z dachu i prawie darmowe; pod chmurami to zwykły prąd z sieci, zużyty przy
+gorszej sprawności. Kafel „Słońce 10–16" podaje prognozowaną sumę promieniowania
+na metr kwadratowy i jedno słowo oceny: *pogodnie — grzej w południe*,
+*zmiennie*, *pochmurno — ciepło z sieci*. Progi: ponad 2,0 kWh/m² w oknie to
+dzień pogodny, poniżej 0,9 — pochmurny.
+
+Współrzędne domu trzymamy osobno, w `pogoda.json`, bo to **nie jest kod i nie
+trafia do repozytorium** (jest w `.gitignore`). Uruchomienie:
+
+```
+copy pogoda.przyklad.json pogoda.json
+```
+
+i wpisać do niego szerokość i długość geograficzną. Sprawdzenie bez panelu:
+
+```
+python pogoda.py
+```
+
+Pogodę pobiera osobny wątek, a `/api/stan` podaje tylko ostatni udany odczyt
+wraz z jego wiekiem. Gdy Open-Meteo nie odpowiada, **panel otwiera się tak
+samo** — kafel pokazuje poprzednie dane z dopiskiem, ile mają godzin. Gdy
+brakuje `pogoda.json`, kafel mówi wprost, co skopiować.
+
 ### Kto jest w sieci — `siec.py`
 
 ```bash
