@@ -18,7 +18,8 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 |---|---|---|
 | Pompa ciepła ACOND THERM | adres z DHCP, zmienny (bywało `.9`, `.8`, `.23`) | MAC **`f8:dc:7a:7d:24:89`** — po nim się ją znajduje; sterownik Tecomat Foxtrot, sw 160.36; ETH1 `192.168.134.176` to osobna sieć, nie ruszać |
 | Mostek Philips Hue | `192.168.88.10` | sparowany, klucz w `~/.hue-most.json` |
-| Komputer Jacka (Windows 11) | `192.168.88.18` | laptop, bywa poza domem |
+| Komputer stacjonarny (Acer, Windows 11, użytkownik `jacek`) | `192.168.88.22` | **tu od 18.10.2026 chodzi monitoring**; Python 3.15 w `AppData\Local\Python\pythoncore-3.15-64` |
+| Komputer Jacka (Windows 11) | `192.168.88.18` | laptop, bywa poza domem; od 18.10 już nie zbiera |
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
 | Falownik Huawei SUN2000 | — | **nie jest w sieci**, patrz niżej |
 
