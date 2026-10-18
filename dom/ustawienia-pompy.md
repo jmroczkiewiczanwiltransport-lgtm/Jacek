@@ -221,6 +221,25 @@ sprzed przeprowadzki na `.23`. Pod ósemką siedzi teraz **monitor domofonu**.
 Panel działa, bo najpierw sięga po adres z `adres-pompy.txt`, ale gdyby `.23`
 kiedyś zamilkło, zacznie pukać do domofonu. Do poprawienia.
 
+### Oba okna grzania przesunięte na 11:00
+
+Wieczorem przestawione w sterowniku, z 10:00 na 11:00, koniec bez zmian o 16:00:
+
+- `PAGE117.XML` — temperatura wody grzewczej, 45 °C, siedem dni
+- `PAGE118.XML` — blokada ogrzewania CWU poza harmonogramem, 45 °C, siedem dni
+
+Powód: o dziesiątej w październiku panele dopiero ruszają, więc ta godzina była
+grzaniem z sieci. Od środy porównamy z danymi godzinowymi Enei za 17–18.10, czyli
+jeszcze sprzed zmiany — i wtedy będzie widać, ile ta godzina naprawdę kosztowała.
+
+Razem z tym zmieniłem `OKNO_GRZANIA` w panelu na `(11, 16)`, żeby kafel „Słońce"
+liczył sumę promieniowania dla tego samego okna, co sterownik.
+
+**Uwaga na pomyłkę przy klikaniu:** strona harmonogramu pokojowego wygląda
+prawie identycznie jak ta z wodą grzewczą. Różnica jest w wierszu TEMPERATURE —
+**45,0** to woda, **19–20** to pokój. Pokojowy ma zostać wyłączony; włączenie go
+nadpisałoby nastawę 20,5 starymi oknami z zeszłego sezonu.
+
 ### Stan na teraz
 
 Panel chodzi z `C:\Users\jacek\Downloads\PanelPompy` — **tymczasowo**, bo

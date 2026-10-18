@@ -9,7 +9,7 @@ dzień odpuszcza grzanie dokładnie wtedy, gdy prąd jest najtańszy. Mając obo
 odczyt modelu meteorologicznego widać, o ile obudowa zawyża.
 
 **Nasłonecznienie mówi, czy podbicie w południe ma sens.** Harmonogram grzeje
-w oknie 10:00–16:00 niezależnie od pogody. W dzień słoneczny to ciepło jest
+w oknie 11:00–16:00 niezależnie od pogody. W dzień słoneczny to ciepło jest
 z dachu i prawie darmowe; pod chmurami to zwykły prąd z sieci, i to zużyty
 przy gorszej sprawności. Prognoza promieniowania pozwala to rozróżnić rano,
 a nie trzy dni później z danych operatora.
@@ -31,7 +31,7 @@ KATALOG = os.path.dirname(os.path.abspath(__file__))
 PLIK_USTAWIEN = os.path.join(KATALOG, 'pogoda.json')
 
 # Próg, powyżej którego dzień uznajemy za wart podbicia grzania w południe.
-# 2,0 kWh/m² w oknie 10–16 to w październiku dzień wyraźnie pogodny; przy
+# 2,0 kWh/m² w oknie 11–16 to w październiku dzień wyraźnie pogodny; przy
 # 10 kWp daje to kilkanaście kilowatogodzin, czyli więcej, niż pompa zdoła zjeść.
 PROG_SLONECZNY = 2.0
 PROG_POCHMURNY = 0.9
@@ -87,7 +87,7 @@ def _suma_kwh(godziny, wartosci, od_godziny, do_godziny, dzien):
     return round(razem, 2)
 
 
-def podsumuj(odpowiedz, okno=(10, 16), teraz=None):
+def podsumuj(odpowiedz, okno=(11, 16), teraz=None):
     """Z surowej odpowiedzi robi to, co panel ma pokazać."""
     teraz = teraz or datetime.now()
     biezace = odpowiedz.get('current') or {}
@@ -118,7 +118,7 @@ def podsumuj(odpowiedz, okno=(10, 16), teraz=None):
     }
 
 
-def pogoda(ustawienia=None, okno=(10, 16), limit=10):
+def pogoda(ustawienia=None, okno=(11, 16), limit=10):
     """Całość w jednym kroku. Zwraca None, gdy nie ma ustawień albo łączności."""
     ustawienia = ustawienia or wczytaj_ustawienia()
     if not ustawienia:

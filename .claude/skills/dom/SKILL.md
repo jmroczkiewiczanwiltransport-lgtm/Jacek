@@ -165,11 +165,20 @@ Strony sterownika (zalogowany, `http://192.168.88.23`): ikona **zegara** w lewym
 górnym rogu prowadzi do harmonogramów, **termometr** do krzywej grzewczej,
 **wykres** do historii ostatniej doby.
 
-| Harmonogram | Stan | Godziny | Wartość |
-|---|---|---|---|
-| Temperatury wody grzewczej | **włączony** | codziennie **10:00–16:00** | 45,0 °C |
-| Blokada ogrzewania CWU poza harmonogramem | **włączona** | codziennie **10:00–16:00** | CWU 45,0 °C |
-| Temperatury pokojowej (obieg 1) | **wyłączony** | stare okna wieczorne, patrz niżej | 19,0–20,0 °C |
+| Harmonogram | Strona | Stan | Godziny | Wartość |
+|---|---|---|---|---|
+| Temperatury wody grzewczej | `PAGE117.XML` | **włączony** | codziennie **11:00–16:00** | 45,0 °C |
+| Blokada ogrzewania CWU poza harmonogramem | `PAGE118.XML` | **włączona** | codziennie **11:00–16:00** | CWU 45,0 °C |
+| Temperatury pokojowej (obieg 1) | — | **wyłączony** | stare okna wieczorne, patrz niżej | 19,0–20,0 °C |
+
+**Okna przesunięte z 10:00 na 11:00 dnia 18.10.2026.** O dziesiątej w październiku
+panele dopiero ruszają — ta godzina była grzaniem z sieci. Koniec został na 16:00.
+Jeżeli zmieniasz te godziny, zmień też `OKNO_GRZANIA` w `dom/pompa-acond.py`,
+bo kafel „Słońce" liczy sumę promieniowania dokładnie dla tego okna.
+
+**Strona z harmonogramem pokojowym wygląda myląco jak ta z wodą grzewczą.**
+Rozpoznaje się je po wierszu TEMPERATURE: **45,0** to woda grzewcza, **19–20**
+to pokój. Pokojowego nie włączać — ma w sobie stare okna i nadpisałby nastawę.
 
 To jest celowa „przerzutka na południe": całe grzanie — i wody użytkowej, i
 podłogi — zepchnięte do okna, w którym pracują panele. Działa.
@@ -206,7 +215,7 @@ schodzi na grubszą siatkę.
 
 Po co: temperatura z modelu stoi w kafelku obok odczytu czujnika, więc błąd
 nasłonecznionej obudowy widać na bieżąco; suma promieniowania w oknie
-10:00–16:00 mówi **rano**, czy południowe podbicie pójdzie z dachu, czy z sieci
+11:00–16:00 mówi **rano**, czy południowe podbicie pójdzie z dachu, czy z sieci
 (dane Enei przychodzą dopiero po 2–3 dniach). Progi oceny: ≥ 2,0 kWh/m² to
 dzień pogodny, ≤ 0,9 pochmurny.
 

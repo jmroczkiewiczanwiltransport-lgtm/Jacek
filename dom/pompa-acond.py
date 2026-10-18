@@ -843,7 +843,9 @@ def _zuzycie_z_licznika(plik):
 # i 17,4 °C o 12:15. Sterownik dobiera po nim temperaturę wody, więc trzeba
 # widzieć obok odczyt niezależny. Druga rzecz to prognoza nasłonecznienia —
 # mówi rano, czy południowe grzanie pójdzie z dachu, czy z sieci.
-OKNO_GRZANIA = (10, 16)
+# Okno musi odpowiadać harmonogramom w sterowniku: od 18.10.2026 to 11:00–16:00
+# (wcześniej 10:00, ale o dziesiątej w październiku panele ledwo ruszają).
+OKNO_GRZANIA = (11, 16)
 ODSTEP_POGODY = 15 * 60
 _POGODA = {'dane': None, 'kiedy': 0.0, 'blad': None}
 _ZAMEK_POGODY = threading.Lock()
