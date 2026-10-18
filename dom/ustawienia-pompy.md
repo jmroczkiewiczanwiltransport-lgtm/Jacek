@@ -172,6 +172,63 @@ argument za rezerwacją w routerze.
 Dołożony **dziennik palenia w kominku** — przycisk w panelu, zapis do
 `kominek.csv`, pas na wykresie ostatniej doby.
 
+## 18.10.2026 wieczorem — monitoring na komputerze stacjonarnym
+
+Panel przeniesiony z laptopa na stacjonarny. Przy okazji wyszły trzy rzeczy.
+
+### Dziury w historii to nie był wyłączony laptop
+
+Najpierw tak to zdiagnozowałem i **była to zła diagnoza**. Dane mówią inaczej:
+
+| Dzień | Od | Do | Wpisów | Powinno być |
+|---|---|---|---|---|
+| 12.10 | 00:04 | 23:19 | 49 | ~280 |
+| 14.10 | 00:00 | 23:58 | 64 | ~288 |
+| 15.10 | 00:03 | **00:53** | 11 | ~288 |
+| 17.10 | **21:08** | 23:59 | 35 | — |
+| 18.10 | 00:04 | 19:09 | **230** | 230 ✓ |
+
+Zapisy ciągną się przez całą dobę, tylko jest ich pięć razy za mało. Wyłączony
+komputer zostawiłby jedną dziurę, nie dwieście małych. To był wątek zbierający,
+który padał i wracał. **15.10 o 00:53 padł na dobre** i nie zapisał nic aż do
+21:08 w sobotę — czyli do chwili, gdy ruszyła poprawiona wersja. Od tamtej
+godziny 265 wpisów bez przerwy. Pierwszy taki ciąg w tej historii.
+
+Wniosek na przyszłość: **zanim zwalisz dziurę na sprzęt, popatrz na rozkład
+wpisów w dobie.** Awaria programu i wyłączony komputer wyglądają inaczej.
+
+### Liczniki nie zapisały się ani razu przez półtora miesiąca
+
+W paczce z laptopa nie było `liczniki.csv`. Odliczanie doby szło od zegara
+`monotonic`, czyli od **włączenia komputera**, a nie od startu panelu — przy
+komputerze gaszonym na noc warunek „minęła doba" nie spełniał się nigdy.
+Naprawione: pierwszy spis idzie przy pierwszym obiegu pętli, więc każde
+uruchomienie zostawia odczyt.
+
+### Antywirus na stacjonarnym zgłosił trojana
+
+Podejrzany jest `autostart.szablon.vbs` — skrypt VBS, który startuje
+z autostartu i odpala ukryte okno `cmd` (`shell.Run ..., 0, False`). To jest
+podręcznikowy kształt droppera; heurystyka zapala się od samej formy, nie od
+treści. **Do wymiany na `pythonw.exe`** — robi to samo, a jest normalnym,
+podpisanym programem. To nie jest obchodzenie antywirusa, tylko usunięcie
+rzeczy, która słusznie wygląda podejrzanie.
+
+### Mina w `_URUCHOM-PANEL.bat`
+
+Plik wciąż podaje `http://192.168.88.8/PAGE115.XML` — stary adres pompy,
+sprzed przeprowadzki na `.23`. Pod ósemką siedzi teraz **monitor domofonu**.
+Panel działa, bo najpierw sięga po adres z `adres-pompy.txt`, ale gdyby `.23`
+kiedyś zamilkło, zacznie pukać do domofonu. Do poprawienia.
+
+### Stan na teraz
+
+Panel chodzi z `C:\Users\jacek\Downloads\PanelPompy` — **tymczasowo**, bo
+tak wylądował rozpakowany zip. Do przeniesienia do `%LOCALAPPDATA%` razem
+z autostartem. Pogoda z Open-Meteo działa: o zmroku czujnik 10,9 °C przy
+modelu 11,2 °C, czyli zgodnie. Dzień wyszedł pośredni — 1,4 kWh/m² w oknie
+10:00–16:00 przy zachmurzeniu 91 %.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
