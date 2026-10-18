@@ -84,6 +84,94 @@ zbierał danych — stąd dziura w historii od 2 do 27 września. Odnalazł się
 dopiero po adresie MAC (`f8:dc:7a:7d:24:89`). Panel robi to teraz sam.
 **Rezerwacja adresu w routerze wciąż niezrobiona** i to ona usunęłaby przyczynę.
 
+## 17–18.10.2026 — pierwszy mierzony weekend
+
+Nastawa pokojowa podniesiona z 18,1 na **20,5 °C** w sobotę rano. Przez cały
+weekend bez zmian — pierwszy pomiar przy jednej, stałej wartości.
+
+### Przebieg i liczby
+
+| Chwila | Licznik | W domu | Na dworze |
+|---|---|---|---|
+| sob. 07:43 | 4565 kWh | 18,7 °C | 6,7 °C |
+| sob. 12:15 | 4569 kWh | — | — |
+| sob. 21:15 | 4573 kWh | 20,1 °C | 9,8 °C |
+| nd. 00:38 | 4575 kWh | **20,5 °C** | 9,9 °C |
+| nd. 08:37 | 4578 kWh | 20,9 °C | 9,7 °C |
+| nd. 10:29 | 4579 kWh | 21,0 °C | 11,8 °C |
+
+**Podniesienie domu o 1,8 °C kosztowało 10 kWh** — tyle, ile cała doba
+utrzymywania. Dom doszedł do nastawy przed północą, czyli po jakichś
+czternastu godzinach.
+
+**Utrzymanie: 3 kWh przez osiem godzin nocy**, czyli **0,37 kWh/h** przy 20,5 °C
+w domu i 9–10 °C na dworze. W przeliczeniu na dobę około **9 kWh**.
+
+Po naładowaniu płyty dom przestrzelił do 20,9–21,0 °C i pompa zeszła z 7,2 kW
+do 1,35 kW. Przestrzelenie jest normalne — beton oddaje to, co wziął.
+
+### Harmonogramy — stan faktyczny odczytany ze sterownika
+
+**Poprawka do wcześniejszych notatek: okno to 10:00–16:00, nie 12:00–14:00.**
+
+| Harmonogram | Stan | Godziny | Wartość |
+|---|---|---|---|
+| Temperatury wody grzewczej | włączony | codziennie 10:00–16:00 | 45,0 °C |
+| Blokada ogrzewania CWU poza harmonogramem | włączona | codziennie 10:00–16:00 | CWU 45,0 °C |
+| Temperatury pokojowej (obieg 1) | **wyłączony** | stare okna wieczorne | 19,0–20,0 °C |
+
+Harmonogram wody grzewczej **nadpisuje termostat pokojowy**. Zmierzone 18.10
+o 10:29: w domu 21,0 °C przy nastawie 20,5, a pompa i tak grzała 4,7 kW,
+bo woda szła na 45 °C (o 8:37 było 24,8 °C, o 10:29 już 40,4 °C). Krzywa
+pogodowa chciałaby wtedy około 28 °C.
+
+### Zimny prysznic — poprawione
+
+Blokada CWU od 16:00 do 10:00 okazała się za ostra. Zbiornik stygnie
+**0,7 °C na godzinę**: z 45 °C o 16:00 schodzi do 33 °C nad ranem. Woda pod
+prysznicem o siódmej była za chłodna.
+
+Rozwiązanie: **okno poranne 05:00–07:00** w pierwszym, dotąd pustym wierszu
+harmonogramu CWU. Koszt około 0,8–1 kWh z sieci dziennie, bo o piątej rano
+paneli nie ma. Samo podniesienie temperatury zbiornika z 45 na 50 °C nie
+wystarczy — rano i tak byłoby około 38 °C.
+
+Wieczorna kąpiel jest bezpieczna: ostatnie dogrzanie o 16:00, o dwudziestej
+zbiornik ma jeszcze około 42 °C.
+
+### Pogoda i czego ten weekend nie zmierzył
+
+**Niedziela 18.10 cały dzień pod cienką, równą warstwą chmur** — bez cieni,
+produkcja rzędu 30–40 % pogodnego dnia. Czyli zmierzyliśmy strategię
+południowego podbicia w jej **najgorszym przypadku**: 45 °C wody przez sześć
+godzin, z obniżoną sprawnością, głównie za prąd z sieci.
+
+Zostawione celowo, żeby mieć z czym porównać dzień słoneczny.
+
+### Czujnik zewnętrzny stoi w słońcu
+
+17.10: **6,7 °C o 8:08 i 17,4 °C o 12:15**, przy średniej dobowej 11,5 °C.
+Jedenaście stopni skoku w cztery godziny w połowie października to nie
+powietrze, tylko nasłoneczniona obudowa.
+
+Działa przeciwko strategii południowej: sterownik dobiera temperaturę wody po
+tym odczycie, więc **im mocniej świeci, tym bardziej odpuszcza** — dokładnie
+wtedy, gdy prąd jest z dachu. Do sprawdzenia, po której stronie elewacji wisi.
+
+### Sprawy techniczne
+
+Panel przez dwa dni pokazywał świeże dane i **nie zapisywał ani jednego
+wiersza** — wątek zbierający padł po cichu na nieoczekiwanym wyjątku, bo
+łapaliśmy wyłącznie `OSError`. Poprawione: pętla łapie wszystko, a panel
+zapala ostrzeżenie, gdy historia nie rośnie od kwadransa.
+
+Chodziły też **dwa panele naraz**, oba pukające pod nieaktualny adres
+`192.168.88.8` (pompa jest na `.23`). Znajduje ją po MAC-u, ale to kolejny
+argument za rezerwacją w routerze.
+
+Dołożony **dziennik palenia w kominku** — przycisk w panelu, zapis do
+`kominek.csv`, pas na wykresie ostatniej doby.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
@@ -106,5 +194,5 @@ bez ingerencji w instalację.
 poboru wypada w tanich godzinach G12 i 51 % w G12w, przy progu opłacalności ok. 55 %.
 
 **Automatyka reagująca na rzeczywistą nadwyżkę** — sensowna dopiero, gdy dane pokażą,
-jak często podbicie w południe trafia w dzień pochmurny. Harmonogram grzeje 12:00–14:00
+jak często podbicie w południe trafia w dzień pochmurny. Harmonogram grzeje 10:00–16:00
 niezależnie od pogody; automat robiłby to tylko wtedy, gdy naprawdę świeci.
