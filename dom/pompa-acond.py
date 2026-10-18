@@ -849,10 +849,12 @@ OKNO_GRZANIA = (11, 16)
 ODSTEP_POGODY = 15 * 60
 _POGODA = {'dane': None, 'kiedy': 0.0, 'blad': None}
 _ZAMEK_POGODY = threading.Lock()
+PLIK_POGODY = os.path.join(KATALOG, 'pogoda.csv')
+_ZAMEK_PLIKU_POGODY = threading.Lock()
 
 
 def _odswiez_pogode(okno=OKNO_GRZANIA):
-    """Jedno pobranie do pamięci. Zwraca True, gdy przyszły dane."""
+    """Jedno pobranie do pamięci. Zwraca dane albo None."""
     import pogoda as meteo                                          # noqa: PLC0415
     dane = meteo.pogoda(okno=okno)
     with _ZAMEK_POGODY:
@@ -863,7 +865,26 @@ def _odswiez_pogode(okno=OKNO_GRZANIA):
             _POGODA['dane'] = dane
             _POGODA['kiedy'] = time.time()
             _POGODA['blad'] = None
-    return dane is not None
+    return dane
+
+
+def _dopisz_pogode(plik, dane, chwila=None):
+    """Prognoza do pliku, obok historii pompy.
+
+    Różnicę między czujnikiem a modelem widać w panelu tylko na żywo. Bez tego
+    zapisu nie da się jej policzyć wieczorem ani za tydzień — a to jest jedyny
+    sposób, żeby zmierzyć, o ile nasłoneczniona obudowa zawyża w ciągu dnia."""
+    chwila = chwila or datetime.now()
+    pola = ('temperatura', 'zachmurzenie', 'naslonecznienie',
+            'suma_okna', 'suma_doby', 'ocena')
+    pusto = lambda n: '' if dane.get(n) is None else dane[n]        # noqa: E731
+    with _ZAMEK_PLIKU_POGODY:
+        nowy = not os.path.exists(plik) or os.path.getsize(plik) == 0
+        with open(plik, 'a', encoding='utf-8') as f:
+            if nowy:
+                f.write('czas;' + ';'.join(pola) + '\n')
+            f.write(f'{chwila:%Y-%m-%d %H:%M:%S};'
+                    + ';'.join(str(pusto(n)) for n in pola) + '\n')
 
 
 def _pogoda_na_panel(wiek_max=3 * ODSTEP_POGODY):
@@ -886,7 +907,9 @@ def pilnuj_pogody(okno=OKNO_GRZANIA, odstep=ODSTEP_POGODY):
     ostatni_blad = [None]
     while True:
         try:
-            _odswiez_pogode(okno)
+            dane = _odswiez_pogode(okno)
+            if dane:
+                _dopisz_pogode(PLIK_POGODY, dane)
         except Exception as powod:                                   # noqa: BLE001
             podpis = f'{type(powod).__name__}: {powod}'
             if podpis != ostatni_blad[0]:

@@ -429,6 +429,11 @@ i wpisać do niego szerokość i długość geograficzną. Sprawdzenie bez panel
 python pogoda.py
 ```
 
+Każde pobranie dopisuje się do **`pogoda.csv`**, obok historii pompy. To jest
+jedyny sposób, żeby policzyć różnicę między czujnikiem a modelem wieczorem albo
+za tydzień — w panelu widać ją tylko na żywo, a nikt nie siedzi przed ekranem
+w południe.
+
 Pogodę pobiera osobny wątek, a `/api/stan` podaje tylko ostatni udany odczyt
 wraz z jego wiekiem. Gdy Open-Meteo nie odpowiada, **panel otwiera się tak
 samo** — kafel pokazuje poprzednie dane z dopiskiem, ile mają godzin. Gdy
