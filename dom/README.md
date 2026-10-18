@@ -459,6 +459,11 @@ dobę** ze stron 115 i 121 i dopisuje do `liczniki.csv` — dzięki temu przyros
 miesiąc jest gotowy bez przepisywania liczb z ekranu sterownika. Odstęp zmienia
 `--co-liczniki <godziny>`, `0` wyłącza.
 
+Pierwszy spis idzie **zaraz po starcie panelu**, a nie dobę później. Wcześniej
+odliczanie szło od włączenia komputera, więc na laptopie gaszonym na noc doba
+nigdy się nie zbierała i `liczniki.csv` nie powstał ani razu przez półtora
+miesiąca — panel wyglądał zdrowo, bo historia rosła normalnie.
+
 Porównanie z poprzednim odczytem pokazuje jak zawsze:
 
 ```bash

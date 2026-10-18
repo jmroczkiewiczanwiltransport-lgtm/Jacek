@@ -949,7 +949,11 @@ def panel(argumenty):
     # niż bieżące odczyty. Spisujemy je raz na dobę — dzięki temu przyrost za
     # miesiąc jest gotowy sam, bez przepisywania liczb z ekranu sterownika.
     odstep_licznikow = max(0, argumenty.co_liczniki) * 3600
-    ostatnie_liczniki = [0.0]
+    # Pierwszy spis robimy zaraz po starcie, a nie po dobie od zera. Zegar
+    # `monotonic` liczy od włączenia komputera, więc przy komputerze gaszonym
+    # na noc warunek „minęła doba" nie spełniał się nigdy i liczniki nie
+    # zapisały się ani razu przez półtora miesiąca.
+    ostatnie_liczniki = [time.monotonic() - odstep_licznikow]
 
     def czytaj_pompe(limit=8):
         """Czyta pompę; gdy nie odpowiada pod znanym adresem, szuka jej w sieci."""
