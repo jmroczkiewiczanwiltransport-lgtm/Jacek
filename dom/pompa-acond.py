@@ -2068,7 +2068,31 @@ def main():
         sys.exit(1)
 
 
+PLIK_LOGU = os.path.join(KATALOG, 'panel.log')
+
+
+def _dziennik_zamiast_konsoli():
+    """Pod `pythonw.exe` nie ma konsoli — bez tego pierwszy `print` zabija panel.
+
+    Windows uruchamia program bez okna właśnie przez `pythonw.exe`, a ten
+    ustawia `sys.stdout` na None. Każdy `print` leci wtedy wyjątkiem i panel
+    kończy się, zanim cokolwiek pokaże. Przekierowujemy wyjście do pliku —
+    przy okazji jest gdzie zajrzeć, gdy coś nie wstanie."""
+    if sys.stdout is not None and sys.stderr is not None:
+        return
+    try:
+        dziennik = open(PLIK_LOGU, 'a', encoding='utf-8', errors='replace', buffering=1)
+    except OSError:
+        dziennik = open(os.devnull, 'w', encoding='utf-8')
+    if sys.stdout is None:
+        sys.stdout = dziennik
+    if sys.stderr is None:
+        sys.stderr = dziennik
+    print(f'\n=== {datetime.now():%Y-%m-%d %H:%M:%S}  start bez konsoli ===', flush=True)
+
+
 if __name__ == '__main__':
+    _dziennik_zamiast_konsoli()
     try:
         main()
     except KeyboardInterrupt:

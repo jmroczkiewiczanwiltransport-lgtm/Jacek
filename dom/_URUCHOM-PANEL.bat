@@ -6,7 +6,7 @@ cd /d "%~dp0"
 rem  Adres sterownika. To tylko podpowiedz na start: gdy pompa nie odpowiada
 rem  pod tym adresem, panel przeczesuje siec, sam ja znajduje i zapamietuje
 rem  nowy adres w pliku adres-pompy.txt. Poprawiac tego nie trzeba.
-set POMPA=http://192.168.88.8/PAGE115.XML
+set POMPA=http://192.168.88.23/PAGE115.XML
 set PORT=8125
 
 rem  Adres falownika w sieci domowej. Zostaw pusty, dopóki nie włączysz w nim
