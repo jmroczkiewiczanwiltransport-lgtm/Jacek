@@ -188,10 +188,34 @@ podłogi — zepchnięte do okna, w którym pracują panele. Działa.
 najpierw wyzerować): pon 16–18 / wt 14–18 / śr 5–7 i 16–18 / czw 5–7 i 16–18 /
 pt 16–18 / sob 13–17 / nd 6–9.
 
-**Krzywa grzewcza** (strona 126): −15 °C → 38 °C, −5 °C → 34 °C, +5 °C → 30 °C,
-+15 °C → 24 °C. Nisko i dobrze — przy podłogówce niska woda to wysoki COP.
+**Krzywa grzewcza** (strona 126) — i to jest najważniejsza rzecz o tym
+sterowniku: tytuł strony brzmi **RETURN WATER TEMPERATURE DEPENDING ON OUTDOOR
+TEMPERATURE**. Krzywa ustala temperaturę **wody wracającej z podłogi**, nie
+wyjściowej.
+
+| Na dworze | Powrót ma mieć |
+|---|---|
+| −15 °C | 38,0 °C |
+| −5 °C | 34,0 °C |
+| +5 °C | 30,0 °C |
+| +15 °C | 24,0 °C |
+
+Nisko i dobrze — przy podłogówce niska woda to wysoki COP. Powyżej +15 °C
+sterownik najwyraźniej **przedłuża ostatni odcinek**, a nie przycina na 24 °C
+(tak wychodzi z dopasowania do danych z 19.10; gdyby przycinał, pompa grzałaby
+w południe, a stała).
+
+Nastawa pokojowa **przesuwa** wynik krzywej, nie zastępuje go. 19.10 o 20:24:
+krzywa dawała 27,9 °C, a „wymagana" na stronie głównej 22,8 — bo w domu było
+21,0 przy nastawie 20,5. Pompa moduluje moc tak, żeby powrót trzymał tę
+wartość; nie jest to prosty termostat włącz/wyłącz.
+
 **NIGHT DROP wpisany 22:00–06:00, ale obniżenie 0,0 °C**, czyli nie działa.
 Tak ma zostać.
+
+**Antysepsa (antylegionella) jest włączona** — widać ją na wykresie sterownika
+jako osobny cykl CWU do ~55 °C (19.10 o 14:07). Kosztuje około kilowatogodziny.
+Zostawić; przy zbiorniku na 45 °C to realne zabezpieczenie sanitarne.
 
 **Antysepsa (antylegionella) jest dozwolona** — do sprawdzenia, jak często
 startuje, bo dojście zbiornika do 60–65 °C wymaga grzałki elektrycznej.
@@ -204,8 +228,22 @@ tylko nasłoneczniona obudowa.
 
 To działa **przeciwko** strategii południowej: sterownik dobiera temperaturę wody
 po tym odczycie, więc im mocniej świeci, tym bardziej odpuszcza — dokładnie wtedy,
-gdy prąd jest z dachu. Do sprawdzenia, po której stronie elewacji wisi; powinien
-być od północy, w cieniu.
+gdy prąd jest z dachu.
+
+**19.10 zmierzone co do minuty.** Czujnik poszedł z 11,6 do 19,6 °C, krzywa
+obniżyła żądany powrót z 26,0 do 21,2 °C — czyli do poziomu wody, która akurat
+wracała z podłogi. Sterownik uznał, że jest dobrze, i **stał 55 minut, od 11:47
+do 12:42**. O 12:47 czujnik spadł do 15,8, żądanie podskoczyło do 23,5 i pompa
+ruszyła w tej samej minucie. Koszt: około 1 kWh przeniesionej ze słońca do
+wieczornej sieci, czyli ~90 gr w pogodny dzień.
+
+Sprawdzona i **odrzucona** inna hipoteza: że to przekroczenie progu „koniec
+sezonu grzewczego" (14,0 °C). 18.10 czujnik był ponad progiem od 11:24 do 14:00
+i pompa grzała normalnie. Mechanizm idzie przez krzywą, nie przez próg.
+
+**Ściana jest południowa** — maksimum odczytu wypada o 12:00–12:22, czyli pół
+godziny po górowaniu słońca. Ściana zachodnia dałaby szczyt koło 16:00.
+Do sprawdzenia, gdzie dokładnie wisi; powinien być od północy, w cieniu.
 
 ### Pogoda w panelu — Open-Meteo, model ICON-D2
 
