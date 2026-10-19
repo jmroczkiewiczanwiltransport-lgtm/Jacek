@@ -248,6 +248,55 @@ z autostartem. Pogoda z Open-Meteo działa: o zmroku czujnik 10,9 °C przy
 modelu 11,2 °C, czyli zgodnie. Dzień wyszedł pośredni — 1,4 kWh/m² w oknie
 10:00–16:00 przy zachmurzeniu 91 %.
 
+## 19.10.2026 — pierwszy zmierzony dzień z oknem 11:00–16:00
+
+Poniedziałek, dom pusty, pogodnie (prognoza 2,1 kWh/m²). Pierwszy dzień
+z przesuniętymi harmonogramami i pierwszy policzony co do godziny.
+
+| | |
+|---|---|
+| Prąd z licznika | **6 kWh** (4582 → 4588) |
+| Ciepło oddane | **25,1 kWh** |
+| **COP dobowy** | **4,2** |
+| Ciepło w oknie 11:00–16:00 | **19,0 kWh (76 %)** |
+| Prąd w oknie | 4 z 6 kWh |
+
+Do 11:00 pompa nie zrobiła nic — jedenaście godzin postoju, licznik bez ruchu.
+O 11:07, siedem minut po otwarciu okna, ruszyła od ciepłej wody: 38,4 → 46,1 °C
+w 35 minut. Potem, od 12:47 do 20:18, praca ciągła ze szczytem **6,5 kW**
+o 13:50 i zejściem do 1,3 kW wieczorem.
+
+**Strategia południowa działa.** Trzy czwarte ciepła powstaje w oknie, w którym
+pracują panele.
+
+### Pas martwy termostatu pokojowego — zmierzony
+
+Twierdziłem rano, że powyżej nastawy pompa nie ruszy. **Było to zbyt
+kategoryczne.** Z dwóch dni widać:
+
+- zatrzymuje się przy **+1,1 °C** nad nastawą (18.10, 21,6 przy 20,5),
+- wraca przy **+0,6 °C** (19.10, 21,1 przy 20,5).
+
+Czyli pas martwy to około pół stopnia. Wieczorne grzanie powyżej nastawy nie
+jest błędem, tylko normalną pracą w tym paśmie.
+
+### Czujnik zewnętrzny — 19,6 °C o 12:22
+
+O 12:22 pokazał **19,6 °C**, o 13:57 — **9,9 °C**. Dziesięć stopni w półtorej
+godziny to nie powietrze, tylko stygnąca ściana. Dokładnego błędu nie ma, bo
+zapis pogody ruszy dopiero po podmianie plików.
+
+### Dwie rzeczy niewyjaśnione
+
+**Postój 11:47–12:42, 55 minut w środku słońca.** Sprawdzona i **odrzucona**
+hipoteza, że to przekroczenie progu „koniec sezonu grzewczego" (13,9 °C):
+18.10 czujnik był ponad progiem od 11:24 do 14:00 i pompa grzała normalnie,
+nawet 4,5 kW. Najprawdopodobniej opóźnienie po cyklu CWU — ale to zgadywanie.
+
+**CWU poszło do 53,8 °C**, dziewięć stopni ponad nastawę 45. Drugi cykl ruszył
+o 14:07. Może antylegionella, poniedziałek by pasował. Do sprawdzenia
+w sterowniku.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
