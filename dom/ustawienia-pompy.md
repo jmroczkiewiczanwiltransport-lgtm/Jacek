@@ -327,6 +327,48 @@ dom, nie ogrzewanie** — i to po pełnej cenie, bo po ciemku.
 Enei wartość dla godziny 3:00 (pobór podstawowy) i 21:00 (szczyt), odjąć 0,4 kWh
 pompy. Wysoki pobór podstawowy to zwykle najtańsza oszczędność, jaka istnieje.
 
+## 20.10.2026 — skąd się biorą te 11,4 kWh „reszty domu"
+
+Z danych godzinowych Enei za 18.10, po odjęciu pompy (0,41 kWh/h przy pracy
+na minimum):
+
+| Godzina | Enea | Pompa | Dom |
+|---|---|---|---|
+| 3:00 (pobór podstawowy) | 0,694 kWh | 0,41 | **0,28 kWh/h ≈ 280 W** |
+| 21:00 (szczyt) | 1,428 kWh | 0 (stała) | **1,43 kWh**, z tego ~1,15 to aktywność |
+
+**280 W non stop to 6,7 kWh na dobę — prawie 60 % „reszty domu".** W skali roku
+2450 kWh, około 2200 zł. Większość rachunku poza ogrzewaniem to nie pralka,
+tylko rzeczy, które po prostu stoją i ciągną.
+
+Jacek wskazał składniki: **rekuperacja chodząca 24 h**, **osobna lodówka na
+napoje**, oraz **ledy wokół domu, automat 19:30–22:30** (te ostatnie nie wchodzą
+do poboru nocnego, ale trafiają w najdroższe godziny doby).
+
+**Rekuperacji nie ruszamy** — odzyskuje więcej ciepła, niż zużywa prądu. Do
+sprawdzenia: stan filtrów (zapchane podnoszą pobór o połowę) i czy jest
+elektryczna nagrzewnica wstępna. Taka grzałka bierze 500–1500 W i włącza się
+przy mrozie; w styczniu zobaczymy ją jako skok poboru nocnego.
+
+**Metoda pomiaru bez żadnego sprzętu:** wartość godziny 3:00 w aplikacji Enei to
+czysty pobór podstawowy. Wyłączyć badane urządzenie na jedną dobę i porównać
+z poprzednią nocą. Odpowiedź przychodzi z dwudniowym opóźnieniem, ale jest
+dokładna.
+
+### Zmiany wprowadzone
+
+- **20.10 wieczorem:** ledy ograniczone do frontu domu i do najniższej jasności
+  (było: całość, pełna jasność, 19:30–22:30). Porównanie: godzina 21:00
+  z 18.10 = 1,428 kWh, pompa wtedy stała.
+
+### Uwaga o koszcie samego monitoringu
+
+Stacjonarny komputer chodzi od 18.10 przez całą dobę i **wszedł do poboru
+podstawowego**. Przy typowym biegu jałowym 60–80 W to 1,5–2 kWh dziennie,
+czyli 40–55 zł miesięcznie — możliwe, że więcej, niż wynosi cała oszczędność
+z poprawienia nasłonecznionego czujnika. Do zmierzenia watomierzem; docelowo
+panel wart przeniesienia na coś, co bierze 3 W zamiast siedemdziesięciu.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
