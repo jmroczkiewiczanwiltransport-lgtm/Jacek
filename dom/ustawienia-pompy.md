@@ -297,6 +297,36 @@ nawet 4,5 kW. Najprawdopodobniej opóźnienie po cyklu CWU — ale to zgadywanie
 o 14:07. Może antylegionella, poniedziałek by pasował. Do sprawdzenia
 w sterowniku.
 
+## 18.10.2026 — ile z rachunku to naprawdę pompa
+
+Pierwsze zestawienie danych godzinowych Enei z własnym pomiarem pompy. Niedziela,
+dane „po bilansowaniu":
+
+| | kWh | udział |
+|---|---|---|
+| **Cały dom** (Enea) | **18,355** | 100 % |
+| Pompa ciepła (licznik sterownika) | **7,0** | **38 %** |
+| **Reszta domu** | **11,4** | **62 %** |
+
+Oddane przed bilansowaniem 2,376 kWh, po bilansowaniu **0,000** — bilansowanie
+godzinowe skasowało wszystko. To samo 17.10: 2,589 → 0,028. **Autokonsumpcja
+jest praktycznie stuprocentowa**, czyli dokładnie to, o co chodzi w net-billingu.
+
+**Wniosek, który zmienia priorytety:** pompa to mniej niż dwie piąte rachunku.
+Harmonogramy, krzywa i nasłoneczniony czujnik dotyczą tej mniejszej części.
+
+Pompa pracowała 18.10 przez siedemnaście godzin bez przerwy, od północy do
+17:00, ale na minimum — po około **0,4 kWh na godzinę**. Potem stanęła o 17:42
+i do końca doby nie wzięła nic.
+
+A najwyższy słupek Enei tego dnia to **godzina 21**, i godziny 18–23 są
+wszystkie wysokie. Pompa w żadnej z nich nie pracowała. **Wieczorny szczyt to
+dom, nie ogrzewanie** — i to po pełnej cenie, bo po ciemku.
+
+**Do ustalenia:** co składa się na te 11,4 kWh. Najprościej odczytać w aplikacji
+Enei wartość dla godziny 3:00 (pobór podstawowy) i 21:00 (szczyt), odjąć 0,4 kWh
+pompy. Wysoki pobór podstawowy to zwykle najtańsza oszczędność, jaka istnieje.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
