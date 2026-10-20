@@ -480,6 +480,23 @@ z kilowatogodziny prądu, pompa z jednej trzeciej.
 
 ### Gdy sterownik zmieni adres
 
+**Najpierw MAC, potem treść stron.** `adres-pompy.txt` ma dwie linijki — adres
+i adres sprzętowy. Ten drugi się nie zmienia, więc po nim pompa odnajduje się
+zawsze. Jeśli pliku brakuje drugiej linijki, program powie o tym przy zapisie.
+
+**Szukanie po treści bywa mylące.** 20.10.2026 przeszukanie wskazało mostek
+Philips Hue, bo on też odpowiada „403 odmowa dostępu" na nieznane ścieżki,
+a program uznawał odmowę za dowód. Teraz odmowa to tylko poszlaka: brana pod
+uwagę dopiero wtedy, gdy nic w sieci nie pasuje mocniej, i zawsze z ostrzeżeniem
+na ekranie. Gdy to zobaczysz — sprawdź adres, zanim na nim polegniesz.
+
+Najszybszy sposób na pewny adres: **odczytać go z wyświetlacza pompy na ścianie**,
+menu → Info ETH2 (ten „w rogu"), i wpisać ręcznie razem z MAC-iem:
+
+```powershell
+"http://192.168.88.X/PAGE115.XML","f8:dc:7a:7d:24:89" | Set-Content adres-pompy.txt
+```
+
 Sterownik stoi na DHCP i router potrafi mu zmienić adres — zdarzyło się to
 we wrześniu 2026, z `192.168.88.9` na `.8`. Wygląda to jak awaria pompy:
 panel przestaje odpowiadać, historia się urywa, sterowanie nie działa, a

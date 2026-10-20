@@ -209,6 +209,13 @@ def zapamietaj_adres(url, mac=None):
                 f.write(mac + '\n')
     except OSError:
         pass                                   # brak zapisu nie może psuć odczytu
+    if not mac:
+        # Bez MAC-a odnajdywanie pompy zależy od tego, czy jej serwer WWW
+        # akurat odpowiada — a to zawodzi dokładnie wtedy, gdy jest potrzebne.
+        print(f'   Uwaga: nie poznałem adresu MAC pompy, więc {PLIK_ADRESU} ma '
+              f'tylko adres IP.', flush=True)
+        print('   Po zmianie adresu przez router trzeba będzie szukać jej po '
+              'treści stron, a to bywa mylące.', flush=True)
 
 
 # Po czym poznajemy Tecomata w treści odpowiedzi.
@@ -216,13 +223,20 @@ ZNAKI_STEROWNIKA = (b'<LOGIN', b'__T', b'ACOND', b'SoftPLC', b'PLCFORM', b'x-tec
 
 
 def _to_sterownik(adres, port, limit):
-    """Czy pod tym adresem odpowiada Tecomat, a nie przypadkowy serwer WWW?
+    """Jak bardzo to wygląda na Tecomata: 2 — na pewno, 1 — może, 0 — nie.
 
     Pierwsza wersja patrzyła wyłącznie na treść strony i przegapiła sterownik
     stojący tuż przed nią. Bez sesji sterownik odpowiada rozmaicie — raz stroną
-    logowania, raz odmową — więc bierzemy pod uwagę także ciasteczko `SoftPLC`,
-    które nadaje przy każdym zapytaniu, i samą odmowę dostępu."""
+    logowania, raz odmową — więc bierzemy pod uwagę także ciasteczko `SoftPLC`
+    i samą odmowę dostępu.
+
+    Ale odmowa sama w sobie nie jest dowodem. 20.10.2026 przeszukanie wskazało
+    mostek Philips Hue, bo on też odpowiada „403" na nieznane ścieżki — i panel
+    zacząłby odpytywać oświetlenie zamiast pompy. Dlatego odmowa to już tylko
+    poszlaka: bierzemy ją pod uwagę dopiero wtedy, gdy nic w całej sieci nie
+    pasuje mocniej."""
     otwieracz = urllib.request.build_opener()  # osobny, żeby nie mieszać ciasteczek
+    poszlaka = 0
     for sciezka in ('/SYSWWW/LOGIN.XML', '/PAGE115.XML', '/'):
         zadanie = urllib.request.Request(f'http://{adres}:{port}{sciezka}', headers=_NAGLOWKI)
         try:
@@ -231,17 +245,16 @@ def _to_sterownik(adres, port, limit):
                 tresc = _rozpakuj(odpowiedz.read(16384),
                                   naglowki.get('Content-Encoding', ''))
         except urllib.error.HTTPError as powod:
-            # Sterownik broniący dostępu to wciąż sterownik.
             if powod.code in (401, 403):
-                return True
+                poszlaka = 1
             continue
         except (urllib.error.URLError, OSError):
             continue
         if 'SoftPLC' in (naglowki.get('Set-Cookie') or ''):
-            return True
+            return 2
         if any(znak in tresc for znak in ZNAKI_STEROWNIKA):
-            return True
-    return False
+            return 2
+    return poszlaka
 
 
 def _tablica_arp():
@@ -318,12 +331,29 @@ def znajdz_sterownik(wzor_url, siec=None, limit=0.6, mow=False):
                 print(f'Rozpoznałem sterownik po adresie MAC: {znaleziony_adres}')
             return zlozenie(znaleziony_adres)
 
-    for adres in sorted(otwarte, key=lambda a: int(a.rsplit('.', 1)[1])):
-        if _to_sterownik(adres, port, max(limit, 3.0)):
+    # Najpierw pewne trafienia, dopiero potem poszlaki — inaczej pierwsze
+    # urządzenie odmawiające dostępu wygrywa z prawdziwym sterownikiem,
+    # który stoi dalej w kolejności adresów.
+    posortowane = sorted(otwarte, key=lambda a: int(a.rsplit('.', 1)[1]))
+    watpliwe = []
+    for adres in posortowane:
+        pewnosc = _to_sterownik(adres, port, max(limit, 3.0))
+        if pewnosc == 2:
             znaleziony = zlozenie(adres)
             if mow:
                 print(f'Znalazłem sterownik: {znaleziony}')
             return znaleziony
+        if pewnosc == 1:
+            watpliwe.append(adres)
+    if watpliwe:
+        znaleziony = zlozenie(watpliwe[0])
+        if mow:
+            print(f'Nie mam pewności, ale pod {watpliwe[0]} coś broni dostępu — '
+                  f'przyjmuję {znaleziony}')
+            print('   Sprawdź, czy to naprawdę pompa, zanim na tym polegniesz.')
+            if len(watpliwe) > 1:
+                print(f'   Odmawiały też: {", ".join(watpliwe[1:])}')
+        return znaleziony
 
     raise OSError(f'nie znalazłem sterownika w sieci {poczatek}.0/24'
                   + (f' — port {port} otwarty na: {", ".join(sorted(otwarte))}' if otwarte else ''))
