@@ -16,7 +16,7 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 
 | Co | Adres | Uwagi |
 |---|---|---|
-| Pompa ciepła ACOND THERM | adres z DHCP, zmienny (bywało `.9`, `.8`, `.23`) | MAC **`f8:dc:7a:7d:24:89`** — po nim się ją znajduje; sterownik Tecomat Foxtrot, sw 160.36; ETH1 `192.168.134.176` to osobna sieć, nie ruszać |
+| Pompa ciepła ACOND THERM | adres z DHCP, **zmienny**: bywało `.9`, `.8`, `.23`, od 20.10.2026 `.4` | MAC **`f8:dc:7a:7d:24:89`** (ETH2 „w rogu", DYNAMIC IP) — po nim się ją znajduje; sterownik Tecomat Foxtrot, sw 160.36. **ETH1 „pośrodku", MAC `f8:dc:7a:7d:24:88`, `192.168.134.176` FIXED — osobna sieć serwisowa, nie ruszać.** Adres zmienia się po każdym zaniku prądu, bo router rozdaje pulę od nowa |
 | Mostek Philips Hue | `192.168.88.10` | sparowany, klucz w `~/.hue-most.json` |
 | Komputer stacjonarny (Acer, Windows 11, użytkownik `jacek`) | `192.168.88.22` | **tu od 18.10.2026 chodzi monitoring**; Python 3.15 w `AppData\Local\Python\pythoncore-3.15-64` |
 | Komputer Jacka (Windows 11) | `192.168.88.18` | laptop, bywa poza domem; od 18.10 już nie zbiera |
@@ -263,6 +263,25 @@ publiczne**. Adres ulicy nie wchodzi do repozytorium w żadnej postaci.
 
 Pobiera osobny wątek; `/api/stan` oddaje tylko ostatni udany odczyt z jego
 wiekiem, więc martwe łącze do Open-Meteo nigdy nie blokuje otwarcia panelu.
+
+### Zanik prądu — co się wtedy dzieje (20.10.2026, 16:00–18:30)
+
+Sprawdzone w praktyce, bo zdarzyło się po raz pierwszy od uruchomienia
+monitoringu:
+
+1. **Panel nie wstaje sam** — autostartu nie ma, trzeba ręcznie uruchomić
+   `_URUCHOM-PANEL.bat`. Dziura w `dane-pompy.csv` na cały czas przerwy.
+2. **Komputer może wrócić bez sieci.** Panel wypisał wtedy
+   `getaddrinfo failed`, `nie wiem, w jakiej jestem sieci` i podstawił
+   `http://ten-komputer:8125` zamiast adresu. To nie jest awaria panelu —
+   po powrocie Wi-Fi wraca sam, nie trzeba go restartować.
+3. **Pompa dostaje inny adres.** Router rozdaje pulę od nowa. Panel odnajduje
+   sterownik po MAC-u, ale strona sterownika w przeglądarce jest wtedy pod
+   nowym numerem. Nowy adres najszybciej odczytać **wprost z wyświetlacza
+   na ścianie**: menu → Info ETH2 (ten „w rogu").
+
+**Dwie rzeczy, które to zamkną:** rezerwacje adresów w routerze oraz autostart
+panelu plus ustawienie w BIOS-ie „włącz po przywróceniu zasilania".
 
 ## Kalendarz
 
