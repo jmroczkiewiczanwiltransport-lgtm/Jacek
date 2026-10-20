@@ -484,11 +484,16 @@ z kilowatogodziny prądu, pompa z jednej trzeciej.
 i adres sprzętowy. Ten drugi się nie zmienia, więc po nim pompa odnajduje się
 zawsze. Jeśli pliku brakuje drugiej linijki, program powie o tym przy zapisie.
 
-**Szukanie po treści bywa mylące.** 20.10.2026 przeszukanie wskazało mostek
-Philips Hue, bo on też odpowiada „403 odmowa dostępu" na nieznane ścieżki,
-a program uznawał odmowę za dowód. Teraz odmowa to tylko poszlaka: brana pod
-uwagę dopiero wtedy, gdy nic w sieci nie pasuje mocniej, i zawsze z ostrzeżeniem
-na ekranie. Gdy to zobaczysz — sprawdź adres, zanim na nim polegniesz.
+**Odmowa dostępu to poszlaka, nie dowód.** Program uznawał odpowiedź „401"
+lub „403" za potwierdzenie, że pod danym adresem stoi sterownik — a tak
+odpowiada wiele urządzeń. Teraz liczy się przede wszystkim treść strony
+(ciasteczko `SoftPLC`, znaki Tecomata); sama odmowa jest brana pod uwagę
+dopiero wtedy, gdy nic w sieci nie pasuje mocniej, i zawsze z ostrzeżeniem
+na ekranie.
+
+(Zmiana powstała 20.10.2026 przy okazji zaniku prądu. Przypisałem wtedy
+przeszukaniu pomyłkę, której nie popełniło: wskazany przez nie adres `.10`
+okazał się poprawny. Poprawka i tak jest słuszna, ale powód był zmyślony.)
 
 Najszybszy sposób na pewny adres: **odczytać go z wyświetlacza pompy na ścianie**,
 menu → Info ETH2 (ten „w rogu"), i wpisać ręcznie razem z MAC-iem:

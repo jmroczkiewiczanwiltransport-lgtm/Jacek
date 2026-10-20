@@ -16,8 +16,8 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 
 | Co | Adres | Uwagi |
 |---|---|---|
-| Pompa ciepła ACOND THERM | adres z DHCP, **zmienny**: bywało `.9`, `.8`, `.23`, od 20.10.2026 `.4` | MAC **`f8:dc:7a:7d:24:89`** (ETH2 „w rogu", DYNAMIC IP) — po nim się ją znajduje; sterownik Tecomat Foxtrot, sw 160.36. **ETH1 „pośrodku", MAC `f8:dc:7a:7d:24:88`, `192.168.134.176` FIXED — osobna sieć serwisowa, nie ruszać.** Adres zmienia się po każdym zaniku prądu, bo router rozdaje pulę od nowa |
-| Mostek Philips Hue | `192.168.88.10` | sparowany, klucz w `~/.hue-most.json` |
+| Pompa ciepła ACOND THERM | adres z DHCP, **zmienny**: bywało `.9`, `.8`, `.23`, od 20.10.2026 `.10` | MAC **`f8:dc:7a:7d:24:89`** (ETH2 „w rogu", DYNAMIC IP) — po nim się ją znajduje; sterownik Tecomat Foxtrot, sw 160.36. **ETH1 „pośrodku", MAC `f8:dc:7a:7d:24:88`, `192.168.134.176` FIXED — osobna sieć serwisowa, nie ruszać.** Adres zmienia się po każdym zaniku prądu, bo router rozdaje pulę od nowa |
+| Mostek Philips Hue | **adres nieznany** (był `.10`, ale 20.10.2026 pod tym adresem stanęła pompa) | sparowany, klucz w `~/.hue-most.json`; do ustalenia na nowo |
 | Komputer stacjonarny (Acer, Windows 11, użytkownik `jacek`) | `192.168.88.22` | **tu od 18.10.2026 chodzi monitoring**; Python 3.15 w `AppData\Local\Python\pythoncore-3.15-64` |
 | Komputer Jacka (Windows 11) | `192.168.88.18` | laptop, bywa poza domem; od 18.10 już nie zbiera |
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
@@ -275,10 +275,23 @@ monitoringu:
    `getaddrinfo failed`, `nie wiem, w jakiej jestem sieci` i podstawił
    `http://ten-komputer:8125` zamiast adresu. To nie jest awaria panelu —
    po powrocie Wi-Fi wraca sam, nie trzeba go restartować.
-3. **Pompa dostaje inny adres.** Router rozdaje pulę od nowa. Panel odnajduje
-   sterownik po MAC-u, ale strona sterownika w przeglądarce jest wtedy pod
-   nowym numerem. Nowy adres najszybciej odczytać **wprost z wyświetlacza
-   na ścianie**: menu → Info ETH2 (ten „w rogu").
+3. **Wszystkie adresy w domu się przetasowują.** Nie tylko pompa — 20.10
+   stacjonarny przeszedł z `.22` na `.17`, a pompa przez wieczór pokazywała
+   kolejno `.4` i `.10`. Panel odnajduje sterownik po MAC-u, ale strona
+   sterownika w przeglądarce jest pod nowym numerem. Nowy adres najszybciej
+   odczytać **wprost z wyświetlacza na ścianie**: menu → Info ETH2 (ten
+   „w rogu").
+
+**Najważniejsza lekcja z tego wieczoru — moja, nie Jacka.** Przeszukanie sieci
+wskazało poprawnie `192.168.88.10`. Ja uznałem to za pomyłkę, bo w tej tabeli
+pod `.10` miałem zapisany mostek Hue. **Zaufałem własnej notatce sprzed tygodnia
+zamiast świeżemu pomiarowi** — a po zaniku prądu notatka była już nieaktualna.
+Skutek: Jacek restartował pompę bezpiecznikiem i szukał nieistniejących portów
+przez godzinę.
+
+Po zaniku prądu **cała ta tabela jest podejrzana, dopóki się jej nie sprawdzi**.
+Kolejność zaufania: wyświetlacz na ścianie → `arp -a` → `Test-NetConnection` →
+dopiero na końcu notatki.
 
 **Dwie rzeczy, które to zamkną:** rezerwacje adresów w routerze oraz autostart
 panelu plus ustawienie w BIOS-ie „włącz po przywróceniu zasilania".
