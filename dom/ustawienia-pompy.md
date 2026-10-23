@@ -481,6 +481,50 @@ sterownik ustawiałby 22 °C także w dzień pochmurny, co jest czystą stratą.
 10:00–16:00. Punkt odniesienia — 23.10: noc 9,8 kWh ciepła, okno 6,3 kWh,
 popołudnie 13:00–19:00 zero.
 
+## Ile daje słońce w ciągu roku — i dlaczego stały próg nie wystarczy
+
+Zmierzone u Jacka (prognoza Open-Meteo, okno grzania i cała doba):
+
+| Dzień | W oknie | Doba | Jaki był |
+|---|---|---|---|
+| 23.10 | **1,7** | **2,3** | bezchmurny, czujnik +7,6 °C |
+| 21.10 | **1,42** | 1,9 | bezchmurny, czujnik +6,9 °C |
+| 22.10 | 0,33 | 0,45 | 100 % chmur |
+| 20.10 | 0,33 | 0,50 | 100 % chmur |
+
+**Sufit na koniec października to ~1,8 kWh/m² w oknie, ~2,3 na dobę.** Słońce
+stoi wtedy 26° nad horyzontem, model pokazał w południe 400 W/m².
+
+Dzień bezchmurny przez rok, cała doba:
+
+| czerwiec | marzec / wrzesień | październik | listopad | grudzień |
+|---|---|---|---|---|
+| 7–8 | 4–5 | 2,2 | 1,2 | **0,8** |
+
+### Błąd w automacie słonecznym, do poprawienia przed listopadem
+
+**Próg `prog_kwh = 1.5` przestanie działać.** W grudniu nawet bezchmurny dzień
+da około 0,8 — połowę progu. Automat nie włączy się ani razu przez całą zimę,
+choćby świeciło bez jednej chmury.
+
+Próg ustawiłem na podstawie pięciu październikowych dni i nie sprawdziłem, co
+będzie za sześć tygodni.
+
+**Rozwiązanie:** kryterium względne zamiast bezwzględnego. Z szerokości
+geograficznej i daty da się policzyć, ile maksymalnie może dać słońce tego dnia
+— bez dodatkowej usługi, sama astronomia. Warunek brzmiałby wtedy „dziś będzie
+ponad 60 % tego, co w tym dniu możliwe" i działałby jednakowo w czerwcu
+i w grudniu.
+
+Do zrobienia **przed 1 listopada**. Do tego czasu 1,5 jest w porządku.
+
+### Przy okazji: próg 1,5 pomija dni, na których zysk byłby największy
+
+21.10 miało 1,42 — odpadło o osiem setnych. A był to akurat dzień, w którym
+pompa przepracowała 2,5 godziny i **3 kWh poszły do sieci** zamiast do domu.
+Czyli dzień, na którym automat zarobiłby najwięcej. Po tygodniu obserwacji
+warto zejść do 1,2.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
