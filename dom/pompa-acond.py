@@ -868,6 +868,95 @@ def _zuzycie_z_licznika(plik):
     return wynik
 
 
+# --- Automat słoneczny ------------------------------------------------------
+# Sterownik dobiera grzanie z krzywej i z nastawy pokojowej. Nie wie natomiast,
+# czy dziś świeci — a to jest jedyna informacja, która decyduje, czy warto
+# wepchnąć ciepło w podłogę w południe, czy lepiej go nie robić wcale.
+#
+# Panel tę informację ma. Więc w dzień pogodny podnosi nastawę na czas okna
+# słonecznego, a poza nim trzyma bazową. Dom magazynuje ciepło zrobione
+# z dachu i oddaje je nocą, zamiast dogrzewać się z sieci nad ranem.
+#
+# Trzy zasady, których ten automat przestrzega:
+#   1. Bez pliku ustawień nie robi NIC. Milczące sterowanie cudzym ogrzewaniem
+#      byłoby nadużyciem.
+#   2. Gdy ktoś ruszy nastawę ręcznie, automat ustępuje do końca okna.
+#      Człowiek przy panelu wie więcej niż prognoza.
+#   3. Każda zmiana ląduje w slonce.csv. Jeśli rachunek wyjdzie dziwny,
+#      ma być czym to sprawdzić.
+PLIK_SLONCA = os.path.join(KATALOG, 'slonce.json')
+PLIK_DZIENNIKA_SLONCA = os.path.join(KATALOG, 'slonce.csv')
+_SLONCE = {'cel': None, 'powod': 'automat nieuruchomiony', 'kiedy': None,
+           'pauza_do': None, 'blad': None}
+_ZAMEK_SLONCA = threading.Lock()
+TOLERANCJA_NASTAWY = 0.15          # mniej niż jeden impuls i pół
+
+
+def wczytaj_slonce(plik=None):
+    """Ustawienia automatu. Brak pliku znaczy: nie sterujemy."""
+    plik = plik or PLIK_SLONCA
+    if not os.path.exists(plik):
+        return None
+    try:
+        with open(plik, encoding='utf-8') as f:
+            dane = json.load(f)
+    except (ValueError, OSError):
+        return None
+    if not dane.get('wlaczone'):
+        return None
+    okno = dane.get('okno') or [10, 16]
+    try:
+        return {'okno': (int(okno[0]), int(okno[1])),
+                'prog_kwh': float(dane.get('prog_kwh', 1.5)),
+                'nastawa_slonce': float(dane['nastawa_slonce']),
+                'nastawa_baza': float(dane['nastawa_baza'])}
+    except (KeyError, TypeError, ValueError, IndexError):
+        return None
+
+
+def cel_nastawy(ustawienia, pogoda, teraz=None):
+    """Jaka nastawa ma obowiązywać w tej chwili i dlaczego.
+
+    Czysta decyzja, bez sieci i bez zapisu — żeby dała się sprawdzić testem."""
+    teraz = teraz or datetime.now()
+    if not ustawienia:
+        return None, 'automat wyłączony'
+    if not pogoda or pogoda.get('suma_okna') is None:
+        # Bez prognozy nie zgadujemy: zostawiamy nastawę tak, jak jest.
+        return None, 'brak prognozy — nic nie zmieniam'
+    od, do = ustawienia['okno']
+    w_oknie = od <= teraz.hour < do
+    slonecznie = pogoda['suma_okna'] >= ustawienia['prog_kwh']
+    if w_oknie and slonecznie:
+        return (ustawienia['nastawa_slonce'],
+                f"słońce {pogoda['suma_okna']:.1f} kWh/m² — grzeję do {do}:00")
+    if w_oknie:
+        return (ustawienia['nastawa_baza'],
+                f"pochmurno ({pogoda['suma_okna']:.1f} kWh/m²) — bez podbicia")
+    return ustawienia['nastawa_baza'], f'poza oknem {od}:00–{do}:00'
+
+
+def _dopisz_slonce(plik, chwila, cel, przed, po, powod, udalo):
+    try:
+        nowy = not os.path.exists(plik) or os.path.getsize(plik) == 0
+        with open(plik, 'a', encoding='utf-8') as f:
+            if nowy:
+                f.write('czas;cel;nastawa_przed;nastawa_po;udalo_sie;powod\n')
+            f.write(f'{chwila:%Y-%m-%d %H:%M:%S};{cel};{przed};{po};'
+                    f'{"tak" if udalo else "nie"};{powod}\n')
+    except OSError:
+        pass
+
+
+def _slonce_na_panel():
+    with _ZAMEK_SLONCA:
+        stan = dict(_SLONCE)
+    if stan['kiedy']:
+        stan['sprzed'] = int(time.time() - stan['kiedy'])
+    stan.pop('kiedy', None)
+    return stan
+
+
 # --- Pogoda z zewnątrz -------------------------------------------------------
 # Czujnik zewnętrzny pompy stoi w słońcu: 17.10.2026 pokazał 6,7 °C o 8:08
 # i 17,4 °C o 12:15. Sterownik dobiera po nim temperaturę wody, więc trzeba
@@ -1096,6 +1185,7 @@ def panel(argumenty):
             odpowiedz['zadania'] = _najblizsze_zadania()
             odpowiedz['kominek'] = _stan_kominka(PLIK_KOMINKA)
             odpowiedz['pogoda'] = _pogoda_na_panel()
+            odpowiedz['slonce'] = _slonce_na_panel()
             # Ile minęło od ostatniego dopisku do historii. Panel sam powie,
             # gdy przestanie rosnąć — inaczej wygląda zdrowo, bo dane na żywo
             # czyta inną drogą niż ta, która zapisuje.
@@ -1194,9 +1284,80 @@ def panel(argumenty):
                     traceback.print_exc()
             time.sleep(odstep_zapisu)
 
+    def pilnuj_slonca(odstep=300):
+        """Trzyma nastawę pokojową tam, gdzie każe prognoza.
+
+        Ustępuje człowiekowi: gdy odczyt nastawy nie zgadza się ani z celem,
+        ani z tym, co sami ostatnio ustawiliśmy, znaczy że ktoś ruszył ją
+        ręcznie — i wtedy milczymy do końca bieżącego okna."""
+        ostatnio_ustawione = [None]
+        pauza_do = [None]
+        ostatni_blad = [None]
+        while True:
+            try:
+                ustawienia = wczytaj_slonce()
+                cel, powod = cel_nastawy(ustawienia, _pogoda_na_panel())
+                teraz = datetime.now()
+                if pauza_do[0] and teraz >= pauza_do[0]:
+                    pauza_do[0] = None
+                if cel is None or not steruje:
+                    with _ZAMEK_SLONCA:
+                        _SLONCE.update({'cel': None, 'powod': powod, 'blad': None})
+                elif pauza_do[0]:
+                    with _ZAMEK_SLONCA:
+                        _SLONCE.update({'cel': cel, 'blad': None,
+                                        'powod': 'ustąpiłem — nastawę zmieniono ręcznie',
+                                        'pauza_do': pauza_do[0].strftime('%H:%M')})
+                else:
+                    zmienne = czytaj_pompe()
+                    teraz_nastawa = liczba(zmienne.get(zmienna_nastawy))
+                    recznie = (teraz_nastawa is not None
+                               and ostatnio_ustawione[0] is not None
+                               and abs(teraz_nastawa - ostatnio_ustawione[0]) > TOLERANCJA_NASTAWY
+                               and abs(teraz_nastawa - cel) > TOLERANCJA_NASTAWY)
+                    if recznie:
+                        od, do = ustawienia['okno']
+                        koniec = teraz.replace(minute=0, second=0, microsecond=0)
+                        koniec = koniec.replace(hour=do) if teraz.hour < do else koniec + timedelta(days=1)
+                        pauza_do[0] = koniec
+                        print(f'{teraz:%H:%M:%S}  nastawa zmieniona ręcznie na {teraz_nastawa} '
+                              f'— automat słoneczny ustępuje do {koniec:%H:%M}', flush=True)
+                        with _ZAMEK_SLONCA:
+                            _SLONCE.update({'cel': cel, 'blad': None,
+                                            'powod': 'ustąpiłem — nastawę zmieniono ręcznie',
+                                            'pauza_do': koniec.strftime('%H:%M')})
+                    elif teraz_nastawa is not None and abs(teraz_nastawa - cel) > TOLERANCJA_NASTAWY:
+                        wynik = ustaw_nastawe(adres_pompy[0], cel, zmienna_nastawy,
+                                              argumenty.uzytkownik, argumenty.haslo,
+                                              ciasteczko=argumenty.ciasteczko)
+                        ostatnio_ustawione[0] = wynik.get('nastawa')
+                        _dopisz_slonce(PLIK_DZIENNIKA_SLONCA, teraz, cel, teraz_nastawa,
+                                       wynik.get('nastawa'), powod, wynik.get('osiagnieto'))
+                        print(f'{teraz:%H:%M:%S}  automat słoneczny: {teraz_nastawa} → '
+                              f'{wynik.get("nastawa")} °C ({powod})', flush=True)
+                        with _ZAMEK_SLONCA:
+                            _SLONCE.update({'cel': cel, 'powod': powod, 'blad': None,
+                                            'kiedy': time.time(), 'pauza_do': None})
+                    else:
+                        with _ZAMEK_SLONCA:
+                            _SLONCE.update({'cel': cel, 'powod': powod,
+                                            'blad': None, 'pauza_do': None})
+                ostatni_blad[0] = None
+            except Exception as powod_bledu:                          # noqa: BLE001
+                podpis = f'{type(powod_bledu).__name__}: {powod_bledu}'
+                with _ZAMEK_SLONCA:
+                    _SLONCE['blad'] = podpis
+                if podpis != ostatni_blad[0]:
+                    ostatni_blad[0] = podpis
+                    print(f'{datetime.now():%H:%M:%S}  automat słoneczny — {podpis}',
+                          flush=True)
+            time.sleep(odstep)
+
     if odstep_zapisu:
         threading.Thread(target=zbieraj, daemon=True).start()
     threading.Thread(target=pilnuj_pogody, daemon=True).start()
+    if steruje:
+        threading.Thread(target=pilnuj_slonca, daemon=True).start()
 
     nasluch = '127.0.0.1' if argumenty.tylko_lokalnie else '0.0.0.0'
     serwer = ThreadingHTTPServer((nasluch, argumenty.port_panelu), Obsluga)

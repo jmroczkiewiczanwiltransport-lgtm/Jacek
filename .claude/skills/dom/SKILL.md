@@ -296,6 +296,25 @@ dopiero na końcu notatki.
 **Dwie rzeczy, które to zamkną:** rezerwacje adresów w routerze oraz autostart
 panelu plus ustawienie w BIOS-ie „włącz po przywróceniu zasilania".
 
+### Automat słoneczny w panelu (od 23.10.2026)
+
+Panel sam podnosi nastawę pokojową w oknie słonecznym, gdy prognoza mówi, że
+dziś świeci, i trzyma bazową w dni pochmurne i poza oknem. Ustawienia
+w `dom/slonce.json` (gitignore), przykład w `slonce.przyklad.json`. Bez tego
+pliku automat nie robi nic.
+
+**Harmonogram temperatury pokojowej w sterowniku musi zostać WYŁĄCZONY.**
+Dwa mechanizmy ustawiające tę samą wartość będą się przestawiać nawzajem.
+
+Automat ustępuje człowiekowi: gdy odczyt nastawy nie zgadza się ani z celem,
+ani z tym, co sam ostatnio ustawił, milczy do końca bieżącego okna. Każda
+zmiana trafia do `slonce.csv`.
+
+Powód, dla którego powstał: 23.10 pompa grzała od północy do 9:00, a potem
+**stała od 13:00 do 19:00** — w najbardziej słoneczne godziny, bo nasłoneczniony
+czujnik mówił krzywej, że jest ciepło. Prawie 10 kWh ciepła weszło w dom nocą
+zamiast w południe, z sieci zamiast z dachu i przy gorszym COP.
+
 ## Kalendarz
 
 Zadania siedzą w `dom/przypomnienia.json`, panel pokazuje najbliższe trzy,

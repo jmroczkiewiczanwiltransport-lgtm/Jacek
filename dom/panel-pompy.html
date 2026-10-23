@@ -88,6 +88,7 @@
   <div id="stan" class="stan" hidden><span class="kropka"></span><span></span></div>
   <div id="kafle" class="siatka"></div>
   <div id="sterowanie"></div>
+  <div id="automat"></div>
   <div id="kominek"></div>
   <div id="reszta"></div>
 </main>
@@ -272,6 +273,7 @@ async function odswiez() {
   // konkretną wartość to seria takich impulsów, więc trwa i trzeba pokazać,
   // że coś się dzieje — inaczej wygląda na zawieszony panel.
   rysujSterowanie(dane, nastawa);
+  rysujAutomat(dane.slonce);
   rysujKominek(dane.kominek);
 
   // ── obieg grzewczy i licznik ──
@@ -374,6 +376,21 @@ function trwanie(minut) {
   return minut >= 60
     ? `${Math.floor(minut / 60)} h ${String(minut % 60).padStart(2, '0')} min`
     : `${minut} min`;
+}
+
+// Automat słoneczny sam zmienia nastawę pokojową, więc musi mówić, co robi
+// i dlaczego. Sterowanie ogrzewaniem bez widocznego powodu jest gorsze niż
+// brak sterowania — nie da się odróżnić działania od awarii.
+function rysujAutomat(stan) {
+  const gdzie = $('#automat');
+  gdzie.innerHTML = '';
+  if (!stan || (stan.cel === null && !stan.blad)) return;
+  const opis = stan.blad ? stan.blad
+    : stan.powod + (stan.pauza_do ? ` · wracam o ${stan.pauza_do}` : '');
+  const plytka = kafel('Automat słoneczny', stan.blad ? null : stan.cel.toFixed(1),
+                       stan.blad ? '' : '°C', opis, stan.pauza_do ? '' : 'slonce');
+  plytka.classList.add('szeroki');
+  gdzie.append(el('div', { className: 'siatka' }, [plytka]));
 }
 
 // Jeden przycisk zamiast formularza z godzinami: wpis ma powstać w chwili,

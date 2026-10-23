@@ -439,6 +439,59 @@ wraz z jego wiekiem. Gdy Open-Meteo nie odpowiada, **panel otwiera się tak
 samo** — kafel pokazuje poprzednie dane z dopiskiem, ile mają godzin. Gdy
 brakuje `pogoda.json`, kafel mówi wprost, co skopiować.
 
+### Automat słoneczny — grzanie wtedy, gdy świeci
+
+Sterownik dobiera grzanie z krzywej i z nastawy pokojowej. **Nie wie, czy dziś
+świeci** — a to jedyna informacja, która rozstrzyga, czy warto wepchnąć ciepło
+w podłogę w południe, czy nie robić go wcale.
+
+Panel tę informację ma, bo pobiera prognozę. Więc w dzień pogodny podnosi
+nastawę pokojową na czas okna słonecznego, a poza nim trzyma bazową. Jastrych
+magazynuje ciepło zrobione z dachu i oddaje je nocą — zamiast dogrzewać się
+z sieci nad ranem, przy gorszej sprawności.
+
+Po co to w liczbach: 23.10.2026 pompa grzała od północy do dziewiątej, a potem
+**stała od 13:00 do 19:00**, w najbardziej słoneczne godziny. Prawie dziesięć
+kilowatogodzin ciepła weszło w dom nocą zamiast w południe.
+
+**Bez pliku `slonce.json` automat nie robi nic.** Uruchomienie:
+
+```
+copy slonce.przyklad.json slonce.json
+```
+
+i w środku `"wlaczone": true`:
+
+| Pole | Znaczenie |
+|---|---|
+| `okno` | godziny podbicia, domyślnie `[10, 16]` |
+| `prog_kwh` | od ilu kWh/m² w oknie dzień uznajemy za słoneczny |
+| `nastawa_slonce` | nastawa w oknie w dzień pogodny |
+| `nastawa_baza` | nastawa poza oknem i w dni pochmurne |
+
+`nastawa_slonce` musi być **wyraźnie wyższa niż to, do czego dom sam dryfuje**.
+Przy bazie 20,5 dom potrafi stać na 21,8 — wtedy nastawa 21 nie uruchomi
+niczego.
+
+**Trzy zasady, których automat przestrzega:**
+
+**Bez pliku nie robi nic.** Milczące sterowanie cudzym ogrzewaniem byłoby
+nadużyciem. Zepsuty plik też go nie włączy.
+
+**Ustępuje człowiekowi.** Gdy odczyt nastawy nie zgadza się ani z celem, ani
+z tym, co sam ostatnio ustawił, uznaje że ktoś ruszył ją ręcznie — i milczy do
+końca bieżącego okna. Człowiek przy panelu wie więcej niż prognoza.
+
+**Zapisuje każdą zmianę** do `slonce.csv`: czas, cel, nastawa przed i po, czy
+się udało, i powód. Jeśli rachunek wyjdzie dziwny, jest czym to sprawdzić.
+
+Panel pokazuje, co automat właśnie robi i dlaczego — sterowanie ogrzewaniem bez
+widocznego powodu jest gorsze niż jego brak, bo nie da się odróżnić działania
+od awarii.
+
+**Nie włączaj przy tym harmonogramu pokojowego w sterowniku.** Dwa mechanizmy
+ustawiające tę samą wartość będą się nawzajem przestawiać.
+
 ### Kto jest w sieci — `siec.py`
 
 ```bash
