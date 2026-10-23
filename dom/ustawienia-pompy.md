@@ -369,6 +369,94 @@ czyli 40–55 zł miesięcznie — możliwe, że więcej, niż wynosi cała oszc
 z poprawienia nasłonecznionego czujnika. Do zmierzenia watomierzem; docelowo
 panel wart przeniesienia na coś, co bierze 3 W zamiast siedemdziesięciu.
 
+## 19–23.10.2026 — błąd czujnika zmierzony, i czego przy okazji nie zauważyliśmy
+
+Pierwszy tydzień, w którym panel zapisywał **jednocześnie** odczyt czujnika
+i temperaturę z modelu. 1035 par pomiarów w odstępie do 7,5 minuty.
+
+### Krzywa błędu — średnia z pięciu dni
+
+| Godzina | Różnica czujnik − model |
+|---|---|
+| 00:00–08:00 | **−0,3 … +0,3** (zero) |
+| 10:00 | +1,0 |
+| 11:00 | +1,4 |
+| 12:00 | +2,6 |
+| **13:00** | **+2,9** |
+| 14:00 | +0,8 |
+| 16:00 | +0,6 |
+
+**W nocy czujnik mówi prawdę.** To obala moją hipotezę z 20.10, postawioną na
+podstawie jednego odczytu o 01:17, że nagrzana ściana oddaje mu ciepło przez
+całą noc. Pięć dni danych tego nie pokazuje — tamten odczyt był wyjątkiem.
+
+**Cały błąd to bezpośrednie słońce, od 9:00 do 14:00.** Potwierdza to rozkład
+dzienny:
+
+| Dzień | Szczyt różnicy | Czujnik | Model | Pogoda |
+|---|---|---|---|---|
+| 21.10 | **+6,9** o 13:24 | 23,5 | 16,6 | słonecznie |
+| 23.10 | **+7,6** o 13:30 | 20,7 | 13,1 | słonecznie |
+| 20.10 | +1,3 | — | — | 100 % chmur |
+| 22.10 | +0,7 | — | — | 100 % chmur |
+
+**Siedem stopni w południe przy słońcu, zero przy chmurach.** Sprawa
+rozstrzygnięta: daszek osłonowy albo przewieszenie na ścianę północną.
+
+### Zużycie dobowe
+
+| Dzień | kWh | Czas pracy | Śr. zewn |
+|---|---|---|---|
+| 19.10 | 7 | 12 h | 8,6 °C |
+| 20.10 | ~6 | 16 h | 8,5 °C (zanik prądu) |
+| 21.10 | **2** | 2,5 h | 14,5 °C |
+| 22.10 | **9** | **24 h** | 10,3 °C |
+| 23.10 | 5 (do 19:20) | 10,5 h | 8,9 °C |
+
+### Zbiornik CWU stoi zimny przez pół doby
+
+Znalezione przy okazji, nie szukane:
+
+```
+21.10  18:00   44 → 24 → 20 °C      ← kąpiel opróżniła zbiornik
+       19:00–23:00     19–20 °C
+22.10  00:00–11:00     19–20 °C     ← jedenaście godzin
+23.10  06:00   40 → 24 °C           ← poranny prysznic
+       07:00–12:00     20–24 °C     ← pięć godzin
+```
+
+**Blokada CWU nie pozwala dogrzać zbiornika przed 11:00**, więc po każdym
+większym poborze dom zostaje bez ciepłej wody do południa. Przesunięcie okna
+z 10:00 na 11:00 (19.10) wydłużyło tę dziurę o godzinę — skutek uboczny
+optymalizacji, którego nie przewidziałem.
+
+**Do zrobienia: okno CWU 05:00–07:00** w pustym górnym rzędzie `PAGE118.XML`.
+Koszt około 0,5 kWh na dobę z sieci.
+
+### Licznik energii cofa się przy zaniku prądu
+
+20.10: **4595 kWh o 16:06 → 4590 kWh po powrocie prądu.** Sterownik zapisuje
+licznik do pamięci trwałej tylko co jakiś czas. Te 5 kWh nigdy się nie pojawi;
+przyrost miesięczny będzie o tyle zaniżony. Licznik jest wiarygodny **między**
+zanikami, nie **przez** nie. Panel tego nie wykrywa i pokazał wtedy „1,0 kWh"
+zamiast rzeczywistych ~6 — do poprawienia w kodzie.
+
+### 21.10 — pierwszy dzień z prawdziwym oddaniem do sieci
+
+Enea, po bilansowaniu: pobrana 7,733 kWh, **oddana 2,988 kWh**. Wcześniej
+bilansowanie godzinowe kasowało oddanie do zera (17.10: 2,589 → 0,028;
+18.10: 2,376 → 0,000).
+
+Powód: pompa przepracowała tego dnia **2,5 godziny**, bo było ciepło,
+a nasłoneczniony czujnik pokazywał w południe 23,5 °C. Panele produkowały,
+dom nie miał co z tym zrobić, nadwyżka poszła do sieci — a w net-billingu
+wraca droższa.
+
+**Kierunek na przyszłość:** w dni, gdy pompa nie ma czego grzać, nadwyżkę
+opłaca się wsadzić w zbiornik CWU zamiast oddawać. Podniesienie go z 45 na
+55 °C zmieściłoby około 2 kWh, czyli dokładnie tyle, ile wtedy uciekło.
+Do przemyślenia razem z antysepsą i spadkiem COP przy gorętszej wodzie.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
