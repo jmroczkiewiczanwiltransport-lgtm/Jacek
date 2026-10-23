@@ -457,6 +457,30 @@ opłaca się wsadzić w zbiornik CWU zamiast oddawać. Podniesienie go z 45 na
 55 °C zmieściłoby około 2 kWh, czyli dokładnie tyle, ile wtedy uciekło.
 Do przemyślenia razem z antysepsą i spadkiem COP przy gorętszej wodzie.
 
+## 23.10.2026 wieczorem — automat słoneczny włączony
+
+Po obserwacji Jacka („pompa za mało pracuje w dzień, dziś grzała w nocy, a w dzień
+na słońcu grzała tylko wodę") — potwierdzonej co do godziny w danych — włączone
+sterowanie nastawą z panelu.
+
+```json
+{"wlaczone": true, "okno": [10, 16], "prog_kwh": 1.5,
+ "nastawa_slonce": 22.0, "nastawa_baza": 20.0}
+```
+
+Baza zmieniona z 20,5 na **20,0 °C**. Przy okazji sprawdzone na żywo, że
+sterownik przyjmuje serię impulsów po 0,1 °C — droga 20,5 → 20,0 doszła
+dokładnie do celu. To był jedyny element, którego nie dało się sprawdzić
+na atrapie.
+
+**Harmonogram pokojowy w sterowniku zostaje wyłączony.** Jacek chciał go
+włączyć, ale automat w panelu robi to samo, a dodatkowo wie, czy dziś świeci —
+sterownik ustawiałby 22 °C także w dzień pochmurny, co jest czystą stratą.
+
+**Do porównania w niedzielę:** czy zużycie przesunęło się z nocy na okno
+10:00–16:00. Punkt odniesienia — 23.10: noc 9,8 kWh ciepła, okno 6,3 kWh,
+popołudnie 13:00–19:00 zero.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
