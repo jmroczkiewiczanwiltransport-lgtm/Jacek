@@ -306,6 +306,14 @@ pliku automat nie robi nic.
 **Harmonogram temperatury pokojowej w sterowniku musi zostać WYŁĄCZONY.**
 Dwa mechanizmy ustawiające tę samą wartość będą się przestawiać nawzajem.
 
+Od 24.10 okno ma dwa poziomy: `nastawa_slonce` na całe okno i `schody`
+(lista `[od, do, ile]`, godziny ułamkowe) na szczyt. Ustawione: okno 9–15,
+21,5 °C, a 10:00–12:30 — 22,0 °C.
+
+**Okno podaje się czasem zegarowym, a słońce zegarka nie przestawia.**
+Kulminacja promieniowania: ~12:44 czasu letniego, ~11:44 zimowego. Przy każdej
+zmianie czasu okno i harmonogramy `PAGE117`/`PAGE118` przesuwają się o godzinę.
+
 Automat ustępuje człowiekowi: gdy odczyt nastawy nie zgadza się ani z celem,
 ani z tym, co sam ostatnio ustawił, milczy do końca bieżącego okna. Każda
 zmiana trafia do `slonce.csv`.

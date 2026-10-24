@@ -525,6 +525,25 @@ pompa przepracowała 2,5 godziny i **3 kWh poszły do sieci** zamiast do domu.
 Czyli dzień, na którym automat zarobiłby najwięcej. Po tygodniu obserwacji
 warto zejść do 1,2.
 
+### 24.10.2026 — schody zamiast jednej nastawy, i czas zimowy
+
+Jedna nastawa na całe okno marnuje jego brzegi. O 9:00 i o 14:30 panele dają
+ułamek tego, co w południe; grzanie do 22 °C o tych porach dobiera prąd z sieci
+dokładnie wtedy, gdy nie ma nadwyżki.
+
+Stąd dwa poziomy: **21,5 °C na całe okno, 22,0 °C w szczycie**. Szczyt wybrany
+z pomiaru, nie z intuicji — promieniowanie w Dąbrówce kulminuje o 12:44 czasu
+letniego, czyli **11:44 czasu zimowego**. Blok 10:00–12:30 zimowego obejmuje
+godziny przed kulminacją, bo jastrych odbiera ciepło z opóźnieniem — podłoga
+nagrzana o 11:00 oddaje je o 14:00.
+
+Dziś w nocy zmiana czasu, więc całe okno schodzi o godzinę: `[10, 16]` → `[9, 15]`.
+**Słońce zegarka nie przestawia.** Gdyby okna nie ruszyć, automat grzałby
+godzinę po szczycie i kończył, gdy produkcja już spada.
+
+Do zrobienia przy okazji to samo w sterowniku: harmonogramy `PAGE117`
+i `PAGE118` z 11:00–16:00 na 10:00–15:00.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie

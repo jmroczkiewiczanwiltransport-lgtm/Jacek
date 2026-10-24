@@ -914,12 +914,23 @@ def wczytaj_slonce(plik=None):
         return None
     okno = dane.get('okno') or [10, 16]
     try:
-        return {'okno': (int(okno[0]), int(okno[1])),
+        schody = []
+        for od, do, ile in dane.get('schody') or []:
+            schody.append((float(od), float(do), float(ile)))
+        return {'okno': (float(okno[0]), float(okno[1])),
                 'prog_kwh': float(dane.get('prog_kwh', 1.5)),
                 'nastawa_slonce': float(dane['nastawa_slonce']),
-                'nastawa_baza': float(dane['nastawa_baza'])}
+                'nastawa_baza': float(dane['nastawa_baza']),
+                'schody': schody}
     except (KeyError, TypeError, ValueError, IndexError):
         return None
+
+
+def _godzina(ile):
+    """8.5 -> '8:30'. Godziny trzymamy ułamkiem, bo południe nie wypada
+    równo o pełnej i 13:30 bywa sensowniejszą granicą niż 13:00."""
+    minuty = int(round(ile * 60))
+    return f'{minuty // 60}:{minuty % 60:02d}'
 
 
 def cel_nastawy(ustawienia, pogoda, teraz=None):
@@ -933,15 +944,25 @@ def cel_nastawy(ustawienia, pogoda, teraz=None):
         # Bez prognozy nie zgadujemy: zostawiamy nastawę tak, jak jest.
         return None, 'brak prognozy — nic nie zmieniam'
     od, do = ustawienia['okno']
-    w_oknie = od <= teraz.hour < do
+    zegar = teraz.hour + teraz.minute / 60.0
+    w_oknie = od <= zegar < do
     slonecznie = pogoda['suma_okna'] >= ustawienia['prog_kwh']
     if w_oknie and slonecznie:
+        # Schody to podbicie w podbiciu: w samo południe, gdy panele dają
+        # najwięcej, można pozwolić sobie na stopień więcej niż na brzegach
+        # okna. Pierwszy pasujący wygrywa, więc kolejność w pliku ma znaczenie.
+        for poczatek, koniec, ile in ustawienia.get('schody') or []:
+            if poczatek <= zegar < koniec:
+                return (ile, f"słońce {pogoda['suma_okna']:.1f} kWh/m² — "
+                             f"szczyt {_godzina(poczatek)}–{_godzina(koniec)}")
         return (ustawienia['nastawa_slonce'],
-                f"słońce {pogoda['suma_okna']:.1f} kWh/m² — grzeję do {do}:00")
+                f"słońce {pogoda['suma_okna']:.1f} kWh/m² — "
+                f"grzeję do {_godzina(do)}")
     if w_oknie:
         return (ustawienia['nastawa_baza'],
                 f"pochmurno ({pogoda['suma_okna']:.1f} kWh/m²) — bez podbicia")
-    return ustawienia['nastawa_baza'], f'poza oknem {od}:00–{do}:00'
+    return (ustawienia['nastawa_baza'],
+            f'poza oknem {_godzina(od)}–{_godzina(do)}')
 
 
 def _dopisz_slonce(plik, chwila, cel, przed, po, powod, udalo):
@@ -1325,8 +1346,11 @@ def panel(argumenty):
                                and abs(teraz_nastawa - cel) > TOLERANCJA_NASTAWY)
                     if recznie:
                         od, do = ustawienia['okno']
-                        koniec = teraz.replace(minute=0, second=0, microsecond=0)
-                        koniec = koniec.replace(hour=do) if teraz.hour < do else koniec + timedelta(days=1)
+                        minuty = int(round(do * 60))
+                        koniec = teraz.replace(hour=minuty // 60, minute=minuty % 60,
+                                               second=0, microsecond=0)
+                        if koniec <= teraz:
+                            koniec += timedelta(days=1)
                         pauza_do[0] = koniec
                         print(f'{teraz:%H:%M:%S}  nastawa zmieniona ręcznie na {teraz_nastawa} '
                               f'— automat słoneczny ustępuje do {koniec:%H:%M}', flush=True)

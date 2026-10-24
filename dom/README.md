@@ -464,10 +464,31 @@ i w środku `"wlaczone": true`:
 
 | Pole | Znaczenie |
 |---|---|
-| `okno` | godziny podbicia, domyślnie `[10, 16]` |
+| `okno` | godziny podbicia, czasem zegarowym |
 | `prog_kwh` | od ilu kWh/m² w oknie dzień uznajemy za słoneczny |
 | `nastawa_slonce` | nastawa w oknie w dzień pogodny |
 | `nastawa_baza` | nastawa poza oknem i w dni pochmurne |
+| `schody` | wyższa nastawa w środku okna, lista `[od, do, ile]` |
+
+**Okno podaje się czasem zegarowym, a słońce zegarka nie przestawia.** Szczyt
+promieniowania wypada tu około 12:45 latem i 11:45 zimą — po zmianie czasu
+okno trzeba przesunąć o godzinę w dół, inaczej automat grzeje godzinę po
+szczycie.
+
+`schody` pozwalają podbić nastawę jeszcze raz w samym południe, gdy panele dają
+najwięcej, i trzymać niżej na brzegach okna. Godziny mogą być ułamkowe
+(`12.5` to 12:30). Pierwszy pasujący stopień wygrywa, więc kolejność ma
+znaczenie. Pusta lista albo brak pola znaczy: jedna nastawa na całe okno.
+
+```json
+"okno": [9, 15],
+"nastawa_slonce": 21.5,
+"schody": [[10, 12.5, 22.0]]
+```
+
+czyli 21,5 °C od 9:00 do 15:00, a między 10:00 a 12:30 — 22,0 °C.
+**Schody działają tylko w dzień słoneczny**; pod chmurami obowiązuje
+`nastawa_baza` przez całe okno, tak samo jak wcześniej.
 
 `nastawa_slonce` musi być **wyraźnie wyższa niż to, do czego dom sam dryfuje**.
 Przy bazie 20,5 dom potrafi stać na 21,8 — wtedy nastawa 21 nie uruchomi
