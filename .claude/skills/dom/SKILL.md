@@ -23,6 +23,17 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
 | Falownik Huawei SUN2000 | — | **nie jest w sieci**, patrz niżej |
 
+**Panel pompy mieszka w `C:\PanelPompy` na stacjonarnym** — pliki leżą płasko,
+bez podfolderu `dom`. Tam są wszystkie dane: `dane-pompy.csv`, `pogoda.csv`,
+`slonce.csv`, `liczniki.csv`, `kominek.csv`, `logowanie.txt`, `pogoda.json`,
+`slonce.json`. Do 24.10 folder stał w Pobranych, obok dwóch starych kopii po
+rozpakowanych paczkach.
+
+**Nie zgaduj ścieżki instalacji.** 24.10 podałem Jackowi `C:\PanelPompy\dom`
+z pamięci, `type` zwrócił „nie istnieje" i poszedł szukać nieistniejącego
+problemu. Gdy ścieżka jest potrzebna, sprawdź:
+`Get-ChildItem C:\ -Filter pompa-acond.py -Recurse -Depth 4 -ErrorAction SilentlyContinue | % FullName`
+
 **Panele NIE są na dachu.** Stoją na gruncie, w jednym długim rzędzie na działce
 za domem, na stelażu. Nie pisz „ciepło z dachu". Konsekwencje: pochylenie jest
 stałe i prawdopodobnie stromsze niż połać dachowa (lepsza zima, gorsze lato),

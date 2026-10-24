@@ -3,9 +3,15 @@ chcp 65001 >nul
 title Autostart panelu pompy
 cd /d "%~dp0"
 
-rem  Panel musi mieszkać w stałym miejscu, a nie w Pobranych: folder z paczką
-rem  zmienia nazwę przy każdej aktualizacji i autostart wskazywałby w pustkę.
-set "DOCEL=%LOCALAPPDATA%\PanelPompy"
+rem  Autostart wskazuje na folder, w którym ten plik leży. Panel ma już swoje
+rem  stałe miejsce (u Jacka C:\PanelPompy) i nie ma po co robić kopii gdzie
+rem  indziej — druga kopia znaczy dwa zestawy danych i aktualizowanie nie tej,
+rem  która chodzi. Jedyne, na co nie pozwalamy, to Pobrane: ten folder Windows
+rem  czyści sam, a leży w nim cała zebrana historia.
+set "DOCEL=%~dp0"
+if "%DOCEL:~-1%"=="\" set "DOCEL=%DOCEL:~0,-1%"
+echo %DOCEL% | findstr /i "\\Downloads\\ \\Pobrane\\" >nul
+if not errorlevel 1 goto zle_miejsce
 set "SZABLON=%~dp0autostart.szablon.vbs"
 set "STARTUP_VBS=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Panel pompy.vbs"
 
@@ -14,29 +20,16 @@ echo   ============================================
 echo     Autostart panelu pompy
 echo   ============================================
 echo.
-echo   Panel zamieszka w:
+echo   Panel mieszka w:
 echo     %DOCEL%
 echo.
 
-rem  Zatrzymujemy panel, zanim podmienimy pliki. Bez tego stary proces trzyma
+rem  Zatrzymujemy panel, zanim wystartujemy nowy. Bez tego stary proces trzyma
 rem  port 8125, nowy nie ma gdzie wstac i po cichu pada — a uzytkownik widzi
 rem  stara wersje i slusznie mysli, ze instalacja nic nie dala.
 echo   Zatrzymuje dzialajacy panel, jesli jakis chodzi...
 powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*pompa-acond.py*panel*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>&1
 echo.
-
-if not exist "%DOCEL%" mkdir "%DOCEL%"
-
-rem  Pliki programu — te nadpisujemy zawsze, to jest właśnie aktualizacja.
-for %%p in (pompa-acond.py modbus.py falownik.py siec.py pogoda.py panel-pompy.html przypomnienia.py przypomnienia.json opisy-panelu.przyklad.json pogoda.przyklad.json slonce.przyklad.json _URUCHOM-PANEL.bat autostart.szablon.vbs) do (
-  if exist "%%p" copy /y "%%p" "%DOCEL%\" >nul
-)
-
-rem  Twoje pliki — kopiujemy tylko, jeśli tam ich jeszcze nie ma. Inaczej
-rem  aktualizacja skasowałaby zebraną historię albo dane do logowania.
-for %%p in (logowanie.txt ciasteczko.txt opisy-panelu.json dane-pompy.csv liczniki.csv kominek.csv pogoda.json pogoda.csv slonce.json slonce.csv) do (
-  if exist "%%p" if not exist "%DOCEL%\%%p" copy /y "%%p" "%DOCEL%\" >nul
-)
 
 if not exist "%DOCEL%\logowanie.txt" (
   echo   UWAGA: nie znalazłem logowanie.txt — panel nie zaloguje się do sterownika.
@@ -60,10 +53,20 @@ echo.
 echo   Panel: http://localhost:8125
 echo.
 echo   Żeby to wyłączyć, uruchom _USUN-AUTOSTART.bat
-echo   Od teraz aktualizujesz tak: pobierasz paczkę i klikasz ten plik jeszcze raz.
+echo   Aktualizacja: wrzucasz nowe pliki do tego folderu i klikasz ten plik.
 echo.
 pause
 exit /b
+
+:zle_miejsce
+echo.
+echo   Panel leży w Pobranych. Windows potrafi sam czyścić ten folder, a razem
+echo   z nim poszłaby cała zebrana historia pomiarów.
+echo.
+echo   Przenieś cały folder na C:\PanelPompy i uruchom ten plik jeszcze raz.
+echo.
+pause
+exit /b 1
 
 :blad_skrotu
 echo   Nie udało się założyć skrótu w Autostarcie.
