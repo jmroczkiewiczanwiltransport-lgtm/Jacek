@@ -389,11 +389,15 @@ function trwanie(minut) {
 function rysujAutomat(stan) {
   const gdzie = $('#automat');
   gdzie.innerHTML = '';
-  if (!stan || (stan.cel === null && !stan.blad)) return;
+  // Pokazujemy kafelek zawsze, gdy automat ma cokolwiek do powiedzenia. Gdy
+  // znikał przy braku celu, wyglądało to jak brak pliku ustawień — a powód
+  // („czekam na prognozę", „automat wyłączony") jest wtedy najpotrzebniejszy.
+  if (!stan || (!stan.powod && !stan.blad)) return;
   const opis = stan.blad ? stan.blad
     : stan.powod + (stan.pauza_do ? ` · wracam o ${stan.pauza_do}` : '');
-  const plytka = kafel('Automat słoneczny', stan.blad ? null : stan.cel.toFixed(1),
-                       stan.blad ? '' : '°C', opis, stan.pauza_do ? '' : 'slonce');
+  const maCel = !stan.blad && stan.cel !== null && stan.cel !== undefined;
+  const plytka = kafel('Automat słoneczny', maCel ? stan.cel.toFixed(1) : null,
+                       maCel ? '°C' : '', opis, stan.pauza_do ? '' : 'slonce');
   plytka.classList.add('szeroki');
   gdzie.append(el('div', { className: 'siatka' }, [plytka]));
 }

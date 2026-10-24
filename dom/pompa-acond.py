@@ -1363,10 +1363,17 @@ def panel(argumenty):
         pauza_do = [None]
         pamiec_dnia = {}
         ostatni_blad = [None]
+        czekam_na_prognoze = [False]
         while True:
             try:
                 ustawienia = wczytaj_slonce()
-                cel, powod = cel_nastawy(ustawienia, _pogoda_na_panel(), pamiec=pamiec_dnia)
+                prognoza = _pogoda_na_panel()
+                # Wątek pogody startuje równolegle z tym i potrzebuje sekundy
+                # na pierwsze pobranie. Bez tego pierwszy obieg trafiał w pustkę,
+                # zasypiał na pięć minut i przez ten czas panel nie pokazywał
+                # automatu wcale — wyglądało to jak brak slonce.json.
+                czekam_na_prognoze[0] = not prognoza or prognoza.get('suma_okna') is None
+                cel, powod = cel_nastawy(ustawienia, prognoza, pamiec=pamiec_dnia)
                 teraz = datetime.now()
                 if pauza_do[0] and teraz >= pauza_do[0]:
                     pauza_do[0] = None
@@ -1424,7 +1431,7 @@ def panel(argumenty):
                     ostatni_blad[0] = podpis
                     print(f'{datetime.now():%H:%M:%S}  automat słoneczny — {podpis}',
                           flush=True)
-            time.sleep(odstep)
+            time.sleep(15 if czekam_na_prognoze[0] else odstep)
 
     if odstep_zapisu:
         threading.Thread(target=zbieraj, daemon=True).start()
