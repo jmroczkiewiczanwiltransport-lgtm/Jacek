@@ -156,7 +156,7 @@ powietrze, tylko nasłoneczniona obudowa.
 
 Działa przeciwko strategii południowej: sterownik dobiera temperaturę wody po
 tym odczycie, więc **im mocniej świeci, tym bardziej odpuszcza** — dokładnie
-wtedy, gdy prąd jest z dachu. Do sprawdzenia, po której stronie elewacji wisi.
+wtedy, gdy prąd jest z paneli. Do sprawdzenia, po której stronie elewacji wisi.
 
 ### Sprawy techniczne
 

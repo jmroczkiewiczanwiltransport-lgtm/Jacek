@@ -10,7 +10,7 @@ odczyt modelu meteorologicznego widać, o ile obudowa zawyża.
 
 **Nasłonecznienie mówi, czy podbicie w południe ma sens.** Harmonogram grzeje
 w oknie 11:00–16:00 niezależnie od pogody. W dzień słoneczny to ciepło jest
-z dachu i prawie darmowe; pod chmurami to zwykły prąd z sieci, i to zużyty
+z paneli i prawie darmowe; pod chmurami to zwykły prąd z sieci, i to zużyty
 przy gorszej sprawności. Prognoza promieniowania pozwala to rozróżnić rano,
 a nie trzy dni później z danych operatora.
 

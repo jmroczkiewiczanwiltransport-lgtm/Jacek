@@ -23,6 +23,13 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
 | Falownik Huawei SUN2000 | — | **nie jest w sieci**, patrz niżej |
 
+**Panele NIE są na dachu.** Stoją na gruncie, w jednym długim rzędzie na działce
+za domem, na stelażu. Nie pisz „ciepło z dachu". Konsekwencje: pochylenie jest
+stałe i prawdopodobnie stromsze niż połać dachowa (lepsza zima, gorsze lato),
+odśnieżanie i mycie robi się z ziemi, a rząd mają w pobliżu drzewa i linię
+energetyczną na słupach — cienie przy niskim słońcu do sprawdzenia.
+Azymut, pochylenie i moc: **do ustalenia**.
+
 Ogrzewanie: podłogówka w całym domu plus grzejnik elektryczny w łazience.
 Taryfa **G11**. Fotowoltaika rozliczana **net-billingiem**, umowa od stycznia 2026
 — danych sprzed tej daty nie ma i nie będzie.
@@ -228,7 +235,7 @@ tylko nasłoneczniona obudowa.
 
 To działa **przeciwko** strategii południowej: sterownik dobiera temperaturę wody
 po tym odczycie, więc im mocniej świeci, tym bardziej odpuszcza — dokładnie wtedy,
-gdy prąd jest z dachu.
+gdy prąd jest z paneli.
 
 **19.10 zmierzone co do minuty.** Czujnik poszedł z 11,6 do 19,6 °C, krzywa
 obniżyła żądany powrót z 26,0 do 21,2 °C — czyli do poziomu wody, która akurat
@@ -254,7 +261,7 @@ schodzi na grubszą siatkę.
 
 Po co: temperatura z modelu stoi w kafelku obok odczytu czujnika, więc błąd
 nasłonecznionej obudowy widać na bieżąco; suma promieniowania w oknie
-11:00–16:00 mówi **rano**, czy południowe podbicie pójdzie z dachu, czy z sieci
+11:00–16:00 mówi **rano**, czy południowe podbicie pójdzie z paneli, czy z sieci
 (dane Enei przychodzą dopiero po 2–3 dniach). Progi oceny: ≥ 2,0 kWh/m² to
 dzień pogodny, ≤ 0,9 pochmurny.
 
@@ -321,7 +328,7 @@ zmiana trafia do `slonce.csv`.
 Powód, dla którego powstał: 23.10 pompa grzała od północy do 9:00, a potem
 **stała od 13:00 do 19:00** — w najbardziej słoneczne godziny, bo nasłoneczniony
 czujnik mówił krzywej, że jest ciepło. Prawie 10 kWh ciepła weszło w dom nocą
-zamiast w południe, z sieci zamiast z dachu i przy gorszym COP.
+zamiast w południe, z sieci zamiast z paneli i przy gorszym COP.
 
 ## Kalendarz
 

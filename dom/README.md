@@ -410,7 +410,7 @@ gdy to się dzieje, a nie po miesiącu w rachunku.
 
 **Nasłonecznienie mówi, czy podbicie w południe ma sens.** Harmonogram grzeje
 w oknie 10:00–16:00 niezależnie od pogody. W dzień słoneczny to ciepło jest
-z dachu i prawie darmowe; pod chmurami to zwykły prąd z sieci, zużyty przy
+z paneli i prawie darmowe; pod chmurami to zwykły prąd z sieci, zużyty przy
 gorszej sprawności. Kafel „Słońce 10–16" podaje prognozowaną sumę promieniowania
 na metr kwadratowy i jedno słowo oceny: *pogodnie — grzej w południe*,
 *zmiennie*, *pochmurno — ciepło z sieci*. Progi: ponad 2,0 kWh/m² w oknie to
@@ -447,7 +447,7 @@ w podłogę w południe, czy nie robić go wcale.
 
 Panel tę informację ma, bo pobiera prognozę. Więc w dzień pogodny podnosi
 nastawę pokojową na czas okna słonecznego, a poza nim trzyma bazową. Jastrych
-magazynuje ciepło zrobione z dachu i oddaje je nocą — zamiast dogrzewać się
+magazynuje ciepło zrobione z paneli i oddaje je nocą — zamiast dogrzewać się
 z sieci nad ranem, przy gorszej sprawności.
 
 Po co to w liczbach: 23.10.2026 pompa grzała od północy do dziewiątej, a potem
