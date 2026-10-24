@@ -898,6 +898,12 @@ _SLONCE = {'cel': None, 'powod': 'automat nieuruchomiony', 'kiedy': None,
            'pauza_do': None, 'blad': None}
 _ZAMEK_SLONCA = threading.Lock()
 TOLERANCJA_NASTAWY = 0.15          # mniej niż jeden impuls i pół
+# Osobny, znacznie szerszy próg na pytanie "czy ruszył to człowiek". Zapis
+# idzie impulsami po 0,1 °C i potrafi przestrzelić o jeden czy dwa — 24.10
+# kazaliśmy 22,0, a sterownik stanął na 22,1. Przy jednym progu taki rozjazd
+# automat wziąłby za cudzą rękę i zamilkł na resztę dnia. Człowiek przy
+# panelu rusza nastawę o stopnie, nie o dziesiąte części.
+PROG_RECZNEJ = 0.5
 
 
 def wczytaj_slonce(plik=None):
@@ -933,10 +939,12 @@ def _godzina(ile):
     return f'{minuty // 60}:{minuty % 60:02d}'
 
 
-def cel_nastawy(ustawienia, pogoda, teraz=None):
+def cel_nastawy(ustawienia, pogoda, teraz=None, pamiec=None):
     """Jaka nastawa ma obowiązywać w tej chwili i dlaczego.
 
-    Czysta decyzja, bez sieci i bez zapisu — żeby dała się sprawdzić testem."""
+    Czysta decyzja, bez sieci i bez zapisu — żeby dała się sprawdzić testem.
+    `pamiec` to słownik, w którym zapamiętujemy werdykt dnia; podaj None, żeby
+    liczyć od zera."""
     teraz = teraz or datetime.now()
     if not ustawienia:
         return None, 'automat wyłączony'
@@ -947,6 +955,17 @@ def cel_nastawy(ustawienia, pogoda, teraz=None):
     zegar = teraz.hour + teraz.minute / 60.0
     w_oknie = od <= zegar < do
     slonecznie = pogoda['suma_okna'] >= ustawienia['prog_kwh']
+    if w_oknie and pamiec is not None:
+        # Prognoza drga: 24.10 suma okna chodziła między 1,53 a 1,68 przy progu
+        # 1,50. Gdyby zeszła na chwilę poniżej, nastawa spadłaby o dwa stopnie
+        # w środku dnia i zaraz wróciła — dwa razy po dwadzieścia impulsów
+        # i szarpnięcie całą podłogą. Decyzję podejmujemy raz, przy wejściu
+        # w okno, i trzymamy się jej do wieczora.
+        if pamiec.get('dzien') != teraz.date():
+            pamiec.clear()
+            pamiec['dzien'] = teraz.date()
+            pamiec['slonecznie'] = slonecznie
+        slonecznie = pamiec['slonecznie']
     if w_oknie and slonecznie:
         # Schody to podbicie w podbiciu: w samo południe, gdy panele dają
         # najwięcej, można pozwolić sobie na stopień więcej niż na brzegach
@@ -1321,11 +1340,12 @@ def panel(argumenty):
         ręcznie — i wtedy milczymy do końca bieżącego okna."""
         ostatnio_ustawione = [None]
         pauza_do = [None]
+        pamiec_dnia = {}
         ostatni_blad = [None]
         while True:
             try:
                 ustawienia = wczytaj_slonce()
-                cel, powod = cel_nastawy(ustawienia, _pogoda_na_panel())
+                cel, powod = cel_nastawy(ustawienia, _pogoda_na_panel(), pamiec=pamiec_dnia)
                 teraz = datetime.now()
                 if pauza_do[0] and teraz >= pauza_do[0]:
                     pauza_do[0] = None
@@ -1342,8 +1362,8 @@ def panel(argumenty):
                     teraz_nastawa = liczba(zmienne.get(zmienna_nastawy))
                     recznie = (teraz_nastawa is not None
                                and ostatnio_ustawione[0] is not None
-                               and abs(teraz_nastawa - ostatnio_ustawione[0]) > TOLERANCJA_NASTAWY
-                               and abs(teraz_nastawa - cel) > TOLERANCJA_NASTAWY)
+                               and abs(teraz_nastawa - ostatnio_ustawione[0]) > PROG_RECZNEJ
+                               and abs(teraz_nastawa - cel) > PROG_RECZNEJ)
                     if recznie:
                         od, do = ustawienia['okno']
                         minuty = int(round(do * 60))

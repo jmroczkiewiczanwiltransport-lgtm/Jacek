@@ -544,6 +544,53 @@ godzinę po szczycie i kończył, gdy produkcja już spada.
 Do zrobienia przy okazji to samo w sterowniku: harmonogramy `PAGE117`
 i `PAGE118` z 11:00–16:00 na 10:00–15:00.
 
+### 24.10.2026 — pierwszy pełny dzień automatu, zmierzony
+
+| | |
+|---|---|
+| pompa stała | 00:00–10:07, dziesięć godzin |
+| strata w tym czasie | 21,6 → 20,8 °C, czyli **0,08 °C/h** |
+| automat ruszył | 10:07:43, nastawa 20,0 → 22,1 |
+| okno 10:07–16:05 | **37,1 kWh ciepła za 7 kWh prądu — COP 5,3** |
+| poza oknem przez dobę | 0,6 kWh ciepła |
+| CWU | podgrzane 11:07–13:00, 37,6 → 45,8 °C |
+
+**Całe dzienne ciepło domu zmieściło się w sześciu godzinach okna.**
+
+**Nastawa nie jest włącznikiem, tylko przesunięciem temperatury wody.** Pokój
+doszedł w oknie najwyżej do 21,4 °C przy nastawie 22,1 — pompa jechała bez
+przerwy i nawet się nie zbliżyła. Schody w środku okna nie każą jej grzać
+dłużej, tylko goręcej, a gorętsza woda to gorszy COP. Ich sens jest taki, że
+przesuwają kilowatogodziny na godziny, za które płaci dach.
+
+**Jastrych oddaje jeszcze cztery godziny po wyłączeniu.** Pompa stanęła
+o 16:05 przy 21,4 °C, pokój rósł do **22,0 °C o 19:46** i tak został.
+
+**Okno było dobrze postawione.** Godziny z promieniowaniem ≥150 W/m² to
+dokładnie 10:00–16:00 czasu letniego — czyli całe okno. Najlepszy blok 2,5 h
+liczony z pomiaru: **10:30–13:00 czasu zimowego** (0,87 kWh/m² dnia 23.10
+i 0,83 dnia 24.10), ale przewaga nad 10:00–12:30 to 1–4 %. Optimum jest płaskie.
+
+**Dwie usterki, obie naprawione w kodzie:**
+
+Prognoza drgała w oknie między 1,53 a 1,68 kWh/m² przy progu 1,50. Jeden
+schodek niżej i nastawa spadłaby o dwa stopnie w południe, żeby zaraz wrócić.
+Werdykt zapada teraz raz, przy wejściu w okno.
+
+Zapis impulsowy przestrzelił: kazaliśmy 22,0, sterownik stanął na 22,1.
+Rozpoznawanie ręcznej zmiany miało ten sam próg co zapis (0,15 °C), więc przy
+przestrzeleniu o dwa impulsy automat uznałby to za cudzą rękę i zamilkł na
+resztę dnia. Teraz ręczną zmianą jest dopiero 0,5 °C.
+
+**Próg zejdzie z 1,5 na 1,2 kWh/m².** Z sześciu dni pomiarów: 19.10 — 1,89,
+21.10 — 1,42, 23.10 — 1,70, 24.10 — 1,60, a dni naprawdę pochmurne (20.10
+i 22.10) miały 0,3–0,5. Próg 1,2 łapie wszystkie cztery pogodne i żadnego
+pochmurnego. Przy 1,5 wypadłoby 21.10 — dzień, w którym 3 kWh poszły do sieci.
+
+**Do obserwacji: dom się podnosi.** 22.10 wieczorem 21,6 °C, 24.10 — 22,0.
+Okno wkłada więcej ciepła, niż dom traci. Jeśli trend się utrzyma, zejść
+z `nastawa_slonce` na 21,0 — wtedy schody w szczycie zaczną mieć realny sens.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie

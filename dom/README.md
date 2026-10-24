@@ -494,6 +494,17 @@ czyli 21,5 °C od 9:00 do 15:00, a między 10:00 a 12:30 — 22,0 °C.
 Przy bazie 20,5 dom potrafi stać na 21,8 — wtedy nastawa 21 nie uruchomi
 niczego.
 
+**Werdykt zapada raz na dobę.** Prognoza drga — 24.10 suma okna chodziła
+między 1,53 a 1,68 kWh/m² przy progu 1,50. Gdyby zeszła na chwilę niżej,
+nastawa spadłaby o dwa stopnie w środku dnia i zaraz wróciła. Automat decyduje
+przy wejściu w okno i trzyma się tego do wieczora.
+
+**Dwa progi, nie jeden.** `TOLERANCJA_NASTAWY` (0,15 °C) mówi, kiedy warto
+zapisać; `PROG_RECZNEJ` (0,5 °C) — kiedy uznać, że nastawę ruszył człowiek.
+Zapis idzie impulsami po 0,1 °C i potrafi przestrzelić: 24.10 kazaliśmy 22,0,
+sterownik stanął na 22,1. Przy jednym progu automat wziąłby to za cudzą rękę
+i zamilkł na resztę dnia.
+
 **Trzy zasady, których automat przestrzega:**
 
 **Bez pliku nie robi nic.** Milczące sterowanie cudzym ogrzewaniem byłoby
