@@ -1020,6 +1020,24 @@ PLIK_POGODY = os.path.join(KATALOG, 'pogoda.csv')
 _ZAMEK_PLIKU_POGODY = threading.Lock()
 
 
+def okno_pogodowe(domyslne=OKNO_GRZANIA):
+    """Godziny, dla których liczymy sumę nasłonecznienia.
+
+    Musi to być **to samo okno, w którym grzeje automat** — inaczej próg
+    `prog_kwh` porównuje się z sumą z zupełnie innych godzin. 24.10 kafelek
+    pokazywał 11–16, podczas gdy automat pracował na 9–15: po zmianie czasu
+    rozjazd urósł do dwóch godzin i próg przestał cokolwiek znaczyć.
+
+    Czytamy wprost z pliku, bez względu na `wlaczone` — sumę chcemy widzieć
+    na kafelku także wtedy, gdy automat jest wyłączony."""
+    try:
+        with open(PLIK_SLONCA, encoding='utf-8') as f:
+            okno = json.load(f).get('okno')
+        return (float(okno[0]), float(okno[1]))
+    except (OSError, ValueError, TypeError, IndexError):
+        return domyslne
+
+
 def _odswiez_pogode(okno=OKNO_GRZANIA):
     """Jedno pobranie do pamięci. Zwraca dane albo None."""
     import pogoda as meteo                                          # noqa: PLC0415
@@ -1069,12 +1087,15 @@ def _pogoda_na_panel(wiek_max=3 * ODSTEP_POGODY):
     return wynik
 
 
-def pilnuj_pogody(okno=OKNO_GRZANIA, odstep=ODSTEP_POGODY):
-    """Wątek odświeżający pogodę. Jak każdy tutaj — przeżywa wszystko."""
+def pilnuj_pogody(okno=None, odstep=ODSTEP_POGODY):
+    """Wątek odświeżający pogodę. Jak każdy tutaj — przeżywa wszystko.
+
+    Okno czytamy w każdym obiegu, a nie raz na starcie: zmiana `slonce.json`
+    ma działać bez restartu panelu."""
     ostatni_blad = [None]
     while True:
         try:
-            dane = _odswiez_pogode(okno)
+            dane = _odswiez_pogode(okno or okno_pogodowe())
             if dane:
                 _dopisz_pogode(PLIK_POGODY, dane)
         except Exception as powod:                                   # noqa: BLE001
