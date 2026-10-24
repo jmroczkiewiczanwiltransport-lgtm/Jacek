@@ -304,6 +304,11 @@ async function odswiez() {
         punkty: dane.historia.filter((h) => h.pokojowa !== null).map((h) => [h.czas, h.pokojowa]) },
       { nazwa: 'na dworze', kolor: 'var(--zimno)',
         punkty: dane.historia.filter((h) => h.zewnetrzna !== null).map((h) => [h.czas, h.zewnetrzna]) },
+      // Odkąd automat słoneczny sam przestawia nastawę, bez niej nie widać,
+      // dlaczego pompa raz grzeje, a raz stoi.
+      { nazwa: 'nastawa', kolor: 'var(--slaby)',
+        punkty: dane.historia.filter((h) => h.nastawa !== null && h.nastawa !== undefined)
+                             .map((h) => [h.czas, h.nastawa]) },
     ].filter((s) => s.punkty.length > 1);
     // Przerwa w pracy pompy przy palącym się kominku wygląda jak awaria.
     // Pas na wykresie od razu mówi, że to był ogień, a nie usterka.

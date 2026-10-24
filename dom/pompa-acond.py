@@ -707,10 +707,17 @@ def _historia_z_pliku(plik, godzin=24):
     with open(plik, encoding='utf-8') as f:
         naglowek = f.readline().rstrip('\n').split(';')
         wiersze = [w.rstrip('\n').split(';') for w in f if w.strip()]
+    # Szukamy po fragmencie nazwy, od najkrótszej — żeby „Temperatura zewnętrzna"
+    # wygrała z „Temperatura zewnętrzna średnia". Ale fragment musi być pełny:
+    # samo „pokojowa" pasuje też do „Nastawa pokojowa", która jest KRÓTSZA —
+    # i przez to wykres przez półtora miesiąca rysował nastawę zamiast
+    # temperatury w domu. Widać to było dopiero, gdy nastawa zaczęła się ruszać.
     szukaj = lambda fragment: next(
         (i for i, n in sorted(enumerate(naglowek), key=lambda x: len(x[1]))
          if fragment in bez_ogonkow(n)), None)
-    i_pok, i_zew = szukaj('pokojowa'), szukaj('zewnetrzna')
+    i_pok = szukaj('temperatura pokojowa')
+    i_zew = szukaj('temperatura zewnetrzna')
+    i_nas = szukaj('nastawa pokojowa')
     granica = datetime.now() - timedelta(hours=godzin)
     wynik = []
     for wiersz in wiersze[-4000:]:
@@ -722,7 +729,8 @@ def _historia_z_pliku(plik, godzin=24):
             continue
         odczyt = lambda i: (liczba(wiersz[i]) if i is not None and i < len(wiersz) else None)
         wynik.append({'czas': int(czas.timestamp()),
-                      'pokojowa': odczyt(i_pok), 'zewnetrzna': odczyt(i_zew)})
+                      'pokojowa': odczyt(i_pok), 'zewnetrzna': odczyt(i_zew),
+                      'nastawa': odczyt(i_nas)})
     return wynik[::max(1, len(wynik) // 200)] if wynik else []
 
 
