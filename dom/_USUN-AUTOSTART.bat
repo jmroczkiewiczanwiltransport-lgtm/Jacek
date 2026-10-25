@@ -18,8 +18,8 @@ rem  Panel chodzi bez okna, więc trzeba go zatrzymać po nazwie polecenia.
 powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*pompa-acond.py*panel*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"
 echo   Działający panel zatrzymany.
 echo.
-echo   Pliki i zebrana historia zostają w:
-echo     %LOCALAPPDATA%\PanelPompy
-echo   Możesz je skasować ręcznie, jeśli już ich nie chcesz.
+echo   Pliki i zebrana historia zostają tam, gdzie były:
+echo     %~dp0
+echo   Nic stąd nie kasuję — to dwa miesiące pomiarów.
 echo.
 pause
