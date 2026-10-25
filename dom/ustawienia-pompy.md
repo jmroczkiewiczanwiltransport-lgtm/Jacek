@@ -591,6 +591,39 @@ pochmurnego. Przy 1,5 wypadłoby 21.10 — dzień, w którym 3 kWh poszły do si
 Okno wkłada więcej ciepła, niż dom traci. Jeśli trend się utrzyma, zejść
 z `nastawa_slonce` na 21,0 — wtedy schody w szczycie zaczną mieć realny sens.
 
+### 25.10.2026 — kominek grzeje powietrze, nie jastrych
+
+Jacek zapytał, co się stanie, gdy rozpali, i czy po kominku podnieść nastawę
+na okno słoneczne. Odpowiedź dały dane z poprzedniego palenia, 20.10 w godzinach
+17:00–22:15:
+
+| | przed kominkiem 14:01 | po kominku 22:03 | rano 07:03 |
+|---|---|---|---|
+| pokój | 21,0 °C | **22,2 °C** | 21,2 °C |
+| woda w obiegu (wstęp) | 23,6 °C | **19,1 °C** | 19,5 °C |
+
+**Powietrze poszło w górę o 1,2 stopnia, woda w obiegu w dół o 4,5.** Kominek
+nagrzał pokój, a jastrych przez ten czas się rozładował — i nikt go nie
+doładował, bo sterownik patrzy wyłącznie na powietrze. Pompa stała **ponad
+dobę**: licznik 4590 o 22:00 w piątek i 4591 nazajutrz o 12:00.
+
+Z tego wynikają dwie rzeczy.
+
+**Temperatura pokojowa jest złym miernikiem naładowania domu.** Dobrym jest
+**wstęp wody do PC** — to w przybliżeniu temperatura jastrychu. Po kominku
+powietrze kłamie na korzyść.
+
+**Stała nastawa w oknie marnowałaby słoneczny dzień po kominku.** Przy pokoju
+22,2 nastawa 21,5 nie uruchomi niczego. Dlatego automat odnosi teraz cel do
+temperatury zastanej przy wejściu w okno: `podbicie_nad_pokojem` stopni wyżej,
+z sufitem `nastawa_max`. Odniesienie brane raz, żeby cel nie gonił własnego
+ogona.
+
+Ustawione: podbicie 0,8 °C, sufit 23,5 °C. W zwykły dzień (pokój ~21) daje to
+21,9 w oknie i 22,4 w szczycie — czyli praktycznie to samo, co dotąd, bo
+i tak nastawa nie jest tam ograniczeniem. Różnica pojawia się dopiero po
+kominku, i o to chodzi.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie

@@ -4,5 +4,7 @@
   "prog_kwh": 1.2,
   "nastawa_slonce": 21.5,
   "nastawa_baza": 20.0,
-  "schody": [[10.5, 13.0, 22.0]]
+  "schody": [[10.5, 13.0, 22.0]],
+  "podbicie_nad_pokojem": 0.8,
+  "nastawa_max": 23.5
 }

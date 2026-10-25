@@ -469,6 +469,8 @@ i w środku `"wlaczone": true`:
 | `nastawa_slonce` | nastawa w oknie w dzień pogodny |
 | `nastawa_baza` | nastawa poza oknem i w dni pochmurne |
 | `schody` | wyższa nastawa w środku okna, lista `[od, do, ile]` |
+| `podbicie_nad_pokojem` | ile stopni nad temperaturę zastaną przy wejściu w okno |
+| `nastawa_max` | sufit, powyżej którego automat nie idzie nigdy |
 
 **Okno podaje się czasem zegarowym, a słońce zegarka nie przestawia.** Szczyt
 promieniowania wypada tu około 12:45 latem i 11:45 zimą — po zmianie czasu
@@ -493,6 +495,20 @@ czyli 21,5 °C od 9:00 do 15:00, a między 10:00 a 12:30 — 22,0 °C.
 `nastawa_slonce` musi być **wyraźnie wyższa niż to, do czego dom sam dryfuje**.
 Przy bazie 20,5 dom potrafi stać na 21,8 — wtedy nastawa 21 nie uruchomi
 niczego.
+
+**Nastawa odnosi się do tego, co jest, a nie do stałej liczby.** Powód to
+kominek. 20.10 po pięciu godzinach palenia pokój miał 22,2 °C, a woda w obiegu
+spadła z 23,6 na **19,1** — jastrych był pusty, choć termometr mówił, że
+ciepło. Kominek grzeje powietrze, podłogi nie. Sterownik patrzy tylko na
+powietrze, więc nazajutrz nie grzał wcale: pompa stała ponad dobę.
+
+Gdyby nastawa była stałą liczbą, słoneczny dzień po kominku przepadałby —
+21,5 °C przy pokoju 22,2 nie uruchomi niczego. Dlatego przy wejściu w okno
+automat bierze temperaturę zastaną i celuje `podbicie_nad_pokojem` stopni
+wyżej, nie niżej niż `nastawa_slonce` i nie wyżej niż `nastawa_max`.
+
+Odniesienie bierzemy **raz**, przy wejściu w okno. Inaczej cel goniłby własny
+ogon: grzanie podnosi pokój, pokój podnosi cel, i tak w kółko aż do sufitu.
 
 **Werdykt zapada raz na dobę.** Prognoza drga — 24.10 suma okna chodziła
 między 1,53 a 1,68 kWh/m² przy progu 1,50. Gdyby zeszła na chwilę niżej,

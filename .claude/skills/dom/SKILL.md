@@ -328,6 +328,14 @@ Od 24.10 okno ma dwa poziomy: `nastawa_slonce` na całe okno i `schody`
 (lista `[od, do, ile]`, godziny ułamkowe) na szczyt. Ustawione: okno 9–15,
 21,5 °C, a 10:00–12:30 — 22,0 °C.
 
+**Kominek grzeje powietrze, nie jastrych.** 20.10, po pięciu godzinach palenia:
+pokój 22,2 °C, a woda w obiegu spadła z 23,6 na 19,1. Sterownik patrzy tylko na
+powietrze, więc po kominku nie grzeje ponad dobę — przy pustej podłodze.
+Dlatego nastawa w oknie odnosi się do temperatury zastanej
+(`podbicie_nad_pokojem`, sufit `nastawa_max`), a nie do stałej liczby.
+Przy ocenie „czy jastrych jest naładowany" patrz na **Wstęp wody do PC**,
+nie na temperaturę pokojową.
+
 **Okno podaje się czasem zegarowym, a słońce zegarka nie przestawia.**
 Kulminacja promieniowania: ~12:44 czasu letniego, ~11:44 zimowego. Przy każdej
 zmianie czasu okno i harmonogramy `PAGE117`/`PAGE118` przesuwają się o godzinę.

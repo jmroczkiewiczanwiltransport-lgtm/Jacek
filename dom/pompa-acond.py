@@ -923,11 +923,14 @@ def wczytaj_slonce(plik=None):
         schody = []
         for od, do, ile in dane.get('schody') or []:
             schody.append((float(od), float(do), float(ile)))
+        podbicie = dane.get('podbicie_nad_pokojem')
         return {'okno': (float(okno[0]), float(okno[1])),
                 'prog_kwh': float(dane.get('prog_kwh', 1.5)),
                 'nastawa_slonce': float(dane['nastawa_slonce']),
                 'nastawa_baza': float(dane['nastawa_baza']),
-                'schody': schody}
+                'schody': schody,
+                'podbicie_nad_pokojem': None if podbicie is None else float(podbicie),
+                'nastawa_max': float(dane.get('nastawa_max', 23.5))}
     except (KeyError, TypeError, ValueError, IndexError):
         return None
 
@@ -939,12 +942,13 @@ def _godzina(ile):
     return f'{minuty // 60}:{minuty % 60:02d}'
 
 
-def cel_nastawy(ustawienia, pogoda, teraz=None, pamiec=None):
+def cel_nastawy(ustawienia, pogoda, teraz=None, pamiec=None, pokojowa=None):
     """Jaka nastawa ma obowiązywać w tej chwili i dlaczego.
 
     Czysta decyzja, bez sieci i bez zapisu — żeby dała się sprawdzić testem.
     `pamiec` to słownik, w którym zapamiętujemy werdykt dnia; podaj None, żeby
-    liczyć od zera."""
+    liczyć od zera. `pokojowa` to bieżąca temperatura w domu — potrzebna tylko
+    wtedy, gdy ustawienia mają `podbicie_nad_pokojem`."""
     teraz = teraz or datetime.now()
     if not ustawienia:
         return None, 'automat wyłączony'
@@ -965,18 +969,34 @@ def cel_nastawy(ustawienia, pogoda, teraz=None, pamiec=None):
             pamiec.clear()
             pamiec['dzien'] = teraz.date()
             pamiec['slonecznie'] = slonecznie
+            # Kominek grzeje powietrze, nie podłogę. 20.10 po pięciu godzinach
+            # palenia pokój miał 22,2 °C, a woda w obiegu spadła z 23,6 na 19,1 —
+            # jastrych był pusty, choć termometr mówił, że ciepło. Sterownik
+            # patrzy tylko na powietrze, więc nazajutrz nie grzeje wcale.
+            # Dlatego nastawę odnosimy do temperatury zastanej przy wejściu
+            # w okno, a nie do stałej liczby. Odniesienie bierzemy raz, bo
+            # inaczej cel goniłby własny ogon.
+            pamiec['dodatek'] = 0.0
+            podbicie = ustawienia.get('podbicie_nad_pokojem')
+            if podbicie is not None and pokojowa is not None:
+                pamiec['dodatek'] = max(0.0, (pokojowa + podbicie)
+                                        - ustawienia['nastawa_slonce'])
         slonecznie = pamiec['slonecznie']
     if w_oknie and slonecznie:
         # Schody to podbicie w podbiciu: w samo południe, gdy panele dają
         # najwięcej, można pozwolić sobie na stopień więcej niż na brzegach
         # okna. Pierwszy pasujący wygrywa, więc kolejność w pliku ma znaczenie.
+        dodatek = (pamiec or {}).get('dodatek') or 0.0
+        sufit = ustawienia.get('nastawa_max', 23.5)
+        podnies = lambda ile: round(min(ile + dodatek, sufit), 1)   # noqa: E731
+        ponad = f' (+{dodatek:.1f} nad zastaną)' if dodatek else ''
         for poczatek, koniec, ile in ustawienia.get('schody') or []:
             if poczatek <= zegar < koniec:
-                return (ile, f"słońce {pogoda['suma_okna']:.1f} kWh/m² — "
-                             f"szczyt {_godzina(poczatek)}–{_godzina(koniec)}")
-        return (ustawienia['nastawa_slonce'],
+                return (podnies(ile), f"słońce {pogoda['suma_okna']:.1f} kWh/m² — "
+                        f"szczyt {_godzina(poczatek)}–{_godzina(koniec)}{ponad}")
+        return (podnies(ustawienia['nastawa_slonce']),
                 f"słońce {pogoda['suma_okna']:.1f} kWh/m² — "
-                f"grzeję do {_godzina(do)}")
+                f"grzeję do {_godzina(do)}{ponad}")
     if w_oknie:
         return (ustawienia['nastawa_baza'],
                 f"pochmurno ({pogoda['suma_okna']:.1f} kWh/m²) — bez podbicia")
@@ -1151,6 +1171,8 @@ def panel(argumenty):
     # Sterowanie ograniczamy do jednej wielkości i szukamy jej po opisie, a nie
     # po zaszytym skrócie — skróty są stałe tylko dla tego programu sterownika.
     zmienna_nastawy = next((k for k, v in opisy.items() if v[0] == 'Nastawa pokojowa'), None)
+    zmienna_pokojowej = next((k for k, v in opisy.items()
+                              if v[0] == 'Temperatura pokojowa'), None)
     steruje = not argumenty.bez_sterowania and zmienna_nastawy is not None
 
     # Adres sterownika potrafi się zmienić — trzymamy go w jednym miejscu,
@@ -1373,7 +1395,13 @@ def panel(argumenty):
                 # zasypiał na pięć minut i przez ten czas panel nie pokazywał
                 # automatu wcale — wyglądało to jak brak slonce.json.
                 czekam_na_prognoze[0] = not prognoza or prognoza.get('suma_okna') is None
-                cel, powod = cel_nastawy(ustawienia, prognoza, pamiec=pamiec_dnia)
+                # Pompę czytamy przed decyzją, bo nastawa może się odnosić do
+                # tego, ile w domu jest teraz. Gdy sterownik milczy, liczymy
+                # bez tego — wtedy obowiązuje sama nastawa z pliku.
+                zmienne = czytaj_pompe() if steruje else {}
+                pokojowa = liczba(zmienne.get(zmienna_pokojowej)) if zmienne else None
+                cel, powod = cel_nastawy(ustawienia, prognoza, pamiec=pamiec_dnia,
+                                         pokojowa=pokojowa)
                 teraz = datetime.now()
                 if pauza_do[0] and teraz >= pauza_do[0]:
                     pauza_do[0] = None
@@ -1386,7 +1414,6 @@ def panel(argumenty):
                                         'powod': 'ustąpiłem — nastawę zmieniono ręcznie',
                                         'pauza_do': pauza_do[0].strftime('%H:%M')})
                 else:
-                    zmienne = czytaj_pompe()
                     teraz_nastawa = liczba(zmienne.get(zmienna_nastawy))
                     recznie = (teraz_nastawa is not None
                                and ostatnio_ustawione[0] is not None
