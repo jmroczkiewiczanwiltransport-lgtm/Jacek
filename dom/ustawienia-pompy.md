@@ -602,10 +602,15 @@ na okno słoneczne. Odpowiedź dały dane z poprzedniego palenia, 20.10 w godzin
 | pokój | 21,0 °C | **22,2 °C** | 21,2 °C |
 | woda w obiegu (wstęp) | 23,6 °C | **19,1 °C** | 19,5 °C |
 
-**Powietrze poszło w górę o 1,2 stopnia, woda w obiegu w dół o 4,5.** Kominek
-nagrzał pokój, a jastrych przez ten czas się rozładował — i nikt go nie
-doładował, bo sterownik patrzy wyłącznie na powietrze. Pompa stała **ponad
-dobę**: licznik 4590 o 22:00 w piątek i 4591 nazajutrz o 12:00.
+Przy odczycie 23,6 pompa pracowała, więc ta liczba mówi o wodzie pod
+sprężarką, nie o podłodze. Wartościowy jest odczyt nocny: **gdy pompa stoi,
+woda w obiegu wyrównuje się z jastrychem** — i przez całą noc trzymała się
+19–21 °C, podczas gdy powietrze pokazywało 22,2. **Podłoga była o jeden do
+trzech stopni chłodniejsza niż powietrze.**
+
+Pompa stała potem ponad dobę (licznik 4590 w piątek o 22:00, 4591 nazajutrz
+w południe), ale tego nie wolno zapisać na konto kominka: 21.10 było
+wyjątkowo ciepło, model dawał 17–18 °C po południu. Dom i tak by nie grzał.
 
 Z tego wynikają dwie rzeczy.
 
