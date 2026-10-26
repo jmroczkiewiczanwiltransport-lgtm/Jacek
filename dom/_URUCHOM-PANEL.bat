@@ -16,7 +16,7 @@ set FALOWNIK=
 
 echo.
 echo   ============================================
-echo     Panel pompy ciepła
+echo     Panel pompy ciepła  -  start %DATE% %TIME%
 echo   ============================================
 echo.
 
@@ -78,7 +78,7 @@ if defined FALOWNIK set DODATKI=%DODATKI% --falownik %FALOWNIK%
 %PYTHON% pompa-acond.py panel %POMPA%%DODATKI%
 
 echo.
-echo   Panel zatrzymany.
+echo   Panel zatrzymany  %DATE% %TIME%
 echo.
 echo   Gdyby telefon nie wchodził na panel, sprawdź w PowerShellu:
 echo       Get-NetConnectionProfile
