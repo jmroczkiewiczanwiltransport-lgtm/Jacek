@@ -1203,6 +1203,7 @@ def panel(argumenty):
     # żeby po odnalezieniu nowego reszta panelu od razu z niego korzystała.
     adres_pompy = [zapamietany_adres() or argumenty.host]
     ostatnie_szukanie = [0.0]
+    nieudane = [0]          # ile odczytów z rzędu nie wyszło
 
     # Liczniki (motogodziny, energia) rosną wolno i siedzą na innych stronach
     # niż bieżące odczyty. Spisujemy je raz na dobę — dzięki temu przyrost za
@@ -1228,22 +1229,37 @@ def panel(argumenty):
                 zmienne = pobierz_strone(url, argumenty.uzytkownik, argumenty.haslo,
                                          limit=limit, ciasteczko=argumenty.ciasteczko)
                 adres_pompy[0] = url
+                nieudane[0] = 0
                 return zmienne
             except OSError as powod:
                 ostatni_blad = powod
 
-        # Żaden znany adres nie odpowiada. Przeczesanie sieci to 254 połączenia,
-        # więc nie robimy tego częściej niż raz na pięć minut.
-        if argumenty.bez_szukania or time.monotonic() - ostatnie_szukanie[0] < 300:
+        # Sterownik lubi się raz na jakiś czas zaciąć na kilka sekund i wrócić
+        # pod tym samym adresem. 26.10 panel przeczesał z tego powodu sieć
+        # dwanaście razy w ciągu doby — 254 połączenia za każdym razem — żeby
+        # za każdym razem znaleźć pompę tam, gdzie była. Jedno przeoczenie to
+        # za mało, żeby zakładać przeprowadzkę.
+        nieudane[0] += 1
+        if argumenty.bez_szukania or nieudane[0] < 2 \
+                or time.monotonic() - ostatnie_szukanie[0] < 300:
             raise ostatni_blad or OSError('pompa nie odpowiada')
         ostatnie_szukanie[0] = time.monotonic()
-        znaleziony = znajdz_sterownik(adres_pompy[0], argumenty.siec)
+        bylo = adres_pompy[0]
+        znaleziony = znajdz_sterownik(bylo, argumenty.siec)
         zmienne = pobierz_strone(znaleziony, argumenty.uzytkownik, argumenty.haslo,
                                  limit=limit, ciasteczko=argumenty.ciasteczko)
         adres_pompy[0] = znaleziony
-        zapamietaj_adres(znaleziony)
-        print(f'{datetime.now():%H:%M:%S}  sterownik zmienił adres — teraz {znaleziony}',
-              flush=True)
+        nieudane[0] = 0
+        if znaleziony != bylo:
+            zapamietaj_adres(znaleziony)
+            print(f'{datetime.now():%H:%M:%S}  sterownik zmienił adres — '
+                  f'teraz {znaleziony}', flush=True)
+        else:
+            # Pisanie "zmienił adres", gdy nic się nie zmieniło, to gotowa pułapka
+            # na przyszłego czytelnika dziennika — łatwo z tego wyciągnąć wniosek,
+            # że sieć się sypie, i szukać problemu tam, gdzie go nie ma.
+            print(f'{datetime.now():%H:%M:%S}  sterownik odpowiedział dopiero po '
+                  f'przeszukaniu sieci — adres bez zmian ({znaleziony})', flush=True)
         return zmienne
 
     class Obsluga(BaseHTTPRequestHandler):

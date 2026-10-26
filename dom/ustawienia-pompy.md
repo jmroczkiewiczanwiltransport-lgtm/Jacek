@@ -663,6 +663,38 @@ i nadrabiamy w oknie. 25.10 pokazało, że dom to wytrzymuje.
 26.10 do **53,6** — przy nastawie 45. Dwa dni z rzędu. Antysepsa czy
 harmonogram wody grzewczej — nie wiadomo, trzeba zajrzeć w sterownik.
 
+### 26.10.2026 — Enea potwierdza, że automat zjada produkcję na miejscu
+
+Dane godzinowe za **24.10**, pierwszy dzień pracy automatu:
+
+| | 23.10 (bez automatu) | 24.10 (z automatem) |
+|---|---|---|
+| oddana przed bilansowaniem | 0,948 kWh | **1,733 kWh** |
+| oddana po bilansowaniu | 0,129 kWh | **0,055 kWh** |
+| skasowane w tej samej godzinie | 0,819 (86 %) | **1,678 (97 %)** |
+
+**Z 1,733 kWh nadwyżki tylko 55 watogodzin naprawdę opuściło posesję.** Reszta
+poszła w pompę w tej samej godzinie, w której powstała. A kilowatogodzina
+zjedzona na miejscu jest warta tyle, co kupiona — dwa, trzy razy więcej niż
+sprzedana po cenie rynkowej.
+
+Nie przypisuję automatowi całej różnicy: 23.10 dwie osoby były w domu cały
+dzień, 24.10 nie. Pobór bytowy był inny. Ale kierunek się zgadza.
+
+### 26.10.2026 — panel przeczesywał sieć dwanaście razy na dobę
+
+W `panel.log` z 26.10 dwanaście wpisów „sterownik zmienił adres — teraz
+192.168.88.10". Za każdym razem ten sam adres. Sterownik zacina się na kilka
+sekund (dwa razy widać wprost: 13:10 i 19:21, po pięć minut ciszy), panel
+traktuje jedno nieudane pobranie jako przeprowadzkę i rusza z przeczesywaniem
+254 adresów.
+
+Dwie poprawki. Przeszukanie dopiero po **dwóch** nieudanych odczytach z rzędu.
+I komunikat mówi prawdę: gdy adres się nie zmienił, pisze „adres bez zmian".
+Zdanie „sterownik zmienił adres", gdy nic się nie zmieniło, to gotowa pułapka
+— łatwo z tego wnioskować, że sieć się sypie, i szukać problemu tam, gdzie
+go nie ma.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
