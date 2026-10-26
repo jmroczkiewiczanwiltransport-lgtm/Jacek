@@ -14,8 +14,8 @@ Wszystkie trzy harmonogramy były **skonfigurowane, ale wyłączone**.
 
 | Harmonogram | Ustawienie | Stan po zmianie |
 |---|---|---|
-| Grzanie CWU (`PAGE118`) | **10:00–16:00 wszystkie dni** | **włączony** |
-| Temperatura wody grzewczej (`PAGE117`) | **10:00–16:00 wszystkie dni, 45,0 °C** | **włączony** |
+| Grzanie CWU (`PAGE118`) | **10:00–15:00 wszystkie dni** (od 26.10) | **włączony** |
+| Temperatura wody grzewczej (`PAGE117`) | **10:00–15:00 wszystkie dni, 45,0 °C** (od 26.10) | **włączony, ale bezczynny** |
 | Temperatura pokojowa (`PAGE116`) | okna wieczorne 16:00–18:00, 19–20 °C | wyłączony — celowo |
 
 Harmonogram temperatury pokojowej zostaje wyłączony świadomie: przy ogrzewaniu
@@ -225,8 +225,8 @@ kiedyś zamilkło, zacznie pukać do domofonu. Do poprawienia.
 
 Wieczorem przestawione w sterowniku, z 10:00 na 11:00, koniec bez zmian o 16:00:
 
-- `PAGE117.XML` — temperatura wody grzewczej, 45 °C, siedem dni
-- `PAGE118.XML` — blokada ogrzewania CWU poza harmonogramem, 45 °C, siedem dni
+- `PAGE117.XML` — temperatura wody grzewczej, 45 °C, siedem dni, 10:00–15:00
+- `PAGE118.XML` — blokada ogrzewania CWU poza harmonogramem, 45 °C, siedem dni, 10:00–15:00
 
 Powód: o dziesiątej w październiku panele dopiero ruszają, więc ta godzina była
 grzaniem z sieci. Od środy porównamy z danymi godzinowymi Enei za 17–18.10, czyli
@@ -430,7 +430,11 @@ większym poborze dom zostaje bez ciepłej wody do południa. Przesunięcie okna
 z 10:00 na 11:00 (19.10) wydłużyło tę dziurę o godzinę — skutek uboczny
 optymalizacji, którego nie przewidziałem.
 
-**Do zrobienia: okno CWU 05:00–07:00** w pustym górnym rzędzie `PAGE118.XML`.
+**Porzucone 26.10: okno CWU 05:00–07:00** w pustym górnym rzędzie `PAGE118.XML`.
+Grzanie wody o piątej rano to grzanie z sieci, przed wschodem słońca — czyli
+dokładnie to, co wycięliśmy z ogrzewania domu przez `nastawa_noc`. Wracamy do
+tematu dopiero, jeśli zabraknie ciepłej wody; niech zadecyduje brak wody,
+a nie przeczucie.
 Koszt około 0,5 kWh na dobę z sieci.
 
 ### Licznik energii cofa się przy zaniku prądu
@@ -541,8 +545,8 @@ Dziś w nocy zmiana czasu, więc całe okno schodzi o godzinę: `[10, 16]` → `
 **Słońce zegarka nie przestawia.** Gdyby okna nie ruszyć, automat grzałby
 godzinę po szczycie i kończył, gdy produkcja już spada.
 
-Do zrobienia przy okazji to samo w sterowniku: harmonogramy `PAGE117`
-i `PAGE118` z 11:00–16:00 na 10:00–15:00.
+To samo w sterowniku zrobione 26.10 wieczorem: harmonogramy `PAGE117`
+i `PAGE118` przestawione z 11:00–16:00 na 10:00–15:00, wszystkie siedem dni.
 
 ### 24.10.2026 — pierwszy pełny dzień automatu, zmierzony
 
@@ -695,6 +699,30 @@ Zdanie „sterownik zmienił adres", gdy nic się nie zmieniło, to gotowa puła
 — łatwo z tego wnioskować, że sieć się sypie, i szukać problemu tam, gdzie
 go nie ma.
 
+### 26.10.2026 wieczorem — harmonogramy przesunięte, antysepsa wyjaśnia 51 °C
+
+`PAGE117` i `PAGE118` przestawione z **11:00–16:00 na 10:00–15:00**, wszystkie
+siedem dni. Od jutra grzanie zbiornika rusza o 10:0x zamiast 11:0x, czyli
+w szczycie produkcji zamiast godzinę po nim.
+
+**Zagadka 51 °C rozwiązana: na stronie głównej sterownika jest ANTYSEPSA
+DOZWOL. ✓.** To jedyna funkcja, która ma prawo przekroczyć nastawę 45 °C — po
+to istnieje. Zbiornik dochodził do 52,6 (18.10), 47,0 (25.10) i 53,6 (26.10);
+pompa pcha tak wysoko, jak potrafi bez grzałki, i odpuszcza koło 53.
+
+**Nie wyłączać.** Zbiornik stoi przez większość doby w przedziale 36–45 °C,
+czyli dokładnie tam, gdzie legionella mnoży się najlepiej. Wycofuję to, co
+napisałem wcześniej o „ośmiu stopniach nadmiaru codziennie przy gorszym COP" —
+to nie był nadmiar, tylko funkcja robiąca swoje.
+
+Czego nadal nie wiem: **jak często się włącza**. Harmonogramu antysepsy nie ma
+na tej stronie, a z trzech punktów nie odczytam cyklu. Do obserwacji przez
+tydzień: w które dni zbiornik przekracza 50 °C.
+
+**Zmierzone przy okazji — zbiornik stygnie 0,40 °C/h** (sześć nocy, 0,34–0,46),
+czyli blisko dziesięć stopni na dobę bez poboru. Na każde 100 litrów to
+0,47 kWh ciepła dziennie. Objętość zbiornika nieznana — do spisania z tabliczki.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
@@ -702,7 +730,11 @@ go nie ma.
       gdzie zatrzymać, a dom nie będzie grzany.
 - [ ] **Pierwszy tydzień po włączeniu blokady CWU:** sprawdzić, czy nie brakuje
       ciepłej wody wieczorem. Jeśli brakuje — podnieść nastawę CWU z 45 na 48 °C.
-- [ ] **Grudzień:** wyłączyć harmonogram temperatury wody grzewczej. Zimą nie ma
+- [ ] ~~**Grudzień:** wyłączyć harmonogram temperatury wody grzewczej.~~ **Nie ma
+      czego wyłączać** — 26.10 sprawdzone: `PAGE117` każe trzymać 45 °C w oknie,
+      a pomiary z 24 i 26.10 pokazują w tych godzinach 25–30 °C. W trybie
+      pogodowym to ustawienie nie przebija krzywej. Zostaje wpisane i bezczynne.
+      Pierwotne uzasadnienie poniżej zachowane dla porządku: zimą nie ma
       nadwyżki z paneli, a wymuszanie 45 °C wody to sam gorszy COP bez zysku.
 - [ ] **Marzec:** włączyć go z powrotem.
 - [ ] **Zima:** odśnieżać panele. Kilowatogodzina ze stycznia była warta 0,68 zł,

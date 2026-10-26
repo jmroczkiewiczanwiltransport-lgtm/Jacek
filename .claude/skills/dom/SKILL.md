@@ -186,8 +186,8 @@ górnym rogu prowadzi do harmonogramów, **termometr** do krzywej grzewczej,
 
 | Harmonogram | Strona | Stan | Godziny | Wartość |
 |---|---|---|---|---|
-| Temperatury wody grzewczej | `PAGE117.XML` | **włączony** | codziennie **11:00–16:00** | 45,0 °C |
-| Blokada ogrzewania CWU poza harmonogramem | `PAGE118.XML` | **włączona** | codziennie **11:00–16:00** | CWU 45,0 °C |
+| Temperatury wody grzewczej | `PAGE117.XML` | włączony, **bezczynny** | codziennie **10:00–15:00** | 45,0 °C |
+| Blokada ogrzewania CWU poza harmonogramem | `PAGE118.XML` | **włączona** | codziennie **10:00–15:00** | CWU 45,0 °C |
 | Temperatury pokojowej (obieg 1) | — | **wyłączony** | stare okna wieczorne, patrz niżej | 19,0–20,0 °C |
 
 **Okna przesunięte z 10:00 na 11:00 dnia 18.10.2026.** O dziesiątej w październiku
@@ -339,6 +339,14 @@ nie na temperaturę pokojową.
 **Okno podaje się czasem zegarowym, a słońce zegarka nie przestawia.**
 Kulminacja promieniowania: ~12:44 czasu letniego, ~11:44 zimowego. Przy każdej
 zmianie czasu okno i harmonogramy `PAGE117`/`PAGE118` przesuwają się o godzinę.
+
+**`PAGE117` jest bezczynny.** Każe trzymać 45 °C wody grzewczej w oknie,
+a pomiary pokazują w tych godzinach 25–30 °C. W trybie pogodowym („AT ZAWSZE")
+nie przebija krzywej. Nie planuj wokół niego niczego.
+
+**ANTYSEPSA DOZWOL. ✓ na stronie głównej** tłumaczy, czemu zbiornik bywa na
+51–53 °C przy nastawie 45. Nie wyłączać — zbiornik stoi przez większość doby
+w 36–45 °C, czyli w optimum dla legionelli. Zbiornik stygnie 0,40 °C/h.
 
 Automat ustępuje człowiekowi: gdy odczyt nastawy nie zgadza się ani z celem,
 ani z tym, co sam ostatnio ustawił, milczy do końca bieżącego okna. Każda
