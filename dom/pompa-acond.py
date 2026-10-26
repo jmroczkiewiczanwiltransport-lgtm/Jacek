@@ -924,13 +924,16 @@ def wczytaj_slonce(plik=None):
         for od, do, ile in dane.get('schody') or []:
             schody.append((float(od), float(do), float(ile)))
         podbicie = dane.get('podbicie_nad_pokojem')
+        noc = dane.get('nastawa_noc')
         return {'okno': (float(okno[0]), float(okno[1])),
                 'prog_kwh': float(dane.get('prog_kwh', 1.5)),
                 'nastawa_slonce': float(dane['nastawa_slonce']),
                 'nastawa_baza': float(dane['nastawa_baza']),
                 'schody': schody,
                 'podbicie_nad_pokojem': None if podbicie is None else float(podbicie),
-                'nastawa_max': float(dane.get('nastawa_max', 23.5))}
+                'nastawa_max': float(dane.get('nastawa_max', 23.5)),
+                'nastawa_noc': None if noc is None else float(noc),
+                'noc_od': float(dane.get('noc_od', 18))}
     except (KeyError, TypeError, ValueError, IndexError):
         return None
 
@@ -1000,6 +1003,27 @@ def cel_nastawy(ustawienia, pogoda, teraz=None, pamiec=None, pokojowa=None):
     if w_oknie:
         return (ustawienia['nastawa_baza'],
                 f"pochmurno ({pogoda['suma_okna']:.1f} kWh/m²) — bez podbicia")
+    # Poza oknem zwykle trzymamy bazę. Wyjątek: noc przed słonecznym dniem.
+    # 26.10 dom zszedł pod nastawę o 4 rano i pompa przepracowała sześć godzin
+    # do wschodu — 5 z 12 kilowatogodzin doby poszło, zanim panele ruszyły,
+    # przy COP 4,7 zamiast 5,1. A dzień wcześniej dom przeleżał całą dobę bez
+    # grzania na ładunku z poprzedniego okna. Skoro jastrych to wytrzymuje,
+    # przed słonecznym dniem nie ma po co dogrzewać nocą.
+    noc = ustawienia.get('nastawa_noc')
+    if noc is not None:
+        wieczorem = zegar >= ustawienia.get('noc_od', 18)
+        nad_ranem = zegar < od
+        # Wieczorem patrzymy na jutro, nad ranem na dziś — to ten sam dzień.
+        zapowiedz = pogoda.get('suma_jutra') if wieczorem else pogoda['suma_okna']
+        if (wieczorem or nad_ranem) and zapowiedz is not None \
+                and zapowiedz >= ustawienia['prog_kwh']:
+            if wieczorem:
+                powod = (f'jutro słońce ({zapowiedz:.1f} kWh/m²) — '
+                         f'noc niżej, dogrzeję w oknie')
+            else:
+                powod = (f'dziś słońce ({zapowiedz:.1f} kWh/m²) — '
+                         f'czekam do {_godzina(od)}')
+            return noc, powod
     return (ustawienia['nastawa_baza'],
             f'poza oknem {_godzina(od)}–{_godzina(do)}')
 

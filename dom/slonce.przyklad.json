@@ -6,5 +6,7 @@
   "nastawa_baza": 20.0,
   "schody": [[10.5, 13.0, 22.0]],
   "podbicie_nad_pokojem": 0.8,
-  "nastawa_max": 23.5
+  "nastawa_max": 23.5,
+  "nastawa_noc": 19.5,
+  "noc_od": 18
 }

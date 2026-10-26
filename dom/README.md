@@ -471,6 +471,8 @@ i w środku `"wlaczone": true`:
 | `schody` | wyższa nastawa w środku okna, lista `[od, do, ile]` |
 | `podbicie_nad_pokojem` | ile stopni nad temperaturę zastaną przy wejściu w okno |
 | `nastawa_max` | sufit, powyżej którego automat nie idzie nigdy |
+| `nastawa_noc` | nastawa na noc **przed** słonecznym dniem; brak pola = bez zmian |
+| `noc_od` | od której godziny patrzymy na jutro, domyślnie 18 |
 
 **Okno podaje się czasem zegarowym, a słońce zegarka nie przestawia.** Szczyt
 promieniowania wypada tu około 12:45 latem i 11:45 zimą — po zmianie czasu
@@ -495,6 +497,17 @@ czyli 21,5 °C od 9:00 do 15:00, a między 10:00 a 12:30 — 22,0 °C.
 `nastawa_slonce` musi być **wyraźnie wyższa niż to, do czego dom sam dryfuje**.
 Przy bazie 20,5 dom potrafi stać na 21,8 — wtedy nastawa 21 nie uruchomi
 niczego.
+
+**Noc przed słonecznym dniem schodzi niżej.** 26.10 dom zszedł pod nastawę
+o czwartej rano i pompa przepracowała sześć godzin do wschodu: **5 z 12 kWh
+doby poszło, zanim panele w ogóle ruszyły**, przy COP 4,7 zamiast 5,1 w oknie.
+A dobę wcześniej dom przeleżał całe 24 godziny bez grzania, na ładunku
+z poprzedniego okna — stygnąc 0,065 °C/h. Skoro jastrych to wytrzymuje, przed
+słonecznym dniem nie ma po co dogrzewać nocą.
+
+Decyzja zapada dwa razy: wieczorem (od `noc_od`) z prognozy **na jutro**,
+a nad ranem, przed oknem, z prognozy **na dziś**. Pochmurna zapowiedź albo
+brak pola `nastawa_noc` znaczy: bez zmian, obowiązuje `nastawa_baza`.
 
 **Nastawa odnosi się do tego, co jest, a nie do stałej liczby.** Powód to
 kominek. 20.10 po pięciu godzinach palenia pokój miał 22,2 °C, a woda w obiegu

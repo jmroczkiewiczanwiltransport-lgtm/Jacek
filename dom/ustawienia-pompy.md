@@ -629,6 +629,40 @@ Ustawione: podbicie 0,8 °C, sufit 23,5 °C. W zwykły dzień (pokój ~21) daje 
 i tak nastawa nie jest tam ograniczeniem. Różnica pojawia się dopiero po
 kominku, i o to chodzi.
 
+### 25–26.10.2026 — ładunek starcza na dobę, ale noc zjada jedną trzecią
+
+**25.10, pochmurno.** Pompa nie grzała w ogóle: 1 kWh przez całą dobę, i to
+na ciepłą wodę o 11:00. Dom zszedł z 21,9 na 20,4 — **0,065 °C/h**, nie 0,11,
+jak zapowiadałem. Myliłem się o czterdzieści procent, bo nie uwzględniłem, że
+jastrych wciąż oddaje 37 kWh z okna 24.10.
+
+To jest pierwszy policzalny zysk z automatu: **jedno słoneczne okno przeniosło
+dom przez całą następną, pochmurną dobę.**
+
+**26.10, słonecznie.** Schody zadziałały co do minuty — cztery przestawienia
+w `slonce.csv`: 09:04 na 21,5, 10:34 na 22,0, 13:00 z powrotem na 21,5,
+15:01 na 20,0. Podbicie nad pokojem wyszło zero i tak miało być: o dziewiątej
+dom miał 20,2, czyli 20,2 + 0,8 < 21,5.
+
+Ale doba rozpadła się tak:
+
+| | ciepło | prąd | COP | na dworze |
+|---|---|---|---|---|
+| noc 03:00–09:00 | 23,3 kWh | **5 kWh** | 4,7 | 6 °C |
+| okno 09:00–15:00 | 35,4 kWh | 7 kWh | **5,1** | 8–12 °C |
+| cała doba | 61,1 kWh | 12 kWh | 5,1 | |
+
+**Czterdzieści dwa procent prądu doby poszło przed wschodem słońca.** Dom
+zszedł pod nastawę 20,0 o czwartej i sterownik zrobił to, co do niego należy.
+Automat nie mógł pomóc, bo poza oknem trzyma bazę.
+
+Stąd `nastawa_noc`: przed słonecznym dniem pozwalamy domowi zejść niżej
+i nadrabiamy w oknie. 25.10 pokazało, że dom to wytrzymuje.
+
+**Do sprawdzenia: CWU przekracza nastawę.** 25.10 doszło do 47,0 °C,
+26.10 do **53,6** — przy nastawie 45. Dwa dni z rzędu. Antysepsa czy
+harmonogram wody grzewczej — nie wiadomo, trzeba zajrzeć w sterownik.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie

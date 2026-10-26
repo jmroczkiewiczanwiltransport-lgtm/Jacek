@@ -24,7 +24,7 @@ import json
 import os
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 
 USLUGA = 'https://api.open-meteo.com/v1/forecast'
 KATALOG = os.path.dirname(os.path.abspath(__file__))
@@ -98,6 +98,11 @@ def podsumuj(odpowiedz, okno=(11, 16), teraz=None):
     dzis = teraz.date()
     suma_doby = _suma_kwh(czasy, slonce, 0, 24, dzis)
     suma_okna = _suma_kwh(czasy, slonce, okno[0], okno[1], dzis)
+    # Suma na jutro jest po to, żeby wieczorem dało się zdecydować, czy puścić
+    # dom niżej na noc. Prognoza sięga dwóch dób, więc o 22:00 jutrzejsze okno
+    # jest już policzone; nad ranem to pole bywa puste i wtedy nic nie robimy.
+    suma_jutra = _suma_kwh(czasy, slonce, okno[0], okno[1],
+                           dzis + timedelta(days=1))
 
     if suma_okna >= PROG_SLONECZNY:
         ocena = 'sloneczny'
@@ -112,6 +117,7 @@ def podsumuj(odpowiedz, okno=(11, 16), teraz=None):
         'naslonecznienie': biezace.get('shortwave_radiation'),
         'suma_doby': suma_doby,
         'suma_okna': suma_okna,
+        'suma_jutra': suma_jutra,
         'okno': list(okno),
         'ocena': ocena,
         'o_ktorej': biezace.get('time'),
