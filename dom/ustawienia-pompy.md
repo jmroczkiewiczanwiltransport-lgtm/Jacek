@@ -723,6 +723,35 @@ tydzień: w które dni zbiornik przekracza 50 °C.
 czyli blisko dziesięć stopni na dobę bez poboru. Na każde 100 litrów to
 0,47 kWh ciepła dziennie. Objętość zbiornika nieznana — do spisania z tabliczki.
 
+### 27.10.2026 — noc niżej: cztery kilowatogodziny mniej, przy zimniejszej nocy
+
+Pierwsza doba z `nastawa_noc`. Porównanie z poprzednią, też słoneczną,
+obcięte do 18:11, żeby było uczciwe:
+
+| | 26.10 | 27.10 |
+|---|---|---|
+| noc 00:00–09:00 | 23,3 kWh ciepła / **5 kWh prądu** | 0,5 / **1 kWh** |
+| okno 09:00–15:00 | 35,4 / 7 (COP 5,1) | 38,3 / 7 (**COP 5,5**) |
+| razem | 61,1 / **12 kWh** | 39,6 / **8 kWh** |
+| najzimniej w nocy | 4,9 °C | **1,9 °C** |
+| pokój o 18:00 | 21,2 °C | **21,2 °C** |
+
+**Cztery kilowatogodziny mniej, przy nocy o trzy stopnie zimniejszej, przy
+identycznej temperaturze w domu wieczorem.** Nastawa 19,4 sprawiła, że dom
+przespał noc bez grzania: spadek 0,078 °C/h z 21,1 na 20,4, czyli o 0,9 stopnia
+powyżej nastawy nad ranem.
+
+Zastrzeżenie: 26.10 włożyło w dom 61 kWh, a 27.10 tylko 40 — część wczorajszego
+nadmiaru przeszła na dziś. Prawdziwa oszczędność ustabilizuje się po kilku
+dobach. Ale kierunek i mechanizm są jednoznaczne.
+
+**Ciepła woda nie grzała się dziś ani razu.** Zbiornik zszedł z 48,9 o północy
+na 40,0 o 18:00, czyli przez całe okno 10:00–15:00 nie spadł dość nisko, żeby
+sterownik ruszył. Przy nastawie 45 i histerezie progiem jest gdzieś 40.
+Jutro rano zbiornik będzie miał ~33 °C. **Do obserwacji: czy wystarczy
+ciepłej wody.** Jeśli nie, problemem nie jest brak porannego okna, tylko to,
+że pięciogodzinne okno potrafi minąć się z progiem i przepuścić całą dobę.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
