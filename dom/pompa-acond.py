@@ -1163,16 +1163,28 @@ def _najblizsze_zadania(ile=3):
     except (ValueError, OSError):
         return []
     dzis = datetime.now().date()
-    przyszle = []
-    for z in zadania:
-        try:
-            dzien = datetime.strptime(z['data'], '%Y-%m-%d').date()
-        except (KeyError, ValueError):
-            continue
-        if dzien >= dzis:
-            przyszle.append({'data': z['data'], 'tytul': z.get('tytul', ''),
-                             'za_dni': (dzien - dzis).days})
-    return sorted(przyszle, key=lambda z: z['data'])[:ile]
+
+    # Zadania potrafią się powtarzać (`powtarzaj_miesiecy`, `ile_razy`), a panel
+    # patrzył wyłącznie na pole `data`. Spisywanie liczników co miesiąc zniknęło
+    # z kafelka 1 października i nie wróciło — pierwszy termin minął, a kolejnych
+    # sześciu panel nie widział. Rozwijanie powtórzeń umie już `przypomnienia.py`,
+    # które robi z tego plik do kalendarza; bierzemy je stamtąd, żeby kafelek
+    # i kalendarz nie mogły się rozjechać po raz drugi.
+    try:
+        import przypomnienia as kalendarzyk                        # noqa: PLC0415
+        wszystkie = [(d, t) for d, t, _ in kalendarzyk.zadania(plik)]
+    except Exception:                                              # noqa: BLE001
+        wszystkie = []
+        for z in zadania:
+            try:
+                wszystkie.append((datetime.strptime(z['data'], '%Y-%m-%d').date(),
+                                  z.get('tytul', '')))
+            except (KeyError, ValueError):
+                continue
+
+    przyszle = [{'data': d.isoformat(), 'tytul': t, 'za_dni': (d - dzis).days}
+                for d, t in sorted(wszystkie) if d >= dzis]
+    return przyszle[:ile]
 
 
 def szukaj(argumenty):

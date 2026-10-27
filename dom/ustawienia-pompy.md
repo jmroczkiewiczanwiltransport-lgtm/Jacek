@@ -752,6 +752,23 @@ Jutro rano zbiornik będzie miał ~33 °C. **Do obserwacji: czy wystarczy
 ciepłej wody.** Jeśli nie, problemem nie jest brak porannego okna, tylko to,
 że pięciogodzinne okno potrafi minąć się z progiem i przepuścić całą dobę.
 
+### 27.10.2026 — kafelek „do zrobienia" gubił zadania powtarzalne
+
+Po podmianie przypomnień Jacek zauważył, że na kafelku brakuje spisania
+liczników — a termin wypada za pięć dni. Przyczyna w `_najblizsze_zadania`:
+funkcja patrzyła wyłącznie na pole `data` i odrzucała wszystko, co minęło.
+Zadania z `powtarzaj_miesiecy` mają w tym polu **pierwszy** termin, więc
+spisywanie liczników zniknęło z panelu **1 października** i nie wróciło. Sześć
+kolejnych terminów było dla kafelka niewidzialne.
+
+Rozwijanie powtórzeń umiało już `przypomnienia.py`, bo robi z nich plik do
+kalendarza. Panel bierze je teraz stamtąd — jedno źródło prawdy, żeby kafelek
+i kalendarz nie rozjechały się po raz drugi. Gdyby `przypomnienia.py` zniknęło
+albo się wywaliło, zostaje stare zachowanie zamiast pustego kafelka.
+
+Skutek praktyczny: **liczniki nie były spisane ani razu od 1 października.**
+Punkt zerowy z 30.08 zostaje bez porównania przez dwa miesiące.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
