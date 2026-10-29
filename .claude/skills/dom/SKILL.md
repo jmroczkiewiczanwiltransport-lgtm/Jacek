@@ -23,6 +23,14 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
 | Falownik Huawei SUN2000 | — | **nie jest w sieci**, patrz niżej |
 
+**Sterownik wpuszcza bardzo niewielu zalogowanych naraz — prawdopodobnie
+jednego.** Strona pompy otwarta w przeglądarce zabiera sesję panelowi.
+Objawy po stronie panelu: `sterownik nie przyjął loginu lub hasła`, timeouty,
+kreska zamiast nastawy, a w dzienniku „sterownik zmienił adres" pod tym samym
+adresem. Zanim zaczniesz szukać usterki w kodzie, **każ zamknąć wszystkie
+zakładki wskazujące na sterownik**. Działający panel przeżywa to bez szwanku,
+dopóki ma własną sesję — problem wychodzi dopiero przy jego restarcie.
+
 **Panel pompy mieszka w `C:\PanelPompy` na stacjonarnym** — pliki leżą płasko,
 bez podfolderu `dom`. Tam są wszystkie dane: `dane-pompy.csv`, `pogoda.csv`,
 `slonce.csv`, `liczniki.csv`, `kominek.csv`, `logowanie.txt`, `pogoda.json`,

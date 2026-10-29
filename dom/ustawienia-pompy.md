@@ -814,6 +814,24 @@ drugi obsługuje przeglądarkę. Do sprawdzenia poleceniem
 Przy okazji: błąd na kafelku nie miał daty, więc wyglądał na świeży. Teraz
 dopisuje „trwa od X" — awaria, która minęła, nie będzie udawać trwającej.
 
+### 30.10.2026 w nocy — panel i przeglądarka biły się o jedną sesję
+
+Po restarcie panelu o 00:33 sterownik zaczął odsyłać formularz logowania:
+`sterownik nie przyjął loginu lub hasła`, nastawa jako kreska, timeouty.
+Hasło się nie zmieniło, `ciasteczko.txt` nie istnieje, a sesję panel trzyma
+w jednym wspólnym słoiku — więc żadna z moich trzech pierwszych hipotez.
+
+Rozstrzygnął prosty test: **logowanie przez przeglądarkę działało.** Czyli
+sterownik żyje i ma miejsce — tyle że dokładnie jedno, a zajmowała je
+otwarta strona pompy. Po zamknięciu zakładek panel wrócił w kilka minut.
+
+To tłumaczy też wcześniejsze zagadki tego tygodnia: timeouty i wpisy
+„sterownik zmienił adres" pod tym samym adresem pojawiały się za każdym razem,
+gdy siedzieliśmy w przeglądarce przy harmonogramach.
+
+**Reguła: nie trzymać stron sterownika otwartych.** Panel z już założoną sesją
+to przeżywa, ale po jego restarcie miejsca nie ma.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
