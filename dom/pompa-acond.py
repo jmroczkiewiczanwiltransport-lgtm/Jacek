@@ -895,7 +895,7 @@ def _zuzycie_z_licznika(plik):
 PLIK_SLONCA = os.path.join(KATALOG, 'slonce.json')
 PLIK_DZIENNIKA_SLONCA = os.path.join(KATALOG, 'slonce.csv')
 _SLONCE = {'cel': None, 'powod': 'automat nieuruchomiony', 'kiedy': None,
-           'pauza_do': None, 'blad': None}
+           'pauza_do': None, 'blad': None, 'blad_od': None}
 _ZAMEK_SLONCA = threading.Lock()
 TOLERANCJA_NASTAWY = 0.15          # mniej niż jeden impuls i pół
 # Osobny, znacznie szerszy próg na pytanie "czy ruszył to człowiek". Zapis
@@ -1015,14 +1015,27 @@ def cel_nastawy(ustawienia, pogoda, teraz=None, pamiec=None, pokojowa=None):
         nad_ranem = zegar < od
         # Wieczorem patrzymy na jutro, nad ranem na dziś — to ten sam dzień.
         zapowiedz = pogoda.get('suma_jutra') if wieczorem else pogoda['suma_okna']
-        if (wieczorem or nad_ranem) and zapowiedz is not None \
-                and zapowiedz >= ustawienia['prog_kwh']:
+        nizej = zapowiedz is not None and zapowiedz >= ustawienia['prog_kwh']
+        if (wieczorem or nad_ranem) and pamiec is not None:
+            # Noc też trzeba zatrzasnąć. 27/28.10 prognoza krążyła wokół progu
+            # 1,2 i nastawa przeskakiwała sześć razy w trzynaście godzin:
+            # 19,5 → 20,0 → 19,5 → 20,0 → 19,5 → 20,0. Każdy skok to pół stopnia
+            # i kilka impulsów do sterownika, bez żadnego pożytku.
+            # Kluczem jest doba PORANKA, który tę noc kończy — dzięki temu
+            # wieczorny werdykt i nadranny dotyczą tego samego klucza.
+            klucz = teraz.date() + timedelta(days=1) if wieczorem else teraz.date()
+            if pamiec.get('noc') != klucz:
+                pamiec['noc'] = klucz
+                pamiec['noc_nizej'] = nizej
+                pamiec['noc_ile'] = zapowiedz
+            nizej = pamiec['noc_nizej']
+            zapowiedz = pamiec['noc_ile']
+        if (wieczorem or nad_ranem) and nizej:
+            ile = f'{zapowiedz:.1f} kWh/m²' if zapowiedz is not None else 'prognoza'
             if wieczorem:
-                powod = (f'jutro słońce ({zapowiedz:.1f} kWh/m²) — '
-                         f'noc niżej, dogrzeję w oknie')
+                powod = f'jutro słońce ({ile}) — noc niżej, dogrzeję w oknie'
             else:
-                powod = (f'dziś słońce ({zapowiedz:.1f} kWh/m²) — '
-                         f'czekam do {_godzina(od)}')
+                powod = f'dziś słońce ({ile}) — czekam do {_godzina(od)}'
             return noc, powod
     return (ustawienia['nastawa_baza'],
             f'poza oknem {_godzina(od)}–{_godzina(do)}')
@@ -1045,7 +1058,14 @@ def _slonce_na_panel():
         stan = dict(_SLONCE)
     if stan['kiedy']:
         stan['sprzed'] = int(time.time() - stan['kiedy'])
+    # Błąd bez daty wygląda jak błąd sprzed chwili. 29.10 panel pokazywał
+    # „nie wiem, w jakiej jestem sieci" długo po tym, jak awaria się skończyła,
+    # i nie dało się odróżnić usterki trwającej od takiej, która już minęła.
+    # `blad_od` liczy się tylko wtedy, gdy błąd faktycznie trwa.
+    if stan.get('blad') and stan.get('blad_od'):
+        stan['blad_sprzed'] = int(time.time() - stan['blad_od'])
     stan.pop('kiedy', None)
+    stan.pop('blad_od', None)
     return stan
 
 
@@ -1505,6 +1525,8 @@ def panel(argumenty):
             except Exception as powod_bledu:                          # noqa: BLE001
                 podpis = f'{type(powod_bledu).__name__}: {powod_bledu}'
                 with _ZAMEK_SLONCA:
+                    if not _SLONCE['blad']:
+                        _SLONCE['blad_od'] = time.time()
                     _SLONCE['blad'] = podpis
                 if podpis != ostatni_blad[0]:
                     ostatni_blad[0] = podpis

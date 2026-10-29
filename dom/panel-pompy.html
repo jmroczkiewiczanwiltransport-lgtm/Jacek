@@ -393,7 +393,9 @@ function rysujAutomat(stan) {
   // znikał przy braku celu, wyglądało to jak brak pliku ustawień — a powód
   // („czekam na prognozę", „automat wyłączony") jest wtedy najpotrzebniejszy.
   if (!stan || (!stan.powod && !stan.blad)) return;
-  const opis = stan.blad ? stan.blad
+  const opis = stan.blad
+    ? stan.blad + (stan.blad_sprzed > 90
+        ? ` · trwa od ${trwanie(Math.floor(stan.blad_sprzed / 60))}` : '')
     : stan.powod + (stan.pauza_do ? ` · wracam o ${stan.pauza_do}` : '');
   const maCel = !stan.blad && stan.cel !== null && stan.cel !== undefined;
   const plytka = kafel('Automat słoneczny', maCel ? stan.cel.toFixed(1) : null,

@@ -769,6 +769,51 @@ albo się wywaliło, zostaje stare zachowanie zamiast pustego kafelka.
 Skutek praktyczny: **liczniki nie były spisane ani razu od 1 października.**
 Punkt zerowy z 30.08 zostaje bez porównania przez dwa miesiące.
 
+### 29.10.2026 — nocna decyzja skakała sześć razy w trzynaście godzin
+
+Zapowiedziałem 25.10, że jeśli prognoza zawiśnie koło progu, nastawa nocna
+zacznie skakać, i że wtedy dorobię zatrzask. Zawisła:
+
+```
+27.10 18:01  19,5   jutro słońce (1.4 kWh/m²)
+27.10 19:56  20,0   poza oknem            <- prognoza pod próg
+27.10 20:56  19,5   jutro słońce (1.2)    <- wróciła
+28.10 02:57  20,0   poza oknem
+28.10 03:57  19,5   dziś słońce (1.3)
+28.10 06:58  20,0   poza oknem
+```
+
+Sześć przestawień, każde po kilka impulsów do sterownika, bez żadnego pożytku.
+Werdykt nocny jest teraz zatrzaskiwany tak samo jak dzienny, kluczem jest doba
+**poranka kończącego noc** — dzięki temu wieczorny werdykt i nadranny dotyczą
+tego samego klucza i nie rozjeżdżają się o północy.
+
+### 29.10.2026 — blokada CWU pokazała zęby
+
+28.10 o 21:00 zbiornik zszedł z 43,2 na **19,5 °C** w ciągu godziny. To nie jest
+stygnięcie, tylko opróżnienie — ktoś zużył praktycznie cały zasób. I przez
+blokadę poza harmonogramem **nie dało się go dogrzać aż do 11:00 następnego
+dnia**: czternaście godzin z zimną wodą w zbiorniku.
+
+To jest realna cena harmonogramu 10:00–15:00 i trzeba ją znać. Dopisanie okna
+porannego nic by tu nie dało — zbiornik opróżnił się wieczorem, nie w nocy.
+Jeśli ma się to powtarzać, rozwiązaniem jest raczej wyjątek: pozwolić na
+dogrzanie poza harmonogramem, gdy zbiornik spadnie poniżej np. 25 °C.
+
+### 29.10.2026 — panel ostrzega o czymś, czego nie widać w plikach
+
+Zrzut z 20:14 pokazuje „Historia nie rośnie od 4 h", pogodę sprzed 4 h i błąd
+automatu `OSError: nie wiem, w jakiej jestem sieci`. A w plikach **nie ma
+żadnej przerwy**: historia co 5 minut, pogoda co 15, obie aż do 20:14.
+
+Dwa źródła mówią co innego. Najprostsze wyjaśnienie: **działają dwa panele
+naraz** — jeden z autostartu, drugi uruchomiony ręcznie. Jeden pisze pliki,
+drugi obsługuje przeglądarkę. Do sprawdzenia poleceniem
+`Get-Process python,pythonw | Select Id,ProcessName,StartTime`.
+
+Przy okazji: błąd na kafelku nie miał daty, więc wyglądał na świeży. Teraz
+dopisuje „trwa od X" — awaria, która minęła, nie będzie udawać trwającej.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
