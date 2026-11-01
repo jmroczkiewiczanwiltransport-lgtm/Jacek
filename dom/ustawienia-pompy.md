@@ -886,6 +886,31 @@ a od 1.11 autostart uruchamia panel przy logowaniu, często zanim wstanie WiFi.
 Bez tej poprawki każde włączenie komputera zaczynałoby się od godziny bez
 prognozy, czyli od godziny bez automatu.
 
+### 1.11.2026 — liczniki: grzałka elektryczna nie ruszyła ani razu
+
+Pierwszy automatyczny spis liczników (panel zrobił go sam o 09:53) porównany
+z punktem zerowym z 30.08.2026.
+
+| licznik | 30.08 | 18.10 | 01.11 |
+|---|---|---|---|
+| energia elektryczna | 4506 kWh | 4582 | **4652** |
+| **biwalencja 1** | **119 h** | **119** | **119** |
+| **biwalencja 2** | **43 h** | **43** | **43** |
+
+**Obie biwalencje stoją w miejscu.** Grzałka elektryczna nie włączyła się ani
+razu od końca sierpnia — przez cały październik, łącznie z nocami przy dwóch
+stopniach. To była rzecz, która mogła po cichu zjeść rachunek i nie zjadła.
+
+Energia: **146 kWh przez 63 dni**, z czego **70 kWh w ostatnie dwa tygodnie**.
+Połowa dwumiesięcznego zużycia przypadła na pół miesiąca — sezon grzewczy
+zaczął się naprawdę dopiero w połowie października.
+
+**Czego nie wiem:** pozostałe liczniki (przyrosty +109, +149, +120, +122, +13
+przez dwa tygodnie) nie mają u nas nazw — w `liczniki.csv` figurują jako same
+skróty `__T…`. Żeby je nazwać raz a dobrze, potrzebny jest zrzut ekranu
+informacyjnego sterownika, gdzie stoją z opisami. Wtedy każdy kolejny spis
+będzie czytelny bez zgadywania.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
