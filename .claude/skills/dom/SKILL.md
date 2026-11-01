@@ -23,6 +23,16 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
 | Falownik Huawei SUN2000 | — | **nie jest w sieci**, patrz niżej |
 
+**Autostart panelu idzie przez Harmonogram zadań Windows** (zadanie
+„Panel pompy", wyzwalacz przy logowaniu), nie przez folder Autostartu.
+Poprzednia metoda — skrypt `.vbs` uruchamiający ukryte okno — była blokowana
+przez Avasta (18.10) i przez 360 Total Security jako Trojan.Generic (1.11).
+Nie wskrzeszaj jej i nie proponuj dodawania wyjątków w antywirusie.
+
+**Zanim zaczniesz szukać przyczyny w kodzie, sprawdź antywirusa.** Półtora
+tygodnia szukaliśmy błędu w instalatorze autostartu, a 360 Total Security
+przechwytywał go po cichu, z odliczaniem, które samo wybiera „Block".
+
 **Sterownik wpuszcza bardzo niewielu zalogowanych naraz — prawdopodobnie
 jednego.** Strona pompy otwarta w przeglądarce zabiera sesję panelowi.
 Objawy po stronie panelu: `sterownik nie przyjął loginu lub hasła`, timeouty,

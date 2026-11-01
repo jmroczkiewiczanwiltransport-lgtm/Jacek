@@ -1,25 +1,30 @@
 @echo off
 chcp 65001 >nul
-title Wyłączanie autostartu panelu
-set "STARTUP_VBS=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Panel pompy.vbs"
+title Wylaczanie autostartu panelu
+set "ZADANIE=Panel pompy"
+set "STARY_VBS=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Panel pompy.vbs"
 
 echo.
-echo   Wyłączam autostart panelu pompy.
+echo   Wylaczam autostart panelu pompy.
 echo.
 
-if exist "%STARTUP_VBS%" (
-  del "%STARTUP_VBS%"
-  echo   Skrót z Autostartu usunięty.
+powershell -NoProfile -Command "Unregister-ScheduledTask -TaskName $env:ZADANIE -Confirm:$false -ErrorAction SilentlyContinue"
+powershell -NoProfile -Command "if (Get-ScheduledTask -TaskName $env:ZADANIE -ErrorAction SilentlyContinue) { exit 1 } else { exit 0 }"
+if errorlevel 1 (
+  echo   Nie udalo sie usunac zadania - sprobuj jako administrator.
 ) else (
-  echo   Skrótu w Autostarcie i tak nie było.
+  echo   Zadanie z Harmonogramu usuniete.
 )
 
-rem  Panel chodzi bez okna, więc trzeba go zatrzymać po nazwie polecenia.
+rem  Resztka po poprzedniej metodzie, gdyby jeszcze gdzies lezala.
+if exist "%STARY_VBS%" del "%STARY_VBS%" >nul 2>&1
+
+rem  Panel chodzi bez okna, wiec trzeba go zatrzymac po nazwie polecenia.
 powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*pompa-acond.py*panel*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"
-echo   Działający panel zatrzymany.
+echo   Dzialajacy panel zatrzymany.
 echo.
-echo   Pliki i zebrana historia zostają tam, gdzie były:
+echo   Pliki i zebrana historia zostaja tam, gdzie byly:
 echo     %~dp0
-echo   Nic stąd nie kasuję — to dwa miesiące pomiarów.
+echo   Nic stad nie kasuje - to dwa miesiace pomiarow.
 echo.
 pause

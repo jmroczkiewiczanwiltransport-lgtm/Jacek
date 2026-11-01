@@ -24,6 +24,8 @@ rem  Szukamy Pythona — raz jako "python", raz jako "py".
 set PYTHON=python
 python --version >nul 2>&1
 if errorlevel 1 set PYTHON=py
+set PYTHONW=pythonw
+if "%PYTHON%"=="py" set PYTHONW=pyw
 %PYTHON% --version >nul 2>&1
 if errorlevel 1 goto brak_pythona
 
@@ -74,6 +76,15 @@ rem  Składamy dodatki osobno — inaczej wariantów byłoby cztery.
 set DODATKI=
 if defined CIASTECZKO set DODATKI=%DODATKI% --ciasteczko "%CIASTECZKO%"
 if defined FALOWNIK set DODATKI=%DODATKI% --falownik %FALOWNIK%
+
+rem  Autostart woła ten plik z argumentem "cicho". Wtedy uruchamiamy pythonw,
+rem  ktory nie otwiera konsoli: okno znika po sekundzie, a panel sam pisze do
+rem  panel.log. Dzieki temu autostart nie potrzebuje zadnego skryptu .vbs
+rem  ukrywajacego okno - a to wlasnie takie skrypty blokuja antywirusy.
+if /i "%~1"=="cicho" (
+  start "" /b %PYTHONW% pompa-acond.py panel %POMPA%%DODATKI%
+  exit /b 0
+)
 
 %PYTHON% pompa-acond.py panel %POMPA%%DODATKI%
 

@@ -832,6 +832,52 @@ gdy siedzieliśmy w przeglądarce przy harmonogramach.
 **Reguła: nie trzymać stron sterownika otwartych.** Panel z już założoną sesją
 to przeżywa, ale po jego restarcie miejsca nie ma.
 
+### 1.11.2026 — autostart blokował antywirus, nie kod
+
+Przez półtora tygodnia autostart „nie działał" i dwa razy szukaliśmy przyczyny
+w kodzie. Zrzut z 1.11 pokazał prawdę: **360 Total Security przechwytywał go
+po cichu.** Najpierw ostrzeżenie „A program is modifying startup directory"
+z odliczaniem, które po 24 sekundach samo wybiera *Block* — więc wystarczyło
+odejść od komputera. A po kliknięciu *Allow* drugie okno: założony plik
+`Panel pompy.vbs` uznany za **Trojan.Generic**.
+
+Avast zgłosił ten sam plik już 18.10. **Dwa niezależne antywirusy, ta sama
+technika** — skrypt `.vbs` w folderze Autostartu uruchamiający ukryte okno
+konsoli. To jest dokładnie to, co robi złośliwe oprogramowanie, więc obie
+reakcje były słuszne co do techniki, choć nie co do pliku.
+
+**Nie dodaliśmy wyjątku.** Wpisywanie własnych skryptów na białą listę uczy
+odruchu klikania „zezwól" przy ostrzeżeniach o katalogu startowym, a to odruch
+drogi. Zamiast tego autostart przeszedł na **Harmonogram zadań Windows** —
+mechanizm, który system daje właśnie do tego. Nie dotyka folderu startowego,
+niczego nie ukrywa, nie podszywa się pod nic.
+
+Okna konsoli i tak nie widać: `_URUCHOM-PANEL.bat` wywołany z argumentem
+`cicho` uruchamia **pythonw** zamiast **python** i kończy się po sekundzie.
+Panel pisze wtedy do `panel.log` sam — funkcja `_dziennik_zamiast_konsoli`
+istnieje dokładnie po to.
+
+`autostart.szablon.vbs` usunięty z projektu, żeby nikt go nie wskrzesił.
+
+### 1.11.2026 — pogoda stoi na tłumaczeniu nazw
+
+W dzienniku panelu: `pogoda niedostępna — URLError: [Errno 11001]
+getaddrinfo failed`. To nie brak internetu, tylko brak rozwiązywania nazw —
+komputer nie zamienia `api.open-meteo.com` na adres IP.
+
+Potwierdzają to dwie rzeczy z tego samego startu. Panel wypisał
+`Z telefonu w tej samej sieci: http://ten-komputer:8125` zamiast adresu IP,
+bo przy starcie o 09:48:30 **nie miał jeszcze żadnego adresu**. I `[WinError
+10051] na nieosiągalnej sieci` sekundę później. O 09:53 sieć wróciła
+(`pompa znów odpowiada`), ale pompa stoi pod **numerem** 192.168.88.10 —
+nazw nie potrzebuje. Open-Meteo potrzebuje.
+
+Przeglądarka działa, bo Edge i Chrome mają własne tłumaczenie nazw
+(DNS-over-HTTPS) i omijają systemowe. Python korzysta z systemowego.
+
+Do sprawdzenia: `Resolve-DnsName api.open-meteo.com`. Jeśli odmawia —
+wpisać stały serwer nazw w ustawieniach karty sieciowej.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
