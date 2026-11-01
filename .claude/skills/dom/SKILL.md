@@ -23,6 +23,16 @@ Rozmawiamy po polsku. Kod, komentarze, komunikaty i nazwy zmiennych też są po 
 | Router | `192.168.88.1` | najpewniej MikroTik (adresacja .88.x) |
 | Falownik Huawei SUN2000 | — | **nie jest w sieci**, patrz niżej |
 
+**Gdy naraz padnie cała drobnica, a telefon i komputer działają — to pasmo
+2,4 GHz, nie urządzenia.** 1.11 offline było jednocześnie: mostek Hue i cztery
+sterowniki MiBoxer. Telefon i panel pompy chodziły normalnie, bo siedzą na
+5 GHz albo na kablu. **Restart routera** (wyjąć z prądu na 10 s — nigdy reset
+fabryczny) odwiesił radio i sterowniki wróciły same. Mostek Hue wymagał
+dodatkowo własnego restartu: po dłuższym braku sieci przestaje próbować.
+
+**Mostek Hue u Jacka ma WiFi** (czarny, nowszy model) — nie zakładaj, że łączy
+się kablem jak starsze wersje. Pomyliłem się na ten temat 1.11.
+
 **Autostart panelu idzie przez Harmonogram zadań Windows** (zadanie
 „Panel pompy", wyzwalacz przy logowaniu), nie przez folder Autostartu.
 Poprzednia metoda — skrypt `.vbs` uruchamiający ukryte okno — była blokowana

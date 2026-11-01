@@ -911,6 +911,27 @@ skróty `__T…`. Żeby je nazwać raz a dobrze, potrzebny jest zrzut ekranu
 informacyjnego sterownika, gdzie stoją z opisami. Wtedy każdy kolejny spis
 będzie czytelny bez zgadywania.
 
+### 1.11.2026 wieczorem — zawieszone 2,4 GHz zabrało całą drobnicę
+
+Aplikacja Hue wisiała na „Podłączanie do mostka", a w MiBoxerze wszystkie
+cztery sterowniki LED pokazywały „poza siecią". Telefon i panel pompy działały
+normalnie.
+
+To wykluczyło awarię pojedynczego urządzenia: mostek i sterowniki nie mają ze
+sobą nic wspólnego poza siecią domową. A że telefon i komputer siedzą na 5 GHz
+albo na kablu — **padło radio 2,4 GHz w routerze**, na którym wisi cała
+drobnica.
+
+**Restart routera** (wyjęcie z prądu na 10 sekund, nigdy reset fabryczny)
+przywrócił wszystkie cztery sterowniki w kilka minut. Mostek Hue wymagał
+dodatkowo własnego restartu — po dłuższym braku sieci przestaje szukać
+i potrzebuje świeżego startu.
+
+Po drodze pomyliłem się dwa razy. Najpierw uznałem, że mostek łączy się
+kablem — czarny, nowszy model ma WiFi, a ja mówiłem o starszych wersjach.
+Potem zgadywałem wzmacniacz WiFi jako wspólny punkt awarii. Jacek poprawił
+mnie w obu przypadkach i dopiero wtedy obraz się ułożył.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
