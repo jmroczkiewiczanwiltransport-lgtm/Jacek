@@ -1324,6 +1324,23 @@ def panel(argumenty):
             self.wfile.write(tresc)
 
         def do_GET(self):
+            # Cokolwiek się w środku wysypie, przeglądarka ma dostać JSON-a
+            # z powodem, a nie pięćsetkę. 2.11 pusta strona panelu wyglądała
+            # jak „umarło", a naprawdę był to nieobsłużony wyjątek przy
+            # odczycie sterownika — strona nie miała czego narysować i nie
+            # miała czym o tym powiedzieć.
+            try:
+                return self._do_GET()
+            except Exception as powod:                               # noqa: BLE001
+                podpis = f'{type(powod).__name__}: {powod}'
+                print(f'{datetime.now():%H:%M:%S}  panel: {podpis}', flush=True)
+                try:
+                    return self._odpowiedz(200, {'blad': f'Panel się potknął — {podpis}',
+                                                 'pompa': {}, 'zrodlo': ''})
+                except OSError:
+                    return None
+
+        def _do_GET(self):
             if self.path in ('/', '/panel-pompy.html'):
                 with open(os.path.join(KATALOG, 'panel-pompy.html'), 'rb') as f:
                     return self._odpowiedz(200, f.read(), 'text/html; charset=utf-8')
@@ -1377,6 +1394,17 @@ def panel(argumenty):
             self._odpowiedz(200, odpowiedz)
 
         def do_POST(self):
+            try:
+                return self._do_POST()
+            except Exception as powod:                               # noqa: BLE001
+                podpis = f'{type(powod).__name__}: {powod}'
+                print(f'{datetime.now():%H:%M:%S}  panel: {podpis}', flush=True)
+                try:
+                    return self._odpowiedz(500, {'blad': f'Panel się potknął — {podpis}'})
+                except OSError:
+                    return None
+
+        def _do_POST(self):
             """Sterowanie: przyjmujemy nazwę akcji, nigdy nazwę zmiennej.
 
             Panel jest widoczny w całej sieci domowej, więc gdyby przyjmował

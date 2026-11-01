@@ -932,6 +932,29 @@ kablem — czarny, nowszy model ma WiFi, a ja mówiłem o starszych wersjach.
 Potem zgadywałem wzmacniacz WiFi jako wspólny punkt awarii. Jacek poprawił
 mnie w obu przypadkach i dopiero wtedy obraz się ułożył.
 
+### 2.11.2026 — pusta strona panelu to był nieobsłużony wyjątek
+
+Po restarcie routera panel pokazał sam nagłówek i nic więcej. Wyglądało to
+jak „umarło", a w `panel.log` stoi:
+
+```
+Exception occurred during processing of request from ('127.0.0.1', 56921)
+Traceback (most recent call last):
+```
+
+Czyli `/api/stan` wysypało się na czymś, czego nie łapał `except OSError`,
+serwer oddał pięćsetkę, a strona nie miała czego narysować **ani czym o tym
+powiedzieć**. To najgorszy możliwy objaw: awaria bez komunikatu.
+
+`do_GET` i `do_POST` mają teraz zewnętrzną klamrę na wszystko. Cokolwiek się
+wysypie, przeglądarka dostaje JSON-a z nazwą wyjątku, a ten sam tekst trafia
+do dziennika. Pusta strona przestaje być możliwa.
+
+Przy okazji z tego samego dziennika: **restart routera zmienił adres
+komputera z `192.168.88.14` na `.24`.** Sterownik został na `.10`. To drugi
+raz w dwa tygodnie, kiedy adresy się przestawiają — rezerwacje DHCP
+w routerze przestają być wygodą, a stają się koniecznością.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
