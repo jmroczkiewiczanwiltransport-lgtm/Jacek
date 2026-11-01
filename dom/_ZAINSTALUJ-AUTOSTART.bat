@@ -48,10 +48,26 @@ rem  Zamiast tego Harmonogram zadan - mechanizm, ktory Windows daje wlasnie do
 rem  tego. Nie dotyka folderu startowego, niczego nie ukrywa i nie podszywa sie
 rem  pod nic. Okno konsoli i tak nie zostaje, bo _URUCHOM-PANEL.bat w trybie
 rem  "cicho" odpala pythonw i konczy sie po sekundzie.
+rem
+rem  Zakladanie zadania wymaga administratora, restart panelu nie. Dlatego
+rem  najpierw sprawdzamy, czy zadanie juz jest i czy wskazuje na TEN folder -
+rem  jesli tak, nie ruszamy go wcale. Bez tego kazda aktualizacja konczyla sie
+rem  czerwona "Odmowa dostepu", po ktorej i tak szlo "Gotowe". Komunikat o
+rem  bledzie, po ktorym wszystko dziala, uczy ignorowania komunikatow o bledach.
+powershell -NoProfile -Command "$z=Get-ScheduledTask -TaskName $env:ZADANIE -ErrorAction SilentlyContinue; if ($z -and $z.Actions[0].Execute -eq ($env:DOCEL+'\_URUCHOM-PANEL.bat')) { exit 0 } else { exit 1 }"
+if not errorlevel 1 goto zadanie_juz_jest
+
 echo   Zakladam zadanie w Harmonogramie Windows...
-powershell -NoProfile -Command "$a=New-ScheduledTaskAction -Execute ($env:DOCEL+'\_URUCHOM-PANEL.bat') -Argument 'cicho' -WorkingDirectory $env:DOCEL; $t=New-ScheduledTaskTrigger -AtLogOn; $s=New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero) -StartWhenAvailable; Register-ScheduledTask -TaskName $env:ZADANIE -Action $a -Trigger $t -Settings $s -Force | Out-Null"
+powershell -NoProfile -Command "$a=New-ScheduledTaskAction -Execute ($env:DOCEL+'\_URUCHOM-PANEL.bat') -Argument 'cicho' -WorkingDirectory $env:DOCEL; $t=New-ScheduledTaskTrigger -AtLogOn; $s=New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero) -StartWhenAvailable; Register-ScheduledTask -TaskName $env:ZADANIE -Action $a -Trigger $t -Settings $s -Force | Out-Null" 2>nul
 powershell -NoProfile -Command "if (Get-ScheduledTask -TaskName $env:ZADANIE -ErrorAction SilentlyContinue) { exit 0 } else { exit 1 }"
 if errorlevel 1 goto blad_zadania
+echo   Zadanie zalozone.
+goto po_zadaniu
+
+:zadanie_juz_jest
+echo   Zadanie w Harmonogramie juz jest - nie ruszam go.
+
+:po_zadaniu
 
 echo   Gotowe. Panel bedzie sie uruchamial sam po zalogowaniu do Windowsa,
 echo   bez okna terminala. To, co wypisuje, trafia do:
