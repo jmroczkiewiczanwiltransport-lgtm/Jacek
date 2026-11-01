@@ -1164,6 +1164,14 @@ def pilnuj_pogody(okno=None, odstep=ODSTEP_POGODY):
                 _dopisz_pogode(PLIK_POGODY, dane)
         except Exception as powod:                                   # noqa: BLE001
             podpis = f'{type(powod).__name__}: {powod}'
+            # Bez tego panel po prostu gubił kafelek pogody i nie mówił nic.
+            # 1.11 wyglądało to tak, jakby pogody nigdy nie było — a naprawdę
+            # od wczorajszego wieczora nie dało się dosięgnąć Open-Meteo.
+            # Milczenie jest gorsze od komunikatu o błędzie: nie da się
+            # odróżnić awarii od tego, że coś nigdy nie zostało włączone.
+            with _ZAMEK_POGODY:
+                if _POGODA['dane'] is None:
+                    _POGODA['blad'] = f'Nie mam prognozy — {podpis}'
             if podpis != ostatni_blad[0]:
                 ostatni_blad[0] = podpis
                 print(f'{datetime.now():%H:%M:%S}  pogoda niedostępna — {podpis}',
