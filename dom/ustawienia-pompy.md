@@ -875,8 +875,16 @@ nazw nie potrzebuje. Open-Meteo potrzebuje.
 Przeglądarka działa, bo Edge i Chrome mają własne tłumaczenie nazw
 (DNS-over-HTTPS) i omijają systemowe. Python korzysta z systemowego.
 
-Do sprawdzenia: `Resolve-DnsName api.open-meteo.com`. Jeśli odmawia —
-wpisać stały serwer nazw w ustawieniach karty sieciowej.
+**Rozwiązało się po restarcie panelu** — świeży proces, uruchomiony przy
+działającej sieci, pobrał prognozę od razu. Czyli nie DNS był trwale zepsuty,
+tylko panel wystartował przed siecią i przez ponad dwie godziny się z tego nie
+podniósł, mimo że ponawia co kwadrans.
+
+Dlatego: **dopóki nie ma ani jednej udanej prognozy, wątek pogody pyta co
+minutę zamiast co kwadrans.** Przy zimnym starcie kwadrans to za rzadko —
+a od 1.11 autostart uruchamia panel przy logowaniu, często zanim wstanie WiFi.
+Bez tej poprawki każde włączenie komputera zaczynałoby się od godziny bez
+prognozy, czyli od godziny bez automatu.
 
 ## Do zrobienia
 

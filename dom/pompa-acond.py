@@ -1178,7 +1178,15 @@ def pilnuj_pogody(okno=None, odstep=ODSTEP_POGODY):
                       flush=True)
         else:
             ostatni_blad[0] = None
-        time.sleep(odstep)
+        # Dopóki nie mamy ani jednej udanej prognozy, pytamy co minutę zamiast
+        # co kwadrans. Autostart uruchamia panel przy logowaniu, często zanim
+        # wstanie WiFi — 1.11 panel wystartował o 09:48:30 bez żadnego adresu,
+        # sieć wróciła o 09:53, a pogody nie było jeszcze o jedenastej.
+        # Kwadrans odstępu przy zimnym starcie to za rzadko; minuta sprawia,
+        # że wyścig z kartą sieciową przestaje być widoczny.
+        with _ZAMEK_POGODY:
+            zimny_start = _POGODA['dane'] is None
+        time.sleep(60 if zimny_start else odstep)
 
 
 def _najblizsze_zadania(ile=3):
