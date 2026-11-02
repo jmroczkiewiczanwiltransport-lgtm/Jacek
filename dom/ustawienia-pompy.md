@@ -852,10 +852,13 @@ drogi. Zamiast tego autostart przeszedł na **Harmonogram zadań Windows** —
 mechanizm, który system daje właśnie do tego. Nie dotyka folderu startowego,
 niczego nie ukrywa, nie podszywa się pod nic.
 
-Okna konsoli i tak nie widać: `_URUCHOM-PANEL.bat` wywołany z argumentem
-`cicho` uruchamia **pythonw** zamiast **python** i kończy się po sekundzie.
-Panel pisze wtedy do `panel.log` sam — funkcja `_dziennik_zamiast_konsoli`
-istnieje dokładnie po to.
+Okna konsoli i tak nie widać: panel chodzi pod **pythonw**, który żadnego
+okna nie otwiera. Pisze wtedy do `panel.log` sam — funkcja
+`_dziennik_zamiast_konsoli` istnieje dokładnie po to.
+
+*Dopisek 2.11:* pierwsza wersja tego zadania wołała `_URUCHOM-PANEL.bat cicho`,
+a ten odpalał pythona przez `start /b` i kończył się po sekundzie. To było
+błędne i panel z Harmonogramu nie wstawał wcale — patrz wpis z 2.11 niżej.
 
 `autostart.szablon.vbs` usunięty z projektu, żeby nikt go nie wskrzesił.
 
@@ -954,6 +957,50 @@ Przy okazji z tego samego dziennika: **restart routera zmienił adres
 komputera z `192.168.88.14` na `.24`.** Sterownik został na `.10`. To drugi
 raz w dwa tygodnie, kiedy adresy się przestawiają — rezerwacje DHCP
 w routerze przestają być wygodą, a stają się koniecznością.
+
+### 2.11.2026 — autostart zabijał panel w trakcie startu Pythona
+
+Instalator przeszedł czysto („Zadanie w Harmonogramie juz jest", „Uruchamiam
+go teraz"), a `localhost:8125` odpowiedział `ERR_CONNECTION_REFUSED`. W
+`panel.log` **ani jednej nowej linijki**. To jest ten trop, nie brak linijki
+o błędzie: `_dziennik_zamiast_konsoli()` jest pierwszą rzeczą, jaką robi
+`__main__`, więc brak wpisu znaczy, że Python nigdy tam nie doszedł.
+
+Winny był sposób uruchamiania:
+
+```
+start "" /b %PYTHONW% pompa-acond.py panel ...
+exit /b 0
+```
+
+Harmonogram zadań trzyma zadanie w obiekcie *job* i zamyka go, gdy kończy się
+proces akcji — a razem z nim idzie całe potomstwo. Skrypt kończył się po
+ułamku sekundy, import 120-kilobajtowego pliku trwa około sekundy. Panel
+ginął w trakcie własnego startu. Z folderu Autostartu ta sama konstrukcja
+działała, bo tam rodzicem jest Explorer, który nigdzie się nie wybiera.
+
+Trzy poprawki, bo trzy osobne rzeczy były zepsute:
+
+1. **Zadaniem jest sam panel.** Akcja to `pythonw.exe` z argumentem
+   `pompa-acond.py panel` — bez pośrednika w `.bat`, bez odłączania. Proces
+   zadania żyje tak długo jak panel, więc nie ma czego zabijać. `pythonw.exe`
+   nie otwiera okna, więc nadal nie trzeba niczego ukrywać — a to ukrywanie
+   okna brało nam po kolei Avasta i 360 Total Security.
+2. **Adresu sterownika w zadaniu nie ma.** Panel trzyma go sam
+   w `adres-pompy.txt` i sam poprawia po zmianie DHCP. Wcześniej ten sam
+   adres stał w trzech miejscach, z czego dwa cicho się rozjeżdżały —
+   `panel` bez argumentu bierze teraz zapamiętany.
+3. **Instalator sprawdza, a nie zapewnia.** `schtasks /Run` miał na sobie
+   `>nul 2>&1`, więc „Odmowa dostępu" na zadaniu założonym przez
+   administratora wyglądała identycznie jak sukces. Teraz: gdy Harmonogram
+   odmówi, instalator startuje panel sam; potem **puka do portu 8125** i
+   dopiero wtedy mówi „działa". Gdy nie wstanie — wypisuje ostatnie 15 linijek
+   `panel.log` na miejscu, zamiast kazać je przepisywać z PowerShella.
+
+Punkt 3 jest najważniejszy z całej trójki. Każda runda tej historii wyglądała
+tak samo: instalator mówił „Gotowe", panelu nie było, a diagnoza zaczynała się
+od proszenia Jacka o wklejenie logu. Narzędzie, które melduje sukces, nie
+sprawdziwszy go, kosztowało tu więcej czasu niż sam błąd.
 
 ## Do zrobienia
 

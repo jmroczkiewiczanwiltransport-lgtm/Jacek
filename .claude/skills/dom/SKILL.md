@@ -39,6 +39,19 @@ Poprzednia metoda — skrypt `.vbs` uruchamiający ukryte okno — była blokowa
 przez Avasta (18.10) i przez 360 Total Security jako Trojan.Generic (1.11).
 Nie wskrzeszaj jej i nie proponuj dodawania wyjątków w antywirusie.
 
+**Procesu uruchamianego z Harmonogramu nigdy nie odłączaj.** `start /b`
+plus `exit` w skrypcie akcji zabija to, co uruchomił: Harmonogram trzyma
+zadanie w obiekcie *job* i zamyka go razem z procesem akcji. Panel ginął tak
+w trakcie własnego startu, nie zostawiając śladu w `panel.log`. Procesem
+zadania ma być sam program.
+
+**Instalator, który melduje sukces bez sprawdzenia, kosztuje więcej niż
+błąd.** `_ZAINSTALUJ-AUTOSTART.bat` puka na koniec do portu 8125 i przy
+niepowodzeniu sam wypisuje ogon `panel.log`. Nie zabieraj mu tego. Wyciszać
+`>nul 2>&1` wolno tylko to, czego niepowodzenie i tak obsługujesz linijkę
+niżej — `schtasks /Run` jest wyciszony, bo po odmowie instalator startuje
+panel sam. Wyciszenie bez obsługi to kłamstwo z opóźnionym zapłonem.
+
 **Zanim zaczniesz szukać przyczyny w kodzie, sprawdź antywirusa.** Półtora
 tygodnia szukaliśmy błędu w instalatorze autostartu, a 360 Total Security
 przechwytywał go po cichu, z odliczaniem, które samo wybiera „Block".
@@ -145,8 +158,10 @@ Jedyna działająca droga to `node hue.mjs panel`.
 
 ## Co jest uruchomione u Jacka
 
-- **Panel pompy** — `%LOCALAPPDATA%\PanelPompy`, autostart przy logowaniu do Windowsa,
-  bez okna terminala (VBS w Autostarcie). Port **8125**. Zapisuje odczyt do
+- **Panel pompy** — `C:\PanelPompy`, autostart przy logowaniu do Windowsa,
+  bez okna terminala. Zadanie w Harmonogramie o nazwie „Panel pompy" uruchamia
+  **`pythonw.exe pompa-acond.py panel`** — wprost, bez pośrednika w `.bat`
+  i bez `start /b`. Port **8125**. Zapisuje odczyt do
   `dane-pompy.csv` co 5 minut, własnym wątkiem, niezależnie od ruchu na stronie.
   Aktualizacja: pobrać paczkę, kliknąć `_ZAINSTALUJ-AUTOSTART.bat` — pliki użytkownika
   i historia przeżywają.
@@ -300,7 +315,8 @@ schodzi na grubszą siatkę.
 
 Po co: temperatura z modelu stoi w kafelku obok odczytu czujnika, więc błąd
 nasłonecznionej obudowy widać na bieżąco; suma promieniowania w oknie
-11:00–16:00 mówi **rano**, czy południowe podbicie pójdzie z paneli, czy z sieci
+z `slonce.json` (`okno`, obecnie 9:00–15:00) mówi **rano**, czy południowe
+podbicie pójdzie z paneli, czy z sieci
 (dane Enei przychodzą dopiero po 2–3 dniach). Progi oceny: ≥ 2,0 kWh/m² to
 dzień pogodny, ≤ 0,9 pochmurny.
 
@@ -315,8 +331,9 @@ wiekiem, więc martwe łącze do Open-Meteo nigdy nie blokuje otwarcia panelu.
 Sprawdzone w praktyce, bo zdarzyło się po raz pierwszy od uruchomienia
 monitoringu:
 
-1. **Panel nie wstaje sam** — autostartu nie ma, trzeba ręcznie uruchomić
-   `_URUCHOM-PANEL.bat`. Dziura w `dane-pompy.csv` na cały czas przerwy.
+1. ~~**Panel nie wstaje sam**~~ — wtedy autostartu nie było i trzeba było
+   ręcznie uruchamiać `_URUCHOM-PANEL.bat`; dziura w `dane-pompy.csv` na cały
+   czas przerwy. Od 2.11 zadanie w Harmonogramie podnosi panel przy logowaniu.
 2. **Komputer może wrócić bez sieci.** Panel wypisał wtedy
    `getaddrinfo failed`, `nie wiem, w jakiej jestem sieci` i podstawił
    `http://ten-komputer:8125` zamiast adresu. To nie jest awaria panelu —

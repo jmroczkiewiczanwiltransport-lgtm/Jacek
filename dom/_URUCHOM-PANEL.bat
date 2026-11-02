@@ -77,13 +77,19 @@ set DODATKI=
 if defined CIASTECZKO set DODATKI=%DODATKI% --ciasteczko "%CIASTECZKO%"
 if defined FALOWNIK set DODATKI=%DODATKI% --falownik %FALOWNIK%
 
-rem  Autostart woła ten plik z argumentem "cicho". Wtedy uruchamiamy pythonw,
-rem  ktory nie otwiera konsoli: okno znika po sekundzie, a panel sam pisze do
-rem  panel.log. Dzieki temu autostart nie potrzebuje zadnego skryptu .vbs
-rem  ukrywajacego okno - a to wlasnie takie skrypty blokuja antywirusy.
+rem  Autostart wola ten plik z argumentem "cicho". Wtedy uruchamiamy pythonw,
+rem  ktory nie otwiera wlasnej konsoli, a panel sam pisze do panel.log.
+rem
+rem  Bez "start" i bez odlaczania. Wczesniej bylo tu "start /b ... & exit /b 0"
+rem  - skrypt konczyl sie natychmiast i zostawial pythona samego. Przy
+rem  uruchomieniu z Harmonogramu zadan to go zabijalo: Harmonogram trzyma
+rem  zadanie w obiekcie job i zamyka go, gdy proces akcji sie konczy, a razem
+rem  z nim idzie cale potomstwo. Panel ginal w trakcie startu Pythona, zanim
+rem  zdazyl cokolwiek dopisac do panel.log - stad "zadanie poszlo, portu nie
+rem  ma, w logu pusto". Teraz czekamy na pythona i zadanie zyje tak dlugo jak on.
 if /i "%~1"=="cicho" (
-  start "" /b %PYTHONW% pompa-acond.py panel %POMPA%%DODATKI%
-  exit /b 0
+  "%PYTHONW%" pompa-acond.py panel %POMPA%%DODATKI%
+  exit /b
 )
 
 %PYTHON% pompa-acond.py panel %POMPA%%DODATKI%

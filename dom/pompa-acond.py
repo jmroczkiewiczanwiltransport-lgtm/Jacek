@@ -1578,14 +1578,28 @@ def panel(argumenty):
                           flush=True)
             time.sleep(15 if czekam_na_prognoze[0] else odstep)
 
+    # Port zajmujemy PRZED uruchomieniem wątków. Kolejność jest tu całą
+    # treścią: drugi panel uruchomiony przez pomyłkę odbija się od zajętego
+    # portu i ginie, nie zdążywszy niczego zapisać ani ruszyć nastawy.
+    # Odwrotnie — a tak było do 2.11 — zdublowany panel zdąża dopisać wiersz
+    # do dane-pompy.csv i wysłać impulsy do sterownika, zanim się zorientuje,
+    # że jest zbędny. Dwa panele naraz zdarzyły się już 26.10.
+    nasluch = '127.0.0.1' if argumenty.tylko_lokalnie else '0.0.0.0'
+    try:
+        serwer = ThreadingHTTPServer((nasluch, argumenty.port_panelu), Obsluga)
+    except OSError as powod:
+        raise SystemExit(f'Port {argumenty.port_panelu} jest zajęty ({powod}).\n'
+                         'Najpewniej panel już działa — otwórz '
+                         f'http://localhost:{argumenty.port_panelu}\n'
+                         'Jeśli to stary, zawieszony proces, zatrzymaj go w Menedżerze '
+                         'zadań (python albo pythonw) i uruchom panel jeszcze raz.')
+
     if odstep_zapisu:
         threading.Thread(target=zbieraj, daemon=True).start()
     threading.Thread(target=pilnuj_pogody, daemon=True).start()
     if steruje:
         threading.Thread(target=pilnuj_slonca, daemon=True).start()
 
-    nasluch = '127.0.0.1' if argumenty.tylko_lokalnie else '0.0.0.0'
-    serwer = ThreadingHTTPServer((nasluch, argumenty.port_panelu), Obsluga)
     print(f'Panel pompy: http://localhost:{argumenty.port_panelu}')
     if not argumenty.tylko_lokalnie:
         moj_adres = _adres_lokalny() or 'ten-komputer'
@@ -2464,6 +2478,19 @@ def main():
     parser.add_argument('--haslo', help='hasło do panelu sterownika')
     parser.add_argument('--ciasteczko', help='ciasteczko sesji panelu, np. "SoftPLC=10900268"')
     argumenty = parser.parse_args()
+
+    # Autostart woła po prostu „panel", bez adresu. Panel i tak utrzymuje adres
+    # sterownika sam w adres-pompy.txt — gdy router zmieni mu IP, panel je
+    # odnajduje i zapisuje. Powtarzanie adresu w skrócie i w zadaniu
+    # Harmonogramu robiło z tego trzy miejsca do poprawiania, z czego dwa
+    # cicho się rozjeżdżały.
+    if argumenty.polecenie == 'panel' and not argumenty.host:
+        argumenty.host = zapamietany_adres()
+        if not argumenty.host:
+            raise SystemExit('Nie wiem, pod jakim adresem jest sterownik — plik '
+                             f'{PLIK_ADRESU} jest pusty albo go nie ma.\n'
+                             'Uruchom raz z adresem, a panel go zapamięta:\n'
+                             '   python pompa-acond.py panel http://192.168.88.23/PAGE115.XML')
 
     # Adres z „http" znaczy: czytamy stronę sterownika, a nie rejestry Modbusa.
     # „znajdz" z definicji dotyczy strony WWW, nawet gdy podano samą sieć.
