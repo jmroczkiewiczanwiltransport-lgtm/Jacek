@@ -1037,6 +1037,57 @@ od nowa.
 Treści `logowanie.txt` nie czyta — tylko liczy niepuste linijki. Plik
 diagnozy wędruje przez czat i hasło do sterownika nie ma w nim czego szukać.
 
+### 5.11.2026 — panel walczył sam ze sobą o jedyną sesję sterownika
+
+`_DIAGNOZA.bat` przyniósł to, czego pięć rund zrzutów ekranu nie przyniosło.
+Trzy fakty i jeden wniosek.
+
+**Fakt pierwszy: `/api/stan` nie odpowiedział w 25 sekund.** Nie wysypał się
+— czekał. Stąd pusta strona: `fetch` wisiał, `odswiez()` nigdy nie doszło do
+końca, więc w rogu został `…` prosto z pliku. Nie było żadnego wyjątku do
+złapania.
+
+Przyczyna w kodzie: `/api/stan` wołał `czytaj_pompe()` **na żywo, przy każdym
+odświeżeniu strony**. Ta funkcja próbuje trzech adresów po 8 sekund, a po
+dwóch nieudanych odczytach przeczesuje 254 adresy w sieci. Żądanie HTTP
+czekało na to wszystko. Pogoda miała tę rzecz rozwiązaną od początku —
+osobny wątek, a `/api/stan` oddaje ostatni udany odczyt z jego wiekiem.
+Pompa nie miała, i nikt tego nie zauważył, dopóki sterownik odpowiadał.
+
+**Fakt drugi: w dzienniku co kilkanaście minut „sterownik nie przyjął loginu
+lub hasła" i „strona odpowiedziała 404".** Przy jednym działającym panelu.
+Bo panel rozmawiał ze sterownikiem z trzech miejsc naraz: każde żądanie
+`/api/stan` (a tych jest tyle, ile otwartych kart i telefonów), wątek zapisu
+historii i automat słoneczny. **Sterownik wpuszcza jedną sesję.** Wygrywał
+ostatni, pozostali dostawali 404. Panel odbierał sesję sam sobie.
+
+**Fakt trzeci: `slonce.csv` nie urósł od 28.10.** Automat słoneczny nie
+przestawił nastawy ani razu przez osiem dni — każda próba kończyła się tym
+404. Podbicie w południe i obniżka na noc, zmierzone pod koniec października
+jako warte ok. 4 kWh na dobę, przez ten czas nie działały wcale. To jest
+najdroższy skutek tej usterki, a widać go było tylko w dacie pliku.
+
+Naprawa:
+
+- **Jedna kłódka na całą rozmowę ze sterownikiem.** Odczyt, spis liczników,
+  impuls nastawy, dojście automatu do celu — po kolei, nigdy dwa naraz.
+  Seria impulsów po 0,1 °C nie może zostać przerwana w połowie drogi.
+- **`/api/stan` nigdy nie sięga do sieci.** Oddaje ostatni udany odczyt wraz
+  z jego wiekiem, dokładnie tak jak pogoda. Zmierzone: przy martwym
+  sterowniku odpowiada w **3 ms zamiast 25 sekund**.
+- **Jeden wątek pyta sterownik co 30 s**, po nieudanej próbie co 60.
+  Wcześniej liczba zapytań rosła z liczbą otwartych kart.
+- Strona mówi, ile liczby mają lat (`odczyt_sprzed`), i osobno, że dopiero
+  wstała. Panel pokazujący dane sprzed godziny wyglądał identycznie jak
+  panel pokazujący dane sprzed minuty.
+
+**Przy okazji: Jacek nigdy nie wgrał poprawek z 2.11.** Daty plików:
+`pompa-acond.py` 2.11 00:55, `_URUCHOM-PANEL.bat` 1.11 12:00. Dlatego
+zadanie w Harmonogramie nadal wołało `.bat` z `cicho`, a panel stał od
+2.11 00:44 do 5.11 17:34 — trzy doby dziury w `dane-pompy.csv`. Wniosek na
+przyszłość: **pytać o datę pliku, nie o to, czy wgrane.** Diagnoza pokazuje
+to w sekcji 7 i nie wymaga niczyjej pamięci.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie

@@ -1263,7 +1263,67 @@ def panel(argumenty):
     # zapisały się ani razu przez półtora miesiąca.
     ostatnie_liczniki = [time.monotonic() - odstep_licznikow]
 
+    # Sterownik wpuszcza jedną sesję naraz. Do 5.11 rozmawiały z nim trzy
+    # rzeczy niezależnie od siebie: KAŻDE żądanie /api/stan (a tych jest tyle,
+    # ile otwartych kart i telefonów), wątek zapisu historii i automat
+    # słoneczny. Wygrywał ostatni, reszcie sterownik odpowiadał „nie przyjąłem
+    # logowania" albo 404 — w dzienniku z 2–5.11 widać to co kilkanaście minut.
+    # Panel walczył sam ze sobą o jedyną sesję.
+    zamek_sterownika = threading.RLock()
+
+    # Ostatni udany odczyt — dokładnie ta sama konstrukcja, co przy pogodzie.
+    # Strona ma się otwierać także wtedy, gdy sterownik milczy.
+    odczyt = {'dane': {}, 'kiedy': 0.0, 'blad': None, 'blad_od': None}
+    zamek_odczytu = threading.Lock()
+
     def czytaj_pompe(limit=8):
+        """Odczyt ze sterownika — po kolei, nigdy dwa naraz, i do pamięci.
+
+        Kłódka nie jest ostrożnością na zapas: dwa równoległe logowania do
+        tego sterownika kończą się tym, że oba dostają 404."""
+        with zamek_sterownika:
+            try:
+                zmienne = _czytaj_ze_sterownika(limit)
+            except OSError as powod:
+                with zamek_odczytu:
+                    if odczyt['blad'] is None:
+                        odczyt['blad_od'] = time.time()
+                    odczyt['blad'] = str(powod)
+                raise
+            with zamek_odczytu:
+                odczyt.update({'dane': zmienne, 'kiedy': time.time(),
+                               'blad': None, 'blad_od': None})
+            return zmienne
+
+    def _pompa_na_panel():
+        """To, co panel dostaje w /api/stan — nigdy nie sięga do sieci.
+
+        Do 5.11 /api/stan czytał sterownik na żywo, przy każdym odświeżeniu
+        strony. Gdy sterownik się zaciął, żądanie czekało na trzy próby po
+        8 sekund, a czasem jeszcze na przeczesanie 254 adresów — strona
+        wisiała w nieskończoność i zostawał sam nagłówek. Panel ma pokazywać,
+        co wie, natychmiast, a o kłopotach ze sterownikiem mówić słowami."""
+        with zamek_odczytu:
+            return (dict(odczyt['dane']), odczyt['kiedy'],
+                    odczyt['blad'], odczyt['blad_od'])
+
+    def pilnuj_odczytu(odstep=30):
+        """Jedyny wątek, który pyta sterownik „bo trzeba pokazać"."""
+        while True:
+            udane = True
+            try:
+                czytaj_pompe()
+            except OSError:
+                udane = False      # powód leży w pamięci odczytu, panel go pokaże
+            except Exception as powod:                                # noqa: BLE001
+                udane = False
+                print(f'{datetime.now():%H:%M:%S}  odczyt pompy — '
+                      f'{type(powod).__name__}: {powod}', flush=True)
+            # Po nieudanej próbie pytamy rzadziej. Sterownik, który właśnie
+            # odmówił sesji, nie polubi nas od częstszego pukania.
+            time.sleep(odstep if udane else odstep * 2)
+
+    def _czytaj_ze_sterownika(limit=8):
         """Czyta pompę; gdy nie odpowiada pod znanym adresem, szuka jej w sieci."""
         proby, zapisany = [adres_pompy[0]], zapamietany_adres()
         if argumenty.host not in proby:
@@ -1350,19 +1410,19 @@ def panel(argumenty):
                 return self._odpowiedz(404, {'blad': 'Nie ma takiej ścieżki.'})
 
             odpowiedz = {'zrodlo': f'pompa {adres_pompy[0]}', 'pompa': {}}
-            try:
-                zmienne = czytaj_pompe()
-                # Adres mógł się przed chwilą zmienić — w stopce ma być ten,
-                # z którego naprawdę przyszły te liczby.
-                odpowiedz['zrodlo'] = f'pompa {adres_pompy[0]}'
-                for zmienna, wartosc in zmienne.items():
-                    if zmienna in opisy and liczba(wartosc) is not None:
-                        odpowiedz['pompa'][opisy[zmienna][0]] = liczba(wartosc)
-                if not opisy:
-                    odpowiedz['blad'] = ('Brak opisy-panelu.json — panel nie wie, która zmienna '
-                                         'jest którą. Skopiuj opisy-panelu.przyklad.json.')
-            except OSError as powod:
-                odpowiedz['blad'] = f'Pompa nie odpowiada: {powod}'
+            zmienne, kiedy, blad_odczytu, blad_od = _pompa_na_panel()
+            for zmienna, wartosc in zmienne.items():
+                if zmienna in opisy and liczba(wartosc) is not None:
+                    odpowiedz['pompa'][opisy[zmienna][0]] = liczba(wartosc)
+            if not opisy:
+                odpowiedz['blad'] = ('Brak opisy-panelu.json — panel nie wie, która zmienna '
+                                     'jest którą. Skopiuj opisy-panelu.przyklad.json.')
+            elif blad_odczytu:
+                odpowiedz['blad'] = f'Pompa nie odpowiada: {blad_odczytu}'
+                odpowiedz['blad_sprzed'] = int(time.time() - blad_od) if blad_od else None
+            # Wiek liczb na stronie. Bez tego panel pokazujący sprzed godziny
+            # wygląda identycznie jak panel pokazujący sprzed minuty.
+            odpowiedz['odczyt_sprzed'] = int(time.time() - kiedy) if kiedy else None
 
             if adres_falownika:
                 try:
@@ -1431,13 +1491,18 @@ def panel(argumenty):
                 return self._odpowiedz(403, {'blad': 'Sterowanie wyłączone.'})
             try:
                 if akcja in ('nastawa-w-gore', 'nastawa-w-dol'):
-                    zmienne = impuls(adres_pompy[0], akcja, argumenty.uzytkownik,
-                                     argumenty.haslo, ciasteczko=argumenty.ciasteczko)
+                    with zamek_sterownika:
+                        zmienne = impuls(adres_pompy[0], akcja, argumenty.uzytkownik,
+                                         argumenty.haslo, ciasteczko=argumenty.ciasteczko)
                     return self._odpowiedz(200, {'nastawa': liczba(zmienne.get(zmienna_nastawy))})
                 if akcja == 'nastawa-cel':
-                    wynik = ustaw_nastawe(adres_pompy[0], zlecenie.get('wartosc'),
-                                          zmienna_nastawy, argumenty.uzytkownik,
-                                          argumenty.haslo, ciasteczko=argumenty.ciasteczko)
+                    # Dojście do celu to seria impulsów po 0,1 °C. Gdyby w jej
+                    # środku ktoś inny zalogował się do sterownika, zostałaby
+                    # przerwana w połowie drogi, pod przypadkową wartością.
+                    with zamek_sterownika:
+                        wynik = ustaw_nastawe(adres_pompy[0], zlecenie.get('wartosc'),
+                                              zmienna_nastawy, argumenty.uzytkownik,
+                                              argumenty.haslo, ciasteczko=argumenty.ciasteczko)
                     return self._odpowiedz(200, wynik)
             except (OSError, TypeError, ValueError) as powod:
                 return self._odpowiedz(502, {'blad': f'Sterownik nie przyjął: {powod}'})
@@ -1460,8 +1525,9 @@ def panel(argumenty):
                         time.monotonic() - ostatnie_liczniki[0] >= odstep_licznikow:
                     ostatnie_liczniki[0] = time.monotonic()
                     baza = re.sub(r'/PAGE\d+\.XML$', '', adres_pompy[0].rstrip('/'), flags=re.I)
-                    spis = czytaj_liczniki(baza, (115, 121), argumenty.uzytkownik,
-                                           argumenty.haslo, argumenty.ciasteczko)
+                    with zamek_sterownika:
+                        spis = czytaj_liczniki(baza, (115, 121), argumenty.uzytkownik,
+                                               argumenty.haslo, argumenty.ciasteczko)
                     if spis:
                         dopisz_liczniki(PLIK_LICZNIKOW, spis)
                         print(f'{datetime.now():%H:%M:%S}  spisałem liczniki '
@@ -1550,9 +1616,10 @@ def panel(argumenty):
                                             'powod': 'ustąpiłem — nastawę zmieniono ręcznie',
                                             'pauza_do': koniec.strftime('%H:%M')})
                     elif teraz_nastawa is not None and abs(teraz_nastawa - cel) > TOLERANCJA_NASTAWY:
-                        wynik = ustaw_nastawe(adres_pompy[0], cel, zmienna_nastawy,
-                                              argumenty.uzytkownik, argumenty.haslo,
-                                              ciasteczko=argumenty.ciasteczko)
+                        with zamek_sterownika:
+                            wynik = ustaw_nastawe(adres_pompy[0], cel, zmienna_nastawy,
+                                                  argumenty.uzytkownik, argumenty.haslo,
+                                                  ciasteczko=argumenty.ciasteczko)
                         ostatnio_ustawione[0] = wynik.get('nastawa')
                         _dopisz_slonce(PLIK_DZIENNIKA_SLONCA, teraz, cel, teraz_nastawa,
                                        wynik.get('nastawa'), powod, wynik.get('osiagnieto'))
@@ -1596,6 +1663,7 @@ def panel(argumenty):
 
     if odstep_zapisu:
         threading.Thread(target=zbieraj, daemon=True).start()
+    threading.Thread(target=pilnuj_odczytu, daemon=True).start()
     threading.Thread(target=pilnuj_pogody, daemon=True).start()
     if steruje:
         threading.Thread(target=pilnuj_slonca, daemon=True).start()

@@ -56,6 +56,20 @@ panel sam. Wyciszenie bez obsługi to kłamstwo z opóźnionym zapłonem.
 tygodnia szukaliśmy błędu w instalatorze autostartu, a 360 Total Security
 przechwytywał go po cichu, z odliczaniem, które samo wybiera „Block".
 
+**Cała rozmowa ze sterownikiem idzie przez jedną kłódkę
+(`zamek_sterownika` w `panel()`).** Nie omijaj jej, dodając nowe wywołanie
+`pobierz_strone`, `ustaw_nastawe`, `impuls` czy `czytaj_liczniki` — panel
+odbierał sobie sesję sam (5.11), a wyglądało to na awarię sterownika.
+`/api/stan` nie sięga do sieci wcale: oddaje ostatni odczyt z pamięci wraz
+z wiekiem, tak samo jak pogoda. Jeśli kiedykolwiek znów zechcesz tam
+wstawić odczyt na żywo — to jest dokładnie ta zmiana, która dała pustą
+stronę i 25-sekundowe żądania.
+
+**Daty plików mówią prawdę, odpowiedź „wgrałem" nie.** 5.11 okazało się, że
+poprawki z 2.11 nigdy nie trafiły na dysk, a trzy dni szukaliśmy błędu
+w kodzie, który tam nie leżał. `_DIAGNOZA.bat` wypisuje daty i rozmiary
+plików panelu — patrz tam, zanim cokolwiek założysz.
+
 **Sterownik wpuszcza bardzo niewielu zalogowanych naraz — prawdopodobnie
 jednego.** Strona pompy otwarta w przeglądarce zabiera sesję panelowi.
 Objawy po stronie panelu: `sterownik nie przyjął loginu lub hasła`, timeouty,

@@ -199,6 +199,16 @@ function rysuj(dane) {
   if (dane.blad) {
     $('#blad').append(el('div', { className: 'blad', textContent: dane.blad }));
   }
+  // Panel bierze liczby z pamięci, a nie ze sterownika na żywo — dzięki temu
+  // strona otwiera się nawet wtedy, gdy sterownik milczy. Ale wtedy trzeba
+  // powiedzieć, ile te liczby mają lat, bo wyglądają identycznie jak świeże.
+  if (dane.odczyt_sprzed === null && !dane.blad) {
+    $('#blad').append(el('div', { className: 'blad', textContent:
+      'Panel dopiero wstał — czekam na pierwszy odczyt ze sterownika.' }));
+  } else if (dane.odczyt_sprzed > 180 && !dane.blad) {
+    $('#blad').append(el('div', { className: 'blad', textContent:
+      `Liczby ze sterownika są sprzed ${trwanie(Math.floor(dane.odczyt_sprzed / 60))}.` }));
+  }
 
   const p = dane.pompa || {};
   const f = dane.falownik || null;
