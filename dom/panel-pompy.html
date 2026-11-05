@@ -167,6 +167,22 @@ async function odswiez() {
       textContent: 'Brak kontaktu z serwerem panelu. Czy „pompa-acond.py panel" nadal działa?' }));
     return;
   }
+  try {
+    rysuj(dane);
+  } catch (powod) {
+    // Pusta strona nie może być możliwa. 2.11 załatałem to po stronie
+    // serwera — a 5.11 ta sama awaria wróciła po stronie przeglądarki:
+    // jedna linijka rysowania rzuciła wyjątkiem i cała reszta strony nie
+    // powstała, bez słowa wyjaśnienia. Nagłówek i „…" w rogu zostały
+    // dokładnie takie, jak w pliku. Teraz strona mówi, na czym się wywróciła.
+    $('#blad').append(el('div', { className: 'blad', textContent:
+      'Panel dostał dane, ale nie umiał ich narysować — ' + powod
+      + ' · to usterka strony, nie pompy. Pomiary są całe.' }));
+    $('#czas').textContent = '!';
+  }
+}
+
+function rysuj(dane) {
   $('#blad').innerHTML = '';
   // Panel potrafi wyglądać zdrowo, a nie zapisywać: dane na żywo idą inną
   // drogą niż historia. Bez tej linijki dziura w zapisie wychodzi dopiero

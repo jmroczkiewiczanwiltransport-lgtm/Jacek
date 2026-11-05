@@ -1002,6 +1002,41 @@ tak samo: instalator mówił „Gotowe", panelu nie było, a diagnoza zaczynała
 od proszenia Jacka o wklejenie logu. Narzędzie, które melduje sukces, nie
 sprawdziwszy go, kosztowało tu więcej czasu niż sam błąd.
 
+### 5.11.2026 — pusta strona wróciła, tym razem od strony przeglądarki
+
+Zrzut: nagłówek „Pompa ciepła", w rogu wciąż `…` z pliku, pod spodem nic.
+Brak zegara w rogu jest tu całą diagnozą — `$('#czas')` ustawia się
+w **ostatniej** linijce rysowania, więc skoro został placeholder, funkcja
+rzuciła wyjątkiem gdzieś w środku. Do tego Jacek mówi, że od 2.11 00:55 nic
+się nie zapisuje — trzy doby dziury.
+
+2.11 zamknąłem tę samą awarię po stronie serwera: `do_GET` oddaje teraz
+JSON-a z powodem zamiast pięćsetki. Nie wystarczyło. **Ten sam błąd miał
+drugie wejście — po stronie strony.** Jedna linijka rysowania rzuca
+wyjątkiem, `odswiez()` kończy się po cichu i zostaje pusty dokument. Żadnego
+śladu w dzienniku, bo błąd jest w przeglądarce, nie w Pythonie.
+
+Rysowanie poszło do osobnej funkcji `rysuj()`, wołanej w `try`. Gdy coś
+w niej padnie, strona pokazuje czerwoną ramkę z nazwą wyjątku i stawia `!`
+w rogu. Pusta strona przestaje być możliwa **z obu stron naraz** — i to jest
+ta sama lekcja, co z instalatorem: awaria bez komunikatu kosztuje tydzień.
+
+Sprawdzone zawczasu Playwrightem, że to nie jest zwykły brak danych:
+przy pustej odpowiedzi sterownika i przy awaryjnym `{'blad', 'pompa': {}}`
+strona rysuje się w całości. Wywraca ją coś w konkretnych danych Jacka,
+czego stąd nie odtworzę.
+
+Dlatego powstał **`_DIAGNOZA.bat`** — jeden dwuklik zamiast przepisywania
+poleceń ze zrzutu ekranu. Zbiera do `diagnoza.txt`: procesy Pythona z
+godziną startu (tu wyjdzie, czy od 2.11 wisi zombie), kto trzyma port 8125,
+definicję zadania w Harmonogramie, **surową odpowiedź `/api/stan`**, ogon
+`panel.log`, daty ostatniego zapisu wszystkich CSV-ek i wersje plików
+panelu. Potem, już po zapisaniu diagnozy, zatrzymuje wszystko i stawia panel
+od nowa.
+
+Treści `logowanie.txt` nie czyta — tylko liczy niepuste linijki. Plik
+diagnozy wędruje przez czat i hasło do sterownika nie ma w nim czego szukać.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
