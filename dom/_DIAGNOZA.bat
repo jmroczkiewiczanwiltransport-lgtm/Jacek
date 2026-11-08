@@ -20,6 +20,10 @@ echo.
 echo   Zbieram. To tylko czyta - niczego nie zmienia.
 echo.
 
+set "PYTHON=python"
+python --version >nul 2>&1
+if errorlevel 1 set "PYTHON=py"
+
 > "%PLIK%" echo === DIAGNOZA PANELU POMPY ===
 >>"%PLIK%" echo Kiedy : %DATE% %TIME%
 >>"%PLIK%" echo Folder: %~dp0
@@ -66,6 +70,22 @@ powershell -NoProfile -Command "if (Test-Path 'logowanie.txt') { 'logowanie.txt:
 >>"%PLIK%" echo --- 9. Siec ---
 powershell -NoProfile -Command "Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -notlike '127.*' } | ForEach-Object { 'ten komputer: ' + $_.IPAddress + ' (' + $_.InterfaceAlias + ')' }" >>"%PLIK%" 2>&1
 powershell -NoProfile -Command "try { $a=(Get-Content 'adres-pompy.txt' -ErrorAction Stop)[0]; $h=([Uri]$a).Host; if (Test-Connection -ComputerName $h -Count 1 -Quiet -ErrorAction SilentlyContinue) { 'sterownik ' + $h + ' odpowiada na ping' } else { 'sterownik ' + $h + ' NIE odpowiada na ping' } } catch { 'nie wiem, pod jakim adresem jest sterownik' }" >>"%PLIK%" 2>&1
+
+
+rem  Pogoda 1.11 i 8.11 nie wstala przez dlugie minuty po starcie, z bledem
+rem  getaddrinfo - komputer nie zamienial nazwy api.open-meteo.com na adres.
+rem  Przegladarka tego nie zdradzi, bo ma wlasny DNS przez HTTPS. Tu pytamy
+rem  osobno Windowsa i osobno Pythona, a potem probujemy pobrac prognoze
+rem  swiezym procesem. Wspolrzedne ogolne (srodek Polski), nie adres domu.
+>>"%PLIK%" echo.
+>>"%PLIK%" echo --- 10. Pogoda: czy ten komputer siega do Open-Meteo ---
+powershell -NoProfile -Command "try { $r=@(Resolve-DnsName api.open-meteo.com -Type A -DnsOnly -ErrorAction Stop | Where-Object { $_.IPAddress }); 'DNS Windows : ' + ($r.IPAddress -join ', ') } catch { 'DNS Windows : BLAD - ' + $_.Exception.Message }" >>"%PLIK%" 2>&1
+%PYTHON% -I -c "import socket; print('DNS Python  : ' + ', '.join(sorted({a[4][0] for a in socket.getaddrinfo('api.open-meteo.com', 443)})))" >>"%PLIK%" 2>&1
+%PYTHON% -I -c "import time, urllib.request; t=time.time(); r=urllib.request.urlopen('https://api.open-meteo.com/v1/forecast?latitude=52&longitude=19&current=temperature_2m', timeout=15); print(f'HTTPS Python: HTTP {r.status} w {time.time()-t:.1f} s')" >>"%PLIK%" 2>&1
+powershell -NoProfile -Command "Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object { $_.ServerAddresses } | ForEach-Object { 'serwery DNS : ' + $_.InterfaceAlias + ' -> ' + ($_.ServerAddresses -join ', ') }" >>"%PLIK%" 2>&1
+powershell -NoProfile -Command "Get-NetIPInterface -AddressFamily IPv4 -ConnectionState Connected | Sort-Object InterfaceMetric | ForEach-Object { 'karta       : ' + $_.InterfaceAlias + ', metryka ' + $_.InterfaceMetric }" >>"%PLIK%" 2>&1
+powershell -NoProfile -Command "$p=Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings'; if ($p.ProxyEnable) { 'proxy       : ' + $p.ProxyServer } else { 'proxy       : brak' }" >>"%PLIK%" 2>&1
+powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; try { $d=(Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8125/api/stan' -TimeoutSec 10).Content | ConvertFrom-Json; if ($d.pogoda.blad) { 'panel mowi  : ' + $d.pogoda.blad } elseif ($d.pogoda) { 'panel mowi  : prognoza jest, sprzed ' + $d.pogoda.sprzed + ' s' } else { 'panel mowi  : brak pogody' } } catch { 'panel mowi  : nie odpowiada' }" >>"%PLIK%" 2>&1
 
 echo   Gotowe. Otwieram diagnoza.txt - przeslij mi calosc.
 echo.

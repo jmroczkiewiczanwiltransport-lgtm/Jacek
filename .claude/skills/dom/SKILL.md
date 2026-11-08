@@ -65,6 +65,18 @@ z wiekiem, tak samo jak pogoda. Jeśli kiedykolwiek znów zechcesz tam
 wstawić odczyt na żywo — to jest dokładnie ta zmiana, która dała pustą
 stronę i 25-sekundowe żądania.
 
+**Sterownik czyta JEDEN wątek (`pilnuj_odczytu`, co 30 s).** Historia bierze
+odczyt z pamięci (`swiezy_odczyt`), automat decyduje z pamięci
+(`_pompa_na_panel`) i czyta na żywo dopiero tuż przed zmianą nastawy albo
+przed ustąpieniem człowiekowi. Nie dokładaj nigdzie własnego
+`czytaj_pompe()` „bo tak prościej" — 8.11 automat pukał tak co 15 s
+i historia stanęła po jednym wierszu.
+
+**Zanim wyślesz zmianę dotyczącą sterownika, puść ją na atrapie:**
+`dom/testy/scenariusz.sh` (opis w nagłówku). Mierzy rozmowy na minutę,
+rozmowy naraz, impulsy i nastawę; `WERSJA=<rewizja>` puszcza starszą wersję
+do porównania. Jacek nie powinien być pierwszym, kto to uruchamia.
+
 **Daty plików mówią prawdę, odpowiedź „wgrałem" nie.** 5.11 okazało się, że
 poprawki z 2.11 nigdy nie trafiły na dysk, a trzy dni szukaliśmy błędu
 w kodzie, który tam nie leżał. `_DIAGNOZA.bat` wypisuje daty i rozmiary

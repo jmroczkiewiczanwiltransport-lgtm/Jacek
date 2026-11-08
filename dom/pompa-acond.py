@@ -1290,10 +1290,25 @@ def panel(argumenty):
                         odczyt['blad_od'] = time.time()
                     odczyt['blad'] = str(powod)
                 raise
-            with zamek_odczytu:
-                odczyt.update({'dane': zmienne, 'kiedy': time.time(),
-                               'blad': None, 'blad_od': None})
+            zapamietaj_odczyt(zmienne)
             return zmienne
+
+    def zapamietaj_odczyt(zmienne):
+        """Pełny odczyt strony sterownika do pamięci — skądkolwiek przyszedł."""
+        with zamek_odczytu:
+            odczyt.update({'dane': zmienne, 'kiedy': time.time(),
+                           'blad': None, 'blad_od': None})
+
+    def odswiez_po_zmianie():
+        """Po impulsach pamięć ma znać nową nastawę od razu, a nie za pół minuty.
+
+        Inaczej strona i historia pokazywałyby nastawę sprzed zmiany do
+        następnego odczytu. Nieudane odświeżenie nie unieważnia zmiany, która
+        już się dokonała — dlatego błąd tu połykamy."""
+        try:
+            czytaj_pompe()
+        except OSError:
+            pass
 
     def _pompa_na_panel():
         """To, co panel dostaje w /api/stan — nigdy nie sięga do sieci.
@@ -1306,6 +1321,19 @@ def panel(argumenty):
         with zamek_odczytu:
             return (dict(odczyt['dane']), odczyt['kiedy'],
                     odczyt['blad'], odczyt['blad_od'])
+
+    def swiezy_odczyt(max_wiek=90):
+        """Odczyt z pamięci, gdy jest świeży; ze sterownika tylko wtedy, gdy nie.
+
+        Historia i automat nie potrzebują odczytu sprzed sekundy — wystarczy im
+        ten, który wątek odczytu przyniósł przed chwilą. 8.11 każdy z nich pytał
+        sterownik sam: automat bez prognozy co 15 sekund, wątek odczytu co 30,
+        historia co 5 minut. Sterownik z jedną sesją nie nadążał, a zapis historii
+        trafiał akurat w odmowy — dopisał jeden wiersz po starcie i stanął."""
+        with zamek_odczytu:
+            if odczyt['dane'] and time.time() - odczyt['kiedy'] <= max_wiek:
+                return dict(odczyt['dane'])
+        return czytaj_pompe()
 
     def pilnuj_odczytu(odstep=30):
         """Jedyny wątek, który pyta sterownik „bo trzeba pokazać"."""
@@ -1494,6 +1522,8 @@ def panel(argumenty):
                     with zamek_sterownika:
                         zmienne = impuls(adres_pompy[0], akcja, argumenty.uzytkownik,
                                          argumenty.haslo, ciasteczko=argumenty.ciasteczko)
+                    # Sterownik po impulsie oddaje całą stronę — to pełny odczyt.
+                    zapamietaj_odczyt(zmienne)
                     return self._odpowiedz(200, {'nastawa': liczba(zmienne.get(zmienna_nastawy))})
                 if akcja == 'nastawa-cel':
                     # Dojście do celu to seria impulsów po 0,1 °C. Gdyby w jej
@@ -1503,6 +1533,7 @@ def panel(argumenty):
                         wynik = ustaw_nastawe(adres_pompy[0], zlecenie.get('wartosc'),
                                               zmienna_nastawy, argumenty.uzytkownik,
                                               argumenty.haslo, ciasteczko=argumenty.ciasteczko)
+                        odswiez_po_zmianie()
                     return self._odpowiedz(200, wynik)
             except (OSError, TypeError, ValueError) as powod:
                 return self._odpowiedz(502, {'blad': f'Sterownik nie przyjął: {powod}'})
@@ -1518,7 +1549,7 @@ def panel(argumenty):
         ostatni_blad = [None]
         while True:
             try:
-                zmienne = czytaj_pompe()
+                zmienne = swiezy_odczyt()
                 if opisy:
                     _dopisz_odczyt(plik_danych, zmienne, opisy)
                 if odstep_licznikow and \
@@ -1568,6 +1599,7 @@ def panel(argumenty):
         pamiec_dnia = {}
         ostatni_blad = [None]
         czekam_na_prognoze = [False]
+        czekam_na_odczyt = [False]
         while True:
             try:
                 ustawienia = wczytaj_slonce()
@@ -1577,10 +1609,19 @@ def panel(argumenty):
                 # zasypiał na pięć minut i przez ten czas panel nie pokazywał
                 # automatu wcale — wyglądało to jak brak slonce.json.
                 czekam_na_prognoze[0] = not prognoza or prognoza.get('suma_okna') is None
-                # Pompę czytamy przed decyzją, bo nastawa może się odnosić do
-                # tego, ile w domu jest teraz. Gdy sterownik milczy, liczymy
-                # bez tego — wtedy obowiązuje sama nastawa z pliku.
-                zmienne = czytaj_pompe() if steruje else {}
+                # Pompę znamy przed decyzją, bo nastawa może się odnosić do
+                # tego, ile w domu jest teraz. Bierzemy ją Z PAMIĘCI, nie ze
+                # sterownika: do 8.11 automat logował się sam w każdym obiegu,
+                # a bez prognozy obieg trwa 15 sekund — cztery logowania na
+                # minutę tylko po to, żeby napisać „nic nie zmieniam". Na żywo
+                # czytamy dopiero wtedy, gdy naprawdę mamy coś zmienić.
+                # Gdy w pamięci nic nie ma, liczymy bez tego — wtedy obowiązuje
+                # sama nastawa z pliku.
+                zmienne = _pompa_na_panel()[0] if steruje else {}
+                # Tuż po starcie pamięć jest pusta, bo wątek odczytu jeszcze nie
+                # wrócił ze sterownika. Bez tego automat przespałby pierwszy obieg
+                # i ruszył dopiero po pięciu minutach — po każdym restarcie.
+                czekam_na_odczyt[0] = steruje and not zmienne
                 pokojowa = liczba(zmienne.get(zmienna_pokojowej)) if zmienne else None
                 cel, powod = cel_nastawy(ustawienia, prognoza, pamiec=pamiec_dnia,
                                          pokojowa=pokojowa)
@@ -1596,11 +1637,35 @@ def panel(argumenty):
                                         'powod': 'ustąpiłem — nastawę zmieniono ręcznie',
                                         'pauza_do': pauza_do[0].strftime('%H:%M')})
                 else:
+                    def czy_recznie(nastawa):
+                        return (nastawa is not None
+                                and ostatnio_ustawione[0] is not None
+                                and abs(nastawa - ostatnio_ustawione[0]) > PROG_RECZNEJ
+                                and abs(nastawa - cel) > PROG_RECZNEJ)
+
+                    def trzeba_ruszyc(nastawa):
+                        return (nastawa is not None and not czy_recznie(nastawa)
+                                and abs(nastawa - cel) > TOLERANCJA_NASTAWY)
+
                     teraz_nastawa = liczba(zmienne.get(zmienna_nastawy))
-                    recznie = (teraz_nastawa is not None
-                               and ostatnio_ustawione[0] is not None
-                               and abs(teraz_nastawa - ostatnio_ustawione[0]) > PROG_RECZNEJ
-                               and abs(teraz_nastawa - cel) > PROG_RECZNEJ)
+                    wynik = None
+                    if czy_recznie(teraz_nastawa) or trzeba_ruszyc(teraz_nastawa):
+                        # Z pamięci wynika, że trzeba coś zrobić: ruszyć nastawę
+                        # albo ustąpić człowiekowi. Obie decyzje potwierdzamy na
+                        # żywo. Pamięć mogłaby nie znać ręcznej zmiany sprzed
+                        # kilkunastu sekund — i odwrotnie: gdy wątek odczytu przez
+                        # parę minut nie dostaje odpowiedzi, w pamięci zostaje
+                        # nastawa sprzed NASZEJ ostatniej zmiany, i automat wziąłby
+                        # własny ruch za ręczny. Odczyt i impulsy pod jedną kłódką:
+                        # nic nie wciśnie się między sprawdzenie a zmianę.
+                        with zamek_sterownika:
+                            teraz_nastawa = liczba(czytaj_pompe().get(zmienna_nastawy))
+                            if trzeba_ruszyc(teraz_nastawa):
+                                wynik = ustaw_nastawe(adres_pompy[0], cel, zmienna_nastawy,
+                                                      argumenty.uzytkownik, argumenty.haslo,
+                                                      ciasteczko=argumenty.ciasteczko)
+                                odswiez_po_zmianie()
+                    recznie = czy_recznie(teraz_nastawa)
                     if recznie:
                         od, do = ustawienia['okno']
                         minuty = int(round(do * 60))
@@ -1615,11 +1680,7 @@ def panel(argumenty):
                             _SLONCE.update({'cel': cel, 'blad': None,
                                             'powod': 'ustąpiłem — nastawę zmieniono ręcznie',
                                             'pauza_do': koniec.strftime('%H:%M')})
-                    elif teraz_nastawa is not None and abs(teraz_nastawa - cel) > TOLERANCJA_NASTAWY:
-                        with zamek_sterownika:
-                            wynik = ustaw_nastawe(adres_pompy[0], cel, zmienna_nastawy,
-                                                  argumenty.uzytkownik, argumenty.haslo,
-                                                  ciasteczko=argumenty.ciasteczko)
+                    elif wynik is not None:
                         ostatnio_ustawione[0] = wynik.get('nastawa')
                         _dopisz_slonce(PLIK_DZIENNIKA_SLONCA, teraz, cel, teraz_nastawa,
                                        wynik.get('nastawa'), powod, wynik.get('osiagnieto'))
@@ -1643,7 +1704,7 @@ def panel(argumenty):
                     ostatni_blad[0] = podpis
                     print(f'{datetime.now():%H:%M:%S}  automat słoneczny — {podpis}',
                           flush=True)
-            time.sleep(15 if czekam_na_prognoze[0] else odstep)
+            time.sleep(15 if czekam_na_prognoze[0] or czekam_na_odczyt[0] else odstep)
 
     # Port zajmujemy PRZED uruchomieniem wątków. Kolejność jest tu całą
     # treścią: drugi panel uruchomiony przez pomyłkę odbija się od zajętego

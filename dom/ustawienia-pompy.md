@@ -1171,6 +1171,64 @@ Na teraz zalecenie: **restart komputera.** Zabija każdy zawieszony proces na
 pewno, a przy logowaniu zadanie stawia nowy panel — pierwszy prawdziwy test
 autostartu po dwóch tygodniach.
 
+### 8.11.2026 po restarcie — autostart działa, historia stanęła po jednym wierszu
+
+**Autostart zadziałał.** Po restarcie komputera panel wstał sam przy
+logowaniu — pierwszy prawdziwy test od dwóch tygodni. Strona rysuje się
+w całości, liczby ze sterownika świeże. Kłódka i pamięć odczytu z 5.11
+robią swoje: pustej strony już nie ma.
+
+Dwie rzeczy na stronie: „Historia nie rośnie od 21 min" i „Nie mam
+prognozy — getaddrinfo failed", przez co automat „nic nie zmienia".
+
+**Historia — moja wina, i to wprost z 5.11.** Automat słoneczny czytał
+sterownik w KAŻDYM obiegu, także bez prognozy, a bez prognozy obieg trwa
+15 sekund. Pogoda nie wstała od startu, więc automat logował się do
+sterownika cztery razy na minutę tylko po to, żeby napisać „nic nie
+zmieniam". Do tego wątek odczytu co 30 s. Sterownik z jedną sesją nie
+nadążał; zapis historii, pytający raz na 5 minut, trafiał w odmowy.
+Zmierzone na atrapie sterownika, ta sama sytuacja (brak prognozy):
+**6,1 rozmowy na minutę** w wersji z 5.11.
+
+Naprawa — sterownik czyta jeden wątek, reszta korzysta z jego odczytu:
+
+- **Historia zapisuje z pamięci** (`swiezy_odczyt`, do 90 s). Jeśli strona
+  ma świeże liczby, historia rośnie — dokładnie tej rozbieżności („strona
+  świeża, historia stoi") nie da się już uzyskać.
+- **Automat decyduje z pamięci**, a sterownik czyta dopiero, gdy ma coś
+  zrobić — ruszyć nastawę albo ustąpić człowiekowi. Obie decyzje
+  potwierdza odczytem na żywo, pod tą samą kłódką co impulsy. Bez tego
+  stara pamięć mogłaby nie znać ręcznej zmiany sprzed kilkunastu sekund
+  albo — odwrotnie — pokazać nastawę sprzed NASZEJ zmiany, i automat
+  wziąłby własny ruch za ręczny.
+- Po każdej zmianie nastawy (automat i przyciski) pamięć odświeża się od
+  razu — strona i historia nie pokazują już nastawy sprzed impulsów.
+- Gdy pamięć jest jeszcze pusta, automat pyta o nią co 15 s zamiast spać
+  5 minut. Bez tego po każdym restarcie tracił pierwszy obieg.
+
+Na atrapie, ta sama sytuacja: **2,2 rozmowy na minutę**, czyli praktycznie
+sam wątek odczytu. Podniesienie 20,0 → 21,5 dokładnie 15 impulsami, już
+w pierwszej minucie po starcie; ręczne 19,0 na sterowniku — automat
+ustępuje do końca okna, nastawa zostaje 19,0. To samo zachowanie co w
+wersji z 5.11, przy jednej trzeciej rozmów.
+
+Atrapa i scenariusze leżą teraz w `dom/testy/` (opis w `scenariusz.sh`).
+Każdy błąd z ostatnich dwóch tygodni — rywalizacja o sesję, zawieszone
+`/api/stan`, automat pukający co 15 s — dało się na nich złapać przed
+wysłaniem. Wcześniej nie było na czym.
+
+**Pogoda — nie kod, tylko ten komputer.** Po starcie przez ponad 20 minut
+`getaddrinfo failed`; 1.11 przez dwie godziny. Pobieranie w `pogoda.py` to
+zwykłe `urlopen` z limitem 10 s, bez żadnej pamięci między próbami — więc
+nazwy nie zamienia system. Przeglądarka tego nie pokaże, bo ma własny DNS
+przez HTTPS. Do diagnozy doszła sekcja 10: DNS osobno według Windowsa
+i według Pythona, pobranie prognozy świeżym procesem, serwery DNS każdej
+karty, metryki kart, proxy, i co o pogodzie mówi panel. Podejrzani, bez
+dowodu: karta Ethernet z adresem 169.254 (podłączona, bez DHCP) albo 360
+Total Security — ten sam, który blokował autostart, a `WinError 10053`
+z 5.11 („przerwane przez oprogramowanie zainstalowane w komputerze-
+hoście") to podpis właśnie takiego oprogramowania.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
