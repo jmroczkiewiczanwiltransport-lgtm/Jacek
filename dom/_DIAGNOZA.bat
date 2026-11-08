@@ -54,6 +54,10 @@ powershell -NoProfile -Command "if (Test-Path 'dane-pompy.csv') { '--- 3 ostatni
 powershell -NoProfile -Command "foreach ($n in 'pompa-acond.py','panel-pompy.html','_URUCHOM-PANEL.bat','_ZAINSTALUJ-AUTOSTART.bat','przypomnienia.json','slonce.json','opisy-panelu.json') { if (Test-Path $n) { $f=Get-Item $n; '{0,-28} {1}  {2} B' -f $n, $f.LastWriteTime, $f.Length } else { '{0,-28} BRAK' -f $n } }" >>"%PLIK%" 2>&1
 >>"%PLIK%" echo.
 
+>>"%PLIK%" echo --- 7b. Ustawienia automatu (slonce.json) ---
+powershell -NoProfile -Command "if (Test-Path 'slonce.json') { Get-Content 'slonce.json' } else { 'BRAK slonce.json - automat sloneczny nie dziala wcale' }" >>"%PLIK%" 2>&1
+>>"%PLIK%" echo.
+
 >>"%PLIK%" echo --- 8. Sterownik: adres i logowanie ---
 powershell -NoProfile -Command "if (Test-Path 'adres-pompy.txt') { 'adres-pompy.txt:'; Get-Content 'adres-pompy.txt' } else { 'brak adres-pompy.txt' }" >>"%PLIK%" 2>&1
 powershell -NoProfile -Command "if (Test-Path 'logowanie.txt') { 'logowanie.txt: jest, niepustych linijek: ' + @(Get-Content 'logowanie.txt' | Where-Object { $_.Trim() }).Count } else { 'logowanie.txt: BRAK - panel nie zaloguje sie do sterownika' }" >>"%PLIK%" 2>&1
