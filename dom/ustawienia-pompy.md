@@ -1088,6 +1088,53 @@ zadanie w Harmonogramie nadal wołało `.bat` z `cicho`, a panel stał od
 przyszłość: **pytać o datę pliku, nie o to, czy wgrane.** Diagnoza pokazuje
 to w sekcji 7 i nie wymaga niczyjej pamięci.
 
+### 8.11.2026 — nowe pliki na dysku, stary panel w pamięci
+
+Druga diagnoza. `pompa-acond.py` ma już 126 850 B z datą 8.11 10:44 — nowa
+wersja leży na dysku. A procesy Pythona nadal mają godzinę startu **5.11
+17:34**, zadanie w Harmonogramie wciąż wskazuje na `_URUCHOM-PANEL.bat cicho`,
+a `/api/stan` dalej milczy 25 sekund. **Python czyta plik raz, przy starcie.**
+Podmiana pliku pod działającym panelem nie zmienia niczego, dopóki ktoś go
+nie zrestartuje — a restart robi instalator, którego jeszcze nie odpalono.
+
+`dane-pompy.csv` wciąż stoi na 2.11 00:44. Panel z 5.11 chodzi od trzech dni
+i nie dopisał ani jednego wiersza — żaden odczyt pompy mu się nie udał.
+Pogoda w tym czasie zapisywała się normalnie, więc to nie jest awaria sieci.
+
+**`slonce.json` potwierdzony** — dokładnie zamierzone wartości: okno 9–15,
+schody 10:30–13:00 na 22,0, poza nimi 21,5, baza 20,0, noc 19,5 od 18:00,
+podbicie 0,8 nad pokojową, sufit 23,5. Automat nie działał przez złe
+ustawienia, tylko przez to, że nie mógł się dogadać ze sterownikiem.
+
+**Dowód na rywalizację o sesję, czarno na białym:**
+
+```
+23:01:46  automat słoneczny — BadStatusLine: Content-Length  56
+          Host  192.168.88.14  User-Agent  Mozilla/5.0 (Windows NT 10.0 ...
+          Chrome/145.0.0.0 ...
+```
+
+Automat poprosił sterownik o stronę, a w odpowiedzi dostał **kawałek cudzego
+żądania z Chrome'a**. Wbudowany serwer WWW sterownika ma jedno gniazdo
+na rozmowę i przy dwóch klientach naraz potrafi oddać jednemu bajty drugiego.
+To nie jest awaria sieci ani błąd hasła — to dwóch rozmówców jednocześnie.
+Kłódka z 5.11 zamyka dokładnie to.
+
+Do tego seria `ConnectionAbortedError [WinError 10053]` po stronie serwera
+panelu, 5.11 między 17:52 a 18:23 — czyli wtedy, gdy Jacek odświeżał pustą
+stronę. Przeglądarka rezygnowała z żądania, które wisiało 25 sekund, a panel
+próbował jeszcze pisać w zamknięte połączenie. Objaw tej samej usterki.
+
+**I jeszcze jeden błąd w moim instalatorze**, znaleziony przy czytaniu tej
+diagnozy. Po `Register-ScheduledTask` sprawdzał tylko, czy zadanie *istnieje*.
+Stare zadanie istnieje zawsze — więc odmowa dostępu przechodziła jako
+„Zadanie założone", a zadanie dalej wskazywało na `.bat`. Przy nowym
+`_URUCHOM-PANEL.bat`, który nie odłącza Pythona, skończyłoby się to
+konsolą otwartą przez cały dzień. Teraz po rejestracji idzie **to samo**
+sprawdzenie co przed nią (co uruchamia, z jakiego katalogu), w jednym
+podprogramie `:sprawdz_zadanie` — żeby dwie kopie warunku nie mogły się
+znów rozjechać. Złamałem regułę, którą sam zapisałem trzy dni wcześniej.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie

@@ -74,12 +74,17 @@ rem  najpierw sprawdzamy, czy zadanie juz jest i czy robi dokladnie to -
 rem  jesli tak, nie ruszamy go wcale. Bez tego kazda aktualizacja konczyla sie
 rem  czerwona "Odmowa dostepu", po ktorej i tak szlo "Gotowe". Komunikat o
 rem  bledzie, po ktorym wszystko dziala, uczy ignorowania komunikatow o bledach.
-powershell -NoProfile -Command "$z=Get-ScheduledTask -TaskName $env:ZADANIE -ErrorAction SilentlyContinue; if (-not $z) { exit 1 }; $e=$z.Actions[0].Execute; $k=$z.Actions[0].WorkingDirectory; if ($e) { $e=$e.Trim('\"') }; if ($k) { $k=$k.Trim('\"').TrimEnd('\') }; if ($e -eq $env:PYTHONW -and $k -eq $env:DOCEL) { exit 0 } else { exit 1 }"
+call :sprawdz_zadanie
 if not errorlevel 1 goto zadanie_juz_jest
 
 echo   Zakladam zadanie w Harmonogramie Windows...
 powershell -NoProfile -Command "$a=New-ScheduledTaskAction -Execute $env:PYTHONW -Argument 'pompa-acond.py panel' -WorkingDirectory $env:DOCEL; $t=New-ScheduledTaskTrigger -AtLogOn; $s=New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero) -StartWhenAvailable -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1); Register-ScheduledTask -TaskName $env:ZADANIE -Action $a -Trigger $t -Settings $s -Force | Out-Null"
-powershell -NoProfile -Command "if (Get-ScheduledTask -TaskName $env:ZADANIE -ErrorAction SilentlyContinue) { exit 0 } else { exit 1 }"
+rem  To samo sprawdzenie, co przed rejestracja - a nie samo pytanie, czy
+rem  zadanie istnieje. Stare zadanie istnieje zawsze, wiec tamto pytanie
+rem  przepuszczalo odmowe dostepu jako sukces: instalator mowil zalozone, a zadanie dalej
+rem  wskazywalo na stary plik. Dokladnie ten blad, przed ktorym ostrzega
+rem  komentarz dziesiec linijek wyzej.
+call :sprawdz_zadanie
 if errorlevel 1 goto blad_zadania
 echo   Zadanie zalozone.
 goto po_zadaniu
@@ -188,3 +193,9 @@ if errorlevel 1 (
 echo.
 pause
 exit /b 1
+
+rem  Jedno sprawdzenie w jednym miejscu. Dwie kopie tego samego warunku
+rem  rozjechaly sie po dwoch dniach.
+:sprawdz_zadanie
+powershell -NoProfile -Command "$z=Get-ScheduledTask -TaskName $env:ZADANIE -ErrorAction SilentlyContinue; if (-not $z) { exit 1 }; $e=$z.Actions[0].Execute; $k=$z.Actions[0].WorkingDirectory; if ($e) { $e=$e.Trim('\"') }; if ($k) { $k=$k.Trim('\"').TrimEnd('\') }; if ($e -eq $env:PYTHONW -and $k -eq $env:DOCEL) { exit 0 } else { exit 1 }"
+exit /b %errorlevel%
