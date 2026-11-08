@@ -27,6 +27,7 @@ obsługa jest pewniejsza niż biblioteka zmieniająca API między wersjami.
 
 import argparse
 import base64
+import faulthandler
 import json
 import os
 import re
@@ -1725,6 +1726,31 @@ def panel(argumenty):
     if odstep_zapisu:
         threading.Thread(target=zbieraj, daemon=True).start()
     threading.Thread(target=pilnuj_odczytu, daemon=True).start()
+
+    def puls(odstep=3600):
+        """Raz na godzinę jedna linijka do dziennika: czy wszystko żyje.
+
+        8.11 panel dwa razy przestał odpowiadać, a w panel.log nie było nic —
+        nie dało się powiedzieć nawet, KIEDY stanął. Ostatni puls to mówi.
+        Liczba wątków mówi, czy coś się piętrzy: każde zawieszone żądanie
+        strony to jeden wątek więcej."""
+        while True:
+            time.sleep(odstep)
+            try:
+                with zamek_odczytu:
+                    kiedy = odczyt['kiedy']
+                wiek_odczytu = f'{int(time.time() - kiedy)} s' if kiedy else 'brak'
+                try:
+                    wiek_zapisu = f'{int(time.time() - os.path.getmtime(plik_danych))} s'
+                except OSError:
+                    wiek_zapisu = 'brak'
+                print(f'{datetime.now():%H:%M:%S}  puls: wątków {threading.active_count()}, '
+                      f'odczyt sprzed {wiek_odczytu}, historia sprzed {wiek_zapisu}',
+                      flush=True)
+            except Exception:                                         # noqa: BLE001
+                pass
+
+    threading.Thread(target=puls, daemon=True).start()
     threading.Thread(target=pilnuj_pogody, daemon=True).start()
     if steruje:
         threading.Thread(target=pilnuj_slonca, daemon=True).start()
@@ -1739,10 +1765,29 @@ def panel(argumenty):
         else:
             print('(panel jest widoczny w sieci domowej — tylko do odczytu, niczego nie ustawia)')
     print('Zatrzymanie: Ctrl+C')
+
+    # Strażnik zawieszenia. 8.11 panel przestał odpowiadać nawet na samą
+    # stronę, a nie było jak zajrzeć do środka. faulthandler ma własny wątek
+    # w C — działa, nawet gdy Python i serwer WWW stoją. Pętla serwera co pół
+    # sekundy woła service_actions(); tam przesuwamy strażnikowi termin.
+    # Jeśli pętla przez dwie minuty nie zgłosi się ani razu, strażnik wypisze
+    # do dziennika, gdzie w tej chwili stoi KAŻDY wątek. Brak takiego zrzutu
+    # przy zawieszonym panelu też coś mówi: wtedy stoi cały proces, nie kod.
+    przesuniety = [0.0]
+
+    def przesun_straznika():
+        teraz = time.monotonic()
+        if teraz - przesuniety[0] >= 30 and sys.stderr is not None:
+            przesuniety[0] = teraz
+            faulthandler.dump_traceback_later(120, repeat=False, file=sys.stderr)
+
+    serwer.service_actions = przesun_straznika
     try:
         serwer.serve_forever()
     except KeyboardInterrupt:
         print('\nZamykam panel.')
+    finally:
+        faulthandler.cancel_dump_traceback_later()
 
 
 PLIK_LICZNIKOW = os.path.join(KATALOG, 'liczniki.csv')

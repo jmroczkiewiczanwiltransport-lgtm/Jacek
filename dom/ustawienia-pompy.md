@@ -1229,6 +1229,38 @@ Total Security — ten sam, który blokował autostart, a `WinError 10053`
 z 5.11 („przerwane przez oprogramowanie zainstalowane w komputerze-
 hoście") to podpis właśnie takiego oprogramowania.
 
+### 8.11.2026 po południu — panel znów wisi, tym razem całkiem
+
+Po godzinie poprawnej pracy (prognoza wróciła, automat słusznie zostawił
+20,0 przy 0,9 kWh/m²) strona znów stanęła na samym nagłówku. Różnica wobec
+poprzednich razów: w pasku adresu **✕ zamiast ↻** — przeglądarka czeka na
+samą stronę, nie na dane. Panel nie odpowiada nawet na `GET /`, czyli na
+odczyt pliku z dysku.
+
+Przeszedłem w kodzie wszystko, co obsługa zapytania robi: plik strony,
+pamięć odczytu, historia, zużycie, zadania (pętla `range(ile_razy)`,
+skończona), kominek, pogoda, automat. Locki trzymane są na chwilę, bez
+sieci w środku. **W kodzie nie ma czego, co mogłoby tu stać.** Zostaje
+podejrzenie, że stoi cały proces — wstrzymany z zewnątrz — ale to
+podejrzenie, nie wynik.
+
+Zamiast zgadywać dalej, przyrządy:
+
+- **Strażnik zawieszenia** (`faulthandler.dump_traceback_later`). Ma własny
+  wątek w C, niezależny od Pythona. Pętla serwera co pół sekundy woła
+  `service_actions()`, a ta co 30 s przesuwa strażnikowi termin. Gdy pętla
+  przez 2 minuty milczy — do `panel.log` idzie stos KAŻDEGO wątku. Brak
+  zrzutu przy zawieszonym panelu też jest odpowiedzią: wtedy stoi proces,
+  nie kod. Sprawdzone w obie strony: przy żywej pętli cisza, przy stojącej
+  zrzut wskazujący wątek i linijkę, na której czeka.
+- **Puls co godzinę** w `panel.log`: liczba wątków, wiek odczytu, wiek
+  historii. Ostatni puls mówi, kiedy panel stanął; rosnąca liczba wątków —
+  że coś się piętrzy.
+- **Diagnoza, sekcja 2:** stan wątków procesu na porcie (Wait / Suspended
+  rozstrzyga, czy proces wstrzymał ktoś z zewnątrz) i zużycie procesora
+  przez dwie sekundy (czy coś się nie kręci w kółko). Sekcja 5 — 150
+  linijek dziennika, żeby zmieścił się cały zrzut.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie

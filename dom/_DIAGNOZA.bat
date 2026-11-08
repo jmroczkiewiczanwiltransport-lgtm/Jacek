@@ -35,6 +35,11 @@ powershell -NoProfile -Command "$w=Get-CimInstance Win32_Process | Where-Object 
 
 >>"%PLIK%" echo --- 2. Kto trzyma port 8125 ---
 powershell -NoProfile -Command "$p=Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue; if ($p) { $p | ForEach-Object { $g=Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue; 'nasluchuje PID ' + $_.OwningProcess + ' (' + $g.ProcessName + '), uruchomiony ' + $g.StartTime } } else { 'NIKT - port 8125 jest wolny' }" >>"%PLIK%" 2>&1
+rem  Stan watkow procesu na porcie. Gdy panel wisi, to rozstrzyga, czy stoi
+rem  kod (watki czekaja na cos - Wait / UserRequest, Executive), czy caly proces
+rem  wstrzymal ktos z zewnatrz (Wait / Suspended). Do tego, czy w tej chwili
+rem  w ogole liczy cokolwiek - procesor przez dwie sekundy.
+powershell -NoProfile -Command "foreach ($x in @(Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue)) { $g=Get-Process -Id $x.OwningProcess -ErrorAction SilentlyContinue; if ($g) { $c1=$g.CPU; Start-Sleep -Seconds 2; $g.Refresh(); 'watkow ' + $g.Threads.Count + ', uchwytow ' + $g.HandleCount + ', pamiec ' + [int]($g.WorkingSet64/1MB) + ' MB, procesor razem ' + [int]$g.CPU + ' s, przez ostatnie 2 s: ' + [math]::Round($g.CPU - $c1, 2) + ' s'; $g.Threads | Group-Object { if ($_.ThreadState -eq 'Wait') { [string]$_.ThreadState + ' / ' + [string]$_.WaitReason } else { [string]$_.ThreadState } } | Sort-Object Count -Descending | ForEach-Object { '   ' + $_.Count + ' x ' + $_.Name } } }" >>"%PLIK%" 2>&1
 >>"%PLIK%" echo.
 
 >>"%PLIK%" echo --- 3. Zadanie w Harmonogramie ---
@@ -45,8 +50,8 @@ powershell -NoProfile -Command "$z=Get-ScheduledTask -TaskName 'Panel pompy' -Er
 powershell -NoProfile -Command "try { $o=Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8125/api/stan' -TimeoutSec 25; 'HTTP ' + $o.StatusCode; $t=$o.Content; 'dlugosc ' + $t.Length + ' znakow'; if ($t.Length -gt 6000) { $t.Substring(0,6000) + ' ...(uciete)' } else { $t } } catch { 'NIE ODPOWIEDZIAL: ' + $_.Exception.Message }" >>"%PLIK%" 2>&1
 >>"%PLIK%" echo.
 
->>"%PLIK%" echo --- 5. Ostatnie 40 linijek panel.log ---
-powershell -NoProfile -Command "if (Test-Path 'panel.log') { $f=Get-Item 'panel.log'; 'ostatni zapis ' + $f.LastWriteTime; '---'; Get-Content 'panel.log' -Tail 40 } else { 'brak panel.log' }" >>"%PLIK%" 2>&1
+>>"%PLIK%" echo --- 5. Ostatnie 150 linijek panel.log ---
+powershell -NoProfile -Command "if (Test-Path 'panel.log') { $f=Get-Item 'panel.log'; 'ostatni zapis ' + $f.LastWriteTime; '---'; Get-Content 'panel.log' -Tail 150 } else { 'brak panel.log' }" >>"%PLIK%" 2>&1
 >>"%PLIK%" echo.
 
 >>"%PLIK%" echo --- 6. Czy historia rosnie ---

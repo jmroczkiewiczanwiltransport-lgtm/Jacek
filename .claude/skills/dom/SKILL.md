@@ -72,6 +72,13 @@ przed ustąpieniem człowiekowi. Nie dokładaj nigdzie własnego
 `czytaj_pompe()` „bo tak prościej" — 8.11 automat pukał tak co 15 s
 i historia stanęła po jednym wierszu.
 
+**Gdy panel wisi, w `panel.log` szukaj dwóch rzeczy.** Linijki `puls:` (co
+godzinę: wątki, wiek odczytu, wiek historii) — ostatnia mówi, kiedy panel
+stanął. I bloku `Timeout (0:02:00)!` ze stosami wątków — strażnik
+`faulthandler` wypisuje go sam, gdy pętla serwera milczy dwie minuty. Brak
+zrzutu przy zawieszonym panelu znaczy, że stoi cały proces (wstrzymany
+z zewnątrz), a nie kod — wtedy sekcja 2 diagnozy pokaże `Wait / Suspended`.
+
 **Zanim wyślesz zmianę dotyczącą sterownika, puść ją na atrapie:**
 `dom/testy/scenariusz.sh` (opis w nagłówku). Mierzy rozmowy na minutę,
 rozmowy naraz, impulsy i nastawę; `WERSJA=<rewizja>` puszcza starszą wersję
