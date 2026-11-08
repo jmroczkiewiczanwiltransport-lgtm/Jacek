@@ -30,7 +30,7 @@ powershell -NoProfile -Command "$w=Get-CimInstance Win32_Process | Where-Object 
 >>"%PLIK%" echo.
 
 >>"%PLIK%" echo --- 2. Kto trzyma port 8125 ---
-powershell -NoProfile -Command "$p=Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue; if ($p) { $p | ForEach-Object { 'nasluchuje PID ' + $_.OwningProcess + ' (' + (Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).ProcessName + ')' } } else { 'NIKT - port 8125 jest wolny' }" >>"%PLIK%" 2>&1
+powershell -NoProfile -Command "$p=Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue; if ($p) { $p | ForEach-Object { $g=Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue; 'nasluchuje PID ' + $_.OwningProcess + ' (' + $g.ProcessName + '), uruchomiony ' + $g.StartTime } } else { 'NIKT - port 8125 jest wolny' }" >>"%PLIK%" 2>&1
 >>"%PLIK%" echo.
 
 >>"%PLIK%" echo --- 3. Zadanie w Harmonogramie ---
@@ -80,7 +80,8 @@ pause
 
 echo.
 echo   Zatrzymuje stare procesy panelu...
-powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*pompa-acond.py*panel*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>&1
+powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*pompa-acond.py*panel*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; foreach ($x in @(Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue)) { Stop-Process -Id $x.OwningProcess -Force -ErrorAction SilentlyContinue }; for ($i=0; $i -lt 20; $i++) { if (-not (Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue)) { exit 0 }; Start-Sleep -Milliseconds 500 }; exit 1" >nul 2>&1
+if errorlevel 1 echo   UWAGA: port 8125 dalej zajety - uruchom komputer ponownie.
 
 set "PYTHON=python"
 python --version >nul 2>&1
@@ -92,10 +93,10 @@ echo   Uruchamiam panel od nowa...
 schtasks /Run /TN "Panel pompy" >nul 2>&1
 if errorlevel 1 if exist "%PYTHONW%" start "" "%PYTHONW%" pompa-acond.py panel
 
-powershell -NoProfile -Command "for ($i=0; $i -lt 24; $i++) { try { $g=New-Object Net.Sockets.TcpClient; $g.Connect('127.0.0.1',8125); $g.Close(); exit 0 } catch { Start-Sleep -Milliseconds 750 } }; exit 1"
+powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; $t=[Diagnostics.Stopwatch]::StartNew(); while ($t.Elapsed.TotalSeconds -lt 25) { try { $o=Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8125/api/stan' -TimeoutSec 5; if ($o.StatusCode -eq 200) { exit 0 } } catch { Start-Sleep -Milliseconds 750 } }; exit 1"
 if errorlevel 1 (
   if exist "%PYTHONW%" start "" "%PYTHONW%" pompa-acond.py panel
-  powershell -NoProfile -Command "Start-Sleep -Seconds 6; try { $g=New-Object Net.Sockets.TcpClient; $g.Connect('127.0.0.1',8125); $g.Close(); exit 0 } catch { exit 1 }"
+  powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; $t=[Diagnostics.Stopwatch]::StartNew(); while ($t.Elapsed.TotalSeconds -lt 25) { try { $o=Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8125/api/stan' -TimeoutSec 5; if ($o.StatusCode -eq 200) { exit 0 } } catch { Start-Sleep -Milliseconds 750 } }; exit 1"
 )
 if errorlevel 1 (
   echo.

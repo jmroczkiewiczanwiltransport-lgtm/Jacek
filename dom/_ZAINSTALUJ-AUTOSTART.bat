@@ -42,7 +42,8 @@ rem  Zatrzymujemy panel, zanim wystartujemy nowy. Bez tego stary proces trzyma
 rem  port 8125, nowy nie ma gdzie wstac i po cichu pada - a uzytkownik widzi
 rem  stara wersje i slusznie mysli, ze instalacja nic nie dala.
 echo   Zatrzymuje dzialajacy panel, jesli jakis chodzi...
-powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*pompa-acond.py*panel*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>&1
+call :zatrzymaj_panel
+if errorlevel 1 goto port_zajety
 echo.
 
 if not exist "%DOCEL%\logowanie.txt" (
@@ -109,14 +110,16 @@ if errorlevel 1 (
 )
 
 rem  Instalator ma sprawdzic, a nie zapewnic. Kazda runda tej historii wygladala
-rem  tak samo: "Gotowe", a panelu nie ma. Teraz pukamy do portu 8125 i dopiero
-rem  wtedy cokolwiek obiecujemy.
+rem  tak samo: "Gotowe", a panelu nie ma. Teraz pytamy panel o stan i dopiero
+rem  po odpowiedzi cokolwiek obiecujemy - a obok piszemy, kto odpowiedzial
+rem  i od kiedy chodzi, zeby stary proces nie mogl udawac nowego.
 echo   Sprawdzam, czy panel odpowiada...
-powershell -NoProfile -Command "for ($i=0; $i -lt 24; $i++) { try { $g=New-Object Net.Sockets.TcpClient; $g.Connect('127.0.0.1',8125); $g.Close(); exit 0 } catch { Start-Sleep -Milliseconds 750 } }; exit 1"
+call :czy_odpowiada
 if errorlevel 1 goto nie_wstal
 
 echo.
 echo   Panel dziala: http://localhost:8125
+call :kto_odpowiada
 echo   Bedzie sie uruchamial sam po kazdym zalogowaniu do Windowsa, bez okna.
 echo   To, co wypisuje, trafia do:
 echo     %DOCEL%\panel.log
@@ -137,10 +140,12 @@ echo.
 echo   Przeslij mi te linijki - to jest cala diagnoza, nie trzeba nic przepisywac.
 echo.
 rem  Log juz spisany, wiec reczny start niczego nie zaciera. A dom nie ma
-rem  powodu czekac na to, az rozgryzie sie Harmonogram.
+rem  powodu czekac na to, az rozgryzie sie Harmonogram. Najpierw zwalniamy
+rem  port - jesli trzyma go zawieszony panel, nowy odbilby sie od niego.
 echo   Na teraz uruchamiam panel recznie...
+call :zatrzymaj_panel
 start "" "%PYTHONW%" pompa-acond.py panel
-powershell -NoProfile -Command "for ($i=0; $i -lt 16; $i++) { try { $g=New-Object Net.Sockets.TcpClient; $g.Connect('127.0.0.1',8125); $g.Close(); exit 0 } catch { Start-Sleep -Milliseconds 750 } }; exit 1"
+call :czy_odpowiada
 if errorlevel 1 (
   echo   ...i to tez sie nie udalo. Odpal _URUCHOM-PANEL.bat dwuklikiem - w czarnym
   echo   oknie zobaczysz, na czym sie wywraca.
@@ -184,7 +189,7 @@ rem  Nie zostawiamy go z martwym panelem tylko dlatego, ze autostart sie nie
 rem  udal. To dwie osobne sprawy: autostart dotyczy jutra, panel dzisiaj.
 echo   Na teraz uruchamiam panel recznie, zeby dom nie zostal bez nadzoru...
 start "" "%PYTHONW%" pompa-acond.py panel
-powershell -NoProfile -Command "for ($i=0; $i -lt 16; $i++) { try { $g=New-Object Net.Sockets.TcpClient; $g.Connect('127.0.0.1',8125); $g.Close(); exit 0 } catch { Start-Sleep -Milliseconds 750 } }; exit 1"
+call :czy_odpowiada
 if errorlevel 1 (
   echo   ...i to tez sie nie udalo. Odpal _URUCHOM-PANEL.bat dwuklikiem.
 ) else (
@@ -199,3 +204,36 @@ rem  rozjechaly sie po dwoch dniach.
 :sprawdz_zadanie
 powershell -NoProfile -Command "$z=Get-ScheduledTask -TaskName $env:ZADANIE -ErrorAction SilentlyContinue; if (-not $z) { exit 1 }; $e=$z.Actions[0].Execute; $k=$z.Actions[0].WorkingDirectory; if ($e) { $e=$e.Trim('\"') }; if ($k) { $k=$k.Trim('\"').TrimEnd('\') }; if ($e -eq $env:PYTHONW -and $k -eq $env:DOCEL) { exit 0 } else { exit 1 }"
 exit /b %errorlevel%
+
+:port_zajety
+echo.
+echo   Port 8125 nadal jest zajety i nie umiem go zwolnic. Trzyma go:
+call :kto_odpowiada
+echo.
+echo   Najprosciej: uruchom komputer ponownie. Po zalogowaniu panel wstanie
+echo   sam - zadanie w Harmonogramie jest juz ustawione.
+echo.
+pause
+exit /b 1
+
+rem  Zatrzymanie, ktore sprawdza, czy sie udalo. 8.11 instalator zabijal
+rem  procesy po nazwie polecenia, po cichu, i szedl dalej. Proces z 5.11
+rem  przezyl, trzymal port, nowy panel odbil sie od zajetego portu - a test
+rem  na koncu zapukal do starego i oglosil "Panel dziala". Teraz zabijamy
+rem  takze to, co faktycznie trzyma port, i czekamy, az port bedzie wolny.
+:zatrzymaj_panel
+powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*pompa-acond.py*panel*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; foreach ($x in @(Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue)) { Stop-Process -Id $x.OwningProcess -Force -ErrorAction SilentlyContinue }; for ($i=0; $i -lt 20; $i++) { if (-not (Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue)) { exit 0 }; Start-Sleep -Milliseconds 500 }; exit 1"
+exit /b %errorlevel%
+
+rem  "Dziala" znaczy: /api/stan odpowiedzial w kilka sekund. Samo przyjecie
+rem  polaczenia nie wystarcza - zawieszony panel z 5.11 przyjmowal je
+rem  bez zarzutu, a potem milczal w nieskonczonosc.
+:czy_odpowiada
+powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; $t=[Diagnostics.Stopwatch]::StartNew(); while ($t.Elapsed.TotalSeconds -lt 25) { try { $o=Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8125/api/stan' -TimeoutSec 5; if ($o.StatusCode -eq 200) { exit 0 } } catch { Start-Sleep -Milliseconds 750 } }; exit 1"
+exit /b %errorlevel%
+
+rem  Kto odpowiada na porcie i od kiedy. Godzina startu z dzisiaj to nowy
+rem  panel; data sprzed dni to stary, ktory przezyl.
+:kto_odpowiada
+powershell -NoProfile -Command "$p=@(Get-NetTCPConnection -LocalPort 8125 -State Listen -ErrorAction SilentlyContinue); if ($p.Count -eq 0) { '    (nikt nie nasluchuje na 8125)' } else { foreach ($x in $p) { $g=Get-Process -Id $x.OwningProcess -ErrorAction SilentlyContinue; '    PID ' + $x.OwningProcess + '  ' + $g.ProcessName + ', uruchomiony ' + $g.StartTime } }"
+exit /b 0

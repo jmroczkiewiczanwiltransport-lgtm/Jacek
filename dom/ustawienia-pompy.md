@@ -1135,6 +1135,42 @@ sprawdzenie co przed nią (co uruchamia, z jakiego katalogu), w jednym
 podprogramie `:sprawdz_zadanie` — żeby dwie kopie warunku nie mogły się
 znów rozjechać. Złamałem regułę, którą sam zapisałem trzy dni wcześniej.
 
+### 8.11.2026, przed południem — „Panel działa", a strona dalej pusta
+
+Instalator jako administrator przeszedł czysto: zadanie założone (od
+poprawki sprawdzone naprawdę), „Panel działa: http://localhost:8125".
+Strona dalej pusta — nagłówek i `…` w rogu.
+
+Przeszedłem całą drogę `/api/stan` w nowym kodzie szukając czegokolwiek, co
+może czekać: pogoda, historia, zużycie, kominek, automat. Locki pogody,
+historii i automatu trzymane są tylko na moment podmiany słownika, bez sieci
+w środku; `zamek_sterownika` nie jest w tej drodze wcale. Przy dziurze
+w danych `_historia_z_pliku` i `_zuzycie_z_licznika` zwracają pusty wynik,
+nie pętlą. **Nowy kod nie może dać pustej strony.**
+
+Zostaje jedno wyjaśnienie: **port nadal trzyma proces z 5.11.** Instalator
+zabijał panele po nazwie polecenia, po cichu (`>nul 2>&1`), i szedł dalej.
+Nowy panel odbił się od zajętego portu — od 5.11 robi to czysto, z komunikatem
+w `panel.log` — a test na końcu zapukał do **starego** procesu, który
+połączenie przyjął i oznajmił „Panel działa". Test sprawdzał, czy ktoś
+odbiera, a nie czy odpowiada.
+
+Dwie poprawki, obie z tej samej rodziny co wszystkie poprzednie:
+
+- **Zatrzymanie sprawdza wynik.** Zabija po nazwie polecenia *i* to, co
+  faktycznie trzyma port 8125, a potem czeka, aż port będzie wolny. Gdy się
+  nie da — mówi wprost, kto go trzyma i od kiedy, i radzi restart.
+- **„Działa" znaczy: `/api/stan` odpowiedział w kilka sekund**, nie „port
+  przyjął połączenie". Obok pisze PID i godzinę startu procesu na porcie —
+  panel z 5.11 nie może już udawać panelu z 8.11.
+
+Te same dwie zmiany w części restartującej `_DIAGNOZA.bat`, a sekcja 2
+pokazuje godzinę startu właściciela portu.
+
+Na teraz zalecenie: **restart komputera.** Zabija każdy zawieszony proces na
+pewno, a przy logowaniu zadanie stawia nowy panel — pierwszy prawdziwy test
+autostartu po dwóch tygodniach.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
