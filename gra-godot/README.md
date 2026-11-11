@@ -26,7 +26,11 @@ Gra ma sterowanie dotykowe i lżejsze ustawienia grafiki, które włączają si�
   telefon zapyta o zgodę na „instalowanie z nieznanych źródeł”. Wymaga Androida 7+ i procesora
   64-bitowego (arm64).
 - **Przeglądarka (Android i iPhone).** Eksport „Web” daje katalog `build/web/` (ok. 38 MB), który
-  trzeba wystawić na dowolnym serwerze WWW przez HTTPS, np. GitHub Pages.
+  trzeba wystawić na dowolnym serwerze WWW przez HTTPS, np. GitHub Pages. Dla hostingów z limitem
+  wielkości pliku `tools/paczka_web.sh` dzieli silnik na części po 13 MB i dokłada stronę startową
+  `web/kurs-na-czas-3d.html`, która składa go z powrotem w przeglądarce.
+- **iPhone.** Tylko przez przeglądarkę (Safari), w poziomie. Aplikacja natywna wymagałaby Maca
+  z Xcode i konta Apple Developer — tego projektu nie da się zbudować na iOS z Linuksa ani Windowsa.
 
 Budowanie (wymaga szablonów eksportu Godot 4.6; dla Androida także JDK 17 i Android SDK
 ustawionych w Ustawieniach edytora → Eksport → Android):
@@ -151,5 +155,6 @@ Sprawdzone ręcznie w tej sesji:
 | `scripts/touch.gd` | sterowanie dotykowe |
 | `scripts/audio.gd` | generowanie i odtwarzanie dźwięku |
 | `export_presets.cfg` | ustawienia eksportu na Androida i do przeglądarki |
+| `web/`, `tools/paczka_web.sh` | strona startowa i skrypt paczki przeglądarkowej |
 | `scripts/kit.gd` | narzędzia do budowy brył i materiałów |
 | `shaders/` | asfalt z liniami i kałużami, teren |

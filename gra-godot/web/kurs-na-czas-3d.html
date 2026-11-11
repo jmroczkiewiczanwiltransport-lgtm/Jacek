@@ -1,0 +1,149 @@
+<title>Kurs na czas 3D</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Układ: płótno gry na całą ramkę; nad nim tablica startowa w formie znaku drogowego, a w pionie prośba o obrócenie telefonu. */
+:root{
+  --sign:#0b6b43;            /* zieleń tablic drogi ekspresowej */
+  --sign-deep:#07492e;
+  --paint:#f4f6f1;           /* biel odblaskowa */
+  --asphalt:#14171b;
+  --warn:#f5c518;            /* żółć oznakowania robót */
+  --ink:#0e1113;
+  --stop:#de382e;
+  --display:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
+  --body:'Barlow','Segoe UI',Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--asphalt);color:var(--paint);font-family:var(--body);font-size:16px;overflow:hidden;
+  touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#canvas{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none;touch-action:none;background:var(--asphalt)}
+.cover{position:fixed;inset:0;z-index:5;display:grid;place-items:center;overflow:auto;touch-action:pan-y;background:var(--asphalt);
+  padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sign{width:min(100%,520px);background:var(--sign);border-radius:18px;padding:6px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.sign-in{border:3px solid var(--paint);border-radius:13px;padding:18px 22px 20px;display:grid;gap:12px}
+.eyebrow{margin:0;font:600 14px/1 var(--display);letter-spacing:.16em;text-transform:uppercase}
+h1{margin:0;font:700 clamp(38px,9vw,56px)/.92 var(--display);text-transform:uppercase;text-wrap:balance}
+.lead{margin:0;font:500 16px/1.4 var(--body);max-width:46ch}
+.rows{margin:0;display:grid}
+.rows div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:6px 0;border-top:1px solid rgba(244,246,241,.3)}
+.rows dt{font:500 14px/1.25 var(--body)}
+.rows dd{margin:0;font:600 19px/1.1 var(--display);letter-spacing:.02em;text-align:right}
+.go{font:700 22px/1 var(--display);letter-spacing:.07em;text-transform:uppercase;border-radius:8px;padding:14px 16px;cursor:pointer;
+  background:var(--warn);color:var(--ink);border:0;box-shadow:inset 0 0 0 3px var(--ink)}
+.go:focus-visible{outline:3px solid var(--paint);outline-offset:3px}
+progress{width:100%;height:14px;accent-color:var(--warn)}
+.status{margin:0;font:600 18px/1.2 var(--display);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.note{margin:0;font:500 13px/1.4 var(--body);background:var(--sign-deep);border-radius:6px;padding:9px 12px}
+.err{margin:0;font:500 13px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--ink);color:var(--paint);border-radius:6px;padding:9px 12px;
+  overflow-wrap:anywhere;-webkit-user-select:text;user-select:text}
+.rotate{position:fixed;inset:0;z-index:4;display:none;place-items:center;text-align:center;background:rgba(14,17,19,.9);
+  padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.rotate p{margin:0 0 14px;font:700 30px/1.05 var(--display);text-transform:uppercase;letter-spacing:.03em}
+.rotate button{font:600 16px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--paint);
+  border:2px solid var(--paint);border-radius:8px;padding:10px 14px;cursor:pointer}
+@media (orientation:portrait){ body.playing:not(.anyway) .rotate{display:grid} }
+</style>
+
+<canvas id="canvas" tabindex="0" aria-label="Gra: widok 3D zestawu z naczepą"></canvas>
+
+<div class="rotate" id="rotate">
+  <div>
+    <p>Obróć telefon poziomo</p>
+    <button type="button" id="bAnyway">Graj w pionie</button>
+  </div>
+</div>
+
+<div class="cover" id="cover">
+  <div class="sign"><div class="sign-in">
+    <p class="eyebrow">Symulator · wersja w przeglądarce</p>
+    <h1>Kurs na czas 3D</h1>
+    <p class="lead" id="lead">Zestaw z naczepą: z MOP-u drogą ekspresową przez rondo na plac i tyłem pod wyznaczoną rampę, zanim zamknie się okno rozładunku.</p>
+    <dl class="rows" id="facts">
+      <div><dt>Do pobrania</dt><dd>38 MB</dd></div>
+      <div><dt>Telefon</dt><dd>trzymaj poziomo</dd></div>
+      <div><dt>Sterowanie</dt><dd>dotyk albo klawiatura</dd></div>
+    </dl>
+    <p class="status" id="status" hidden>Pobieram silnik gry: 0%</p>
+    <progress id="bar" max="100" value="0" hidden></progress>
+    <p class="err" id="err" hidden></p>
+    <button class="go" type="button" id="bLoad">Wczytaj grę</button>
+    <p class="note" id="note">Na telefonie: lewy kciuk przesuwa kierownicę, prawy trzyma GAZ lub HAMULEC. Dźwięk włącza się po pierwszym dotknięciu.</p>
+  </div></div>
+</div>
+
+<script src="gra.pck.js"></script>
+<script>
+// Silnik gry (WebAssembly, 38 MB) jest podzielony na trzy pliki; tu składamy go z powrotem i podajemy silnikowi Godot
+// przez podmienione fetch(). Dane gry (index.pck) przychodzą w gra.pck.js jako base64.
+(function(){
+'use strict';
+const PARTS=['silnik-0.wasm','silnik-1.wasm','silnik-2.wasm'], TOTAL=37686550;
+const $=id=>document.getElementById(id);
+const realFetch=window.fetch.bind(window);
+let got=0, wasm=null;
+function progress(){ const p=Math.min(99,Math.floor(got/TOTAL*100)); $('bar').value=p; $('status').textContent='Pobieram silnik gry: '+p+'%'; }
+async function part(name){
+  const r=await realFetch(name);
+  if(!r.ok) throw new Error('Nie udało się pobrać pliku '+name+' (HTTP '+r.status+').');
+  if(r.body&&r.body.getReader){ const rd=r.body.getReader(), chunks=[]; for(;;){ const {done,value}=await rd.read(); if(done) break; chunks.push(value); got+=value.length; progress(); } return new Blob(chunks); }
+  const b=await r.arrayBuffer(); got+=b.byteLength; progress(); return new Blob([b]);
+}
+window.fetch=function(input,init){
+  const url=typeof input==='string'?input:(input&&input.url)||'';
+  const name=url.split('#')[0].split('?')[0].split('/').pop();
+  if(name==='index.wasm'){
+    wasm=wasm||Promise.all(PARTS.map(part)).then(b=>{ $('bar').removeAttribute('value'); $('status').textContent='Uruchamiam silnik i buduję mapę…'; return new Blob(b,{type:'application/wasm'}); });
+    return wasm.then(blob=>new Response(blob,{status:200,headers:{'Content-Type':'application/wasm','Content-Length':String(blob.size)}}));
+  }
+  if(name==='index.pck'){
+    const bin=atob(window.KNC_PCK_B64||''), u8=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
+    return Promise.resolve(new Response(u8,{status:200,headers:{'Content-Type':'application/octet-stream','Content-Length':String(u8.length)}}));
+  }
+  return realFetch(input,init);
+};
+})();
+</script>
+<script src="index.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const CONFIG={"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,
+  "fileSizes":{"index.pck":144868,"index.wasm":37686550},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+let started=false;
+function fail(e){
+  console.error(e);
+  $('status').textContent='Nie udało się uruchomić gry.';
+  $('bar').hidden=true;
+  $('err').textContent=String(e&&e.message||e);
+  $('err').hidden=false;
+  $('note').textContent='Jeśli to się powtarza, podaj treść błędu z ciemnego pola powyżej.';
+  $('bLoad').textContent='Spróbuj ponownie';
+  $('bLoad').hidden=false;
+  started=false;
+}
+function start(){
+  if(started) return;
+  started=true;
+  $('bLoad').hidden=true; $('facts').hidden=true; $('err').hidden=true;
+  $('status').hidden=false; $('bar').hidden=false;
+  if(typeof Engine==='undefined'){ fail(new Error('Nie wczytał się plik index.js z silnikiem gry.')); return; }
+  let missing=[];
+  try{ missing=Engine.getMissingFeatures({threads:false}); }catch(e){ fail(e); return; }
+  if(missing.length){ fail(new Error('Tej przeglądarce brakuje funkcji potrzebnych do gry: '+missing.join(', '))); return; }
+  let engine;
+  try{ engine=new Engine(CONFIG); }catch(e){ fail(e); return; }
+  engine.startGame({onProgress:function(){}}).then(function(){
+    $('cover').hidden=true;
+    document.body.classList.add('playing');
+    $('canvas').focus();
+  },fail);
+}
+$('bLoad').addEventListener('click',start);
+$('bAnyway').addEventListener('click',function(){ document.body.classList.add('anyway'); });
+window.addEventListener('unhandledrejection',function(ev){ if(started&&!$('cover').hidden) fail(ev.reason); });
+})();
+</script>
