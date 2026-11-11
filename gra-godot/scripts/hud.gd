@@ -27,6 +27,7 @@ var overlay: Control
 var overlay_box: VBoxContainer
 
 var state := {}          # dane dla zegarów (ustawia main.gd)
+var compact := false     # telefon: same zegary, bo stan urządzeń pokazują przyciski dotykowe
 var _toast_t := 0.0
 var _phone_t := 0.0
 
@@ -126,7 +127,8 @@ func _ready() -> void:
 	set_hud_visible(false)
 
 
-const HELP_TEXT := "W/S lub ↑/↓  gaz / hamulec        A/D lub ←/→  kierownica\nR  kierunek jazdy D/R (na postoju)   Spacja  hamulec postojowy\nQ/E  kierunkowskazy   F  awaryjne   L  światła   P  wycieraczki\nT  zwalniacz   C  kamera   Z/X  spojrzenie w lusterka (widok z kabiny)\nEnter  zgłoś rozładunek   Backspace  powrót na trasę (−30 s)\nF1  ukryj tę ściągę   Esc  postój"
+const HELP_TEXT := "W/S lub strzałki góra/dół  gaz / hamulec      A/D lub strzałki w bok  kierownica\nR  kierunek jazdy D/R (na postoju)   Spacja  hamulec postojowy\nQ/E  kierunkowskazy   F  awaryjne   L  światła   P  wycieraczki\nT  zwalniacz   H  klakson   C  kamera   Z/X  spojrzenie w lusterka\nEnter  zgłoś rozładunek   Backspace  powrót na trasę (−30 s)\nF1  ukryj tę ściągę   M  dźwięk   Esc  postój"
+const TOUCH_HELP := "Lewy kciuk: kierownica (przesuwaj w bok). Prawy: GAZ i HAMULEC — im wyżej trzymasz palec, tym mocniej.\nD/R kierunek jazdy (na postoju) · P hamulec postojowy · KAM widok · strzałki i AW: kierunkowskazy, awaryjne\nŚW światła · WYC wycieraczki · ZW zwalniacz · TRĄB klakson · ZGŁOŚ ROZŁADUNEK pod rampą"
 
 
 ## Przypina kontrolkę do krawędzi lub środka ekranu z odsunięciem; rozmiar wynika z zawartości.
@@ -168,6 +170,26 @@ func _label(text: String, size: int, color: Color) -> Label:
 
 func set_hud_visible(on: bool) -> void:
 	root.visible = on
+
+
+func set_compact(on: bool) -> void:
+	compact = on
+	dash.custom_minimum_size = Vector2(250 if on else 640, 150)
+	dash.reset_size()
+	_pin(dash, Control.PRESET_CENTER_BOTTOM, 0, -14)
+	# na telefonie rogi ekranu zajmują przyciski, więc komunikaty idą na górę
+	if on:
+		_pin(phone, Control.PRESET_TOP_RIGHT, -18, 124)
+		_pin(dock, Control.PRESET_TOP_LEFT, 18, 64)
+		phone.custom_minimum_size = Vector2(300, 0)
+		phone_lbl.custom_minimum_size = Vector2(280, 0)
+		phone_lbl.add_theme_font_size_override("font_size", 17)
+	else:
+		_pin(phone, Control.PRESET_CENTER_RIGHT, -18, 0)
+		_pin(dock, Control.PRESET_CENTER_LEFT, 18, 0)
+		phone.custom_minimum_size = Vector2(340, 0)
+		phone_lbl.custom_minimum_size = Vector2(320, 0)
+		phone_lbl.add_theme_font_size_override("font_size", 20)
 
 
 static func fmt_time(s: float) -> String:
@@ -271,9 +293,14 @@ func _draw_dash() -> void:
 	var gear: String = s.get("gear", "D")
 	dash.draw_string(font, Vector2(190, 62), gear, HORIZONTAL_ALIGNMENT_LEFT, -1, 52, WARN if gear == "R" else PAINT)
 	dash.draw_string(font, Vector2(190, 84), "KIERUNEK", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(1, 1, 1, 0.6))
+	if compact:
+		var a2: float = s.get("art", 0.0)
+		dash.draw_line(Vector2(212, 136), Vector2(212, 112), PAINT, 5.0)
+		dash.draw_line(Vector2(212, 112), Vector2(212, 112) + Vector2(-sin(a2), -cos(a2)) * 16.0, WARN if absf(a2) > 0.9 else Color(0.35, 0.6, 1.0), 6.0)
+		return
 	# kontrolki
 	var lamps := [
-		["◄", s.get("bl", false), Color(0.3, 0.9, 0.3)], ["►", s.get("br", false), Color(0.3, 0.9, 0.3)],
+		["<", s.get("bl", false), Color(0.3, 0.9, 0.3)], [">", s.get("br", false), Color(0.3, 0.9, 0.3)],
 		["P", s.get("parking", false), STOP], [s.get("lights_txt", "ŚW"), s.get("lights", 0) > 0, Color(0.35, 0.6, 1.0) if s.get("lights", 0) == 2 else Color(0.3, 0.9, 0.3)],
 		["ZW %d" % s.get("retarder", 0), s.get("retarder", 0) > 0, WARN], ["WYC %d" % s.get("wipers", 0), s.get("wipers", 0) > 0, PAINT],
 	]
@@ -283,7 +310,14 @@ func _draw_dash() -> void:
 		var rect := Rect2(x, 24, 56, 34)
 		dash.draw_rect(rect, Color(l[2].r, l[2].g, l[2].b, 0.9 if on else 0.1), true)
 		dash.draw_rect(rect, Color(1, 1, 1, 0.25), false, 1.0)
-		dash.draw_string(font, Vector2(x, 47), l[0], HORIZONTAL_ALIGNMENT_CENTER, 56, 16, Color(0.05, 0.05, 0.05) if on else Color(1, 1, 1, 0.55))
+		var ink := Color(0.05, 0.05, 0.05) if on else Color(1, 1, 1, 0.55)
+		if l[0] == "<" or l[0] == ">":
+			# strzałka kierunkowskazu rysowana, bo nie każda czcionka ma taki znak
+			var d := -1.0 if l[0] == "<" else 1.0
+			var cc := rect.get_center()
+			dash.draw_colored_polygon(PackedVector2Array([cc + Vector2(d * 10, 0), cc + Vector2(-d * 7, -9), cc + Vector2(-d * 7, 9)]), ink)
+		else:
+			dash.draw_string(font, Vector2(x, 47), l[0], HORIZONTAL_ALIGNMENT_CENTER, 56, 16, ink)
 		x += 61.0
 	# wiersz informacji
 	dash.draw_string(font, Vector2(262, 92), s.get("line1", ""), HORIZONTAL_ALIGNMENT_LEFT, w - 280, 16, PAINT)
@@ -318,12 +352,14 @@ func show_board(eyebrow: String, title: String, lead: String, rows: Array, butto
 	for ch in overlay_box.get_children():
 		overlay_box.remove_child(ch)
 		ch.queue_free()
+	var k := 0.8 if compact else 1.0        # telefon: mniejsze pismo, żeby plansza zmieściła się na wysokość
+	overlay_box.add_theme_constant_override("separation", int(10 * k))
 	if eyebrow != "":
-		overlay_box.add_child(_label(eyebrow.to_upper(), 16, PAINT))
-	var t := _label(title.to_upper(), 54, PAINT)
+		overlay_box.add_child(_label(eyebrow.to_upper(), int(16 * k), PAINT))
+	var t := _label(title.to_upper(), int(54 * k), PAINT)
 	overlay_box.add_child(t)
 	if lead != "":
-		var l := _label(lead, 19, PAINT)
+		var l := _label(lead, int(19 * k), PAINT)
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		l.custom_minimum_size = Vector2(560, 0)
 		overlay_box.add_child(l)
@@ -331,31 +367,39 @@ func show_board(eyebrow: String, title: String, lead: String, rows: Array, butto
 		var grid := GridContainer.new()
 		grid.columns = 2
 		grid.add_theme_constant_override("h_separation", 30)
-		grid.add_theme_constant_override("v_separation", 6)
+		grid.add_theme_constant_override("v_separation", int(6 * k))
 		for r in rows:
-			var k := _label(r[0], 17, Color(1, 1, 1, 0.85))
-			k.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			var v := _label(str(r[1]), 22, PAINT if not str(r[1]).begins_with("−") else Color(1.0, 0.75, 0.7))
+			var kl := _label(r[0], int(17 * k), Color(1, 1, 1, 0.85))
+			kl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			var v := _label(str(r[1]), int(22 * k), PAINT if not str(r[1]).begins_with("−") else Color(1.0, 0.75, 0.7))
 			v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-			grid.add_child(k)
+			grid.add_child(kl)
 			grid.add_child(v)
 		overlay_box.add_child(grid)
 	if note != "":
-		var n := _label(note, 16, PAINT)
+		var n := _label(note, int(16 * k), PAINT)
 		n.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		n.custom_minimum_size = Vector2(560, 0)
 		var nb := _panel(Color(0.027, 0.286, 0.18), Color(0, 0, 0, 0), 0, 8)
 		nb.add_child(n)
 		overlay_box.add_child(nb)
-	var hb := HBoxContainer.new()
-	hb.add_theme_constant_override("separation", 10)
+	var hb: Container
+	if buttons.size() > 3:
+		var g := GridContainer.new()
+		g.columns = 2
+		g.add_theme_constant_override("h_separation", 10)
+		g.add_theme_constant_override("v_separation", 8)
+		hb = g
+	else:
+		hb = HBoxContainer.new()
+		hb.add_theme_constant_override("separation", 10)
 	var first: Button = null
 	for b in buttons:
 		var btn := Button.new()
 		btn.text = String(b[0]).to_upper()
-		btn.add_theme_font_size_override("font_size", 22)
+		btn.add_theme_font_size_override("font_size", int(22 * k))
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.custom_minimum_size = Vector2(0, 52)
+		btn.custom_minimum_size = Vector2(0, 52 if not compact else 46)
 		var primary := first == null
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = WARN if primary else Color(0, 0, 0, 0)

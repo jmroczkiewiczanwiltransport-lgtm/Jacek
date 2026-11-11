@@ -20,6 +20,8 @@ var density := 1.0
 var night := false
 var max_cars := 14
 var enabled := true
+var use_spots := true           # reflektory jako światła (na telefonie wyłączone, zostaje samo świecenie lamp)
+var pass_stream: AudioStream    # szum toczenia mijanych pojazdów
 
 var _rng := RandomNumberGenerator.new()
 var _spawn_t := 0.0
@@ -100,6 +102,17 @@ func _make(kind: String) -> Dictionary:
 	sp.light_color = Color(1.0, 0.95, 0.85)
 	sp.shadow_enabled = false
 	body.add_child(sp)
+	if pass_stream != null:
+		var ap := AudioStreamPlayer3D.new()
+		ap.stream = pass_stream
+		ap.bus = "Zewn"
+		ap.unit_size = 7.0
+		ap.max_distance = 110.0
+		ap.volume_db = 2.0 if kind == "truck" else -3.0
+		ap.pitch_scale = _rng.randf_range(0.8, 1.25)
+		ap.position = Vector3(0, 0.6, 0)
+		ap.autoplay = true
+		body.add_child(ap)
 	add_child(body)
 	var c := {"body": body, "kind": kind, "hl": s.z * 0.5, "hw": s.x * 0.5, "head": head, "tail": tail, "blink": blink, "spot": sp,
 		"path": null, "d": 0.0, "v": 0.0, "vt": 0.0, "static": false, "braking": false}
@@ -109,7 +122,7 @@ func _make(kind: String) -> Dictionary:
 
 func _apply_lights(c: Dictionary) -> void:
 	c.head.emission_energy_multiplier = 4.0 if night else 0.6
-	c.spot.visible = night and not c.static
+	c.spot.visible = night and not c.static and use_spots
 	c.tail.emission_energy_multiplier = 4.5 if c.braking else (1.2 if night else 0.0)
 
 

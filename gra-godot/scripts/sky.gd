@@ -20,6 +20,7 @@ var wet := 0.0            # 0 sucho .. 1 mokro (pada)
 var wet_target := 0.0
 var wet_speed := 0.05
 var quality := 2          # 0 niska, 1 średnia, 2 wysoka
+var low_end := false      # telefon / renderer mobilny: bez efektów ekranowych, krótsze cienie
 
 var _cur := {}
 var _target := {}
@@ -84,7 +85,7 @@ func _ready() -> void:
 
 func _make_rain() -> void:
 	rain = GPUParticles3D.new()
-	rain.amount = 2600
+	rain.amount = 900 if low_end else 2600
 	rain.lifetime = 1.1
 	rain.preprocess = 1.0
 	rain.visibility_aabb = AABB(Vector3(-40, -30, -40), Vector3(80, 60, 80))
@@ -115,14 +116,23 @@ func _make_rain() -> void:
 
 func set_quality(q: int) -> void:
 	quality = q
-	env.ssao_enabled = q >= 1
+	env.ssao_enabled = q >= 1 and not low_end
 	env.ssil_enabled = false
-	env.sdfgi_enabled = q >= 2
-	env.volumetric_fog_enabled = q >= 1
-	env.ssr_enabled = q >= 1
+	env.sdfgi_enabled = q >= 2 and not low_end
+	env.volumetric_fog_enabled = q >= 1 and not low_end
+	env.ssr_enabled = q >= 1 and not low_end
 	env.ssr_max_steps = 48
-	sun.directional_shadow_max_distance = [140.0, 220.0, 280.0][q]
+	env.glow_enabled = not (low_end and q == 0)
 	var vp := get_viewport()
+	if low_end:
+		sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
+		sun.directional_shadow_max_distance = [60.0, 100.0, 150.0][q]
+		sun.shadow_enabled = true
+		if vp:
+			vp.msaa_3d = Viewport.MSAA_DISABLED
+			vp.scaling_3d_scale = [0.6, 0.75, 0.9][q]
+		return
+	sun.directional_shadow_max_distance = [140.0, 220.0, 280.0][q]
 	if vp:
 		vp.msaa_3d = [Viewport.MSAA_DISABLED, Viewport.MSAA_2X, Viewport.MSAA_4X][q]
 		vp.scaling_3d_scale = [0.77, 1.0, 1.0][q]

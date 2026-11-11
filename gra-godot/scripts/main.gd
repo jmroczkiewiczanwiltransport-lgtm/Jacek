@@ -7,6 +7,8 @@ const SkyRig = preload("res://scripts/sky.gd")
 const Cameras = preload("res://scripts/cameras.gd")
 const Hud = preload("res://scripts/hud.gd")
 const Traffic = preload("res://scripts/traffic.gd")
+const Audio = preload("res://scripts/audio.gd")
+const Touch = preload("res://scripts/touch.gd")
 
 const CONTRACTS := [
 	{"cargo": "Napoje na paletach", "mass": 18000.0, "frag": 1.0, "time": "day", "rain": 0.0, "bay": 3, "window": 450.0, "rate": 2400, "events": ["breakdown"],
@@ -14,7 +16,7 @@ const CONTRACTS := [
 	{"cargo": "Stal w kręgach", "mass": 25000.0, "frag": 0.7, "time": "overcast", "rain": 0.0, "bay": 5, "window": 480.0, "rate": 3100, "events": ["rain"],
 		"note": "25 t na naczepie: zestaw wolniej się rozpędza i dłużej hamuje. Prognoza zapowiada deszcz na trasie."},
 	{"cargo": "Elektronika", "mass": 12000.0, "frag": 1.6, "time": "dusk", "rain": 0.0, "bay": 8, "window": 450.0, "rate": 3700, "events": ["rebook", "breakdown"],
-		"note": "Kruchy ładunek: każde uderzenie kosztuje o 60% więcej. Zapada zmierzch — włącz światła (L)."},
+		"note": "Kruchy ładunek: każde uderzenie kosztuje o 60% więcej. Zapada zmierzch — włącz światła."},
 	{"cargo": "Leki, transport pilny", "mass": 10000.0, "frag": 1.4, "time": "night", "rain": 1.0, "bay": 5, "window": 470.0, "rate": 4600, "events": ["rebook"],
 		"note": "Noc i deszcz. Mokra jezdnia wydłuża hamowanie o ponad jedną trzecią, a w zakręcie łatwiej o poślizg."},
 ]
@@ -27,8 +29,13 @@ var sky
 var cams
 var hud
 var traffic
+var audio
+var touch
+var touch_mode := false      # sterowanie dotykowe (telefon); włącza się też po pierwszym dotknięciu ekranu
+var low_end := false         # telefon albo renderer inny niż Forward+: lżejsze ustawienia
+var ready_done := false
 
-var state := "menu"          # menu | drive | pause | result
+var state := "loading"          # menu | drive | pause | result
 var c_idx := 0
 var contract := {}
 var career := 0
@@ -49,32 +56,98 @@ var _help_t := 0.0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_input()
-	sky = SkyRig.new(); add_child(sky)
+	var mobile := OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios") or OS.has_environment("KNC_MOBILE")
+	low_end = mobile or RenderingServer.get_current_rendering_method() != "forward_plus"
+	# Mapa powstaje w kodzie i na telefonie trwa to kilka sekund — najpierw pokazujemy napis.
+	var splash := CanvasLayer.new()
+	var bg := ColorRect.new()
+	bg.color = Color(0.043, 0.42, 0.263)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	splash.add_child(bg)
+	var lbl := Label.new()
+	lbl.text = "KURS NA CZAS 3D\nBuduję mapę…"
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lbl.add_theme_font_size_override("font_size", 40)
+	lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
+	splash.add_child(lbl)
+	add_child(splash)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	sky = SkyRig.new()
+	sky.low_end = low_end
+	add_child(sky)
 	world = World.new(); add_child(world)
+	if low_end:
+		world.tree_count = 320
 	world.build()
 	rig = Rig.new(); add_child(rig)
 	rig.impact.connect(_on_impact)
+	audio = Audio.new()
+	audio.rig = rig
+	audio.sky = sky
+	add_child(audio)
 	traffic = Traffic.new(); add_child(traffic)
 	traffic.setup(world, rig)
+	traffic.pass_stream = audio.pass_stream
+	if low_end:
+		traffic.max_cars = 8
+		traffic.use_spots = false
 	cams = Cameras.new(); add_child(cams)
+	cams.mirrors = not low_end
 	cams.setup(rig)
+	audio.cams = cams
 	hud = Hud.new(); add_child(hud)
 	hud.action.connect(_on_action)
-	for n in [sky, world, rig, traffic, cams]:
+	touch = Touch.new()
+	hud.add_child(touch)
+	touch.tapped.connect(_do)
+	for n in [sky, world, rig, traffic, cams, audio]:
 		n.process_mode = Node.PROCESS_MODE_PAUSABLE
+	quality = 1 if low_end else 2
 	if OS.has_environment("KNC_Q"):
 		quality = int(OS.get_environment("KNC_Q"))
 	sky.set_quality(quality)
+	if mobile or OS.has_environment("KNC_TOUCH"):
+		_set_touch_mode(true)
 	_prepare(0)
+	splash.queue_free()
+	ready_done = true
 	_show_menu()
 	_dev_hooks()
+
+
+func _set_touch_mode(on: bool) -> void:
+	touch_mode = on
+	# na telefonie interfejs musi być większy; 1,35 daje czytelne napisy na ekranie 6"
+	get_tree().root.content_scale_factor = 1.35 if on else 1.0
+	hud.set_compact(on)
+	hud.help.visible = false
+	if not on:
+		touch.visible = false
+		touch.active = false
+		touch.release_all()
+	if ready_done and state == "menu":
+		_show_menu()      # plansza przelicza się na nowy rozmiar pisma
+
+
+## Nazwa klawisza albo przycisku dotykowego do podpowiedzi.
+func _k(id: String) -> String:
+	var keys := {"parking": "Spacja", "camera": "klawisz C", "lights": "klawisz L", "wipers": "klawisz P", "confirm": "Enter", "rescue": "Backspace"}
+	var taps := {"parking": "przycisk P", "camera": "przycisk KAM", "lights": "przycisk ŚW", "wipers": "przycisk WYC", "confirm": "przycisk ZGŁOŚ ROZŁADUNEK", "rescue": "postój (II)"}
+	return (taps if touch_mode else keys)[id]
+
+
+func _say(text: String, seconds := 8.0) -> void:
+	hud.dispatcher(text, seconds)
+	audio.play("blip")
 
 
 func _setup_input() -> void:
 	var keys := {
 		"steer_left": [KEY_A, KEY_LEFT], "steer_right": [KEY_D, KEY_RIGHT], "throttle": [KEY_W, KEY_UP], "brake": [KEY_S, KEY_DOWN],
 		"gear": [KEY_R], "parking": [KEY_SPACE], "blink_left": [KEY_Q], "blink_right": [KEY_E], "hazard": [KEY_F],
-		"lights": [KEY_L], "wipers": [KEY_P], "retarder": [KEY_T], "camera": [KEY_C],
+		"lights": [KEY_L], "wipers": [KEY_P], "retarder": [KEY_T], "camera": [KEY_C], "horn": [KEY_H], "mute": [KEY_M],
 		"look_left": [KEY_Z], "look_right": [KEY_X], "confirm": [KEY_ENTER, KEY_KP_ENTER], "pause": [KEY_ESCAPE], "help": [KEY_F1], "rescue": [KEY_BACKSPACE],
 	}
 	for a in keys:
@@ -91,7 +164,7 @@ func _setup_input() -> void:
 		ev.axis_value = axes[a][1]
 		InputMap.action_add_event(a, ev)
 	var pads := {"parking": JOY_BUTTON_A, "gear": JOY_BUTTON_X, "camera": JOY_BUTTON_Y, "blink_left": JOY_BUTTON_LEFT_SHOULDER, "blink_right": JOY_BUTTON_RIGHT_SHOULDER,
-		"lights": JOY_BUTTON_DPAD_UP, "wipers": JOY_BUTTON_DPAD_DOWN, "retarder": JOY_BUTTON_DPAD_RIGHT, "pause": JOY_BUTTON_START, "confirm": JOY_BUTTON_B}
+		"lights": JOY_BUTTON_DPAD_UP, "wipers": JOY_BUTTON_DPAD_DOWN, "retarder": JOY_BUTTON_DPAD_RIGHT, "pause": JOY_BUTTON_START, "confirm": JOY_BUTTON_B, "horn": JOY_BUTTON_RIGHT_STICK}
 	for a in pads:
 		var ev := InputEventJoypadButton.new()
 		ev.button_index = pads[a]
@@ -158,7 +231,7 @@ func _show_menu() -> void:
 		["Okno rozładunku zamyka się za", Hud.fmt_time(contract["window"])], ["Warunki", _conditions()], ["Stawka", Hud.fmt_zl(contract["rate"])]]
 	var lead := "Dowieź ładunek z MOP-u do centrum logistycznego i cofnij naczepę pod wyznaczoną rampę, zanim zamknie się okno rozładunku."
 	hud.show_board("Zlecenie nr %d" % contract["n"], "Kurs na czas 3D", lead, rows,
-		[["Ruszaj", "start"], ["Inne zlecenie", "next"], ["Grafika: " + QUALITY_NAMES[quality], "quality"]], contract["note"])
+		[["Ruszaj", "start"], ["Inne zlecenie", "next"], ["Grafika: " + QUALITY_NAMES[quality], "quality"], ["Dźwięk: " + ("wyłączony" if audio.muted else "włączony"), "mute"]], contract["note"])
 
 
 func _start() -> void:
@@ -169,9 +242,9 @@ func _start() -> void:
 	rig.lights = 1 if sky.is_night() else 0
 	hud.hide_overlay()
 	hud.set_hud_visible(true)
-	hud.help.visible = true
+	hud.help.visible = not touch_mode
 	_help_t = 0.0
-	hud.dispatcher("Zlecenie nr %d: %s, rampa %d. Zwolnij hamulec postojowy (Spacja) i ruszaj. Kamerę zmienisz klawiszem C." % [contract["n"], contract["cargo"], bay_num], 9.0)
+	_say("Zlecenie nr %d: %s, rampa %d. Zwolnij hamulec postojowy (%s) i ruszaj. Widok zmienia %s." % [contract["n"], contract["cargo"], bay_num, _k("parking"), _k("camera")], 9.0)
 
 
 func _on_action(act: String, _arg) -> void:
@@ -185,6 +258,12 @@ func _on_action(act: String, _arg) -> void:
 			sky.set_quality(quality)
 			_show_menu()
 		"resume": _resume()
+		"rescue":
+			_resume()
+			_rescue()
+		"mute":
+			audio.set_muted(not audio.muted)
+			_show_menu()
 		"retry":
 			if state == "result": career -= last_result
 			_start()
@@ -202,8 +281,9 @@ func _pause() -> void:
 		return
 	state = "pause"
 	get_tree().paused = true
+	touch.release_all()
 	hud.show_board("Zlecenie nr %d · %s" % [contract["n"], contract["cargo"]], "Postój", "", [],
-		[["Jedź dalej", "resume"], ["Kurs od nowa", "retry"], ["Menu", "menu"]], Hud.HELP_TEXT)
+		[["Jedź dalej", "resume"], ["Powrót na trasę (−30 s)", "rescue"], ["Kurs od nowa", "retry"], ["Menu", "menu"]], Hud.TOUCH_HELP if touch_mode else Hud.HELP_TEXT)
 
 
 func _resume() -> void:
@@ -219,10 +299,11 @@ func _resume() -> void:
 func _physics_process(delta: float) -> void:
 	if state != "drive":
 		return
-	rig.steer_in = Input.get_axis("steer_right", "steer_left")
-	rig.throttle = Input.get_action_strength("throttle")
-	rig.brake_in = Input.get_action_strength("brake")
-	cams.look = Input.get_axis("look_left", "look_right")
+	rig.steer_in = clampf(Input.get_axis("steer_right", "steer_left") + touch.steer, -1.0, 1.0)
+	rig.throttle = maxf(Input.get_action_strength("throttle"), touch.gas)
+	rig.brake_in = maxf(Input.get_action_strength("brake"), touch.brake)
+	rig.horn = Input.is_action_pressed("horn") or touch.horn
+	cams.look = clampf(Input.get_axis("look_left", "look_right") + touch.look, -1.0, 1.0)
 	var pos: Vector3 = rig.tractor.global_position
 	var off: bool = not world.is_paved(pos)
 	if off != rig.offroad:
@@ -262,11 +343,11 @@ func _update_stage(pos: Vector3) -> void:
 				stage = 3
 			elif pos.z > 3335.0 and pos.x > -40.0 and not _wrong_exit:
 				_wrong_exit = true
-				hud.toast("To zjazd na Toruń. Backspace: powrót na trasę (−30 s)", 6.0, true)
+				hud.toast("To zjazd na Toruń. Powrót na trasę: %s (−30 s)" % _k("rescue"), 6.0, true)
 		3:
 			if pos.x < -343.0 and absf(pos.z - 3260.0) < 40.0:
 				stage = 4
-				hud.dispatcher("Jesteś na placu. Rampa %d — numer jest nad bramą i na nawierzchni. Cofnij naczepę pod odboje, zaciągnij postojowy i zgłoś rozładunek (Enter)." % bay_num, 10.0)
+				_say("Jesteś na placu. Rampa %d — numer jest nad bramą i na nawierzchni. Cofnij naczepę pod odboje, zaciągnij postojowy i zgłoś rozładunek (%s)." % [bay_num, _k("confirm")], 10.0)
 		4:
 			_update_dock()
 
@@ -301,7 +382,7 @@ func _try_dock() -> void:
 		return
 	var e := dock_error()
 	if absf(rig.speed) > 0.15 or not rig.parking:
-		hud.toast("Zatrzymaj zestaw i zaciągnij hamulec postojowy (Spacja)")
+		hud.toast("Zatrzymaj zestaw i zaciągnij hamulec postojowy (%s)" % _k("parking"))
 	elif absf(e["lat"]) > 3.0:
 		hud.toast("To nie ta rampa. Twoja ma numer %d" % bay_num, 3.5, true)
 	elif e["dist"] > 1.0:
@@ -319,7 +400,7 @@ func _update_events(pos: Vector3) -> void:
 		_hint_lights += get_physics_process_delta_time()
 		if _hint_lights > 8.0:
 			_hint_lights = -60.0
-			hud.dispatcher("Jedziesz bez świateł. Włącz mijania klawiszem L.", 6.0)
+			_say("Jedziesz bez świateł. Włącz mijania: %s." % _k("lights"), 6.0)
 	if stage > 2:
 		return
 	for k in events:
@@ -333,12 +414,12 @@ func _update_events(pos: Vector3) -> void:
 					traffic.add_breakdown(ev["z"])
 				if pos.z > ev["z"] - 420.0 and pos.x > -30.0:
 					ev["done"] = true
-					hud.dispatcher("Uwaga: zepsuty pojazd za 400 m, stoi na pasie awaryjnym i wystaje na prawy pas. Zjedź na lewy.", 8.0)
+					_say("Uwaga: zepsuty pojazd za 400 m, stoi na pasie awaryjnym i wystaje na prawy pas. Zjedź na lewy.", 8.0)
 			"rain":
 				if pos.z > ev["z"]:
 					ev["done"] = true
 					sky.set_rain(1.0, 35.0)
-					hud.dispatcher("Front z deszczem nad trasą. Jezdnia robi się śliska: zwolnij, zwiększ odstęp, włącz wycieraczki (P).", 9.0)
+					_say("Front z deszczem nad trasą. Jezdnia robi się śliska: zwolnij, zwiększ odstęp, włącz wycieraczki (%s)." % _k("wipers"), 9.0)
 			"rebook":
 				if pos.z > ev["z"]:
 					ev["done"] = true
@@ -348,7 +429,7 @@ func _update_events(pos: Vector3) -> void:
 							free.append(b["num"])
 					var old := bay_num
 					bay_num = free[randi() % free.size()]
-					hud.dispatcher("Zmiana awizacji: rampa %d jest zajęta. Podjedź pod rampę %d." % [old, bay_num], 10.0)
+					_say("Zmiana awizacji: rampa %d jest zajęta. Podjedź pod rampę %d." % [old, bay_num], 10.0)
 
 
 func _on_impact(dv: float, what: String) -> void:
@@ -358,6 +439,7 @@ func _on_impact(dv: float, what: String) -> void:
 	cargo = maxf(0.0, cargo - pct)
 	hits += 1
 	hud.toast("Uderzenie (%s): −%d%% ładunku" % [what, maxi(1, int(round(pct)))], 2.4, true)
+	audio.play("impact", clampf(dv / 4.0, 0.3, 1.4))
 	if cargo <= 0.0:
 		_fail("Ładunek nie nadaje się do odbioru. Odbiorca odmówił przyjęcia towaru.")
 
@@ -389,7 +471,7 @@ func _rescue() -> void:
 	cams.snap()
 	t_left -= 30.0
 	_wrong_exit = false
-	hud.toast("Powrót na trasę: −30 s. Zwolnij postojowy (Spacja)", 4.0)
+	hud.toast("Powrót na trasę: −30 s. Zwolnij postojowy (%s)" % _k("parking"), 4.0)
 
 
 func _finish(e: Dictionary) -> void:
@@ -415,6 +497,7 @@ func _finish(e: Dictionary) -> void:
 	var net := maxi(0, rate + bonus + prec - late - cut)
 	last_result = net
 	career += net
+	audio.play("jingle")
 	var rows := [["Ładunek", contract["cargo"]], ["Czas przejazdu", "%s z %s" % [Hud.fmt_time(contract["window"] - t_left), Hud.fmt_time(contract["window"])]],
 		["Stan ładunku", "%d%%" % (100 - dmg)], ["Ustawienie pod rampą %d" % bay_num, "%s (%d cm, %.1f°)" % [grade, lat_cm, ang]], ["Stawka", Hud.fmt_zl(rate)]]
 	if bonus > 0: rows.append(["Premia za czas", Hud.fmt_zl(bonus)])
@@ -449,6 +532,14 @@ func _objective_distance(pos: Vector3) -> float:
 
 
 func _process(_delta: float) -> void:
+	if not ready_done:
+		return
+	var show_touch: bool = touch_mode and state == "drive"
+	if touch.visible != show_touch:
+		touch.visible = show_touch
+		touch.active = show_touch
+		if not show_touch:
+			touch.release_all()
 	if state != "drive":
 		return
 	var pos: Vector3 = rig.tractor.global_position
@@ -456,7 +547,7 @@ func _process(_delta: float) -> void:
 	if stage == 4:
 		obj = obj % bay_num
 	var line2 := ""
-	if rig.parking and rig.throttle > 0.1: line2 = "Hamulec postojowy zaciągnięty — zwolnij go Spacją"
+	if rig.parking and rig.throttle > 0.1: line2 = "Hamulec postojowy zaciągnięty — zwolnij go (%s)" % _k("parking")
 	elif rig.offroad and absf(rig.speed) > 1.0: line2 = "Poza jezdnią: gorsza przyczepność i większe opory"
 	elif absf(rig.articulation) > 1.2: line2 = "Zestaw mocno złamany — wyprostuj, jadąc do przodu"
 	hud.state = {"kmh": absf(rig.speed) * 3.6, "gear": "P" if rig.parking else ("D" if rig.gear == 1 else "R"),
@@ -464,29 +555,66 @@ func _process(_delta: float) -> void:
 		"parking": rig.parking, "lights": rig.lights, "lights_txt": ["ŚW", "MIJ", "DROG"][rig.lights], "retarder": rig.retarder, "wipers": rig.wipers,
 		"line1": "Kamera: %s  ·  %s" % [Cameras.NAMES[cams.mode].to_lower(), sky.label()], "line2": line2, "art": rig.articulation}
 	hud.update_drive(t_left, obj, _objective_distance(pos), cargo, "Zlecenie %d · rampa %d" % [contract["n"], bay_num])
+	if rig.parking and rig.throttle > 0.1 and touch_mode and int(Time.get_ticks_msec() / 1000) % 4 == 0:
+		hud.toast(line2, 1.5)
+	touch.lit = {"parking": rig.parking, "blink_left": rig.blink_on and (rig.blinker == 1 or rig.blinker == 2), "blink_right": rig.blink_on and (rig.blinker == -1 or rig.blinker == 2),
+		"hazard": rig.blinker == 2 and rig.blink_on, "lights": rig.lights > 0, "wipers": rig.wipers > 0, "retarder": rig.retarder > 0, "gear": rig.gear == -1}
+	touch.labels = {"gear": "R" if rig.gear == -1 else "D", "lights": ["ŚW", "MIJ", "DROG"][rig.lights], "retarder": "ZW %d" % rig.retarder, "wipers": "WYC %d" % rig.wipers}
+	touch.show_confirm = stage == 4
+	touch.cab = cams.mode == 0
+	touch.queue_redraw()
+
+
+func _notification(what: int) -> void:
+	# przycisk „wstecz” w Androidzie: postój zamiast zamknięcia gry
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and ready_done:
+		if state == "drive": _pause()
+		elif state == "pause": _resume()
+
+
+func _input(e: InputEvent) -> void:
+	# pierwsze dotknięcie ekranu włącza sterowanie dotykowe (np. laptop z ekranem dotykowym, gra w przeglądarce telefonu)
+	if e is InputEventScreenTouch and e.pressed and ready_done and not touch_mode:
+		_set_touch_mode(true)
 
 
 func _unhandled_input(e: InputEvent) -> void:
-	if e.is_action_pressed("pause"):
+	if not ready_done:
+		return
+	for id in ["pause", "mute", "camera", "parking", "gear", "lights", "wipers", "retarder", "blink_left", "blink_right", "hazard", "confirm", "rescue", "help"]:
+		if e.is_action_pressed(id):
+			_do(id)
+			return
+
+
+## Jedna czynność sterująca — z klawiatury, pada albo przycisku dotykowego.
+func _do(id: String) -> void:
+	if id == "pause":
 		if state == "drive": _pause()
 		elif state == "pause": _resume()
 		return
+	if id == "mute":
+		audio.set_muted(not audio.muted)
+		if state == "drive": hud.toast("Dźwięk wyłączony" if audio.muted else "Dźwięk włączony", 1.5)
+		return
 	if state != "drive":
 		return
-	if e.is_action_pressed("camera"): cams.set_mode(cams.mode + 1)
-	elif e.is_action_pressed("parking"): rig.parking = not rig.parking
-	elif e.is_action_pressed("gear"):
-		if absf(rig.speed) < 1.0: rig.gear = -1 if rig.gear == 1 else 1
-		else: hud.toast("Kierunek jazdy zmienisz po zatrzymaniu")
-	elif e.is_action_pressed("lights"): rig.lights = (rig.lights + 1) % 3
-	elif e.is_action_pressed("wipers"): rig.wipers = (rig.wipers + 1) % 3
-	elif e.is_action_pressed("retarder"): rig.retarder = (rig.retarder + 1) % 4
-	elif e.is_action_pressed("blink_left"): rig.blinker = 0 if rig.blinker == 1 else 1
-	elif e.is_action_pressed("blink_right"): rig.blinker = 0 if rig.blinker == -1 else -1
-	elif e.is_action_pressed("hazard"): rig.blinker = 0 if rig.blinker == 2 else 2
-	elif e.is_action_pressed("confirm"): _try_dock()
-	elif e.is_action_pressed("rescue"): _rescue()
-	elif e.is_action_pressed("help"): hud.help.visible = not hud.help.visible
+	match id:
+		"camera": cams.set_mode(cams.mode + 1)
+		"parking": rig.parking = not rig.parking
+		"gear":
+			if absf(rig.speed) < 1.0: rig.gear = -1 if rig.gear == 1 else 1
+			else: hud.toast("Kierunek jazdy zmienisz po zatrzymaniu")
+		"lights": rig.lights = (rig.lights + 1) % 3
+		"wipers": rig.wipers = (rig.wipers + 1) % 3
+		"retarder": rig.retarder = (rig.retarder + 1) % 4
+		"blink_left": rig.blinker = 0 if rig.blinker == 1 else 1
+		"blink_right": rig.blinker = 0 if rig.blinker == -1 else -1
+		"hazard": rig.blinker = 0 if rig.blinker == 2 else 2
+		"confirm": _try_dock()
+		"rescue": _rescue()
+		"help":
+			if not touch_mode: hud.help.visible = not hud.help.visible
 
 
 # ---------------------------------------------------------------- haki deweloperskie

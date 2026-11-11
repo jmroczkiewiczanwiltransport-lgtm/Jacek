@@ -26,6 +26,7 @@ var gate_pos := Vector3(-335, 0, 3260)
 var lamps: Array[Light3D] = []
 var lamp_mat: StandardMaterial3D
 var window_mat: StandardMaterial3D
+var tree_count := 900           # na telefonie mniej (ustawia main.gd przed build())
 
 var _mask: Image
 var _static: StaticBody3D
@@ -374,7 +375,7 @@ func _expressway() -> void:
 	_limit_sign(f4[0] + f4[2] * 8.2, f4[1], "70")
 	var f5 := _frame(c, _d_at_z(c, 3020.0))
 	_limit_sign(f5[0] + f5[2] * 8.2, f5[1], "40")
-	_board(f5[0] + f5[2] * 11.0 + f5[1] * 30.0, f5[1], ["Strefa przemysłowa  →", "Toruń  ↑"], "green", Vector2(7.4, 2.8))
+	_board(f5[0] + f5[2] * 11.0 + f5[1] * 30.0, f5[1], ["Strefa przemysłowa: 1. zjazd", "Toruń: prosto"], "green", Vector2(7.4, 2.8))
 
 
 func _mop() -> void:
@@ -522,7 +523,7 @@ func _chevron(pos: Vector3, toward: Vector3) -> void:
 	Kit.box(n, Vector3(4.2, 0.9, 0.06), Kit.mat(Color(0.04, 0.04, 0.05), 0.6), Vector3(0, 1.5, 0), 0.02)
 	for i in 4:
 		var l := Label3D.new()
-		l.text = "›"
+		l.text = ">"
 		l.font_size = 160
 		l.pixel_size = 0.0075
 		l.modulate = Color(0.95, 0.75, 0.05)
@@ -696,7 +697,7 @@ func _trees() -> void:
 	var meshes := [_tree_mesh(false), _tree_mesh(true)]
 	var xfs := [[], []]
 	var tries := 0
-	while xfs[0].size() + xfs[1].size() < 900 and tries < 20000:
+	while xfs[0].size() + xfs[1].size() < tree_count and tries < 20000:
 		tries += 1
 		# skupiska wzdłuż trasy: losowy punkt na osi + odsunięcie w bok
 		var d := _rng.randf_range(0.0, 4200.0)

@@ -35,6 +35,8 @@ func _process(_dt: float) -> bool:
 		if not main.has_method("_start"):
 			print("BLAD: scena glowna nie wczytala skryptu"); return true
 		return false
+	if not main.ready_done:
+		return false
 	if phase == 0:
 		main._start()
 		main.traffic.enabled = false
