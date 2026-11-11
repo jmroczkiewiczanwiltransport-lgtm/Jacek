@@ -29,8 +29,18 @@ Gra ma sterowanie dotykowe i lżejsze ustawienia grafiki, które włączają si�
   trzeba wystawić na dowolnym serwerze WWW przez HTTPS, np. GitHub Pages. Dla hostingów z limitem
   wielkości pliku `tools/paczka_web.sh` dzieli silnik na części po 13 MB i dokłada stronę startową
   `web/kurs-na-czas-3d.html`, która składa go z powrotem w przeglądarce.
-- **iPhone.** Tylko przez przeglądarkę (Safari), w poziomie. Aplikacja natywna wymagałaby Maca
-  z Xcode i konta Apple Developer — tego projektu nie da się zbudować na iOS z Linuksa ani Windowsa.
+- **iPhone, przeglądarka.** Safari, telefon w poziomie.
+- **iPhone, aplikacja.** Apple pozwala budować aplikacje na iPhone'a tylko w Xcode na macOS, więc
+  ostatni krok wymaga Maca. Projekt ma gotowe ustawienie eksportu „iOS” (sprawdzone: eksport do
+  projektu Xcode przechodzi bez błędów także z Linuksa; pliku `.ipa` poza macOS zbudować się nie da).
+  Na Macu:
+  1. W `export_presets.cfg` zamień `application/app_store_team_id="ABCDE12345"` na swój Team ID
+     (Xcode → Settings → Accounts) i w razie potrzeby zmień `application/bundle_identifier`.
+  2. W Godocie: Projekt → Eksport → iOS → Eksportuj projekt.
+  3. Otwórz powstały `.xcodeproj` w Xcode, podłącz iPhone'a, wybierz go jako cel i naciśnij Run.
+
+  Z darmowym Apple ID aplikacja działa na własnym telefonie 7 dni, potem trzeba ją wgrać ponownie.
+  Trwała instalacja (TestFlight, App Store) wymaga płatnego konta Apple Developer.
 
 Budowanie (wymaga szablonów eksportu Godot 4.6; dla Androida także JDK 17 i Android SDK
 ustawionych w Ustawieniach edytora → Eksport → Android):
