@@ -72,6 +72,12 @@ przed ustąpieniem człowiekowi. Nie dokładaj nigdzie własnego
 `czytaj_pompe()` „bo tak prościej" — 8.11 automat pukał tak co 15 s
 i historia stanęła po jednym wierszu.
 
+**Komputer Jacka zasypia** (przerwy w historii w nocy i w dni poza domem,
+16.11). Automat zakłada, że komputer działa — dlatego podbicie nastawy
+trzyma komputer obudzonym (`nie_usypiaj`), a obniżka na noc nie. Gdy zmieniasz
+automat, nie zgub tej zasady: każda nastawa powyżej bazowej musi mieć kogoś,
+kto ją potem obniży.
+
 **Gdy panel wisi, w `panel.log` szukaj dwóch rzeczy.** Linijki `puls:` (co
 godzinę: wątki, wiek odczytu, wiek historii) — ostatnia mówi, kiedy panel
 stanął. I bloku `Timeout (0:02:00)!` ze stosami wątków — strażnik

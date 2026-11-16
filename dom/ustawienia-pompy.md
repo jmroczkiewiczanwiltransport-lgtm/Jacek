@@ -1261,6 +1261,38 @@ Zamiast zgadywać dalej, przyrządy:
   przez dwie sekundy (czy coś się nie kręci w kółko). Sekcja 5 — 150
   linijek dziennika, żeby zmieścił się cały zrzut.
 
+### 16.11.2026 — automat działa, ale komputer zasypia
+
+Automat wrócił do pracy: 14.11 o 18:08 obniżka na noc (jutro 1,3 kWh/m²),
+15.11 pełny dzień — 9:02 21,5, 10:35 22,0, 13:01 21,5, 15:03 20,0. Wszystkie
+zmiany udane. W oknie 9–15 ok. 27 kWh ciepła za ok. 7 kWh prądu, w domu
+19,4 → 20,2 °C. Prognoza 1,26 kWh/m² — ledwo nad progiem 1,2, co potwierdza,
+że próg względny trzeba zrobić jeszcze w listopadzie.
+
+Za to historia ma dziury: 10.11 21:35 → 13.11 18:15 (prawie trzy doby),
+kilka przerw 14.11, noc 14/15.11 (23:29 → 07:01), 15.11 19:49 → 16.11 20:35.
+Historia i pogoda urywają się w tej samej minucie — stoi cały proces albo
+cały komputer. Układ przerw (noce, dni poza domem) wskazuje na **usypianie
+komputera**; do potwierdzenia u Jacka.
+
+Z tego wynika ryzyko, którego automat nie przewidywał: **komputer, który
+zaśnie w trakcie podbicia, nie obniży nastawy o 15:00** — pompa grzałaby do
+22 °C, dopóki ktoś go nie obudzi. Odwrotnie przy obniżce na noc: uśpiony
+komputer zostawi dom na 19,5 zamiast 20, co jest niegroźne.
+
+Naprawa (wariant wybrany przez Jacka): **dopóki nastawa stoi powyżej
+bazowej, automat prosi Windowsa, żeby nie usypiał komputera**
+(`SetThreadExecutionState` z `ES_SYSTEM_REQUIRED`, ten sam mechanizm co
+w odtwarzaczach filmów; ekran może gasnąć, ręczne uśpienie działa). Gdy
+nastawa wróci do bazowej albo zejdzie niżej — prośbę cofa. Prośba należy do
+wątku, więc składa ją i cofa zawsze wątek automatu. Sprawdzone na atrapie:
+podbicie 20,0 → 21,5 włącza trzymanie, ręczne 19,0 je zwalnia; na
+podstawionym `windll` lecą flagi `0x80000001` i `0x80000000`.
+
+Zostaje do decyzji: komputer nigdy nie śpi (koszt ok. 1–2 kWh na dobę
+stacjonarnego komputera — do zmierzenia; zimą może przewyższyć oszczędności
+automatu) albo docelowo osobny mały komputer na panel (Raspberry Pi, ok. 4 W).
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie

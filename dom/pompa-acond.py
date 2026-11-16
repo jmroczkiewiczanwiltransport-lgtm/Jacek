@@ -907,6 +907,25 @@ TOLERANCJA_NASTAWY = 0.15          # mniej niż jeden impuls i pół
 PROG_RECZNEJ = 0.5
 
 
+_ES_CONTINUOUS, _ES_SYSTEM_REQUIRED = 0x80000000, 0x00000001
+
+
+def nie_usypiaj(trzymaj):
+    """Prosi Windowsa, żeby nie usypiał komputera (albo cofa tę prośbę).
+
+    To ten sam mechanizm, którego używa odtwarzacz filmów: dopóki prośba
+    trwa, komputer nie zaśnie sam z bezczynności, ale ekran może zgasnąć,
+    a ręczne uśpienie nadal działa. Prośba należy do wątku, który ją złożył
+    — dlatego woła ją zawsze wątek automatu. Poza Windowsem nic nie robi."""
+    try:
+        import ctypes                                               # noqa: PLC0415
+        ustaw = ctypes.windll.kernel32.SetThreadExecutionState
+    except (ImportError, AttributeError, OSError):
+        return False
+    ustaw(_ES_CONTINUOUS | (_ES_SYSTEM_REQUIRED if trzymaj else 0))
+    return True
+
+
 def wczytaj_slonce(plik=None):
     """Ustawienia automatu. Brak pliku znaczy: nie sterujemy."""
     plik = plik or PLIK_SLONCA
@@ -1601,9 +1620,12 @@ def panel(argumenty):
         ostatni_blad = [None]
         czekam_na_prognoze = [False]
         czekam_na_odczyt = [False]
+        ostatnie_ustawienia = [None]
+        trzymam_obudzony = [False]
         while True:
             try:
                 ustawienia = wczytaj_slonce()
+                ostatnie_ustawienia[0] = ustawienia
                 prognoza = _pogoda_na_panel()
                 # Wątek pogody startuje równolegle z tym i potrzebuje sekundy
                 # na pierwsze pobranie. Bez tego pierwszy obieg trafiał w pustkę,
@@ -1705,6 +1727,29 @@ def panel(argumenty):
                     ostatni_blad[0] = podpis
                     print(f'{datetime.now():%H:%M:%S}  automat słoneczny — {podpis}',
                           flush=True)
+            # Komputer, który zaśnie w trakcie słonecznego podbicia, nie obniży
+            # nastawy o 15:00 — pompa grzałaby do 22 °C, dopóki ktoś go nie
+            # obudzi. Dlatego dopóki nastawa stoi POWYŻEJ bazowej, prosimy
+            # Windowsa, żeby nie usypiał komputera; gdy wróci do bazowej albo
+            # zejdzie niżej (noc), prośbę cofamy. Obniżka na noc trzymania nie
+            # potrzebuje: uśpiony komputer zostawi wtedy dom na 19,5 zamiast 20.
+            try:
+                ust = ostatnie_ustawienia[0]
+                nastawa_teraz = liczba(_pompa_na_panel()[0].get(zmienna_nastawy)) \
+                    if zmienna_nastawy else None
+                trzymaj = bool(steruje and ust and nastawa_teraz is not None
+                               and nastawa_teraz > ust['nastawa_baza'] + TOLERANCJA_NASTAWY)
+                if trzymaj != trzymam_obudzony[0]:
+                    trzymam_obudzony[0] = trzymaj
+                    nie_usypiaj(trzymaj)
+                    if trzymaj:
+                        print(f'{datetime.now():%H:%M:%S}  nastawa {nastawa_teraz} °C powyżej '
+                              f'bazowej — komputer nie zaśnie, dopóki jej nie obniżę', flush=True)
+                    else:
+                        print(f'{datetime.now():%H:%M:%S}  nastawa nie jest już podbita '
+                              f'— komputer może zasypiać', flush=True)
+            except Exception:                                         # noqa: BLE001
+                pass
             time.sleep(15 if czekam_na_prognoze[0] or czekam_na_odczyt[0] else odstep)
 
     # Port zajmujemy PRZED uruchomieniem wątków. Kolejność jest tu całą
