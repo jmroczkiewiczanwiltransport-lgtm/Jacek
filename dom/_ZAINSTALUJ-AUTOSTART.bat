@@ -103,6 +103,12 @@ rem  od "Odmowa dostepu", gdy klikasz ten plik bez uprawnien. Kiedys bylo to
 rem  schowane za ">nul 2>&1" i instalator mowil "uruchamiam", nie uruchamiajac
 rem  nic. Teraz, gdy Harmonogram odmowi, startujemy panel sami - tak samo, jak
 rem  robi to dwuklik na _URUCHOM-PANEL.bat.
+rem  Harmonogram po cichu IGNORUJE "uruchom", gdy uwaza, ze zadanie wciaz
+rem  trwa - a tuz po zatrzymaniu starego panelu jeszcze tak uwaza. 19.11
+rem  zadanie nie podnioslo panelu wlasnie z tego powodu. Czekamy wiec, az
+rem  przestanie byc "Running" (do 15 s), a gdy nie przestaje - konczymy je.
+powershell -NoProfile -Command "for ($i=0; $i -lt 30; $i++) { $z=Get-ScheduledTask -TaskName $env:ZADANIE -ErrorAction SilentlyContinue; if (-not $z -or $z.State -ne 'Running') { exit 0 }; Start-Sleep -Milliseconds 500 }; exit 1"
+if errorlevel 1 schtasks /End /TN "%ZADANIE%" >nul 2>&1
 schtasks /Run /TN "%ZADANIE%" >nul 2>&1
 if errorlevel 1 (
   echo   Harmonogram nie pozwolil uruchomic zadania z tego okna - startuje panel recznie.
@@ -150,7 +156,9 @@ if errorlevel 1 (
   echo   ...i to tez sie nie udalo. Odpal _URUCHOM-PANEL.bat dwuklikiem - w czarnym
   echo   oknie zobaczysz, na czym sie wywraca.
 ) else (
-  echo   Panel dziala: http://localhost:8125  ^(ale sam po restarcie nie wstanie^)
+  echo   Panel dziala: http://localhost:8125
+  echo   Zadanie w Harmonogramie jest ustawione - po nastepnym zalogowaniu
+  echo   panel wstanie sam, jak zawsze.
 )
 echo.
 pause

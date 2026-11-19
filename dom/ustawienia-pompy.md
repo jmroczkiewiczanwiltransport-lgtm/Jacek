@@ -1293,6 +1293,25 @@ Zostaje do decyzji: komputer nigdy nie śpi (koszt ok. 1–2 kWh na dobę
 stacjonarnego komputera — do zmierzenia; zimą może przewyższyć oszczędności
 automatu) albo docelowo osobny mały komputer na panel (Raspberry Pi, ok. 4 W).
 
+### 19.11.2026 — Harmonogram zignorował „uruchom", komputer śpi
+
+Instalator z paczki 16.11: zadanie poprawne, `schtasks /Run` poszedł, a panel
+nie wstał — w `panel.log` ani jednej nowej linijki startu. Ręczny start
+z instalatora podniósł panel od razu. Najbardziej prawdopodobne: Harmonogram
+wciąż uważał poprzednie uruchomienie za trwające (proces dopiero co zabity)
+i przy domyślnym „nie uruchamiaj drugiej instancji" po cichu zignorował
+polecenie. Instalator czeka teraz do 15 s, aż zadanie przestanie być
+„Running", a gdy nie przestaje — kończy je `schtasks /End`, i dopiero wtedy
+uruchamia. Komunikat „sam po restarcie nie wstanie" był fałszywy (zadanie
+było dobre) — poprawiony.
+
+W tym samym logu nocne błędy pogody co ok. 47 minut (00:40, 01:27, 02:14)
+przy odstępie pobierania 15 minut i **brak pulsu** przez całą noc — proces
+żył tylko w krótkich chwilach. To kolejny ślad usypiania komputera. Poranna
+seria `WinError 10053` (06:47–07:03) pasuje do tego samego: po przebudzeniu
+zrywają się połączenia, które przeglądarka trzymała otwarte, więc 10053
+sam w sobie nie dowodzi winy antywirusa.
+
 ## Do zrobienia
 
 - [ ] **Przed sezonem (wrzesień):** podnieść nastawę pokojową z 15,3 °C (ustawienie
